@@ -1,5 +1,14 @@
 /// Device network status.
-enum NetworkConnectionStatus { connected, disconnected }
+enum NetworkConnectionStatus {
+  connected,
+  disconnected;
+
+  /// Whether the device has active network connection.
+  bool get isConnected => this == NetworkConnectionStatus.connected;
+
+  /// Whether the device is offline.
+  bool get isDisconnected => this == NetworkConnectionStatus.disconnected;
+}
 
 /// Reactive visibility state of the top connectivity banner.
 enum ConnectivityBannerVisibility { hidden, offline, restored }

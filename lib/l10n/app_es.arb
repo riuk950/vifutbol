@@ -87,5 +87,254 @@
   "actionRefresh": "Actualizar",
   "@actionRefresh": {
     "description": "Etiqueta del botón para actualizar datos"
+  },
+  "authWelcomeTitle": "Bienvenido a vifutbol",
+  "@authWelcomeTitle": {
+    "description": "Título de bienvenida en la pantalla de autenticación"
+  },
+  "authWelcomeSubtitle": "Tu plataforma oficial para gestión de torneos, sedes y estadísticas",
+  "@authWelcomeSubtitle": {
+    "description": "Subtítulo de bienvenida"
+  },
+  "authLoginTab": "Iniciar sesión",
+  "@authLoginTab": {
+    "description": "Pestaña de inicio de sesión"
+  },
+  "authRegisterTab": "Crear cuenta",
+  "@authRegisterTab": {
+    "description": "Pestaña de registro"
+  },
+  "authEmailLabel": "Correo electrónico",
+  "@authEmailLabel": {
+    "description": "Etiqueta para el campo de correo electrónico"
+  },
+  "authEmailHint": "ejemplo@vifutbol.com",
+  "@authEmailHint": {
+    "description": "Pista del campo de correo"
+  },
+  "authPasswordLabel": "Contraseña",
+  "@authPasswordLabel": {
+    "description": "Etiqueta para el campo de contraseña"
+  },
+  "authPasswordHint": "Mínimo 8 caracteres",
+  "@authPasswordHint": {
+    "description": "Pista del campo de contraseña"
+  },
+  "authFullNameLabel": "Nombre completo",
+  "@authFullNameLabel": {
+    "description": "Etiqueta para el campo de nombre completo"
+  },
+  "authFullNameHint": "Tu nombre y apellido",
+  "@authFullNameHint": {
+    "description": "Pista del campo de nombre"
+  },
+  "authContinueAsFan": "Continuar como Aficionado",
+  "@authContinueAsFan": {
+    "description": "Acceso rápido de consulta pública como aficionado"
+  },
+  "authOrDivider": "o también puedes",
+  "@authOrDivider": {
+    "description": "Separador visual entre login y acceso rápido"
+  },
+  "authErrorInvalidEmail": "Ingresa un correo electrónico válido",
+  "@authErrorInvalidEmail": {
+    "description": "Error cuando el formato del correo es incorrecto"
+  },
+  "authErrorPasswordTooShort": "La contraseña debe tener al menos 8 caracteres",
+  "@authErrorPasswordTooShort": {
+    "description": "Error cuando la contraseña es menor a 8 caracteres"
+  },
+  "authErrorNameTooShort": "El nombre debe tener al menos 2 caracteres",
+  "@authErrorNameTooShort": {
+    "description": "Error cuando el nombre es menor a 2 caracteres"
+  },
+  "authErrorInvalidCredentials": "Correo o contraseña incorrectos",
+  "@authErrorInvalidCredentials": {
+    "description": "Error de autenticación por credenciales incorrectas"
+  },
+  "authErrorNetworkRequired": "Se requiere conexión a internet para iniciar sesión o registrarse",
+  "@authErrorNetworkRequired": {
+    "description": "Error cuando se intenta login o registro sin red"
+  },
+  "authErrorRateLimited": "Demasiados intentos fallidos. Intenta de nuevo en {seconds} segundos.",
+  "@authErrorRateLimited": {
+    "description": "Error por 5 intentos fallidos consecutivos",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingTitle": "Selecciona tu Rol Deportivo",
+  "@onboardingTitle": {
+    "description": "Título de la pantalla de onboarding de rol"
+  },
+  "onboardingSubtitle": "Define tu nivel de participación y responsabilidades en los torneos",
+  "@onboardingSubtitle": {
+    "description": "Subtítulo de la pantalla de onboarding"
+  },
+  "onboardingAuthCodeLabel": "Código de autorización oficial",
+  "@onboardingAuthCodeLabel": {
+    "description": "Campo opcional para código de organizador o árbitro en producción"
+  },
+  "onboardingAuthCodeHint": "Requerido para Organizador o Árbitro en torneos oficiales",
+  "@onboardingAuthCodeHint": {
+    "description": "Pista del código de autorización"
+  },
+  "onboardingErrorInvalidCode": "Código de autorización inválido para el rol seleccionado",
+  "@onboardingErrorInvalidCode": {
+    "description": "Error cuando el código de torneo es incorrecto"
+  },
+  "onboardingConfirmAction": "Confirmar y entrar al torneo",
+  "@onboardingConfirmAction": {
+    "description": "Botón para finalizar onboarding y acceder al App Shell"
+  },
+  "onboardingDiscardTitle": "¿Descartar cambios?",
+  "@onboardingDiscardTitle": {
+    "description": "Título del diálogo al salir con cambios sin guardar"
+  },
+  "onboardingDiscardMessage": "Si sales ahora, deberás seleccionar tu rol la próxima vez que ingreses a la aplicación.",
+  "@onboardingDiscardMessage": {
+    "description": "Mensaje del diálogo de descarte"
+  },
+  "actionDiscard": "Descartar",
+  "@actionDiscard": {
+    "description": "Botón para confirmar descarte"
+  },
+  "actionCancel": "Cancelar",
+  "@actionCancel": {
+    "description": "Botón para cancelar acción"
+  },
+  "roleOrganizer": "Organizador",
+  "@roleOrganizer": {
+    "description": "Nombre del rol Organizador"
+  },
+  "roleCoach": "Entrenador",
+  "@roleCoach": {
+    "description": "Nombre del rol Entrenador"
+  },
+  "roleReferee": "Árbitro",
+  "@roleReferee": {
+    "description": "Nombre del rol Árbitro"
+  },
+  "rolePlayer": "Jugador",
+  "@rolePlayer": {
+    "description": "Nombre del rol Jugador"
+  },
+  "roleFan": "Aficionado",
+  "@roleFan": {
+    "description": "Nombre del rol Aficionado"
+  },
+  "roleDescOrganizer": "Creación de torneos, administración de sedes y aprobación oficial",
+  "@roleDescOrganizer": {
+    "description": "Descripción del rol Organizador"
+  },
+  "roleDescCoach": "Gestión de plantilla, convocatoria de jugadores y alineaciones",
+  "@roleDescCoach": {
+    "description": "Descripción del rol Entrenador"
+  },
+  "roleDescReferee": "Registro de actas arbitrales en vivo, goles, tarjetas y cierres",
+  "@roleDescReferee": {
+    "description": "Descripción del rol Árbitro"
+  },
+  "roleDescPlayer": "Consulta de convocatorias propias, historial y estadísticas de rendimiento",
+  "@roleDescPlayer": {
+    "description": "Descripción del rol Jugador"
+  },
+  "roleDescFan": "Seguimiento público de partidos, calendario, noticias y tablas",
+  "@roleDescFan": {
+    "description": "Descripción del rol Aficionado"
+  },
+  "profileActiveRole": "Rol deportivo activo",
+  "@profileActiveRole": {
+    "description": "Título de sección de rol activo en perfil"
+  },
+  "profileSwitchRole": "Cambiar rol activo",
+  "@profileSwitchRole": {
+    "description": "Selector para cambiar de rol activo"
+  },
+  "profileCapabilitiesTitle": "Permisos y capacidades del rol",
+  "@profileCapabilitiesTitle": {
+    "description": "Encabezado de matriz de capacidades en perfil"
+  },
+  "capabilityGranted": "Habilitado",
+  "@capabilityGranted": {
+    "description": "Indicador de permiso concedido"
+  },
+  "capabilityDenied": "Restringido",
+  "@capabilityDenied": {
+    "description": "Indicador de permiso denegado"
+  },
+  "capManageTournaments": "Crear y configurar torneos",
+  "@capManageTournaments": {
+    "description": "Capacidad manageTournaments"
+  },
+  "capManageVenues": "Administrar sedes y canchas",
+  "@capManageVenues": {
+    "description": "Capacidad manageVenues"
+  },
+  "capApproveRegistrations": "Aprobar inscripciones de equipos",
+  "@capApproveRegistrations": {
+    "description": "Capacidad approveRegistrations"
+  },
+  "capAssignReferees": "Designar árbitros para partidos",
+  "@capAssignReferees": {
+    "description": "Capacidad assignReferees"
+  },
+  "capManageTeamRoster": "Gestionar plantilla del equipo",
+  "@capManageTeamRoster": {
+    "description": "Capacidad manageTeamRoster"
+  },
+  "capManageLineups": "Registrar convocatorias y alineaciones",
+  "@capManageLineups": {
+    "description": "Capacidad manageLineups"
+  },
+  "capRecordMatchEvents": "Registrar goles y tarjetas en vivo",
+  "@capRecordMatchEvents": {
+    "description": "Capacidad recordMatchEvents"
+  },
+  "capCloseMatchReport": "Firmar y cerrar acta oficial del partido",
+  "@capCloseMatchReport": {
+    "description": "Capacidad closeMatchReport"
+  },
+  "capViewPersonalStats": "Consultar estadísticas personales y convocatorias",
+  "@capViewPersonalStats": {
+    "description": "Capacidad viewPersonalStats"
+  },
+  "capViewPublicContent": "Consultar resultados, sedes y tablas públicas",
+  "@capViewPublicContent": {
+    "description": "Capacidad viewPublicContent"
+  },
+  "profileLogoutAction": "Cerrar sesión",
+  "@profileLogoutAction": {
+    "description": "Botón de cerrar sesión"
+  },
+  "profileLogoutDialogTitle": "¿Cerrar sesión en este dispositivo?",
+  "@profileLogoutDialogTitle": {
+    "description": "Título del diálogo de logout"
+  },
+  "profileLogoutDialogMessage": "Se limpiarán los datos de tu sesión local de forma segura.",
+  "@profileLogoutDialogMessage": {
+    "description": "Mensaje del diálogo de logout"
+  },
+  "profileGuestBannerTitle": "Modo Visitante (Aficionado)",
+  "@profileGuestBannerTitle": {
+    "description": "Título cuando navega como invitado"
+  },
+  "profileGuestBannerSubtitle": "Inicia sesión o crea una cuenta para participar activamente como Entrenador, Árbitro, Jugador u Organizador.",
+  "@profileGuestBannerSubtitle": {
+    "description": "Subtítulo para aficionado invitado"
+  },
+  "profileLoginRegisterButton": "Iniciar sesión o Registrarse",
+  "@profileLoginRegisterButton": {
+    "description": "Botón para iniciar sesión desde perfil en modo invitado"
+  },
+  "rbacAccessRestricted": "Acceso restringido para tu rol actual",
+  "@rbacAccessRestricted": {
+    "description": "Mensaje de guarda RBAC denegado"
+  },
+  "rbacRequiredRoleMessage": "Esta acción requiere permisos autorizados para el rol requerido.",
+  "@rbacRequiredRoleMessage": {
+    "description": "Descripción en guarda RBAC denegado"
   }
 }

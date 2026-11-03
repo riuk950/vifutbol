@@ -1,6 +1,9 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:vifutbol/domain/entities/app_shell_section.dart';
+import 'package:vifutbol/presentation/auth/auth_gate.dart';
+import 'package:vifutbol/presentation/auth/role_onboarding_screen.dart';
+import 'package:vifutbol/presentation/auth/welcome_auth_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
 
 /// Fluro router configuration for App Shell navigation.
@@ -9,6 +12,24 @@ class AppRouter {
 
   static void setupRouter() {
     final rootHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const AuthGate();
+      },
+    );
+
+    final authHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const WelcomeAuthScreen();
+      },
+    );
+
+    final onboardingHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const RoleOnboardingScreen();
+      },
+    );
+
+    final shellHandler = Handler(
       handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
         return const AppShellScreen();
       },
@@ -41,6 +62,21 @@ class AppRouter {
     router.define(
       '/',
       handler: rootHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/auth',
+      handler: authHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/onboarding',
+      handler: onboardingHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/shell',
+      handler: shellHandler,
       transitionType: TransitionType.fadeIn,
     );
     router.define(

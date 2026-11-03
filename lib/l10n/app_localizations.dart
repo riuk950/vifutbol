@@ -225,6 +225,372 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Actualizar'**
   String get actionRefresh;
+
+  /// Título de bienvenida en la pantalla de autenticación
+  ///
+  /// In es, this message translates to:
+  /// **'Bienvenido a vifutbol'**
+  String get authWelcomeTitle;
+
+  /// Subtítulo de bienvenida
+  ///
+  /// In es, this message translates to:
+  /// **'Tu plataforma oficial para gestión de torneos, sedes y estadísticas'**
+  String get authWelcomeSubtitle;
+
+  /// Pestaña de inicio de sesión
+  ///
+  /// In es, this message translates to:
+  /// **'Iniciar sesión'**
+  String get authLoginTab;
+
+  /// Pestaña de registro
+  ///
+  /// In es, this message translates to:
+  /// **'Crear cuenta'**
+  String get authRegisterTab;
+
+  /// Etiqueta para el campo de correo electrónico
+  ///
+  /// In es, this message translates to:
+  /// **'Correo electrónico'**
+  String get authEmailLabel;
+
+  /// Pista del campo de correo
+  ///
+  /// In es, this message translates to:
+  /// **'ejemplo@vifutbol.com'**
+  String get authEmailHint;
+
+  /// Etiqueta para el campo de contraseña
+  ///
+  /// In es, this message translates to:
+  /// **'Contraseña'**
+  String get authPasswordLabel;
+
+  /// Pista del campo de contraseña
+  ///
+  /// In es, this message translates to:
+  /// **'Mínimo 8 caracteres'**
+  String get authPasswordHint;
+
+  /// Etiqueta para el campo de nombre completo
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre completo'**
+  String get authFullNameLabel;
+
+  /// Pista del campo de nombre
+  ///
+  /// In es, this message translates to:
+  /// **'Tu nombre y apellido'**
+  String get authFullNameHint;
+
+  /// Acceso rápido de consulta pública como aficionado
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar como Aficionado'**
+  String get authContinueAsFan;
+
+  /// Separador visual entre login y acceso rápido
+  ///
+  /// In es, this message translates to:
+  /// **'o también puedes'**
+  String get authOrDivider;
+
+  /// Error cuando el formato del correo es incorrecto
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa un correo electrónico válido'**
+  String get authErrorInvalidEmail;
+
+  /// Error cuando la contraseña es menor a 8 caracteres
+  ///
+  /// In es, this message translates to:
+  /// **'La contraseña debe tener al menos 8 caracteres'**
+  String get authErrorPasswordTooShort;
+
+  /// Error cuando el nombre es menor a 2 caracteres
+  ///
+  /// In es, this message translates to:
+  /// **'El nombre debe tener al menos 2 caracteres'**
+  String get authErrorNameTooShort;
+
+  /// Error de autenticación por credenciales incorrectas
+  ///
+  /// In es, this message translates to:
+  /// **'Correo o contraseña incorrectos'**
+  String get authErrorInvalidCredentials;
+
+  /// Error cuando se intenta login o registro sin red
+  ///
+  /// In es, this message translates to:
+  /// **'Se requiere conexión a internet para iniciar sesión o registrarse'**
+  String get authErrorNetworkRequired;
+
+  /// Error por 5 intentos fallidos consecutivos
+  ///
+  /// In es, this message translates to:
+  /// **'Demasiados intentos fallidos. Intenta de nuevo en {seconds} segundos.'**
+  String authErrorRateLimited(int seconds);
+
+  /// Título de la pantalla de onboarding de rol
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona tu Rol Deportivo'**
+  String get onboardingTitle;
+
+  /// Subtítulo de la pantalla de onboarding
+  ///
+  /// In es, this message translates to:
+  /// **'Define tu nivel de participación y responsabilidades en los torneos'**
+  String get onboardingSubtitle;
+
+  /// Campo opcional para código de organizador o árbitro en producción
+  ///
+  /// In es, this message translates to:
+  /// **'Código de autorización oficial'**
+  String get onboardingAuthCodeLabel;
+
+  /// Pista del código de autorización
+  ///
+  /// In es, this message translates to:
+  /// **'Requerido para Organizador o Árbitro en torneos oficiales'**
+  String get onboardingAuthCodeHint;
+
+  /// Error cuando el código de torneo es incorrecto
+  ///
+  /// In es, this message translates to:
+  /// **'Código de autorización inválido para el rol seleccionado'**
+  String get onboardingErrorInvalidCode;
+
+  /// Botón para finalizar onboarding y acceder al App Shell
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar y entrar al torneo'**
+  String get onboardingConfirmAction;
+
+  /// Título del diálogo al salir con cambios sin guardar
+  ///
+  /// In es, this message translates to:
+  /// **'¿Descartar cambios?'**
+  String get onboardingDiscardTitle;
+
+  /// Mensaje del diálogo de descarte
+  ///
+  /// In es, this message translates to:
+  /// **'Si sales ahora, deberás seleccionar tu rol la próxima vez que ingreses a la aplicación.'**
+  String get onboardingDiscardMessage;
+
+  /// Botón para confirmar descarte
+  ///
+  /// In es, this message translates to:
+  /// **'Descartar'**
+  String get actionDiscard;
+
+  /// Botón para cancelar acción
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get actionCancel;
+
+  /// Nombre del rol Organizador
+  ///
+  /// In es, this message translates to:
+  /// **'Organizador'**
+  String get roleOrganizer;
+
+  /// Nombre del rol Entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Entrenador'**
+  String get roleCoach;
+
+  /// Nombre del rol Árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Árbitro'**
+  String get roleReferee;
+
+  /// Nombre del rol Jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Jugador'**
+  String get rolePlayer;
+
+  /// Nombre del rol Aficionado
+  ///
+  /// In es, this message translates to:
+  /// **'Aficionado'**
+  String get roleFan;
+
+  /// Descripción del rol Organizador
+  ///
+  /// In es, this message translates to:
+  /// **'Creación de torneos, administración de sedes y aprobación oficial'**
+  String get roleDescOrganizer;
+
+  /// Descripción del rol Entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Gestión de plantilla, convocatoria de jugadores y alineaciones'**
+  String get roleDescCoach;
+
+  /// Descripción del rol Árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Registro de actas arbitrales en vivo, goles, tarjetas y cierres'**
+  String get roleDescReferee;
+
+  /// Descripción del rol Jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Consulta de convocatorias propias, historial y estadísticas de rendimiento'**
+  String get roleDescPlayer;
+
+  /// Descripción del rol Aficionado
+  ///
+  /// In es, this message translates to:
+  /// **'Seguimiento público de partidos, calendario, noticias y tablas'**
+  String get roleDescFan;
+
+  /// Título de sección de rol activo en perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Rol deportivo activo'**
+  String get profileActiveRole;
+
+  /// Selector para cambiar de rol activo
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar rol activo'**
+  String get profileSwitchRole;
+
+  /// Encabezado de matriz de capacidades en perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Permisos y capacidades del rol'**
+  String get profileCapabilitiesTitle;
+
+  /// Indicador de permiso concedido
+  ///
+  /// In es, this message translates to:
+  /// **'Habilitado'**
+  String get capabilityGranted;
+
+  /// Indicador de permiso denegado
+  ///
+  /// In es, this message translates to:
+  /// **'Restringido'**
+  String get capabilityDenied;
+
+  /// Capacidad manageTournaments
+  ///
+  /// In es, this message translates to:
+  /// **'Crear y configurar torneos'**
+  String get capManageTournaments;
+
+  /// Capacidad manageVenues
+  ///
+  /// In es, this message translates to:
+  /// **'Administrar sedes y canchas'**
+  String get capManageVenues;
+
+  /// Capacidad approveRegistrations
+  ///
+  /// In es, this message translates to:
+  /// **'Aprobar inscripciones de equipos'**
+  String get capApproveRegistrations;
+
+  /// Capacidad assignReferees
+  ///
+  /// In es, this message translates to:
+  /// **'Designar árbitros para partidos'**
+  String get capAssignReferees;
+
+  /// Capacidad manageTeamRoster
+  ///
+  /// In es, this message translates to:
+  /// **'Gestionar plantilla del equipo'**
+  String get capManageTeamRoster;
+
+  /// Capacidad manageLineups
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar convocatorias y alineaciones'**
+  String get capManageLineups;
+
+  /// Capacidad recordMatchEvents
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar goles y tarjetas en vivo'**
+  String get capRecordMatchEvents;
+
+  /// Capacidad closeMatchReport
+  ///
+  /// In es, this message translates to:
+  /// **'Firmar y cerrar acta oficial del partido'**
+  String get capCloseMatchReport;
+
+  /// Capacidad viewPersonalStats
+  ///
+  /// In es, this message translates to:
+  /// **'Consultar estadísticas personales y convocatorias'**
+  String get capViewPersonalStats;
+
+  /// Capacidad viewPublicContent
+  ///
+  /// In es, this message translates to:
+  /// **'Consultar resultados, sedes y tablas públicas'**
+  String get capViewPublicContent;
+
+  /// Botón de cerrar sesión
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar sesión'**
+  String get profileLogoutAction;
+
+  /// Título del diálogo de logout
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cerrar sesión en este dispositivo?'**
+  String get profileLogoutDialogTitle;
+
+  /// Mensaje del diálogo de logout
+  ///
+  /// In es, this message translates to:
+  /// **'Se limpiarán los datos de tu sesión local de forma segura.'**
+  String get profileLogoutDialogMessage;
+
+  /// Título cuando navega como invitado
+  ///
+  /// In es, this message translates to:
+  /// **'Modo Visitante (Aficionado)'**
+  String get profileGuestBannerTitle;
+
+  /// Subtítulo para aficionado invitado
+  ///
+  /// In es, this message translates to:
+  /// **'Inicia sesión o crea una cuenta para participar activamente como Entrenador, Árbitro, Jugador u Organizador.'**
+  String get profileGuestBannerSubtitle;
+
+  /// Botón para iniciar sesión desde perfil en modo invitado
+  ///
+  /// In es, this message translates to:
+  /// **'Iniciar sesión o Registrarse'**
+  String get profileLoginRegisterButton;
+
+  /// Mensaje de guarda RBAC denegado
+  ///
+  /// In es, this message translates to:
+  /// **'Acceso restringido para tu rol actual'**
+  String get rbacAccessRestricted;
+
+  /// Descripción en guarda RBAC denegado
+  ///
+  /// In es, this message translates to:
+  /// **'Esta acción requiere permisos autorizados para el rol requerido.'**
+  String get rbacRequiredRoleMessage;
 }
 
 class _AppLocalizationsDelegate

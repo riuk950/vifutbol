@@ -91,12 +91,16 @@ class _KickPulseButtonState extends State<KickPulseButton> {
           widget.icon!,
           const SizedBox(width: 8.0),
         ],
-        Text(
-          widget.label,
-          style: TextStyle(
-            fontSize: 14.0,
-            fontWeight: FontWeight.w700,
-            color: fgColor,
+        Flexible(
+          child: Text(
+            widget.label,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            style: TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.w700,
+              color: fgColor,
+            ),
           ),
         ),
       ],
