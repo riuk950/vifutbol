@@ -526,4 +526,296 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get locationDevStatePermanentlyDenied => 'Revocado';
+
+  @override
+  String get tournamentsTitle => 'Campeonatos y Reglas';
+
+  @override
+  String get tournamentsSubtitle =>
+      'Normativa oficial, formatos de competición y tablas del torneo';
+
+  @override
+  String get tournamentsCreateAction => 'Crear Campeonato';
+
+  @override
+  String get tournamentsEditAction => 'Editar Reglas';
+
+  @override
+  String get tournamentsFilterAll => 'Todos los formatos';
+
+  @override
+  String get tournamentFormatLeague => 'Liga';
+
+  @override
+  String get tournamentFormatKnockout => 'Copa Eliminatoria';
+
+  @override
+  String get tournamentFormatMixed => 'Mixto (Grupos + Eliminatoria)';
+
+  @override
+  String get tournamentStatusOpenRegistration => 'Inscripciones Abiertas';
+
+  @override
+  String get tournamentStatusInProgress => 'En Curso';
+
+  @override
+  String get tournamentStatusFinished => 'Finalizado';
+
+  @override
+  String get tournamentStartAction => 'Iniciar Campeonato (En Curso)';
+
+  @override
+  String get tournamentFinishAction => 'Finalizar Campeonato';
+
+  @override
+  String get tournamentsEmptyTitle => 'No hay campeonatos registrados';
+
+  @override
+  String get tournamentsEmptySubtitle =>
+      'Crea el primer campeonato oficial para centralizar su normativa, puntos y llaves.';
+
+  @override
+  String get tournamentsDraftBannerTitle => 'Se recuperó un borrador guardado';
+
+  @override
+  String get tournamentsDraftBannerContinue => 'Continuar borrador';
+
+  @override
+  String get tournamentsDraftBannerClear => 'Limpiar borrador';
+
+  @override
+  String get tournamentRulesSectionTitle => 'Normativa Oficial del Torneo';
+
+  @override
+  String get tournamentScoringTitle => 'Sistema de Puntuación';
+
+  @override
+  String get tournamentPointsWin => 'Victoria';
+
+  @override
+  String get tournamentPointsDraw => 'Empate';
+
+  @override
+  String get tournamentPointsLoss => 'Derrota';
+
+  @override
+  String tournamentPointsValue(int points) {
+    return '$points pts';
+  }
+
+  @override
+  String get tournamentTiebreakersTitle => 'Criterios de Desempate en Tabla';
+
+  @override
+  String get tiebreakerGoalDifference => 'Diferencia de Gol';
+
+  @override
+  String get tiebreakerGoalsFor => 'Goles a Favor';
+
+  @override
+  String get tiebreakerHeadToHead => 'Duelo Directo';
+
+  @override
+  String get tiebreakerFairPlay => 'Fair Play (Menor puntaje de tarjetas)';
+
+  @override
+  String get tournamentDisciplinaryAndSquadTitle =>
+      'Disciplina, Plantilla y Tiempo de Juego';
+
+  @override
+  String get tournamentYellowCardLimitLabel =>
+      'Suspensión por acumulación de amarillas';
+
+  @override
+  String tournamentYellowCardLimitValue(int count) {
+    return '$count tarjetas amarillas';
+  }
+
+  @override
+  String get tournamentSquadRangeLabel => 'Cupo de jugadores por equipo';
+
+  @override
+  String get tournamentMinPlayersLabel => 'Mín. jugadores';
+
+  @override
+  String get tournamentMaxPlayersLabel => 'Máx. jugadores';
+
+  @override
+  String tournamentSquadRangeValue(int min, int max) {
+    return 'Mín. $min / Máx. $max jugadores';
+  }
+
+  @override
+  String get tournamentHalfDurationLabel => 'Duración por tiempo reglamentario';
+
+  @override
+  String tournamentHalfDurationValue(int minutes) {
+    return '$minutes min por tiempo';
+  }
+
+  @override
+  String get tournamentLeagueRoundsLabel => 'Modalidad de vueltas (Liga)';
+
+  @override
+  String get tournamentLeagueSingleRound => '1 vuelta (Solo ida)';
+
+  @override
+  String get tournamentLeagueDoubleRound => '2 vueltas (Ida y vuelta)';
+
+  @override
+  String get tournamentKnockoutStructureTitle =>
+      'Estructura de Llaves Eliminatorias';
+
+  @override
+  String get tournamentStartingRoundLabel => 'Ronda inicial de llaves';
+
+  @override
+  String get knockoutRoundOf16 => 'Octavos de Final';
+
+  @override
+  String get knockoutQuarterFinals => 'Cuartos de Final';
+
+  @override
+  String get knockoutSemiFinals => 'Semifinal';
+
+  @override
+  String get knockoutFinalMatch => 'Final';
+
+  @override
+  String get tournamentDirectPenaltiesLabel =>
+      'Desempate directo por penales al finalizar el tiempo reglamentario';
+
+  @override
+  String get tournamentTwoLeggedTiesLabel =>
+      'Cruces a doble partido (Ida y vuelta)';
+
+  @override
+  String get tournamentSingleLegTieValue =>
+      'Partido único (Exige ganador en cada llave)';
+
+  @override
+  String get tournamentGroupStageTitle => 'Configuración de Fase de Grupos';
+
+  @override
+  String get tournamentGroupCountLabel => 'Cantidad de grupos';
+
+  @override
+  String get tournamentAdvancingPerGroupLabel => 'Clasificados por grupo';
+
+  @override
+  String tournamentGroupSummaryValue(int groups, int advancing) {
+    return '$groups grupos · clasifican $advancing por grupo';
+  }
+
+  @override
+  String get tournamentAuditTrailTitle => 'Historial de Auditoría y Recálculos';
+
+  @override
+  String get tournamentFormCreateTitle => 'Crear Campeonato';
+
+  @override
+  String get tournamentFormEditTitle => 'Editar Reglas del Campeonato';
+
+  @override
+  String get tournamentFormNameLabel => 'Nombre oficial del campeonato';
+
+  @override
+  String get tournamentFormNameHint => 'Ej. Torneo Clausura ViFutbol 2026';
+
+  @override
+  String get tournamentFormCategoryLabel => 'Categoría';
+
+  @override
+  String get tournamentFormCategoryHint => 'Ej. Libre Masculino';
+
+  @override
+  String get tournamentFormStartDateLabel => 'Fecha de inicio';
+
+  @override
+  String get tournamentFormEndDateLabel => 'Fecha de finalización';
+
+  @override
+  String get tournamentFormFormatLabel => 'Formato del campeonato';
+
+  @override
+  String get tournamentFormSaveCreateAction => 'Crear Campeonato';
+
+  @override
+  String get tournamentFormSaveEditAction => 'Guardar Cambios';
+
+  @override
+  String get tournamentCriticalRuleLockBanner =>
+      'Campeonato En Curso: alterar el formato o el sistema de puntuación requerirá confirmación administrativa explícita y recálculo auditado.';
+
+  @override
+  String get tournamentAuditDialogTitle =>
+      'Confirmación Administrativa y Recálculo Auditado';
+
+  @override
+  String get tournamentAuditDialogMessage =>
+      'Estás modificando reglas críticas de un campeonato En Curso. Ingresa el motivo oficial para registrar la auditoría y autorizar el recálculo de tabla.';
+
+  @override
+  String get tournamentAuditReasonLabel =>
+      'Motivo administrativo de la modificación';
+
+  @override
+  String get tournamentAuditReasonHint =>
+      'Ej. Resolución oficial del comité disciplinario';
+
+  @override
+  String get tournamentAuditConfirmAction => 'Confirmar cambio y recalcular';
+
+  @override
+  String get tournamentExitDialogTitle =>
+      '¿Deseas descartar los cambios o guardar como borrador?';
+
+  @override
+  String get tournamentExitDialogMessage =>
+      'Tienes configuraciones de campeonato sin publicar. Puedes guardar un borrador local para continuar más tarde o descartar los cambios.';
+
+  @override
+  String get tournamentSaveDraftAction => 'Guardar borrador';
+
+  @override
+  String get tournamentDiscardChangesAction => 'Descartar cambios';
+
+  @override
+  String get tournamentContinueEditingAction => 'Seguir editando';
+
+  @override
+  String get tournamentErrorInvalidName =>
+      'El nombre del campeonato debe tener al menos 3 caracteres';
+
+  @override
+  String get tournamentErrorInvalidCategory =>
+      'Debes ingresar una categoría válida';
+
+  @override
+  String get tournamentErrorInvalidDates =>
+      'La fecha de finalización no puede ser anterior a la fecha de inicio';
+
+  @override
+  String get tournamentErrorInvalidPoints =>
+      'Los puntos deben cumplir: Victoria > Empate >= Derrota >= 0';
+
+  @override
+  String get tournamentErrorInvalidYellowCards =>
+      'El límite de tarjetas amarillas debe estar entre 2 y 10';
+
+  @override
+  String get tournamentErrorInvalidSquadSize =>
+      'El cupo de jugadores debe cumplir: 5 <= Mínimo <= Máximo <= 35';
+
+  @override
+  String get tournamentErrorInvalidHalfDuration =>
+      'La duración por tiempo debe estar entre 10 y 60 minutos';
+
+  @override
+  String get tournamentErrorInvalidGroupStage =>
+      'Configura entre 2 y 8 grupos y entre 1 y 4 clasificados por grupo';
+
+  @override
+  String get tournamentErrorAuditReasonRequired =>
+      'Debes ingresar un motivo administrativo válido para auditar el cambio';
 }

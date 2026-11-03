@@ -1029,6 +1029,522 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Revocado'**
   String get locationDevStatePermanentlyDenied;
+
+  /// Título principal del módulo de campeonatos en la pestaña Posiciones
+  ///
+  /// In es, this message translates to:
+  /// **'Campeonatos y Reglas'**
+  String get tournamentsTitle;
+
+  /// Subtítulo del módulo de campeonatos
+  ///
+  /// In es, this message translates to:
+  /// **'Normativa oficial, formatos de competición y tablas del torneo'**
+  String get tournamentsSubtitle;
+
+  /// Botón principal para crear un nuevo campeonato
+  ///
+  /// In es, this message translates to:
+  /// **'Crear Campeonato'**
+  String get tournamentsCreateAction;
+
+  /// Botón para editar campeonato o reglas
+  ///
+  /// In es, this message translates to:
+  /// **'Editar Reglas'**
+  String get tournamentsEditAction;
+
+  /// Chip de filtro para todos los formatos de campeonato
+  ///
+  /// In es, this message translates to:
+  /// **'Todos los formatos'**
+  String get tournamentsFilterAll;
+
+  /// Formato de torneo Liga todos contra todos
+  ///
+  /// In es, this message translates to:
+  /// **'Liga'**
+  String get tournamentFormatLeague;
+
+  /// Formato de torneo Copa de eliminación directa
+  ///
+  /// In es, this message translates to:
+  /// **'Copa Eliminatoria'**
+  String get tournamentFormatKnockout;
+
+  /// Formato de torneo Mixto con fase de grupos y llaves
+  ///
+  /// In es, this message translates to:
+  /// **'Mixto (Grupos + Eliminatoria)'**
+  String get tournamentFormatMixed;
+
+  /// Estado inicial del campeonato con inscripciones abiertas
+  ///
+  /// In es, this message translates to:
+  /// **'Inscripciones Abiertas'**
+  String get tournamentStatusOpenRegistration;
+
+  /// Estado del campeonato cuando ya está en disputa
+  ///
+  /// In es, this message translates to:
+  /// **'En Curso'**
+  String get tournamentStatusInProgress;
+
+  /// Estado del campeonato cuando ha concluido
+  ///
+  /// In es, this message translates to:
+  /// **'Finalizado'**
+  String get tournamentStatusFinished;
+
+  /// Acción del organizador para pasar el campeonato a En Curso
+  ///
+  /// In es, this message translates to:
+  /// **'Iniciar Campeonato (En Curso)'**
+  String get tournamentStartAction;
+
+  /// Acción del organizador para marcar el campeonato como Finalizado
+  ///
+  /// In es, this message translates to:
+  /// **'Finalizar Campeonato'**
+  String get tournamentFinishAction;
+
+  /// Título cuando no existen campeonatos en el catálogo
+  ///
+  /// In es, this message translates to:
+  /// **'No hay campeonatos registrados'**
+  String get tournamentsEmptyTitle;
+
+  /// Subtítulo cuando no existen campeonatos
+  ///
+  /// In es, this message translates to:
+  /// **'Crea el primer campeonato oficial para centralizar su normativa, puntos y llaves.'**
+  String get tournamentsEmptySubtitle;
+
+  /// Aviso cuando existe un borrador local de campeonato
+  ///
+  /// In es, this message translates to:
+  /// **'Se recuperó un borrador guardado'**
+  String get tournamentsDraftBannerTitle;
+
+  /// Acción para abrir el borrador guardado
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar borrador'**
+  String get tournamentsDraftBannerContinue;
+
+  /// Acción para descartar el borrador guardado
+  ///
+  /// In es, this message translates to:
+  /// **'Limpiar borrador'**
+  String get tournamentsDraftBannerClear;
+
+  /// Título de la tarjeta de resumen de reglas oficiales
+  ///
+  /// In es, this message translates to:
+  /// **'Normativa Oficial del Torneo'**
+  String get tournamentRulesSectionTitle;
+
+  /// Subtítulo del sistema de puntos
+  ///
+  /// In es, this message translates to:
+  /// **'Sistema de Puntuación'**
+  String get tournamentScoringTitle;
+
+  /// Etiqueta de puntos por victoria
+  ///
+  /// In es, this message translates to:
+  /// **'Victoria'**
+  String get tournamentPointsWin;
+
+  /// Etiqueta de puntos por empate
+  ///
+  /// In es, this message translates to:
+  /// **'Empate'**
+  String get tournamentPointsDraw;
+
+  /// Etiqueta de puntos por derrota
+  ///
+  /// In es, this message translates to:
+  /// **'Derrota'**
+  String get tournamentPointsLoss;
+
+  /// Formato de cantidad de puntos
+  ///
+  /// In es, this message translates to:
+  /// **'{points} pts'**
+  String tournamentPointsValue(int points);
+
+  /// Encabezado de la lista ordenada de criterios de desempate
+  ///
+  /// In es, this message translates to:
+  /// **'Criterios de Desempate en Tabla'**
+  String get tournamentTiebreakersTitle;
+
+  /// Criterio de desempate por diferencia de goles
+  ///
+  /// In es, this message translates to:
+  /// **'Diferencia de Gol'**
+  String get tiebreakerGoalDifference;
+
+  /// Criterio de desempate por goles a favor
+  ///
+  /// In es, this message translates to:
+  /// **'Goles a Favor'**
+  String get tiebreakerGoalsFor;
+
+  /// Criterio de desempate por enfrentamiento directo
+  ///
+  /// In es, this message translates to:
+  /// **'Duelo Directo'**
+  String get tiebreakerHeadToHead;
+
+  /// Criterio de desempate por juego limpio
+  ///
+  /// In es, this message translates to:
+  /// **'Fair Play (Menor puntaje de tarjetas)'**
+  String get tiebreakerFairPlay;
+
+  /// Encabezado de reglas operativas y disciplinarias
+  ///
+  /// In es, this message translates to:
+  /// **'Disciplina, Plantilla y Tiempo de Juego'**
+  String get tournamentDisciplinaryAndSquadTitle;
+
+  /// Etiqueta de límite de tarjetas amarillas
+  ///
+  /// In es, this message translates to:
+  /// **'Suspensión por acumulación de amarillas'**
+  String get tournamentYellowCardLimitLabel;
+
+  /// Valor formateado de tarjetas amarillas para suspensión
+  ///
+  /// In es, this message translates to:
+  /// **'{count} tarjetas amarillas'**
+  String tournamentYellowCardLimitValue(int count);
+
+  /// Etiqueta de mínimo y máximo de jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'Cupo de jugadores por equipo'**
+  String get tournamentSquadRangeLabel;
+
+  /// Etiqueta para el campo de mínimo de jugadores por equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Mín. jugadores'**
+  String get tournamentMinPlayersLabel;
+
+  /// Etiqueta para el campo de máximo de jugadores por equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Máx. jugadores'**
+  String get tournamentMaxPlayersLabel;
+
+  /// Rango formateado de jugadores por equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Mín. {min} / Máx. {max} jugadores'**
+  String tournamentSquadRangeValue(int min, int max);
+
+  /// Etiqueta de duración de cada tiempo
+  ///
+  /// In es, this message translates to:
+  /// **'Duración por tiempo reglamentario'**
+  String get tournamentHalfDurationLabel;
+
+  /// Duración formateada por tiempo
+  ///
+  /// In es, this message translates to:
+  /// **'{minutes} min por tiempo'**
+  String tournamentHalfDurationValue(int minutes);
+
+  /// Etiqueta de cantidad de vueltas en formato Liga
+  ///
+  /// In es, this message translates to:
+  /// **'Modalidad de vueltas (Liga)'**
+  String get tournamentLeagueRoundsLabel;
+
+  /// Liga a una sola vuelta
+  ///
+  /// In es, this message translates to:
+  /// **'1 vuelta (Solo ida)'**
+  String get tournamentLeagueSingleRound;
+
+  /// Liga a doble vuelta
+  ///
+  /// In es, this message translates to:
+  /// **'2 vueltas (Ida y vuelta)'**
+  String get tournamentLeagueDoubleRound;
+
+  /// Encabezado de configuración de llaves eliminatorias
+  ///
+  /// In es, this message translates to:
+  /// **'Estructura de Llaves Eliminatorias'**
+  String get tournamentKnockoutStructureTitle;
+
+  /// Etiqueta para seleccionar la ronda de inicio en eliminatoria
+  ///
+  /// In es, this message translates to:
+  /// **'Ronda inicial de llaves'**
+  String get tournamentStartingRoundLabel;
+
+  /// Ronda de Octavos de Final (16 equipos)
+  ///
+  /// In es, this message translates to:
+  /// **'Octavos de Final'**
+  String get knockoutRoundOf16;
+
+  /// Ronda de Cuartos de Final (8 equipos)
+  ///
+  /// In es, this message translates to:
+  /// **'Cuartos de Final'**
+  String get knockoutQuarterFinals;
+
+  /// Ronda de Semifinal (4 equipos)
+  ///
+  /// In es, this message translates to:
+  /// **'Semifinal'**
+  String get knockoutSemiFinals;
+
+  /// Ronda Final (2 equipos)
+  ///
+  /// In es, this message translates to:
+  /// **'Final'**
+  String get knockoutFinalMatch;
+
+  /// Opción para definir empates en llaves directamente desde el punto penal
+  ///
+  /// In es, this message translates to:
+  /// **'Desempate directo por penales al finalizar el tiempo reglamentario'**
+  String get tournamentDirectPenaltiesLabel;
+
+  /// Opción para cruces eliminatorios de ida y vuelta
+  ///
+  /// In es, this message translates to:
+  /// **'Cruces a doble partido (Ida y vuelta)'**
+  String get tournamentTwoLeggedTiesLabel;
+
+  /// Descripción de llave a partido único
+  ///
+  /// In es, this message translates to:
+  /// **'Partido único (Exige ganador en cada llave)'**
+  String get tournamentSingleLegTieValue;
+
+  /// Encabezado de configuración de grupos en formato Mixto
+  ///
+  /// In es, this message translates to:
+  /// **'Configuración de Fase de Grupos'**
+  String get tournamentGroupStageTitle;
+
+  /// Etiqueta de número de grupos
+  ///
+  /// In es, this message translates to:
+  /// **'Cantidad de grupos'**
+  String get tournamentGroupCountLabel;
+
+  /// Etiqueta de clasificados por cada grupo
+  ///
+  /// In es, this message translates to:
+  /// **'Clasificados por grupo'**
+  String get tournamentAdvancingPerGroupLabel;
+
+  /// Resumen de fase de grupos
+  ///
+  /// In es, this message translates to:
+  /// **'{groups} grupos · clasifican {advancing} por grupo'**
+  String tournamentGroupSummaryValue(int groups, int advancing);
+
+  /// Encabezado de historial de cambios críticos auditados
+  ///
+  /// In es, this message translates to:
+  /// **'Historial de Auditoría y Recálculos'**
+  String get tournamentAuditTrailTitle;
+
+  /// Título del asistente de creación de campeonato
+  ///
+  /// In es, this message translates to:
+  /// **'Crear Campeonato'**
+  String get tournamentFormCreateTitle;
+
+  /// Título del asistente de edición de campeonato
+  ///
+  /// In es, this message translates to:
+  /// **'Editar Reglas del Campeonato'**
+  String get tournamentFormEditTitle;
+
+  /// Campo de nombre del campeonato
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre oficial del campeonato'**
+  String get tournamentFormNameLabel;
+
+  /// Pista de nombre del campeonato
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. Torneo Clausura ViFutbol 2026'**
+  String get tournamentFormNameHint;
+
+  /// Campo de categoría del campeonato
+  ///
+  /// In es, this message translates to:
+  /// **'Categoría'**
+  String get tournamentFormCategoryLabel;
+
+  /// Pista de categoría
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. Libre Masculino'**
+  String get tournamentFormCategoryHint;
+
+  /// Etiqueta de fecha de inicio
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha de inicio'**
+  String get tournamentFormStartDateLabel;
+
+  /// Etiqueta de fecha de finalización
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha de finalización'**
+  String get tournamentFormEndDateLabel;
+
+  /// Selector de formato del torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Formato del campeonato'**
+  String get tournamentFormFormatLabel;
+
+  /// Botón para guardar y crear el campeonato
+  ///
+  /// In es, this message translates to:
+  /// **'Crear Campeonato'**
+  String get tournamentFormSaveCreateAction;
+
+  /// Botón para guardar edición del campeonato
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar Cambios'**
+  String get tournamentFormSaveEditAction;
+
+  /// Banner de advertencia de inmutabilidad cuando el torneo está En Curso
+  ///
+  /// In es, this message translates to:
+  /// **'Campeonato En Curso: alterar el formato o el sistema de puntuación requerirá confirmación administrativa explícita y recálculo auditado.'**
+  String get tournamentCriticalRuleLockBanner;
+
+  /// Título del diálogo al modificar formato o puntos estando En Curso
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmación Administrativa y Recálculo Auditado'**
+  String get tournamentAuditDialogTitle;
+
+  /// Mensaje del diálogo de auditoría
+  ///
+  /// In es, this message translates to:
+  /// **'Estás modificando reglas críticas de un campeonato En Curso. Ingresa el motivo oficial para registrar la auditoría y autorizar el recálculo de tabla.'**
+  String get tournamentAuditDialogMessage;
+
+  /// Etiqueta del campo de motivo en el diálogo de auditoría
+  ///
+  /// In es, this message translates to:
+  /// **'Motivo administrativo de la modificación'**
+  String get tournamentAuditReasonLabel;
+
+  /// Pista del campo de motivo de auditoría
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. Resolución oficial del comité disciplinario'**
+  String get tournamentAuditReasonHint;
+
+  /// Botón para confirmar modificación auditada
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar cambio y recalcular'**
+  String get tournamentAuditConfirmAction;
+
+  /// Pregunta oficial al intentar salir del formulario con cambios sin guardar
+  ///
+  /// In es, this message translates to:
+  /// **'¿Deseas descartar los cambios o guardar como borrador?'**
+  String get tournamentExitDialogTitle;
+
+  /// Mensaje descriptivo del diálogo de salida
+  ///
+  /// In es, this message translates to:
+  /// **'Tienes configuraciones de campeonato sin publicar. Puedes guardar un borrador local para continuar más tarde o descartar los cambios.'**
+  String get tournamentExitDialogMessage;
+
+  /// Opción para guardar borrador local y salir
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar borrador'**
+  String get tournamentSaveDraftAction;
+
+  /// Opción para descartar cambios y salir
+  ///
+  /// In es, this message translates to:
+  /// **'Descartar cambios'**
+  String get tournamentDiscardChangesAction;
+
+  /// Opción para permanecer en el formulario
+  ///
+  /// In es, this message translates to:
+  /// **'Seguir editando'**
+  String get tournamentContinueEditingAction;
+
+  /// Error de validación para nombre corto
+  ///
+  /// In es, this message translates to:
+  /// **'El nombre del campeonato debe tener al menos 3 caracteres'**
+  String get tournamentErrorInvalidName;
+
+  /// Error de validación para categoría vacía
+  ///
+  /// In es, this message translates to:
+  /// **'Debes ingresar una categoría válida'**
+  String get tournamentErrorInvalidCategory;
+
+  /// Error de validación para rango de fechas inválido
+  ///
+  /// In es, this message translates to:
+  /// **'La fecha de finalización no puede ser anterior a la fecha de inicio'**
+  String get tournamentErrorInvalidDates;
+
+  /// Error de validación para sistema de puntuación incoherente
+  ///
+  /// In es, this message translates to:
+  /// **'Los puntos deben cumplir: Victoria > Empate >= Derrota >= 0'**
+  String get tournamentErrorInvalidPoints;
+
+  /// Error de validación para límite de amarillas
+  ///
+  /// In es, this message translates to:
+  /// **'El límite de tarjetas amarillas debe estar entre 2 y 10'**
+  String get tournamentErrorInvalidYellowCards;
+
+  /// Error de validación para cupo de jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'El cupo de jugadores debe cumplir: 5 <= Mínimo <= Máximo <= 35'**
+  String get tournamentErrorInvalidSquadSize;
+
+  /// Error de validación para duración por tiempo
+  ///
+  /// In es, this message translates to:
+  /// **'La duración por tiempo debe estar entre 10 y 60 minutos'**
+  String get tournamentErrorInvalidHalfDuration;
+
+  /// Error de validación para fase de grupos en formato Mixto
+  ///
+  /// In es, this message translates to:
+  /// **'Configura entre 2 y 8 grupos y entre 1 y 4 clasificados por grupo'**
+  String get tournamentErrorInvalidGroupStage;
+
+  /// Error cuando no se ingresa motivo de auditoría
+  ///
+  /// In es, this message translates to:
+  /// **'Debes ingresar un motivo administrativo válido para auditar el cambio'**
+  String get tournamentErrorAuditReasonRequired;
 }
 
 class _AppLocalizationsDelegate

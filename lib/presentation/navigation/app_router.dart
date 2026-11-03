@@ -1,10 +1,12 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:vifutbol/domain/entities/app_shell_section.dart';
+import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/presentation/auth/auth_gate.dart';
 import 'package:vifutbol/presentation/auth/role_onboarding_screen.dart';
 import 'package:vifutbol/presentation/auth/welcome_auth_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
+import 'package:vifutbol/presentation/tournaments/tournament_form_screen.dart';
 import 'package:vifutbol/presentation/venues/venue_form_screen.dart';
 
 /// Fluro router configuration for App Shell navigation.
@@ -66,6 +68,14 @@ class AppRouter {
       },
     );
 
+    final tournamentFormHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        final args = context?.settings?.arguments;
+        final initialTournament = args is ChampionshipTournament ? args : null;
+        return TournamentFormScreen(initialTournament: initialTournament);
+      },
+    );
+
     router.define(
       '/',
       handler: rootHandler,
@@ -109,6 +119,11 @@ class AppRouter {
     router.define(
       '/venues/form',
       handler: venueFormHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/tournaments/form',
+      handler: tournamentFormHandler,
       transitionType: TransitionType.fadeIn,
     );
   }

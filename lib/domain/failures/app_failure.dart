@@ -89,3 +89,30 @@ class LocationPermissionFailure extends AppFailure {
     super.cause,
   ]);
 }
+
+/// Machine-readable error codes for championship tournament validation rules.
+enum TournamentValidationErrorCode {
+  invalidName,
+  invalidCategory,
+  invalidDateRange,
+  invalidPointsDistribution,
+  invalidTiebreakerOrder,
+  invalidYellowCardLimit,
+  invalidSquadSizeRange,
+  invalidHalfDuration,
+  invalidLeagueRounds,
+  invalidGroupStageConfig,
+  criticalRulesImmutableWithoutAudit,
+  tournamentAlreadyFinished,
+}
+
+/// Emitted when championship tournament or custom rule validation fails.
+class TournamentValidationFailure extends AppFailure {
+  final TournamentValidationErrorCode code;
+
+  const TournamentValidationFailure(
+    this.code, [
+    super.message = 'Configuración de campeonato o reglas inválida',
+    super.cause,
+  ]);
+}

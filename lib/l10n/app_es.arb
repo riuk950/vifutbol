@@ -643,5 +643,380 @@
   "locationDevStatePermanentlyDenied": "Revocado",
   "@locationDevStatePermanentlyDenied": {
     "description": "Estado revocado en el simulador GPS"
+  },
+  "tournamentsTitle": "Campeonatos y Reglas",
+  "@tournamentsTitle": {
+    "description": "Título principal del módulo de campeonatos en la pestaña Posiciones"
+  },
+  "tournamentsSubtitle": "Normativa oficial, formatos de competición y tablas del torneo",
+  "@tournamentsSubtitle": {
+    "description": "Subtítulo del módulo de campeonatos"
+  },
+  "tournamentsCreateAction": "Crear Campeonato",
+  "@tournamentsCreateAction": {
+    "description": "Botón principal para crear un nuevo campeonato"
+  },
+  "tournamentsEditAction": "Editar Reglas",
+  "@tournamentsEditAction": {
+    "description": "Botón para editar campeonato o reglas"
+  },
+  "tournamentsFilterAll": "Todos los formatos",
+  "@tournamentsFilterAll": {
+    "description": "Chip de filtro para todos los formatos de campeonato"
+  },
+  "tournamentFormatLeague": "Liga",
+  "@tournamentFormatLeague": {
+    "description": "Formato de torneo Liga todos contra todos"
+  },
+  "tournamentFormatKnockout": "Copa Eliminatoria",
+  "@tournamentFormatKnockout": {
+    "description": "Formato de torneo Copa de eliminación directa"
+  },
+  "tournamentFormatMixed": "Mixto (Grupos + Eliminatoria)",
+  "@tournamentFormatMixed": {
+    "description": "Formato de torneo Mixto con fase de grupos y llaves"
+  },
+  "tournamentStatusOpenRegistration": "Inscripciones Abiertas",
+  "@tournamentStatusOpenRegistration": {
+    "description": "Estado inicial del campeonato con inscripciones abiertas"
+  },
+  "tournamentStatusInProgress": "En Curso",
+  "@tournamentStatusInProgress": {
+    "description": "Estado del campeonato cuando ya está en disputa"
+  },
+  "tournamentStatusFinished": "Finalizado",
+  "@tournamentStatusFinished": {
+    "description": "Estado del campeonato cuando ha concluido"
+  },
+  "tournamentStartAction": "Iniciar Campeonato (En Curso)",
+  "@tournamentStartAction": {
+    "description": "Acción del organizador para pasar el campeonato a En Curso"
+  },
+  "tournamentFinishAction": "Finalizar Campeonato",
+  "@tournamentFinishAction": {
+    "description": "Acción del organizador para marcar el campeonato como Finalizado"
+  },
+  "tournamentsEmptyTitle": "No hay campeonatos registrados",
+  "@tournamentsEmptyTitle": {
+    "description": "Título cuando no existen campeonatos en el catálogo"
+  },
+  "tournamentsEmptySubtitle": "Crea el primer campeonato oficial para centralizar su normativa, puntos y llaves.",
+  "@tournamentsEmptySubtitle": {
+    "description": "Subtítulo cuando no existen campeonatos"
+  },
+  "tournamentsDraftBannerTitle": "Se recuperó un borrador guardado",
+  "@tournamentsDraftBannerTitle": {
+    "description": "Aviso cuando existe un borrador local de campeonato"
+  },
+  "tournamentsDraftBannerContinue": "Continuar borrador",
+  "@tournamentsDraftBannerContinue": {
+    "description": "Acción para abrir el borrador guardado"
+  },
+  "tournamentsDraftBannerClear": "Limpiar borrador",
+  "@tournamentsDraftBannerClear": {
+    "description": "Acción para descartar el borrador guardado"
+  },
+  "tournamentRulesSectionTitle": "Normativa Oficial del Torneo",
+  "@tournamentRulesSectionTitle": {
+    "description": "Título de la tarjeta de resumen de reglas oficiales"
+  },
+  "tournamentScoringTitle": "Sistema de Puntuación",
+  "@tournamentScoringTitle": {
+    "description": "Subtítulo del sistema de puntos"
+  },
+  "tournamentPointsWin": "Victoria",
+  "@tournamentPointsWin": {
+    "description": "Etiqueta de puntos por victoria"
+  },
+  "tournamentPointsDraw": "Empate",
+  "@tournamentPointsDraw": {
+    "description": "Etiqueta de puntos por empate"
+  },
+  "tournamentPointsLoss": "Derrota",
+  "@tournamentPointsLoss": {
+    "description": "Etiqueta de puntos por derrota"
+  },
+  "tournamentPointsValue": "{points} pts",
+  "@tournamentPointsValue": {
+    "description": "Formato de cantidad de puntos",
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "tournamentTiebreakersTitle": "Criterios de Desempate en Tabla",
+  "@tournamentTiebreakersTitle": {
+    "description": "Encabezado de la lista ordenada de criterios de desempate"
+  },
+  "tiebreakerGoalDifference": "Diferencia de Gol",
+  "@tiebreakerGoalDifference": {
+    "description": "Criterio de desempate por diferencia de goles"
+  },
+  "tiebreakerGoalsFor": "Goles a Favor",
+  "@tiebreakerGoalsFor": {
+    "description": "Criterio de desempate por goles a favor"
+  },
+  "tiebreakerHeadToHead": "Duelo Directo",
+  "@tiebreakerHeadToHead": {
+    "description": "Criterio de desempate por enfrentamiento directo"
+  },
+  "tiebreakerFairPlay": "Fair Play (Menor puntaje de tarjetas)",
+  "@tiebreakerFairPlay": {
+    "description": "Criterio de desempate por juego limpio"
+  },
+  "tournamentDisciplinaryAndSquadTitle": "Disciplina, Plantilla y Tiempo de Juego",
+  "@tournamentDisciplinaryAndSquadTitle": {
+    "description": "Encabezado de reglas operativas y disciplinarias"
+  },
+  "tournamentYellowCardLimitLabel": "Suspensión por acumulación de amarillas",
+  "@tournamentYellowCardLimitLabel": {
+    "description": "Etiqueta de límite de tarjetas amarillas"
+  },
+  "tournamentYellowCardLimitValue": "{count} tarjetas amarillas",
+  "@tournamentYellowCardLimitValue": {
+    "description": "Valor formateado de tarjetas amarillas para suspensión",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tournamentSquadRangeLabel": "Cupo de jugadores por equipo",
+  "@tournamentSquadRangeLabel": {
+    "description": "Etiqueta de mínimo y máximo de jugadores"
+  },
+  "tournamentMinPlayersLabel": "Mín. jugadores",
+  "@tournamentMinPlayersLabel": {
+    "description": "Etiqueta para el campo de mínimo de jugadores por equipo"
+  },
+  "tournamentMaxPlayersLabel": "Máx. jugadores",
+  "@tournamentMaxPlayersLabel": {
+    "description": "Etiqueta para el campo de máximo de jugadores por equipo"
+  },
+  "tournamentSquadRangeValue": "Mín. {min} / Máx. {max} jugadores",
+  "@tournamentSquadRangeValue": {
+    "description": "Rango formateado de jugadores por equipo",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "tournamentHalfDurationLabel": "Duración por tiempo reglamentario",
+  "@tournamentHalfDurationLabel": {
+    "description": "Etiqueta de duración de cada tiempo"
+  },
+  "tournamentHalfDurationValue": "{minutes} min por tiempo",
+  "@tournamentHalfDurationValue": {
+    "description": "Duración formateada por tiempo",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "tournamentLeagueRoundsLabel": "Modalidad de vueltas (Liga)",
+  "@tournamentLeagueRoundsLabel": {
+    "description": "Etiqueta de cantidad de vueltas en formato Liga"
+  },
+  "tournamentLeagueSingleRound": "1 vuelta (Solo ida)",
+  "@tournamentLeagueSingleRound": {
+    "description": "Liga a una sola vuelta"
+  },
+  "tournamentLeagueDoubleRound": "2 vueltas (Ida y vuelta)",
+  "@tournamentLeagueDoubleRound": {
+    "description": "Liga a doble vuelta"
+  },
+  "tournamentKnockoutStructureTitle": "Estructura de Llaves Eliminatorias",
+  "@tournamentKnockoutStructureTitle": {
+    "description": "Encabezado de configuración de llaves eliminatorias"
+  },
+  "tournamentStartingRoundLabel": "Ronda inicial de llaves",
+  "@tournamentStartingRoundLabel": {
+    "description": "Etiqueta para seleccionar la ronda de inicio en eliminatoria"
+  },
+  "knockoutRoundOf16": "Octavos de Final",
+  "@knockoutRoundOf16": {
+    "description": "Ronda de Octavos de Final (16 equipos)"
+  },
+  "knockoutQuarterFinals": "Cuartos de Final",
+  "@knockoutQuarterFinals": {
+    "description": "Ronda de Cuartos de Final (8 equipos)"
+  },
+  "knockoutSemiFinals": "Semifinal",
+  "@knockoutSemiFinals": {
+    "description": "Ronda de Semifinal (4 equipos)"
+  },
+  "knockoutFinalMatch": "Final",
+  "@knockoutFinalMatch": {
+    "description": "Ronda Final (2 equipos)"
+  },
+  "tournamentDirectPenaltiesLabel": "Desempate directo por penales al finalizar el tiempo reglamentario",
+  "@tournamentDirectPenaltiesLabel": {
+    "description": "Opción para definir empates en llaves directamente desde el punto penal"
+  },
+  "tournamentTwoLeggedTiesLabel": "Cruces a doble partido (Ida y vuelta)",
+  "@tournamentTwoLeggedTiesLabel": {
+    "description": "Opción para cruces eliminatorios de ida y vuelta"
+  },
+  "tournamentSingleLegTieValue": "Partido único (Exige ganador en cada llave)",
+  "@tournamentSingleLegTieValue": {
+    "description": "Descripción de llave a partido único"
+  },
+  "tournamentGroupStageTitle": "Configuración de Fase de Grupos",
+  "@tournamentGroupStageTitle": {
+    "description": "Encabezado de configuración de grupos en formato Mixto"
+  },
+  "tournamentGroupCountLabel": "Cantidad de grupos",
+  "@tournamentGroupCountLabel": {
+    "description": "Etiqueta de número de grupos"
+  },
+  "tournamentAdvancingPerGroupLabel": "Clasificados por grupo",
+  "@tournamentAdvancingPerGroupLabel": {
+    "description": "Etiqueta de clasificados por cada grupo"
+  },
+  "tournamentGroupSummaryValue": "{groups} grupos · clasifican {advancing} por grupo",
+  "@tournamentGroupSummaryValue": {
+    "description": "Resumen de fase de grupos",
+    "placeholders": {
+      "groups": {
+        "type": "int"
+      },
+      "advancing": {
+        "type": "int"
+      }
+    }
+  },
+  "tournamentAuditTrailTitle": "Historial de Auditoría y Recálculos",
+  "@tournamentAuditTrailTitle": {
+    "description": "Encabezado de historial de cambios críticos auditados"
+  },
+  "tournamentFormCreateTitle": "Crear Campeonato",
+  "@tournamentFormCreateTitle": {
+    "description": "Título del asistente de creación de campeonato"
+  },
+  "tournamentFormEditTitle": "Editar Reglas del Campeonato",
+  "@tournamentFormEditTitle": {
+    "description": "Título del asistente de edición de campeonato"
+  },
+  "tournamentFormNameLabel": "Nombre oficial del campeonato",
+  "@tournamentFormNameLabel": {
+    "description": "Campo de nombre del campeonato"
+  },
+  "tournamentFormNameHint": "Ej. Torneo Clausura ViFutbol 2026",
+  "@tournamentFormNameHint": {
+    "description": "Pista de nombre del campeonato"
+  },
+  "tournamentFormCategoryLabel": "Categoría",
+  "@tournamentFormCategoryLabel": {
+    "description": "Campo de categoría del campeonato"
+  },
+  "tournamentFormCategoryHint": "Ej. Libre Masculino",
+  "@tournamentFormCategoryHint": {
+    "description": "Pista de categoría"
+  },
+  "tournamentFormStartDateLabel": "Fecha de inicio",
+  "@tournamentFormStartDateLabel": {
+    "description": "Etiqueta de fecha de inicio"
+  },
+  "tournamentFormEndDateLabel": "Fecha de finalización",
+  "@tournamentFormEndDateLabel": {
+    "description": "Etiqueta de fecha de finalización"
+  },
+  "tournamentFormFormatLabel": "Formato del campeonato",
+  "@tournamentFormFormatLabel": {
+    "description": "Selector de formato del torneo"
+  },
+  "tournamentFormSaveCreateAction": "Crear Campeonato",
+  "@tournamentFormSaveCreateAction": {
+    "description": "Botón para guardar y crear el campeonato"
+  },
+  "tournamentFormSaveEditAction": "Guardar Cambios",
+  "@tournamentFormSaveEditAction": {
+    "description": "Botón para guardar edición del campeonato"
+  },
+  "tournamentCriticalRuleLockBanner": "Campeonato En Curso: alterar el formato o el sistema de puntuación requerirá confirmación administrativa explícita y recálculo auditado.",
+  "@tournamentCriticalRuleLockBanner": {
+    "description": "Banner de advertencia de inmutabilidad cuando el torneo está En Curso"
+  },
+  "tournamentAuditDialogTitle": "Confirmación Administrativa y Recálculo Auditado",
+  "@tournamentAuditDialogTitle": {
+    "description": "Título del diálogo al modificar formato o puntos estando En Curso"
+  },
+  "tournamentAuditDialogMessage": "Estás modificando reglas críticas de un campeonato En Curso. Ingresa el motivo oficial para registrar la auditoría y autorizar el recálculo de tabla.",
+  "@tournamentAuditDialogMessage": {
+    "description": "Mensaje del diálogo de auditoría"
+  },
+  "tournamentAuditReasonLabel": "Motivo administrativo de la modificación",
+  "@tournamentAuditReasonLabel": {
+    "description": "Etiqueta del campo de motivo en el diálogo de auditoría"
+  },
+  "tournamentAuditReasonHint": "Ej. Resolución oficial del comité disciplinario",
+  "@tournamentAuditReasonHint": {
+    "description": "Pista del campo de motivo de auditoría"
+  },
+  "tournamentAuditConfirmAction": "Confirmar cambio y recalcular",
+  "@tournamentAuditConfirmAction": {
+    "description": "Botón para confirmar modificación auditada"
+  },
+  "tournamentExitDialogTitle": "¿Deseas descartar los cambios o guardar como borrador?",
+  "@tournamentExitDialogTitle": {
+    "description": "Pregunta oficial al intentar salir del formulario con cambios sin guardar"
+  },
+  "tournamentExitDialogMessage": "Tienes configuraciones de campeonato sin publicar. Puedes guardar un borrador local para continuar más tarde o descartar los cambios.",
+  "@tournamentExitDialogMessage": {
+    "description": "Mensaje descriptivo del diálogo de salida"
+  },
+  "tournamentSaveDraftAction": "Guardar borrador",
+  "@tournamentSaveDraftAction": {
+    "description": "Opción para guardar borrador local y salir"
+  },
+  "tournamentDiscardChangesAction": "Descartar cambios",
+  "@tournamentDiscardChangesAction": {
+    "description": "Opción para descartar cambios y salir"
+  },
+  "tournamentContinueEditingAction": "Seguir editando",
+  "@tournamentContinueEditingAction": {
+    "description": "Opción para permanecer en el formulario"
+  },
+  "tournamentErrorInvalidName": "El nombre del campeonato debe tener al menos 3 caracteres",
+  "@tournamentErrorInvalidName": {
+    "description": "Error de validación para nombre corto"
+  },
+  "tournamentErrorInvalidCategory": "Debes ingresar una categoría válida",
+  "@tournamentErrorInvalidCategory": {
+    "description": "Error de validación para categoría vacía"
+  },
+  "tournamentErrorInvalidDates": "La fecha de finalización no puede ser anterior a la fecha de inicio",
+  "@tournamentErrorInvalidDates": {
+    "description": "Error de validación para rango de fechas inválido"
+  },
+  "tournamentErrorInvalidPoints": "Los puntos deben cumplir: Victoria > Empate >= Derrota >= 0",
+  "@tournamentErrorInvalidPoints": {
+    "description": "Error de validación para sistema de puntuación incoherente"
+  },
+  "tournamentErrorInvalidYellowCards": "El límite de tarjetas amarillas debe estar entre 2 y 10",
+  "@tournamentErrorInvalidYellowCards": {
+    "description": "Error de validación para límite de amarillas"
+  },
+  "tournamentErrorInvalidSquadSize": "El cupo de jugadores debe cumplir: 5 <= Mínimo <= Máximo <= 35",
+  "@tournamentErrorInvalidSquadSize": {
+    "description": "Error de validación para cupo de jugadores"
+  },
+  "tournamentErrorInvalidHalfDuration": "La duración por tiempo debe estar entre 10 y 60 minutos",
+  "@tournamentErrorInvalidHalfDuration": {
+    "description": "Error de validación para duración por tiempo"
+  },
+  "tournamentErrorInvalidGroupStage": "Configura entre 2 y 8 grupos y entre 1 y 4 clasificados por grupo",
+  "@tournamentErrorInvalidGroupStage": {
+    "description": "Error de validación para fase de grupos en formato Mixto"
+  },
+  "tournamentErrorAuditReasonRequired": "Debes ingresar un motivo administrativo válido para auditar el cambio",
+  "@tournamentErrorAuditReasonRequired": {
+    "description": "Error cuando no se ingresa motivo de auditoría"
   }
 }
