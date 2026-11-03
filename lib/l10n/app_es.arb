@@ -1,0 +1,91 @@
+{
+  "@@locale": "es",
+  "appTitle": "vifutbol",
+  "@appTitle": {
+    "description": "Título principal de la aplicación"
+  },
+  "tabMatchday": "Jornada",
+  "@tabMatchday": {
+    "description": "Pestaña de Jornada en la navegación inferior"
+  },
+  "tabStandings": "Posiciones",
+  "@tabStandings": {
+    "description": "Pestaña de Posiciones en la navegación inferior"
+  },
+  "tabVenues": "Sedes",
+  "@tabVenues": {
+    "description": "Pestaña de Sedes en la navegación inferior"
+  },
+  "tabProfile": "Perfil",
+  "@tabProfile": {
+    "description": "Pestaña de Perfil en la navegación inferior"
+  },
+  "envDevBadge": "DEV",
+  "@envDevBadge": {
+    "description": "Insignia indicadora de entorno de desarrollo"
+  },
+  "envDevelopmentTitle": "Entorno de Desarrollo",
+  "@envDevelopmentTitle": {
+    "description": "Título o descripción del entorno de desarrollo"
+  },
+  "envProductionTitle": "Entorno de Producción",
+  "@envProductionTitle": {
+    "description": "Título o descripción del entorno de producción"
+  },
+  "connectivityOfflineMessage": "Modo sin conexión: mostrando datos guardados en el dispositivo",
+  "@connectivityOfflineMessage": {
+    "description": "Mensaje en banner persistente cuando el dispositivo está sin conexión"
+  },
+  "connectivityRestoredMessage": "Conexión restaurada",
+  "@connectivityRestoredMessage": {
+    "description": "Mensaje temporal de 3 segundos al recuperar la conexión"
+  },
+  "stateLoadingTitle": "Cargando datos deportivos...",
+  "@stateLoadingTitle": {
+    "description": "Título del estado de carga"
+  },
+  "stateLoadingSubtitle": "Por favor espera un momento mientras se sincroniza la información.",
+  "@stateLoadingSubtitle": {
+    "description": "Subtítulo del estado de carga"
+  },
+  "stateContentTitle": "Contenido deportivo listo",
+  "@stateContentTitle": {
+    "description": "Título del estado de contenido"
+  },
+  "stateEmptyTitle": "No hay registros disponibles",
+  "@stateEmptyTitle": {
+    "description": "Título del estado vacío"
+  },
+  "stateEmptyDescription": "Aún no se han programado partidos ni eventos para este torneo.",
+  "@stateEmptyDescription": {
+    "description": "Descripción del estado vacío"
+  },
+  "stateErrorTitle": "Ocurrió un problema",
+  "@stateErrorTitle": {
+    "description": "Título del estado de error"
+  },
+  "stateErrorDescription": "No pudimos cargar la información en este momento.",
+  "@stateErrorDescription": {
+    "description": "Descripción del estado de error"
+  },
+  "stateSuccessTitle": "Operación completada",
+  "@stateSuccessTitle": {
+    "description": "Título del estado de éxito"
+  },
+  "stateSuccessDescription": "Los datos se han guardado y actualizado con éxito.",
+  "@stateSuccessDescription": {
+    "description": "Descripción del estado de éxito"
+  },
+  "actionRetry": "Reintentar",
+  "@actionRetry": {
+    "description": "Etiqueta del botón para reintentar una acción fallida"
+  },
+  "actionContinue": "Continuar",
+  "@actionContinue": {
+    "description": "Etiqueta del botón de continuar"
+  },
+  "actionRefresh": "Actualizar",
+  "@actionRefresh": {
+    "description": "Etiqueta del botón para actualizar datos"
+  }
+}
