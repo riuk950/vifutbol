@@ -116,3 +116,30 @@ class TournamentValidationFailure extends AppFailure {
     super.cause,
   ]);
 }
+
+/// Machine-readable error codes for team registration and player eligibility.
+enum TeamEligibilityErrorCode {
+  tournamentRegistrationsClosed,
+  invalidTeamName,
+  invalidShortCode,
+  duplicateTeamNameInTournament,
+  invalidPlayerName,
+  invalidDocumentId,
+  invalidShirtNumber,
+  duplicateShirtNumberInTeam,
+  playerAlreadyRegisteredInTournament,
+  maxPlayersQuotaReached,
+  insufficientPlayersForApproval,
+  teamNotFound,
+}
+
+/// Emitted when team enrollment, player registration, or eligibility validation fails.
+class TeamEligibilityValidationFailure extends AppFailure {
+  final TeamEligibilityErrorCode code;
+
+  const TeamEligibilityValidationFailure(
+    this.code, [
+    super.message = 'Validación de equipo o elegibilidad fallida',
+    super.cause,
+  ]);
+}

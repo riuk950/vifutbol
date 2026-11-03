@@ -10,6 +10,7 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_state_view.dart';
+import 'package:vifutbol/presentation/teams/widgets/tournament_teams_section.dart';
 import 'package:vifutbol/presentation/tournaments/tournament_form_screen.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/tournament_rules_summary_card.dart';
 
@@ -223,6 +224,11 @@ class StandingsTabView extends ConsumerWidget {
                           actorRole: activeRole,
                         );
                       },
+                    ),
+                    const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
+                    TournamentTeamsSection(
+                      tournament: selected,
+                      actorRole: activeRole,
                     ),
                     const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
                   ],

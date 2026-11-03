@@ -528,10 +528,13 @@ class _RuleRow extends StatelessWidget {
         const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
         Expanded(child: Text(label, style: KickPulseTypography.captionMeta)),
         const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
-        Text(
-          value,
-          style: KickPulseTypography.bodyPrimary.copyWith(
-            fontWeight: FontWeight.w600,
+        Flexible(
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            style: KickPulseTypography.bodyPrimary.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ],

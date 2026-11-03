@@ -1018,5 +1018,274 @@
   "tournamentErrorAuditReasonRequired": "Debes ingresar un motivo administrativo válido para auditar el cambio",
   "@tournamentErrorAuditReasonRequired": {
     "description": "Error cuando no se ingresa motivo de auditoría"
+  },
+  "teamEligibilityPendingQuota": "Pendiente de Cupo",
+  "@teamEligibilityPendingQuota": {
+    "description": "Estado de elegibilidad cuando la plantilla no alcanza el mínimo de jugadores"
+  },
+  "teamEligibilityReadyForApproval": "Listo para Habilitar",
+  "@teamEligibilityReadyForApproval": {
+    "description": "Estado de elegibilidad cuando la plantilla cumple el mínimo y espera aprobación"
+  },
+  "teamEligibilityEligible": "Habilitado",
+  "@teamEligibilityEligible": {
+    "description": "Estado oficial de equipo habilitado para competir"
+  },
+  "playerPositionGoalkeeper": "Portero",
+  "@playerPositionGoalkeeper": {
+    "description": "Posición portero"
+  },
+  "playerPositionDefender": "Defensa",
+  "@playerPositionDefender": {
+    "description": "Posición defensa"
+  },
+  "playerPositionMidfielder": "Mediocampista",
+  "@playerPositionMidfielder": {
+    "description": "Posición mediocampista"
+  },
+  "playerPositionForward": "Delantero",
+  "@playerPositionForward": {
+    "description": "Posición delantero"
+  },
+  "playerPositionShortGoalkeeper": "POR",
+  "@playerPositionShortGoalkeeper": {
+    "description": "Abreviatura portero"
+  },
+  "playerPositionShortDefender": "DEF",
+  "@playerPositionShortDefender": {
+    "description": "Abreviatura defensa"
+  },
+  "playerPositionShortMidfielder": "MED",
+  "@playerPositionShortMidfielder": {
+    "description": "Abreviatura mediocampista"
+  },
+  "playerPositionShortForward": "DEL",
+  "@playerPositionShortForward": {
+    "description": "Abreviatura delantero"
+  },
+  "crestShapeShield": "Escudo Clásico",
+  "@crestShapeShield": {
+    "description": "Forma de emblema escudo clásico"
+  },
+  "crestShapeCircle": "Circular",
+  "@crestShapeCircle": {
+    "description": "Forma de emblema circular"
+  },
+  "crestShapeDiamond": "Rombo",
+  "@crestShapeDiamond": {
+    "description": "Forma de emblema rombo"
+  },
+  "crestShapeHexagon": "Hexágono",
+  "@crestShapeHexagon": {
+    "description": "Forma de emblema hexágono"
+  },
+  "teamsSectionTitle": "Equipos Inscritos",
+  "@teamsSectionTitle": {
+    "description": "Encabezado de la sección de equipos en la vista de torneo"
+  },
+  "teamsSectionSubtitle": "Equipos habilitados para competir y gestión de plantillas",
+  "@teamsSectionSubtitle": {
+    "description": "Subtítulo de la sección de equipos"
+  },
+  "teamsRegisterAction": "Inscribir Equipo",
+  "@teamsRegisterAction": {
+    "description": "Botón para registrar nuevo equipo"
+  },
+  "teamsCountSummary": "{eligibleCount} de {totalCount} habilitados",
+  "@teamsCountSummary": {
+    "description": "Resumen de equipos habilitados",
+    "placeholders": {
+      "eligibleCount": {
+        "type": "int"
+      },
+      "totalCount": {
+        "type": "int"
+      }
+    }
+  },
+  "teamsEmptyTitle": "Sin equipos inscritos",
+  "@teamsEmptyTitle": {
+    "description": "Título cuando no hay equipos registrados"
+  },
+  "teamsEmptySubtitle": "Inscribe el primer equipo para comenzar a registrar jugadores en este campeonato.",
+  "@teamsEmptySubtitle": {
+    "description": "Subtítulo cuando no hay equipos registrados"
+  },
+  "teamsQuotaProgress": "{current} / {min} a {max} jugadores",
+  "@teamsQuotaProgress": {
+    "description": "Progreso de cupo de plantilla",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "teamRosterTitle": "Plantilla Oficial",
+  "@teamRosterTitle": {
+    "description": "Título de la vista de plantilla de equipo"
+  },
+  "teamRosterSubtitle": "Gestión de jugadores y habilitación reglamentaria",
+  "@teamRosterSubtitle": {
+    "description": "Subtítulo de la vista de plantilla de equipo"
+  },
+  "teamEnrollPlayerAction": "Inscribir Jugador",
+  "@teamEnrollPlayerAction": {
+    "description": "Botón para inscribir jugador a la plantilla"
+  },
+  "teamApproveEligibilityAction": "Habilitar Equipo",
+  "@teamApproveEligibilityAction": {
+    "description": "Botón para aprobar oficialmente la elegibilidad del equipo"
+  },
+  "teamEligibilityApprovedSuccess": "El equipo ha sido habilitado oficialmente para el campeonato",
+  "@teamEligibilityApprovedSuccess": {
+    "description": "Mensaje de éxito tras habilitar equipo"
+  },
+  "teamRosterEmpty": "No hay jugadores inscritos en este equipo aún.",
+  "@teamRosterEmpty": {
+    "description": "Mensaje cuando el equipo no tiene jugadores registrados"
+  },
+  "teamFormNameLabel": "Nombre del equipo",
+  "@teamFormNameLabel": {
+    "description": "Etiqueta para nombre de equipo"
+  },
+  "teamFormNameHint": "Ej. Atlético Norte FC",
+  "@teamFormNameHint": {
+    "description": "Pista para nombre de equipo"
+  },
+  "teamFormShortCodeLabel": "Sigla o Monograma (2 a 4 caracteres)",
+  "@teamFormShortCodeLabel": {
+    "description": "Etiqueta para sigla de equipo"
+  },
+  "teamFormShortCodeHint": "Ej. ATN",
+  "@teamFormShortCodeHint": {
+    "description": "Pista para sigla de equipo"
+  },
+  "teamFormCrestShapeLabel": "Forma del emblema",
+  "@teamFormCrestShapeLabel": {
+    "description": "Etiqueta para forma del escudo"
+  },
+  "teamFormPrimaryColorLabel": "Color primario",
+  "@teamFormPrimaryColorLabel": {
+    "description": "Etiqueta para color primario"
+  },
+  "teamFormSecondaryColorLabel": "Color secundario",
+  "@teamFormSecondaryColorLabel": {
+    "description": "Etiqueta para color secundario"
+  },
+  "teamFormSubmitCreate": "Inscribir equipo",
+  "@teamFormSubmitCreate": {
+    "description": "Botón enviar registro de equipo"
+  },
+  "teamFormSubmitEdit": "Guardar cambios",
+  "@teamFormSubmitEdit": {
+    "description": "Botón guardar cambios de equipo"
+  },
+  "playerFormFullNameLabel": "Nombre completo del jugador",
+  "@playerFormFullNameLabel": {
+    "description": "Etiqueta para nombre completo del jugador"
+  },
+  "playerFormFullNameHint": "Ej. Carlos Andrés Rodríguez",
+  "@playerFormFullNameHint": {
+    "description": "Pista para nombre completo del jugador"
+  },
+  "playerFormDocumentLabel": "Documento de identidad",
+  "@playerFormDocumentLabel": {
+    "description": "Etiqueta para documento de identidad"
+  },
+  "playerFormDocumentHint": "Ej. 10203040",
+  "@playerFormDocumentHint": {
+    "description": "Pista para documento de identidad"
+  },
+  "playerFormPositionLabel": "Posición en el campo",
+  "@playerFormPositionLabel": {
+    "description": "Etiqueta para selector de posición"
+  },
+  "playerFormShirtNumberLabel": "Número de camiseta (Dorsal)",
+  "@playerFormShirtNumberLabel": {
+    "description": "Etiqueta para dorsal del jugador"
+  },
+  "playerFormShirtNumberHint": "1 - 99",
+  "@playerFormShirtNumberHint": {
+    "description": "Pista para dorsal del jugador"
+  },
+  "playerFormSubmitEnroll": "Inscribir jugador",
+  "@playerFormSubmitEnroll": {
+    "description": "Botón para inscribir jugador"
+  },
+  "playerFormSubmitEdit": "Guardar jugador",
+  "@playerFormSubmitEdit": {
+    "description": "Botón para guardar jugador editado"
+  },
+  "playerRemoveConfirmTitle": "¿Eliminar jugador de la plantilla?",
+  "@playerRemoveConfirmTitle": {
+    "description": "Título para confirmar eliminación de jugador"
+  },
+  "playerRemoveConfirmMessage": "¿Estás seguro de que deseas retirar a {name} de este equipo?",
+  "@playerRemoveConfirmMessage": {
+    "description": "Mensaje de confirmación para retirar jugador",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "playerRemoveAction": "Retirar jugador",
+  "@playerRemoveAction": {
+    "description": "Botón de acción para retirar jugador"
+  },
+  "teamErrorDuplicateShirtNumber": "El número de camiseta {number} ya está en uso en este equipo.",
+  "@teamErrorDuplicateShirtNumber": {
+    "description": "Error de validación cuando el dorsal ya está ocupado",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "teamErrorPlayerAlreadyRegisteredInTournament": "Este jugador ya se encuentra inscrito en otro equipo de este campeonato.",
+  "@teamErrorPlayerAlreadyRegisteredInTournament": {
+    "description": "Error de validación cuando el jugador ya pertenece a otro equipo del campeonato"
+  },
+  "teamErrorDuplicateTeamName": "Ya existe un equipo con este nombre en este campeonato",
+  "@teamErrorDuplicateTeamName": {
+    "description": "Error cuando el nombre del equipo está repetido en el torneo"
+  },
+  "teamErrorRegistrationsClosed": "Las inscripciones de este campeonato están cerradas",
+  "@teamErrorRegistrationsClosed": {
+    "description": "Error cuando el campeonato no está en Inscripciones Abiertas"
+  },
+  "teamErrorMaxPlayersQuotaReached": "El equipo ya alcanzó el cupo máximo de jugadores permitido",
+  "@teamErrorMaxPlayersQuotaReached": {
+    "description": "Error cuando se intenta agregar más jugadores del cupo máximo"
+  },
+  "teamErrorInsufficientPlayersForApproval": "El equipo aún no alcanza el mínimo reglamentario de jugadores requerido por el campeonato",
+  "@teamErrorInsufficientPlayersForApproval": {
+    "description": "Error al intentar habilitar un equipo que no cumple el mínimo"
+  },
+  "teamErrorInvalidTeamName": "El nombre del equipo debe tener al menos 3 caracteres",
+  "@teamErrorInvalidTeamName": {
+    "description": "Error cuando el nombre del equipo es muy corto"
+  },
+  "teamErrorInvalidShortCode": "La sigla debe tener entre 2 y 4 caracteres",
+  "@teamErrorInvalidShortCode": {
+    "description": "Error cuando la sigla no tiene 2 a 4 caracteres"
+  },
+  "teamErrorInvalidPlayerName": "El nombre del jugador debe tener al menos 3 caracteres",
+  "@teamErrorInvalidPlayerName": {
+    "description": "Error cuando el nombre del jugador es muy corto"
+  },
+  "teamErrorInvalidDocumentId": "El documento de identidad debe tener al menos 5 caracteres",
+  "@teamErrorInvalidDocumentId": {
+    "description": "Error cuando el documento tiene menos de 5 caracteres"
+  },
+  "teamErrorInvalidShirtNumber": "El número de camiseta debe estar entre 1 y 99",
+  "@teamErrorInvalidShirtNumber": {
+    "description": "Error cuando el dorsal está fuera del rango 1 a 99"
   }
 }

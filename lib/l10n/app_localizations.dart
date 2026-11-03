@@ -1545,6 +1545,366 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Debes ingresar un motivo administrativo válido para auditar el cambio'**
   String get tournamentErrorAuditReasonRequired;
+
+  /// Estado de elegibilidad cuando la plantilla no alcanza el mínimo de jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente de Cupo'**
+  String get teamEligibilityPendingQuota;
+
+  /// Estado de elegibilidad cuando la plantilla cumple el mínimo y espera aprobación
+  ///
+  /// In es, this message translates to:
+  /// **'Listo para Habilitar'**
+  String get teamEligibilityReadyForApproval;
+
+  /// Estado oficial de equipo habilitado para competir
+  ///
+  /// In es, this message translates to:
+  /// **'Habilitado'**
+  String get teamEligibilityEligible;
+
+  /// Posición portero
+  ///
+  /// In es, this message translates to:
+  /// **'Portero'**
+  String get playerPositionGoalkeeper;
+
+  /// Posición defensa
+  ///
+  /// In es, this message translates to:
+  /// **'Defensa'**
+  String get playerPositionDefender;
+
+  /// Posición mediocampista
+  ///
+  /// In es, this message translates to:
+  /// **'Mediocampista'**
+  String get playerPositionMidfielder;
+
+  /// Posición delantero
+  ///
+  /// In es, this message translates to:
+  /// **'Delantero'**
+  String get playerPositionForward;
+
+  /// Abreviatura portero
+  ///
+  /// In es, this message translates to:
+  /// **'POR'**
+  String get playerPositionShortGoalkeeper;
+
+  /// Abreviatura defensa
+  ///
+  /// In es, this message translates to:
+  /// **'DEF'**
+  String get playerPositionShortDefender;
+
+  /// Abreviatura mediocampista
+  ///
+  /// In es, this message translates to:
+  /// **'MED'**
+  String get playerPositionShortMidfielder;
+
+  /// Abreviatura delantero
+  ///
+  /// In es, this message translates to:
+  /// **'DEL'**
+  String get playerPositionShortForward;
+
+  /// Forma de emblema escudo clásico
+  ///
+  /// In es, this message translates to:
+  /// **'Escudo Clásico'**
+  String get crestShapeShield;
+
+  /// Forma de emblema circular
+  ///
+  /// In es, this message translates to:
+  /// **'Circular'**
+  String get crestShapeCircle;
+
+  /// Forma de emblema rombo
+  ///
+  /// In es, this message translates to:
+  /// **'Rombo'**
+  String get crestShapeDiamond;
+
+  /// Forma de emblema hexágono
+  ///
+  /// In es, this message translates to:
+  /// **'Hexágono'**
+  String get crestShapeHexagon;
+
+  /// Encabezado de la sección de equipos en la vista de torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Equipos Inscritos'**
+  String get teamsSectionTitle;
+
+  /// Subtítulo de la sección de equipos
+  ///
+  /// In es, this message translates to:
+  /// **'Equipos habilitados para competir y gestión de plantillas'**
+  String get teamsSectionSubtitle;
+
+  /// Botón para registrar nuevo equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Inscribir Equipo'**
+  String get teamsRegisterAction;
+
+  /// Resumen de equipos habilitados
+  ///
+  /// In es, this message translates to:
+  /// **'{eligibleCount} de {totalCount} habilitados'**
+  String teamsCountSummary(int eligibleCount, int totalCount);
+
+  /// Título cuando no hay equipos registrados
+  ///
+  /// In es, this message translates to:
+  /// **'Sin equipos inscritos'**
+  String get teamsEmptyTitle;
+
+  /// Subtítulo cuando no hay equipos registrados
+  ///
+  /// In es, this message translates to:
+  /// **'Inscribe el primer equipo para comenzar a registrar jugadores en este campeonato.'**
+  String get teamsEmptySubtitle;
+
+  /// Progreso de cupo de plantilla
+  ///
+  /// In es, this message translates to:
+  /// **'{current} / {min} a {max} jugadores'**
+  String teamsQuotaProgress(int current, int min, int max);
+
+  /// Título de la vista de plantilla de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Plantilla Oficial'**
+  String get teamRosterTitle;
+
+  /// Subtítulo de la vista de plantilla de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Gestión de jugadores y habilitación reglamentaria'**
+  String get teamRosterSubtitle;
+
+  /// Botón para inscribir jugador a la plantilla
+  ///
+  /// In es, this message translates to:
+  /// **'Inscribir Jugador'**
+  String get teamEnrollPlayerAction;
+
+  /// Botón para aprobar oficialmente la elegibilidad del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Habilitar Equipo'**
+  String get teamApproveEligibilityAction;
+
+  /// Mensaje de éxito tras habilitar equipo
+  ///
+  /// In es, this message translates to:
+  /// **'El equipo ha sido habilitado oficialmente para el campeonato'**
+  String get teamEligibilityApprovedSuccess;
+
+  /// Mensaje cuando el equipo no tiene jugadores registrados
+  ///
+  /// In es, this message translates to:
+  /// **'No hay jugadores inscritos en este equipo aún.'**
+  String get teamRosterEmpty;
+
+  /// Etiqueta para nombre de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre del equipo'**
+  String get teamFormNameLabel;
+
+  /// Pista para nombre de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. Atlético Norte FC'**
+  String get teamFormNameHint;
+
+  /// Etiqueta para sigla de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Sigla o Monograma (2 a 4 caracteres)'**
+  String get teamFormShortCodeLabel;
+
+  /// Pista para sigla de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. ATN'**
+  String get teamFormShortCodeHint;
+
+  /// Etiqueta para forma del escudo
+  ///
+  /// In es, this message translates to:
+  /// **'Forma del emblema'**
+  String get teamFormCrestShapeLabel;
+
+  /// Etiqueta para color primario
+  ///
+  /// In es, this message translates to:
+  /// **'Color primario'**
+  String get teamFormPrimaryColorLabel;
+
+  /// Etiqueta para color secundario
+  ///
+  /// In es, this message translates to:
+  /// **'Color secundario'**
+  String get teamFormSecondaryColorLabel;
+
+  /// Botón enviar registro de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Inscribir equipo'**
+  String get teamFormSubmitCreate;
+
+  /// Botón guardar cambios de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar cambios'**
+  String get teamFormSubmitEdit;
+
+  /// Etiqueta para nombre completo del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre completo del jugador'**
+  String get playerFormFullNameLabel;
+
+  /// Pista para nombre completo del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. Carlos Andrés Rodríguez'**
+  String get playerFormFullNameHint;
+
+  /// Etiqueta para documento de identidad
+  ///
+  /// In es, this message translates to:
+  /// **'Documento de identidad'**
+  String get playerFormDocumentLabel;
+
+  /// Pista para documento de identidad
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. 10203040'**
+  String get playerFormDocumentHint;
+
+  /// Etiqueta para selector de posición
+  ///
+  /// In es, this message translates to:
+  /// **'Posición en el campo'**
+  String get playerFormPositionLabel;
+
+  /// Etiqueta para dorsal del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Número de camiseta (Dorsal)'**
+  String get playerFormShirtNumberLabel;
+
+  /// Pista para dorsal del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'1 - 99'**
+  String get playerFormShirtNumberHint;
+
+  /// Botón para inscribir jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Inscribir jugador'**
+  String get playerFormSubmitEnroll;
+
+  /// Botón para guardar jugador editado
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar jugador'**
+  String get playerFormSubmitEdit;
+
+  /// Título para confirmar eliminación de jugador
+  ///
+  /// In es, this message translates to:
+  /// **'¿Eliminar jugador de la plantilla?'**
+  String get playerRemoveConfirmTitle;
+
+  /// Mensaje de confirmación para retirar jugador
+  ///
+  /// In es, this message translates to:
+  /// **'¿Estás seguro de que deseas retirar a {name} de este equipo?'**
+  String playerRemoveConfirmMessage(String name);
+
+  /// Botón de acción para retirar jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Retirar jugador'**
+  String get playerRemoveAction;
+
+  /// Error de validación cuando el dorsal ya está ocupado
+  ///
+  /// In es, this message translates to:
+  /// **'El número de camiseta {number} ya está en uso en este equipo.'**
+  String teamErrorDuplicateShirtNumber(int number);
+
+  /// Error de validación cuando el jugador ya pertenece a otro equipo del campeonato
+  ///
+  /// In es, this message translates to:
+  /// **'Este jugador ya se encuentra inscrito en otro equipo de este campeonato.'**
+  String get teamErrorPlayerAlreadyRegisteredInTournament;
+
+  /// Error cuando el nombre del equipo está repetido en el torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Ya existe un equipo con este nombre en este campeonato'**
+  String get teamErrorDuplicateTeamName;
+
+  /// Error cuando el campeonato no está en Inscripciones Abiertas
+  ///
+  /// In es, this message translates to:
+  /// **'Las inscripciones de este campeonato están cerradas'**
+  String get teamErrorRegistrationsClosed;
+
+  /// Error cuando se intenta agregar más jugadores del cupo máximo
+  ///
+  /// In es, this message translates to:
+  /// **'El equipo ya alcanzó el cupo máximo de jugadores permitido'**
+  String get teamErrorMaxPlayersQuotaReached;
+
+  /// Error al intentar habilitar un equipo que no cumple el mínimo
+  ///
+  /// In es, this message translates to:
+  /// **'El equipo aún no alcanza el mínimo reglamentario de jugadores requerido por el campeonato'**
+  String get teamErrorInsufficientPlayersForApproval;
+
+  /// Error cuando el nombre del equipo es muy corto
+  ///
+  /// In es, this message translates to:
+  /// **'El nombre del equipo debe tener al menos 3 caracteres'**
+  String get teamErrorInvalidTeamName;
+
+  /// Error cuando la sigla no tiene 2 a 4 caracteres
+  ///
+  /// In es, this message translates to:
+  /// **'La sigla debe tener entre 2 y 4 caracteres'**
+  String get teamErrorInvalidShortCode;
+
+  /// Error cuando el nombre del jugador es muy corto
+  ///
+  /// In es, this message translates to:
+  /// **'El nombre del jugador debe tener al menos 3 caracteres'**
+  String get teamErrorInvalidPlayerName;
+
+  /// Error cuando el documento tiene menos de 5 caracteres
+  ///
+  /// In es, this message translates to:
+  /// **'El documento de identidad debe tener al menos 5 caracteres'**
+  String get teamErrorInvalidDocumentId;
+
+  /// Error cuando el dorsal está fuera del rango 1 a 99
+  ///
+  /// In es, this message translates to:
+  /// **'El número de camiseta debe estar entre 1 y 99'**
+  String get teamErrorInvalidShirtNumber;
 }
 
 class _AppLocalizationsDelegate

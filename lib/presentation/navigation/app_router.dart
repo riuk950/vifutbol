@@ -6,6 +6,7 @@ import 'package:vifutbol/presentation/auth/auth_gate.dart';
 import 'package:vifutbol/presentation/auth/role_onboarding_screen.dart';
 import 'package:vifutbol/presentation/auth/welcome_auth_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
+import 'package:vifutbol/presentation/teams/team_roster_detail_screen.dart';
 import 'package:vifutbol/presentation/tournaments/tournament_form_screen.dart';
 import 'package:vifutbol/presentation/venues/venue_form_screen.dart';
 
@@ -76,6 +77,12 @@ class AppRouter {
       },
     );
 
+    final teamRosterDetailHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const TeamRosterDetailScreen();
+      },
+    );
+
     router.define(
       '/',
       handler: rootHandler,
@@ -124,6 +131,11 @@ class AppRouter {
     router.define(
       '/tournaments/form',
       handler: tournamentFormHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/tournaments/teams/detail',
+      handler: teamRosterDetailHandler,
       transitionType: TransitionType.fadeIn,
     );
   }

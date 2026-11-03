@@ -818,4 +818,207 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get tournamentErrorAuditReasonRequired =>
       'Debes ingresar un motivo administrativo válido para auditar el cambio';
+
+  @override
+  String get teamEligibilityPendingQuota => 'Pendiente de Cupo';
+
+  @override
+  String get teamEligibilityReadyForApproval => 'Listo para Habilitar';
+
+  @override
+  String get teamEligibilityEligible => 'Habilitado';
+
+  @override
+  String get playerPositionGoalkeeper => 'Portero';
+
+  @override
+  String get playerPositionDefender => 'Defensa';
+
+  @override
+  String get playerPositionMidfielder => 'Mediocampista';
+
+  @override
+  String get playerPositionForward => 'Delantero';
+
+  @override
+  String get playerPositionShortGoalkeeper => 'POR';
+
+  @override
+  String get playerPositionShortDefender => 'DEF';
+
+  @override
+  String get playerPositionShortMidfielder => 'MED';
+
+  @override
+  String get playerPositionShortForward => 'DEL';
+
+  @override
+  String get crestShapeShield => 'Escudo Clásico';
+
+  @override
+  String get crestShapeCircle => 'Circular';
+
+  @override
+  String get crestShapeDiamond => 'Rombo';
+
+  @override
+  String get crestShapeHexagon => 'Hexágono';
+
+  @override
+  String get teamsSectionTitle => 'Equipos Inscritos';
+
+  @override
+  String get teamsSectionSubtitle =>
+      'Equipos habilitados para competir y gestión de plantillas';
+
+  @override
+  String get teamsRegisterAction => 'Inscribir Equipo';
+
+  @override
+  String teamsCountSummary(int eligibleCount, int totalCount) {
+    return '$eligibleCount de $totalCount habilitados';
+  }
+
+  @override
+  String get teamsEmptyTitle => 'Sin equipos inscritos';
+
+  @override
+  String get teamsEmptySubtitle =>
+      'Inscribe el primer equipo para comenzar a registrar jugadores en este campeonato.';
+
+  @override
+  String teamsQuotaProgress(int current, int min, int max) {
+    return '$current / $min a $max jugadores';
+  }
+
+  @override
+  String get teamRosterTitle => 'Plantilla Oficial';
+
+  @override
+  String get teamRosterSubtitle =>
+      'Gestión de jugadores y habilitación reglamentaria';
+
+  @override
+  String get teamEnrollPlayerAction => 'Inscribir Jugador';
+
+  @override
+  String get teamApproveEligibilityAction => 'Habilitar Equipo';
+
+  @override
+  String get teamEligibilityApprovedSuccess =>
+      'El equipo ha sido habilitado oficialmente para el campeonato';
+
+  @override
+  String get teamRosterEmpty =>
+      'No hay jugadores inscritos en este equipo aún.';
+
+  @override
+  String get teamFormNameLabel => 'Nombre del equipo';
+
+  @override
+  String get teamFormNameHint => 'Ej. Atlético Norte FC';
+
+  @override
+  String get teamFormShortCodeLabel => 'Sigla o Monograma (2 a 4 caracteres)';
+
+  @override
+  String get teamFormShortCodeHint => 'Ej. ATN';
+
+  @override
+  String get teamFormCrestShapeLabel => 'Forma del emblema';
+
+  @override
+  String get teamFormPrimaryColorLabel => 'Color primario';
+
+  @override
+  String get teamFormSecondaryColorLabel => 'Color secundario';
+
+  @override
+  String get teamFormSubmitCreate => 'Inscribir equipo';
+
+  @override
+  String get teamFormSubmitEdit => 'Guardar cambios';
+
+  @override
+  String get playerFormFullNameLabel => 'Nombre completo del jugador';
+
+  @override
+  String get playerFormFullNameHint => 'Ej. Carlos Andrés Rodríguez';
+
+  @override
+  String get playerFormDocumentLabel => 'Documento de identidad';
+
+  @override
+  String get playerFormDocumentHint => 'Ej. 10203040';
+
+  @override
+  String get playerFormPositionLabel => 'Posición en el campo';
+
+  @override
+  String get playerFormShirtNumberLabel => 'Número de camiseta (Dorsal)';
+
+  @override
+  String get playerFormShirtNumberHint => '1 - 99';
+
+  @override
+  String get playerFormSubmitEnroll => 'Inscribir jugador';
+
+  @override
+  String get playerFormSubmitEdit => 'Guardar jugador';
+
+  @override
+  String get playerRemoveConfirmTitle => '¿Eliminar jugador de la plantilla?';
+
+  @override
+  String playerRemoveConfirmMessage(String name) {
+    return '¿Estás seguro de que deseas retirar a $name de este equipo?';
+  }
+
+  @override
+  String get playerRemoveAction => 'Retirar jugador';
+
+  @override
+  String teamErrorDuplicateShirtNumber(int number) {
+    return 'El número de camiseta $number ya está en uso en este equipo.';
+  }
+
+  @override
+  String get teamErrorPlayerAlreadyRegisteredInTournament =>
+      'Este jugador ya se encuentra inscrito en otro equipo de este campeonato.';
+
+  @override
+  String get teamErrorDuplicateTeamName =>
+      'Ya existe un equipo con este nombre en este campeonato';
+
+  @override
+  String get teamErrorRegistrationsClosed =>
+      'Las inscripciones de este campeonato están cerradas';
+
+  @override
+  String get teamErrorMaxPlayersQuotaReached =>
+      'El equipo ya alcanzó el cupo máximo de jugadores permitido';
+
+  @override
+  String get teamErrorInsufficientPlayersForApproval =>
+      'El equipo aún no alcanza el mínimo reglamentario de jugadores requerido por el campeonato';
+
+  @override
+  String get teamErrorInvalidTeamName =>
+      'El nombre del equipo debe tener al menos 3 caracteres';
+
+  @override
+  String get teamErrorInvalidShortCode =>
+      'La sigla debe tener entre 2 y 4 caracteres';
+
+  @override
+  String get teamErrorInvalidPlayerName =>
+      'El nombre del jugador debe tener al menos 3 caracteres';
+
+  @override
+  String get teamErrorInvalidDocumentId =>
+      'El documento de identidad debe tener al menos 5 caracteres';
+
+  @override
+  String get teamErrorInvalidShirtNumber =>
+      'El número de camiseta debe estar entre 1 y 99';
 }

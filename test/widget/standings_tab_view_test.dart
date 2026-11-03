@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vifutbol/application/controllers/teams_controller.dart';
 import 'package:vifutbol/application/controllers/tournaments_controller.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
+import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
+import 'package:vifutbol/application/use_cases/manage_teams_eligibility_use_case.dart';
 import 'package:vifutbol/application/use_cases/manage_tournaments_use_case.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/role_permission_matrix.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
+import 'package:vifutbol/infrastructure/repositories/local_teams_repository.dart';
 import 'package:vifutbol/infrastructure/repositories/local_tournaments_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_theme.dart';
@@ -42,17 +46,23 @@ class _MemoryStorage implements LocalStorageRepository {
 void main() {
   Widget buildStandingsTestApp({required UserRole role}) {
     final devConfig = EnvironmentConfig.development();
+    final storage = _MemoryStorage();
     final repo = LocalTournamentsRepository(
-      storage: _MemoryStorage(),
+      storage: storage,
       config: devConfig,
     );
     final useCase = ManageTournamentsUseCase(repo);
+    final teamsRepo = LocalTeamsRepository(storage: storage, config: devConfig);
+    final teamsUseCase = ManageTeamsEligibilityUseCase(teamsRepo);
 
     return ProviderScope(
       overrides: [
         environmentConfigProvider.overrideWithValue(devConfig),
+        localStorageRepositoryProvider.overrideWithValue(storage),
         tournamentsRepositoryProvider.overrideWithValue(repo),
         manageTournamentsUseCaseProvider.overrideWithValue(useCase),
+        teamsRepositoryProvider.overrideWithValue(teamsRepo),
+        manageTeamsEligibilityUseCaseProvider.overrideWithValue(teamsUseCase),
         activeUserRoleProvider.overrideWithValue(role),
         activeRoleCapabilitiesProvider.overrideWithValue(
           RolePermissionMatrix.capabilitiesForRole(role),
@@ -61,6 +71,12 @@ void main() {
           (ref) => TournamentsController(
             tournamentsRepository: repo,
             manageTournamentsUseCase: useCase,
+          ),
+        ),
+        teamsControllerProvider.overrideWith(
+          (ref) => TeamsController(
+            teamsRepository: teamsRepo,
+            manageTeamsEligibilityUseCase: teamsUseCase,
           ),
         ),
       ],
