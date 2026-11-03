@@ -591,6 +591,444 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Esta acción requiere permisos autorizados para el rol requerido.'**
   String get rbacRequiredRoleMessage;
+
+  /// Título principal en la pestaña Sedes
+  ///
+  /// In es, this message translates to:
+  /// **'Directorio de Sedes'**
+  String get venuesTitle;
+
+  /// Subtítulo en la pestaña Sedes
+  ///
+  /// In es, this message translates to:
+  /// **'Complejos deportivos y canchas urbanas verificadas'**
+  String get venuesSubtitle;
+
+  /// Pista del buscador de sedes
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar por nombre o dirección...'**
+  String get venuesSearchHint;
+
+  /// Filtro chip para ver todas las superficies
+  ///
+  /// In es, this message translates to:
+  /// **'Todas las superficies'**
+  String get venuesFilterAllSurfaces;
+
+  /// Filtro chip para sedes con canchas iluminadas
+  ///
+  /// In es, this message translates to:
+  /// **'Con iluminación nocturna'**
+  String get venuesFilterLightingOnly;
+
+  /// Botón de alternar cálculo de cercanía
+  ///
+  /// In es, this message translates to:
+  /// **'Cercanía'**
+  String get venuesProximityAction;
+
+  /// Indicador cuando el catálogo está ordenado por distancia
+  ///
+  /// In es, this message translates to:
+  /// **'Ordenado por cercanía'**
+  String get venuesProximityActive;
+
+  /// Botón de acción para crear sede deportiva
+  ///
+  /// In es, this message translates to:
+  /// **'Nueva sede'**
+  String get venuesCreateAction;
+
+  /// Botón de acción para editar sede
+  ///
+  /// In es, this message translates to:
+  /// **'Editar sede'**
+  String get venuesEditAction;
+
+  /// Título del estado vacío sin sedes
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay sedes registradas'**
+  String get venuesEmptyTitle;
+
+  /// Subtítulo del estado vacío sin sedes
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontraron sedes deportivas activas para este torneo.'**
+  String get venuesEmptySubtitle;
+
+  /// Texto del botón o llamada a la acción para el organizador cuando no hay sedes
+  ///
+  /// In es, this message translates to:
+  /// **'Registra la primera sede deportiva para comenzar a programar partidos.'**
+  String get venuesEmptyOrganizerPrompt;
+
+  /// Título del estado vacío tras filtrar sedes
+  ///
+  /// In es, this message translates to:
+  /// **'Sin resultados'**
+  String get venuesEmptyFilterTitle;
+
+  /// Subtítulo del estado vacío tras filtrar sedes
+  ///
+  /// In es, this message translates to:
+  /// **'No encontramos sedes que coincidan con los filtros aplicados.'**
+  String get venuesEmptyFilterSubtitle;
+
+  /// Botón para restablecer filtros y búsqueda
+  ///
+  /// In es, this message translates to:
+  /// **'Limpiar filtros'**
+  String get venuesClearFilters;
+
+  /// Título de la hoja o vista de detalle de sede
+  ///
+  /// In es, this message translates to:
+  /// **'Detalle de la Sede'**
+  String get venuesDetailTitle;
+
+  /// Etiqueta para dirección de sede
+  ///
+  /// In es, this message translates to:
+  /// **'Dirección física'**
+  String get venuesAddressLabel;
+
+  /// Etiqueta para punto de referencia de sede
+  ///
+  /// In es, this message translates to:
+  /// **'Referencia urbana'**
+  String get venuesReferenceLabel;
+
+  /// Etiqueta para coordenadas geográficas
+  ///
+  /// In es, this message translates to:
+  /// **'Coordenadas'**
+  String get venuesCoordinatesLabel;
+
+  /// Acción para copiar o consultar indicaciones de llegada
+  ///
+  /// In es, this message translates to:
+  /// **'Cómo llegar'**
+  String get venuesGetDirections;
+
+  /// Mensaje snackbar cuando se copian las indicaciones
+  ///
+  /// In es, this message translates to:
+  /// **'Indicaciones copiadas al portapapeles'**
+  String get venuesDirectionsCopied;
+
+  /// Contador de canchas internas disponibles
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 cancha disponible} other{{count} canchas disponibles}}'**
+  String venuesPitchesCount(int count);
+
+  /// Encabezado de la lista de canchas de la sede
+  ///
+  /// In es, this message translates to:
+  /// **'Canchas internas'**
+  String get venuesPitchesSectionTitle;
+
+  /// Botón para agregar una nueva cancha al formulario
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar cancha'**
+  String get venuesAddPitchAction;
+
+  /// Botón para remover una cancha del formulario
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar cancha'**
+  String get venuesRemovePitchAction;
+
+  /// Campo de nombre de cancha
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre de la cancha'**
+  String get venuesPitchNameLabel;
+
+  /// Pista para nombre de cancha
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. Cancha Sintética 1'**
+  String get venuesPitchNameHint;
+
+  /// Etiqueta para superficie de cancha
+  ///
+  /// In es, this message translates to:
+  /// **'Tipo de superficie'**
+  String get venuesPitchSurfaceLabel;
+
+  /// Etiqueta para formato de cancha
+  ///
+  /// In es, this message translates to:
+  /// **'Modalidad / Formato'**
+  String get venuesPitchFormatLabel;
+
+  /// Etiqueta para capacidad de cancha
+  ///
+  /// In es, this message translates to:
+  /// **'Capacidad de espectadores'**
+  String get venuesPitchCapacityLabel;
+
+  /// Etiqueta para iluminación de cancha
+  ///
+  /// In es, this message translates to:
+  /// **'Iluminación artificial'**
+  String get venuesPitchLightingLabel;
+
+  /// Texto descriptivo para iluminación activa
+  ///
+  /// In es, this message translates to:
+  /// **'Iluminación nocturna disponible'**
+  String get venuesPitchLightingYes;
+
+  /// Texto descriptivo para iluminación inactiva
+  ///
+  /// In es, this message translates to:
+  /// **'Sin iluminación nocturna'**
+  String get venuesPitchLightingNo;
+
+  /// Etiqueta para estado operativo de cancha
+  ///
+  /// In es, this message translates to:
+  /// **'Disponibilidad operativa'**
+  String get venuesPitchStatusLabel;
+
+  /// Etiqueta para estado operativo Activa
+  ///
+  /// In es, this message translates to:
+  /// **'Activa'**
+  String get venuesStatusActive;
+
+  /// Etiqueta para estado operativo En mantenimiento
+  ///
+  /// In es, this message translates to:
+  /// **'En mantenimiento'**
+  String get venuesStatusMaintenance;
+
+  /// Distancia calculada en kilómetros
+  ///
+  /// In es, this message translates to:
+  /// **'{distance} km'**
+  String venuesDistanceKm(String distance);
+
+  /// Aforo o capacidad formateada con numeral tabular
+  ///
+  /// In es, this message translates to:
+  /// **'{count} espectadores'**
+  String venuesCapacityCount(int count);
+
+  /// Superficie césped sintético
+  ///
+  /// In es, this message translates to:
+  /// **'Césped Sintético'**
+  String get surfaceSyntheticGrass;
+
+  /// Superficie césped natural
+  ///
+  /// In es, this message translates to:
+  /// **'Césped Natural'**
+  String get surfaceNaturalGrass;
+
+  /// Superficie tierra o arena
+  ///
+  /// In es, this message translates to:
+  /// **'Tierra / Arena'**
+  String get surfaceDirtOrSand;
+
+  /// Superficie cemento o coliseo futsal
+  ///
+  /// In es, this message translates to:
+  /// **'Cemento / Futsal'**
+  String get surfaceHardCourt;
+
+  /// Modalidad fútbol 5
+  ///
+  /// In es, this message translates to:
+  /// **'Fútbol 5'**
+  String get formatFootball5;
+
+  /// Modalidad fútbol 7
+  ///
+  /// In es, this message translates to:
+  /// **'Fútbol 7'**
+  String get formatFootball7;
+
+  /// Modalidad fútbol 8
+  ///
+  /// In es, this message translates to:
+  /// **'Fútbol 8'**
+  String get formatFootball8;
+
+  /// Modalidad fútbol 11
+  ///
+  /// In es, this message translates to:
+  /// **'Fútbol 11'**
+  String get formatFootball11;
+
+  /// Título del formulario al registrar una sede
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar Sede Deportiva'**
+  String get venueFormCreateTitle;
+
+  /// Título del formulario al editar una sede
+  ///
+  /// In es, this message translates to:
+  /// **'Editar Sede Deportiva'**
+  String get venueFormEditTitle;
+
+  /// Campo de nombre de la sede
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre del complejo o sede'**
+  String get venueFormNameLabel;
+
+  /// Pista de nombre de sede
+  ///
+  /// In es, this message translates to:
+  /// **'Mínimo 3 caracteres'**
+  String get venueFormNameHint;
+
+  /// Campo de dirección de la sede
+  ///
+  /// In es, this message translates to:
+  /// **'Dirección urbana'**
+  String get venueFormAddressLabel;
+
+  /// Pista de dirección de sede
+  ///
+  /// In es, this message translates to:
+  /// **'Mínimo 5 caracteres'**
+  String get venueFormAddressHint;
+
+  /// Campo de referencia urbana
+  ///
+  /// In es, this message translates to:
+  /// **'Punto de referencia o indicaciones'**
+  String get venueFormReferenceLabel;
+
+  /// Pista de referencia urbana
+  ///
+  /// In es, this message translates to:
+  /// **'Opcional (ej. frente al parque metropolitano)'**
+  String get venueFormReferenceHint;
+
+  /// Campo numérico de latitud
+  ///
+  /// In es, this message translates to:
+  /// **'Latitud'**
+  String get venueFormLatitudeLabel;
+
+  /// Campo numérico de longitud
+  ///
+  /// In es, this message translates to:
+  /// **'Longitud'**
+  String get venueFormLongitudeLabel;
+
+  /// Instrucción de selección de coordenadas en mapa
+  ///
+  /// In es, this message translates to:
+  /// **'Toca el mapa para fijar coordenadas'**
+  String get venueFormPickOnMap;
+
+  /// Botón para guardar sede en formulario
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar sede'**
+  String get venueFormSaveAction;
+
+  /// Título de diálogo al salir con cambios de sede sin guardar
+  ///
+  /// In es, this message translates to:
+  /// **'¿Descartar cambios de la sede?'**
+  String get venueFormDiscardTitle;
+
+  /// Mensaje de confirmación de descarte de formulario de sede
+  ///
+  /// In es, this message translates to:
+  /// **'Si sales ahora, se perderán los datos y canchas configuradas en este formulario.'**
+  String get venueFormDiscardMessage;
+
+  /// Error cuando el nombre de la sede es menor a 3 caracteres
+  ///
+  /// In es, this message translates to:
+  /// **'El nombre debe tener al menos 3 caracteres'**
+  String get venueErrorNameTooShort;
+
+  /// Error cuando la dirección de la sede es menor a 5 caracteres
+  ///
+  /// In es, this message translates to:
+  /// **'La dirección debe tener al menos 5 caracteres'**
+  String get venueErrorAddressTooShort;
+
+  /// Error de validación para latitud fuera de rango
+  ///
+  /// In es, this message translates to:
+  /// **'Latitud inválida (debe estar entre -90.0 y 90.0)'**
+  String get venueErrorInvalidLatitude;
+
+  /// Error de validación para longitud fuera de rango
+  ///
+  /// In es, this message translates to:
+  /// **'Longitud inválida (debe estar entre -180.0 y 180.0)'**
+  String get venueErrorInvalidLongitude;
+
+  /// Error cuando la sede no tiene al menos una cancha activa
+  ///
+  /// In es, this message translates to:
+  /// **'Debes agregar al menos 1 cancha interna activa'**
+  String get venueErrorPitchRequired;
+
+  /// Error cuando el nombre de la cancha es menor a 2 caracteres
+  ///
+  /// In es, this message translates to:
+  /// **'El nombre de la cancha debe tener al menos 2 caracteres'**
+  String get venueErrorPitchNameTooShort;
+
+  /// Error cuando la capacidad de la cancha es menor a 0
+  ///
+  /// In es, this message translates to:
+  /// **'La capacidad no puede ser negativa'**
+  String get venueErrorPitchCapacityNegative;
+
+  /// Banner discreto cuando el permiso de ubicación está denegado o revocado
+  ///
+  /// In es, this message translates to:
+  /// **'Ubicación desactivada: mostrando sedes por referencia urbana'**
+  String get locationPermissionBanner;
+
+  /// Botón de acción en el banner para activar ubicación
+  ///
+  /// In es, this message translates to:
+  /// **'Activar ubicación'**
+  String get locationPermissionEnableAction;
+
+  /// Título del simulador de GPS en entorno de desarrollo
+  ///
+  /// In es, this message translates to:
+  /// **'Simulador GPS (DEV)'**
+  String get locationDevSimulatorTitle;
+
+  /// Estado concedido en el simulador GPS
+  ///
+  /// In es, this message translates to:
+  /// **'Concedido'**
+  String get locationDevStateGranted;
+
+  /// Estado denegado en el simulador GPS
+  ///
+  /// In es, this message translates to:
+  /// **'Denegado'**
+  String get locationDevStateDenied;
+
+  /// Estado revocado en el simulador GPS
+  ///
+  /// In es, this message translates to:
+  /// **'Revocado'**
+  String get locationDevStatePermanentlyDenied;
 }
 
 class _AppLocalizationsDelegate

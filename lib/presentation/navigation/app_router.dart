@@ -5,6 +5,7 @@ import 'package:vifutbol/presentation/auth/auth_gate.dart';
 import 'package:vifutbol/presentation/auth/role_onboarding_screen.dart';
 import 'package:vifutbol/presentation/auth/welcome_auth_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
+import 'package:vifutbol/presentation/venues/venue_form_screen.dart';
 
 /// Fluro router configuration for App Shell navigation.
 class AppRouter {
@@ -59,6 +60,12 @@ class AppRouter {
       },
     );
 
+    final venueFormHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const VenueFormScreen();
+      },
+    );
+
     router.define(
       '/',
       handler: rootHandler,
@@ -97,6 +104,11 @@ class AppRouter {
     router.define(
       '/profile',
       handler: profileHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/venues/form',
+      handler: venueFormHandler,
       transitionType: TransitionType.fadeIn,
     );
   }

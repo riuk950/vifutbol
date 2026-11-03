@@ -336,5 +336,312 @@
   "rbacRequiredRoleMessage": "Esta acción requiere permisos autorizados para el rol requerido.",
   "@rbacRequiredRoleMessage": {
     "description": "Descripción en guarda RBAC denegado"
+  },
+  "venuesTitle": "Directorio de Sedes",
+  "@venuesTitle": {
+    "description": "Título principal en la pestaña Sedes"
+  },
+  "venuesSubtitle": "Complejos deportivos y canchas urbanas verificadas",
+  "@venuesSubtitle": {
+    "description": "Subtítulo en la pestaña Sedes"
+  },
+  "venuesSearchHint": "Buscar por nombre o dirección...",
+  "@venuesSearchHint": {
+    "description": "Pista del buscador de sedes"
+  },
+  "venuesFilterAllSurfaces": "Todas las superficies",
+  "@venuesFilterAllSurfaces": {
+    "description": "Filtro chip para ver todas las superficies"
+  },
+  "venuesFilterLightingOnly": "Con iluminación nocturna",
+  "@venuesFilterLightingOnly": {
+    "description": "Filtro chip para sedes con canchas iluminadas"
+  },
+  "venuesProximityAction": "Cercanía",
+  "@venuesProximityAction": {
+    "description": "Botón de alternar cálculo de cercanía"
+  },
+  "venuesProximityActive": "Ordenado por cercanía",
+  "@venuesProximityActive": {
+    "description": "Indicador cuando el catálogo está ordenado por distancia"
+  },
+  "venuesCreateAction": "Nueva sede",
+  "@venuesCreateAction": {
+    "description": "Botón de acción para crear sede deportiva"
+  },
+  "venuesEditAction": "Editar sede",
+  "@venuesEditAction": {
+    "description": "Botón de acción para editar sede"
+  },
+  "venuesEmptyTitle": "Aún no hay sedes registradas",
+  "@venuesEmptyTitle": {
+    "description": "Título del estado vacío sin sedes"
+  },
+  "venuesEmptySubtitle": "No se encontraron sedes deportivas activas para este torneo.",
+  "@venuesEmptySubtitle": {
+    "description": "Subtítulo del estado vacío sin sedes"
+  },
+  "venuesEmptyOrganizerPrompt": "Registra la primera sede deportiva para comenzar a programar partidos.",
+  "@venuesEmptyOrganizerPrompt": {
+    "description": "Texto del botón o llamada a la acción para el organizador cuando no hay sedes"
+  },
+  "venuesEmptyFilterTitle": "Sin resultados",
+  "@venuesEmptyFilterTitle": {
+    "description": "Título del estado vacío tras filtrar sedes"
+  },
+  "venuesEmptyFilterSubtitle": "No encontramos sedes que coincidan con los filtros aplicados.",
+  "@venuesEmptyFilterSubtitle": {
+    "description": "Subtítulo del estado vacío tras filtrar sedes"
+  },
+  "venuesClearFilters": "Limpiar filtros",
+  "@venuesClearFilters": {
+    "description": "Botón para restablecer filtros y búsqueda"
+  },
+  "venuesDetailTitle": "Detalle de la Sede",
+  "@venuesDetailTitle": {
+    "description": "Título de la hoja o vista de detalle de sede"
+  },
+  "venuesAddressLabel": "Dirección física",
+  "@venuesAddressLabel": {
+    "description": "Etiqueta para dirección de sede"
+  },
+  "venuesReferenceLabel": "Referencia urbana",
+  "@venuesReferenceLabel": {
+    "description": "Etiqueta para punto de referencia de sede"
+  },
+  "venuesCoordinatesLabel": "Coordenadas",
+  "@venuesCoordinatesLabel": {
+    "description": "Etiqueta para coordenadas geográficas"
+  },
+  "venuesGetDirections": "Cómo llegar",
+  "@venuesGetDirections": {
+    "description": "Acción para copiar o consultar indicaciones de llegada"
+  },
+  "venuesDirectionsCopied": "Indicaciones copiadas al portapapeles",
+  "@venuesDirectionsCopied": {
+    "description": "Mensaje snackbar cuando se copian las indicaciones"
+  },
+  "venuesPitchesCount": "{count, plural, =1{1 cancha disponible} other{{count} canchas disponibles}}",
+  "@venuesPitchesCount": {
+    "description": "Contador de canchas internas disponibles",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "venuesPitchesSectionTitle": "Canchas internas",
+  "@venuesPitchesSectionTitle": {
+    "description": "Encabezado de la lista de canchas de la sede"
+  },
+  "venuesAddPitchAction": "Agregar cancha",
+  "@venuesAddPitchAction": {
+    "description": "Botón para agregar una nueva cancha al formulario"
+  },
+  "venuesRemovePitchAction": "Quitar cancha",
+  "@venuesRemovePitchAction": {
+    "description": "Botón para remover una cancha del formulario"
+  },
+  "venuesPitchNameLabel": "Nombre de la cancha",
+  "@venuesPitchNameLabel": {
+    "description": "Campo de nombre de cancha"
+  },
+  "venuesPitchNameHint": "Ej. Cancha Sintética 1",
+  "@venuesPitchNameHint": {
+    "description": "Pista para nombre de cancha"
+  },
+  "venuesPitchSurfaceLabel": "Tipo de superficie",
+  "@venuesPitchSurfaceLabel": {
+    "description": "Etiqueta para superficie de cancha"
+  },
+  "venuesPitchFormatLabel": "Modalidad / Formato",
+  "@venuesPitchFormatLabel": {
+    "description": "Etiqueta para formato de cancha"
+  },
+  "venuesPitchCapacityLabel": "Capacidad de espectadores",
+  "@venuesPitchCapacityLabel": {
+    "description": "Etiqueta para capacidad de cancha"
+  },
+  "venuesPitchLightingLabel": "Iluminación artificial",
+  "@venuesPitchLightingLabel": {
+    "description": "Etiqueta para iluminación de cancha"
+  },
+  "venuesPitchLightingYes": "Iluminación nocturna disponible",
+  "@venuesPitchLightingYes": {
+    "description": "Texto descriptivo para iluminación activa"
+  },
+  "venuesPitchLightingNo": "Sin iluminación nocturna",
+  "@venuesPitchLightingNo": {
+    "description": "Texto descriptivo para iluminación inactiva"
+  },
+  "venuesPitchStatusLabel": "Disponibilidad operativa",
+  "@venuesPitchStatusLabel": {
+    "description": "Etiqueta para estado operativo de cancha"
+  },
+  "venuesStatusActive": "Activa",
+  "@venuesStatusActive": {
+    "description": "Etiqueta para estado operativo Activa"
+  },
+  "venuesStatusMaintenance": "En mantenimiento",
+  "@venuesStatusMaintenance": {
+    "description": "Etiqueta para estado operativo En mantenimiento"
+  },
+  "venuesDistanceKm": "{distance} km",
+  "@venuesDistanceKm": {
+    "description": "Distancia calculada en kilómetros",
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "venuesCapacityCount": "{count} espectadores",
+  "@venuesCapacityCount": {
+    "description": "Aforo o capacidad formateada con numeral tabular",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "surfaceSyntheticGrass": "Césped Sintético",
+  "@surfaceSyntheticGrass": {
+    "description": "Superficie césped sintético"
+  },
+  "surfaceNaturalGrass": "Césped Natural",
+  "@surfaceNaturalGrass": {
+    "description": "Superficie césped natural"
+  },
+  "surfaceDirtOrSand": "Tierra / Arena",
+  "@surfaceDirtOrSand": {
+    "description": "Superficie tierra o arena"
+  },
+  "surfaceHardCourt": "Cemento / Futsal",
+  "@surfaceHardCourt": {
+    "description": "Superficie cemento o coliseo futsal"
+  },
+  "formatFootball5": "Fútbol 5",
+  "@formatFootball5": {
+    "description": "Modalidad fútbol 5"
+  },
+  "formatFootball7": "Fútbol 7",
+  "@formatFootball7": {
+    "description": "Modalidad fútbol 7"
+  },
+  "formatFootball8": "Fútbol 8",
+  "@formatFootball8": {
+    "description": "Modalidad fútbol 8"
+  },
+  "formatFootball11": "Fútbol 11",
+  "@formatFootball11": {
+    "description": "Modalidad fútbol 11"
+  },
+  "venueFormCreateTitle": "Registrar Sede Deportiva",
+  "@venueFormCreateTitle": {
+    "description": "Título del formulario al registrar una sede"
+  },
+  "venueFormEditTitle": "Editar Sede Deportiva",
+  "@venueFormEditTitle": {
+    "description": "Título del formulario al editar una sede"
+  },
+  "venueFormNameLabel": "Nombre del complejo o sede",
+  "@venueFormNameLabel": {
+    "description": "Campo de nombre de la sede"
+  },
+  "venueFormNameHint": "Mínimo 3 caracteres",
+  "@venueFormNameHint": {
+    "description": "Pista de nombre de sede"
+  },
+  "venueFormAddressLabel": "Dirección urbana",
+  "@venueFormAddressLabel": {
+    "description": "Campo de dirección de la sede"
+  },
+  "venueFormAddressHint": "Mínimo 5 caracteres",
+  "@venueFormAddressHint": {
+    "description": "Pista de dirección de sede"
+  },
+  "venueFormReferenceLabel": "Punto de referencia o indicaciones",
+  "@venueFormReferenceLabel": {
+    "description": "Campo de referencia urbana"
+  },
+  "venueFormReferenceHint": "Opcional (ej. frente al parque metropolitano)",
+  "@venueFormReferenceHint": {
+    "description": "Pista de referencia urbana"
+  },
+  "venueFormLatitudeLabel": "Latitud",
+  "@venueFormLatitudeLabel": {
+    "description": "Campo numérico de latitud"
+  },
+  "venueFormLongitudeLabel": "Longitud",
+  "@venueFormLongitudeLabel": {
+    "description": "Campo numérico de longitud"
+  },
+  "venueFormPickOnMap": "Toca el mapa para fijar coordenadas",
+  "@venueFormPickOnMap": {
+    "description": "Instrucción de selección de coordenadas en mapa"
+  },
+  "venueFormSaveAction": "Guardar sede",
+  "@venueFormSaveAction": {
+    "description": "Botón para guardar sede en formulario"
+  },
+  "venueFormDiscardTitle": "¿Descartar cambios de la sede?",
+  "@venueFormDiscardTitle": {
+    "description": "Título de diálogo al salir con cambios de sede sin guardar"
+  },
+  "venueFormDiscardMessage": "Si sales ahora, se perderán los datos y canchas configuradas en este formulario.",
+  "@venueFormDiscardMessage": {
+    "description": "Mensaje de confirmación de descarte de formulario de sede"
+  },
+  "venueErrorNameTooShort": "El nombre debe tener al menos 3 caracteres",
+  "@venueErrorNameTooShort": {
+    "description": "Error cuando el nombre de la sede es menor a 3 caracteres"
+  },
+  "venueErrorAddressTooShort": "La dirección debe tener al menos 5 caracteres",
+  "@venueErrorAddressTooShort": {
+    "description": "Error cuando la dirección de la sede es menor a 5 caracteres"
+  },
+  "venueErrorInvalidLatitude": "Latitud inválida (debe estar entre -90.0 y 90.0)",
+  "@venueErrorInvalidLatitude": {
+    "description": "Error de validación para latitud fuera de rango"
+  },
+  "venueErrorInvalidLongitude": "Longitud inválida (debe estar entre -180.0 y 180.0)",
+  "@venueErrorInvalidLongitude": {
+    "description": "Error de validación para longitud fuera de rango"
+  },
+  "venueErrorPitchRequired": "Debes agregar al menos 1 cancha interna activa",
+  "@venueErrorPitchRequired": {
+    "description": "Error cuando la sede no tiene al menos una cancha activa"
+  },
+  "venueErrorPitchNameTooShort": "El nombre de la cancha debe tener al menos 2 caracteres",
+  "@venueErrorPitchNameTooShort": {
+    "description": "Error cuando el nombre de la cancha es menor a 2 caracteres"
+  },
+  "venueErrorPitchCapacityNegative": "La capacidad no puede ser negativa",
+  "@venueErrorPitchCapacityNegative": {
+    "description": "Error cuando la capacidad de la cancha es menor a 0"
+  },
+  "locationPermissionBanner": "Ubicación desactivada: mostrando sedes por referencia urbana",
+  "@locationPermissionBanner": {
+    "description": "Banner discreto cuando el permiso de ubicación está denegado o revocado"
+  },
+  "locationPermissionEnableAction": "Activar ubicación",
+  "@locationPermissionEnableAction": {
+    "description": "Botón de acción en el banner para activar ubicación"
+  },
+  "locationDevSimulatorTitle": "Simulador GPS (DEV)",
+  "@locationDevSimulatorTitle": {
+    "description": "Título del simulador de GPS en entorno de desarrollo"
+  },
+  "locationDevStateGranted": "Concedido",
+  "@locationDevStateGranted": {
+    "description": "Estado concedido en el simulador GPS"
+  },
+  "locationDevStateDenied": "Denegado",
+  "@locationDevStateDenied": {
+    "description": "Estado denegado en el simulador GPS"
+  },
+  "locationDevStatePermanentlyDenied": "Revocado",
+  "@locationDevStatePermanentlyDenied": {
+    "description": "Estado revocado en el simulador GPS"
   }
 }

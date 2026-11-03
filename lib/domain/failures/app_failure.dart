@@ -73,3 +73,19 @@ class InvalidAuthorizationCodeFailure extends AppFailure {
     super.cause,
   ]);
 }
+
+/// Emitted when venue or pitch data validation fails.
+class InvalidVenueDataFailure extends AppFailure {
+  const InvalidVenueDataFailure([
+    super.message = 'Datos de la sede o canchas inválidos',
+    super.cause,
+  ]);
+}
+
+/// Emitted when location permission or service access encounters an issue.
+class LocationPermissionFailure extends AppFailure {
+  const LocationPermissionFailure([
+    super.message = 'No se pudo obtener la ubicación del dispositivo',
+    super.cause,
+  ]);
+}
