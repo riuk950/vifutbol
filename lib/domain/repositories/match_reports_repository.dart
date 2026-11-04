@@ -8,6 +8,11 @@ abstract class MatchReportsRepository {
   /// linked to the given [match] if none exists yet.
   Future<DigitalMatchReport> loadOrCreateReport(ChampionshipMatch match);
 
+  /// Loads all persisted digital match reports associated with [tournamentId].
+  Future<List<DigitalMatchReport>> loadReportsForTournament(
+    String tournamentId,
+  );
+
   /// Saves the updated [DigitalMatchReport] to local storage.
   /// If [newlyCreatedEvents] are provided, also appends unsynced events to the sync queue.
   Future<DigitalMatchReport> saveReport(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vifutbol/application/controllers/standings_and_rankings_controller.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
@@ -10,6 +11,9 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_state_view.dart';
+import 'package:vifutbol/presentation/standings/widgets/knockout_bracket_card.dart';
+import 'package:vifutbol/presentation/standings/widgets/standings_table_card.dart';
+import 'package:vifutbol/presentation/standings/widgets/tournament_rankings_card.dart';
 import 'package:vifutbol/presentation/teams/widgets/tournament_teams_section.dart';
 import 'package:vifutbol/presentation/tournaments/tournament_form_screen.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/tournament_rules_summary_card.dart';
@@ -231,12 +235,85 @@ class StandingsTabView extends ConsumerWidget {
                       actorRole: activeRole,
                     ),
                     const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
+                    _TournamentCompetitiveSection(tournament: selected),
+                    const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
                   ],
                 );
               },
             ),
           ),
         ),
+      ],
+    );
+  }
+}
+
+class _TournamentCompetitiveSection extends ConsumerWidget {
+  const _TournamentCompetitiveSection({required this.tournament});
+
+  final ChampionshipTournament tournament;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final compState = ref.watch(
+      standingsAndRankingsControllerProvider(tournament.id),
+    );
+    final compController = ref.read(
+      standingsAndRankingsControllerProvider(tournament.id).notifier,
+    );
+    final snapshot = compState.snapshot;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Wrap(
+          spacing: KickPulseRadiiSpacing.spaceSm,
+          runSpacing: KickPulseRadiiSpacing.spaceXs,
+          children: <Widget>[
+            if (tournament.format.hasStandingsTable)
+              ChoiceChip(
+                key: const Key('competitive_view_selector_standings'),
+                label: Text(l10n.competitiveViewStandings),
+                selected:
+                    compState.activeViewMode == CompetitiveViewMode.standings,
+                onSelected: (_) => compController.selectViewMode(
+                  CompetitiveViewMode.standings,
+                ),
+              ),
+            if (tournament.format.hasKnockoutBracket)
+              ChoiceChip(
+                key: const Key('competitive_view_selector_brackets'),
+                label: Text(l10n.competitiveViewBrackets),
+                selected:
+                    compState.activeViewMode == CompetitiveViewMode.brackets,
+                onSelected: (_) =>
+                    compController.selectViewMode(CompetitiveViewMode.brackets),
+              ),
+            ChoiceChip(
+              key: const Key('competitive_view_selector_rankings'),
+              label: Text(l10n.competitiveViewRankings),
+              selected:
+                  compState.activeViewMode == CompetitiveViewMode.rankings,
+              onSelected: (_) =>
+                  compController.selectViewMode(CompetitiveViewMode.rankings),
+            ),
+          ],
+        ),
+        const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+        if (snapshot == null)
+          const SizedBox.shrink()
+        else if (compState.activeViewMode == CompetitiveViewMode.standings &&
+            tournament.format.hasStandingsTable)
+          StandingsTableCard(
+            mainTable: snapshot.mainStandingsTable,
+            groupTables: snapshot.groupStandingsTables,
+          )
+        else if (compState.activeViewMode == CompetitiveViewMode.brackets &&
+            snapshot.knockoutBracket != null)
+          KnockoutBracketCard(bracket: snapshot.knockoutBracket!)
+        else
+          TournamentRankingsCard(rankings: snapshot.rankings),
       ],
     );
   }

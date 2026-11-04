@@ -18,6 +18,9 @@ class ChampionshipMatch {
     this.status = MatchStatus.pendingSchedule,
     this.homeScore,
     this.awayScore,
+    this.homePenaltyScore,
+    this.awayPenaltyScore,
+    this.groupName,
     DateTime? updatedAt,
   }) : assert(id.isNotEmpty, 'Match id cannot be empty'),
        assert(tournamentId.isNotEmpty, 'Tournament id cannot be empty'),
@@ -31,6 +34,14 @@ class ChampionshipMatch {
        ),
        assert(homeScore == null || homeScore >= 0, 'homeScore must be >= 0'),
        assert(awayScore == null || awayScore >= 0, 'awayScore must be >= 0'),
+       assert(
+         homePenaltyScore == null || homePenaltyScore >= 0,
+         'homePenaltyScore must be >= 0',
+       ),
+       assert(
+         awayPenaltyScore == null || awayPenaltyScore >= 0,
+         'awayPenaltyScore must be >= 0',
+       ),
        updatedAt = updatedAt ?? DateTime.now();
 
   final String id;
@@ -49,6 +60,9 @@ class ChampionshipMatch {
   final MatchStatus status;
   final int? homeScore;
   final int? awayScore;
+  final int? homePenaltyScore;
+  final int? awayPenaltyScore;
+  final String? groupName;
   final DateTime updatedAt;
 
   bool get isScheduled =>
@@ -90,6 +104,11 @@ class ChampionshipMatch {
     bool clearHomeScore = false,
     int? awayScore,
     bool clearAwayScore = false,
+    int? homePenaltyScore,
+    bool clearHomePenaltyScore = false,
+    int? awayPenaltyScore,
+    bool clearAwayPenaltyScore = false,
+    String? groupName,
     DateTime? updatedAt,
   }) {
     return ChampionshipMatch(
@@ -109,6 +128,13 @@ class ChampionshipMatch {
       status: status ?? this.status,
       homeScore: clearHomeScore ? null : (homeScore ?? this.homeScore),
       awayScore: clearAwayScore ? null : (awayScore ?? this.awayScore),
+      homePenaltyScore: clearHomePenaltyScore
+          ? null
+          : (homePenaltyScore ?? this.homePenaltyScore),
+      awayPenaltyScore: clearAwayPenaltyScore
+          ? null
+          : (awayPenaltyScore ?? this.awayPenaltyScore),
+      groupName: groupName ?? this.groupName,
       updatedAt: updatedAt ?? DateTime.now(),
     );
   }
@@ -131,6 +157,9 @@ class ChampionshipMatch {
       'status': status.name,
       'homeScore': homeScore,
       'awayScore': awayScore,
+      'homePenaltyScore': homePenaltyScore,
+      'awayPenaltyScore': awayPenaltyScore,
+      'groupName': groupName,
       'updatedAt': updatedAt.toIso8601String(),
     };
   }
@@ -157,6 +186,9 @@ class ChampionshipMatch {
       status: MatchStatus.fromCode(json['status'] as String?),
       homeScore: (json['homeScore'] as num?)?.toInt(),
       awayScore: (json['awayScore'] as num?)?.toInt(),
+      homePenaltyScore: (json['homePenaltyScore'] as num?)?.toInt(),
+      awayPenaltyScore: (json['awayPenaltyScore'] as num?)?.toInt(),
+      groupName: json['groupName'] as String?,
       updatedAt: json['updatedAt'] != null
           ? DateTime.tryParse(json['updatedAt'] as String) ?? DateTime.now()
           : DateTime.now(),
@@ -182,7 +214,10 @@ class ChampionshipMatch {
         other.refereeName == refereeName &&
         other.status == status &&
         other.homeScore == homeScore &&
-        other.awayScore == awayScore;
+        other.awayScore == awayScore &&
+        other.homePenaltyScore == homePenaltyScore &&
+        other.awayPenaltyScore == awayPenaltyScore &&
+        other.groupName == groupName;
   }
 
   @override
@@ -199,5 +234,8 @@ class ChampionshipMatch {
     status,
     homeScore,
     awayScore,
+    homePenaltyScore,
+    awayPenaltyScore,
+    groupName,
   );
 }

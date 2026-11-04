@@ -7,12 +7,15 @@ import '../../domain/entities/match_report_enums.dart';
 import '../../domain/entities/player_internal_tracking.dart';
 import '../../domain/entities/registered_player.dart';
 import '../../domain/entities/role_permission_matrix.dart';
+import '../../domain/entities/tournament_team.dart';
 import '../../domain/entities/user_role.dart';
 import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/lineups_tracking_repository.dart';
 import '../../domain/repositories/match_reports_repository.dart';
+import '../../domain/repositories/teams_repository.dart';
 import '../../domain/repositories/tournament_matches_repository.dart';
 import '../../domain/repositories/tournaments_repository.dart';
+import '../../domain/services/knockout_bracket_service.dart';
 
 /// Application use case controlling live match periods, event recording,
 /// automatic double-yellow expulsions, and immutable report closure.
@@ -22,12 +25,16 @@ class ManageDigitalMatchReportUseCase {
     required this.tournamentMatchesRepository,
     required this.lineupsTrackingRepository,
     required this.tournamentsRepository,
+    this.teamsRepository,
+    this.knockoutBracketService = const KnockoutBracketService(),
   });
 
   final MatchReportsRepository matchReportsRepository;
   final TournamentMatchesRepository tournamentMatchesRepository;
   final LineupsTrackingRepository lineupsTrackingRepository;
   final TournamentsRepository tournamentsRepository;
+  final TeamsRepository? teamsRepository;
+  final KnockoutBracketService knockoutBracketService;
 
   void _assertAuthorizedForEvents(UserRole role) {
     final hasPermission =
@@ -492,6 +499,8 @@ class ManageDigitalMatchReportUseCase {
     required String userId,
     required ChampionshipMatch match,
     required DigitalMatchReport currentReport,
+    int? homePenaltyScore,
+    int? awayPenaltyScore,
     bool isOffline = false,
     DateTime? now,
   }) async {
@@ -526,6 +535,8 @@ class ManageDigitalMatchReportUseCase {
     );
 
     final closedReport = currentReport.copyWith(
+      homePenaltyScore: homePenaltyScore ?? currentReport.homePenaltyScore,
+      awayPenaltyScore: awayPenaltyScore ?? currentReport.awayPenaltyScore,
       currentPeriod: MatchPeriod.closed,
       clearPeriodStartedAt: true,
       elapsedSecondsBeforeCurrentPeriod: finalElapsed,
@@ -540,20 +551,70 @@ class ManageDigitalMatchReportUseCase {
       status: MatchStatus.completed,
       homeScore: closedReport.homeScore,
       awayScore: closedReport.awayScore,
+      homePenaltyScore: closedReport.homePenaltyScore,
+      awayPenaltyScore: closedReport.awayPenaltyScore,
       updatedAt: currentTime,
     );
     await tournamentMatchesRepository.saveMatch(completedMatch);
 
-    // Propagate individual stats & suspensions
-    await _propagatePlayerStatsAndSanctions(
-      tournamentId: match.tournamentId,
-      report: closedReport,
-    );
-
-    return matchReportsRepository.saveReport(
+    // Save closed report first so knockout bracket advancement sees it
+    final savedReport = await matchReportsRepository.saveReport(
       closedReport,
       newlyCreatedEvents: [closeEvent],
     );
+
+    // Propagate individual stats & suspensions
+    await _propagatePlayerStatsAndSanctions(
+      tournamentId: match.tournamentId,
+      report: savedReport,
+    );
+
+    // Automatically advance knockout bracket winners if applicable (FR-006)
+    await _advanceKnockoutWinnersIfApplicable(
+      tournamentId: match.tournamentId,
+      now: currentTime,
+    );
+
+    return savedReport;
+  }
+
+  Future<void> _advanceKnockoutWinnersIfApplicable({
+    required String tournamentId,
+    required DateTime now,
+  }) async {
+    try {
+      final tournaments = await tournamentsRepository.loadTournaments();
+      final tournament = tournaments
+          .where((t) => t.id == tournamentId)
+          .firstOrNull;
+      if (tournament == null || !tournament.format.hasKnockoutBracket) {
+        return;
+      }
+
+      final allMatches = await tournamentMatchesRepository
+          .loadMatchesForTournament(tournamentId);
+      final allReports = await matchReportsRepository.loadReportsForTournament(
+        tournamentId,
+      );
+      final teams = teamsRepository != null
+          ? await teamsRepository!.loadTeamsForTournament(tournamentId)
+          : const <TournamentTeam>[];
+
+      final nextRoundUpdates = knockoutBracketService
+          .computeUpdatedMatchesWithAdvancement(
+            tournament: tournament,
+            teams: teams,
+            currentMatches: allMatches,
+            reports: allReports,
+            now: now,
+          );
+
+      if (nextRoundUpdates.isNotEmpty) {
+        await tournamentMatchesRepository.saveMatchesBatch(nextRoundUpdates);
+      }
+    } catch (_) {
+      // Non-blocking fallback for bracket auto-advancement
+    }
   }
 
   Future<void> _propagatePlayerStatsAndSanctions({

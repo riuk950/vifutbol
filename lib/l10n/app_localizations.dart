@@ -2805,6 +2805,252 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'El jugador que sale y el que entra deben ser diferentes y no estar expulsados.'**
   String get matchReportErrorInvalidSubstitution;
+
+  /// Chip selector para la vista de Tabla de Posiciones
+  ///
+  /// In es, this message translates to:
+  /// **'Posiciones'**
+  String get competitiveViewStandings;
+
+  /// Chip selector para la vista de Llaves Eliminatorias
+  ///
+  /// In es, this message translates to:
+  /// **'Llaves'**
+  String get competitiveViewBrackets;
+
+  /// Chip selector para la vista de Rankings Deportivos
+  ///
+  /// In es, this message translates to:
+  /// **'Rankings'**
+  String get competitiveViewRankings;
+
+  /// Título de la tarjeta de tabla de posiciones
+  ///
+  /// In es, this message translates to:
+  /// **'Tabla de Posiciones Oficial'**
+  String get standingsTableTitle;
+
+  /// Subtítulo explicativo de la tabla de posiciones
+  ///
+  /// In es, this message translates to:
+  /// **'Clasificación determinista calculada a partir de actas oficiales cerradas'**
+  String get standingsTableSubtitle;
+
+  /// Columna Posición en tabla
+  ///
+  /// In es, this message translates to:
+  /// **'POS'**
+  String get standingsColPos;
+
+  /// Columna Equipo en tabla
+  ///
+  /// In es, this message translates to:
+  /// **'EQUIPO'**
+  String get standingsColTeam;
+
+  /// Columna Partidos Jugados
+  ///
+  /// In es, this message translates to:
+  /// **'PJ'**
+  String get standingsColPlayed;
+
+  /// Columna Partidos Ganados
+  ///
+  /// In es, this message translates to:
+  /// **'PG'**
+  String get standingsColWon;
+
+  /// Columna Partidos Empatados
+  ///
+  /// In es, this message translates to:
+  /// **'PE'**
+  String get standingsColDrawn;
+
+  /// Columna Partidos Perdidos
+  ///
+  /// In es, this message translates to:
+  /// **'PP'**
+  String get standingsColLost;
+
+  /// Columna Goles a Favor
+  ///
+  /// In es, this message translates to:
+  /// **'GF'**
+  String get standingsColGoalsFor;
+
+  /// Columna Goles en Contra
+  ///
+  /// In es, this message translates to:
+  /// **'GC'**
+  String get standingsColGoalsAgainst;
+
+  /// Columna Diferencia de Gol
+  ///
+  /// In es, this message translates to:
+  /// **'DG'**
+  String get standingsColGoalDifference;
+
+  /// Columna Puntos Totales
+  ///
+  /// In es, this message translates to:
+  /// **'PTS'**
+  String get standingsColPoints;
+
+  /// Columna Puntaje Fair Play
+  ///
+  /// In es, this message translates to:
+  /// **'FP'**
+  String get standingsColFairPlay;
+
+  /// Mensaje cuando no hay equipos para calcular la tabla
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay equipos habilitados en la tabla de posiciones.'**
+  String get standingsEmptyTeams;
+
+  /// Etiqueta de cantidad de partidos finalizados computados
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =0{Sin partidos finalizados} =1{1 acta cerrada} other{{count} actas cerradas}}'**
+  String standingsCompletedMatchesBadge(int count);
+
+  /// Leyenda de orden de desempate aplicado
+  ///
+  /// In es, this message translates to:
+  /// **'Desempate activo: {criteria}'**
+  String standingsTiebreakerCaption(String criteria);
+
+  /// Leyenda de zona de clasificación en la tabla
+  ///
+  /// In es, this message translates to:
+  /// **'Zona de clasificación / podio'**
+  String get standingsQualificationZoneLabel;
+
+  /// Indicador de empate en todos los criterios configurados
+  ///
+  /// In es, this message translates to:
+  /// **'Empate técnico'**
+  String get standingsTechnicalTieBadge;
+
+  /// Título de la sección de llaves eliminatorias
+  ///
+  /// In es, this message translates to:
+  /// **'Cuadro de Llaves Eliminatorias'**
+  String get knockoutBracketTitle;
+
+  /// Subtítulo del cuadro de llaves
+  ///
+  /// In es, this message translates to:
+  /// **'Avance automático de ganadores tras cierre de acta oficial'**
+  String get knockoutBracketSubtitle;
+
+  /// Modo de vista por rondas individuales con tarjetas Vs
+  ///
+  /// In es, this message translates to:
+  /// **'Por Rondas'**
+  String get knockoutViewModeByRound;
+
+  /// Modo de visor panorámico desplazable en 2D
+  ///
+  /// In es, this message translates to:
+  /// **'Visor 2D'**
+  String get knockoutViewModePanoramic;
+
+  /// Etiqueta cuando aún no se conoce el equipo clasificado
+  ///
+  /// In es, this message translates to:
+  /// **'Por definir'**
+  String get knockoutTbdTeam;
+
+  /// Etiqueta de resultado de tanda de penales
+  ///
+  /// In es, this message translates to:
+  /// **'Penales: {homePen} - {awayPen}'**
+  String knockoutPenaltyShootoutBadge(int homePen, int awayPen);
+
+  /// Etiqueta indicando el ganador que avanza de ronda
+  ///
+  /// In es, this message translates to:
+  /// **'Clasifica: {team}'**
+  String knockoutWinnerAdvancesBadge(String team);
+
+  /// Banner del equipo campeón de la final
+  ///
+  /// In es, this message translates to:
+  /// **'Campeón Oficial: {team}'**
+  String knockoutChampionBannerTitle(String team);
+
+  /// Título de la tarjeta de rankings deportivos
+  ///
+  /// In es, this message translates to:
+  /// **'Rankings y Estadísticas Deportivas'**
+  String get rankingsSectionTitle;
+
+  /// Subtítulo de la tarjeta de rankings
+  ///
+  /// In es, this message translates to:
+  /// **'Líderes individuales y tabla disciplinaria Fair Play'**
+  String get rankingsSectionSubtitle;
+
+  /// Pestaña de máximos goleadores
+  ///
+  /// In es, this message translates to:
+  /// **'Goleadores'**
+  String get rankingsCategoryScorers;
+
+  /// Pestaña de líderes de asistencias
+  ///
+  /// In es, this message translates to:
+  /// **'Asistencias'**
+  String get rankingsCategoryAssists;
+
+  /// Pestaña de tabla disciplinaria Fair Play
+  ///
+  /// In es, this message translates to:
+  /// **'Fair Play'**
+  String get rankingsCategoryFairPlay;
+
+  /// Estado vacío de tabla de goleadores
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no se han registrado goles en actas oficiales cerradas.'**
+  String get rankingsEmptyScorers;
+
+  /// Estado vacío de tabla de asistencias
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no se han registrado asistencias en actas oficiales cerradas.'**
+  String get rankingsEmptyAssists;
+
+  /// Estado vacío de tabla Fair Play
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay equipos evaluados en la clasificación Fair Play.'**
+  String get rankingsEmptyFairPlay;
+
+  /// Unidad de goles anotados
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 gol} other{{count} goles}}'**
+  String rankingsGoalsUnit(int count);
+
+  /// Unidad de asistencias
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 asist.} other{{count} asist.}}'**
+  String rankingsAssistsUnit(int count);
+
+  /// Unidad de puntos de penalización Fair Play
+  ///
+  /// In es, this message translates to:
+  /// **'{points} pts FP'**
+  String rankingsFairPlayPointsUnit(int points);
+
+  /// Leyenda de ponderación de tarjetas en Fair Play
+  ///
+  /// In es, this message translates to:
+  /// **'Ponderación oficial: Amarilla (-1 pt) · Doble Amarilla/Roja (-3 pts) · Roja Directa (-3 pts)'**
+  String get rankingsFairPlayLegend;
 }
 
 class _AppLocalizationsDelegate

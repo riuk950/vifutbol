@@ -2026,5 +2026,212 @@
   "matchReportErrorInvalidSubstitution": "El jugador que sale y el que entra deben ser diferentes y no estar expulsados.",
   "@matchReportErrorInvalidSubstitution": {
     "description": "Error cuando los jugadores de la sustitución son inválidos"
+  },
+  "competitiveViewStandings": "Posiciones",
+  "@competitiveViewStandings": {
+    "description": "Chip selector para la vista de Tabla de Posiciones"
+  },
+  "competitiveViewBrackets": "Llaves",
+  "@competitiveViewBrackets": {
+    "description": "Chip selector para la vista de Llaves Eliminatorias"
+  },
+  "competitiveViewRankings": "Rankings",
+  "@competitiveViewRankings": {
+    "description": "Chip selector para la vista de Rankings Deportivos"
+  },
+  "standingsTableTitle": "Tabla de Posiciones Oficial",
+  "@standingsTableTitle": {
+    "description": "Título de la tarjeta de tabla de posiciones"
+  },
+  "standingsTableSubtitle": "Clasificación determinista calculada a partir de actas oficiales cerradas",
+  "@standingsTableSubtitle": {
+    "description": "Subtítulo explicativo de la tabla de posiciones"
+  },
+  "standingsColPos": "POS",
+  "@standingsColPos": {
+    "description": "Columna Posición en tabla"
+  },
+  "standingsColTeam": "EQUIPO",
+  "@standingsColTeam": {
+    "description": "Columna Equipo en tabla"
+  },
+  "standingsColPlayed": "PJ",
+  "@standingsColPlayed": {
+    "description": "Columna Partidos Jugados"
+  },
+  "standingsColWon": "PG",
+  "@standingsColWon": {
+    "description": "Columna Partidos Ganados"
+  },
+  "standingsColDrawn": "PE",
+  "@standingsColDrawn": {
+    "description": "Columna Partidos Empatados"
+  },
+  "standingsColLost": "PP",
+  "@standingsColLost": {
+    "description": "Columna Partidos Perdidos"
+  },
+  "standingsColGoalsFor": "GF",
+  "@standingsColGoalsFor": {
+    "description": "Columna Goles a Favor"
+  },
+  "standingsColGoalsAgainst": "GC",
+  "@standingsColGoalsAgainst": {
+    "description": "Columna Goles en Contra"
+  },
+  "standingsColGoalDifference": "DG",
+  "@standingsColGoalDifference": {
+    "description": "Columna Diferencia de Gol"
+  },
+  "standingsColPoints": "PTS",
+  "@standingsColPoints": {
+    "description": "Columna Puntos Totales"
+  },
+  "standingsColFairPlay": "FP",
+  "@standingsColFairPlay": {
+    "description": "Columna Puntaje Fair Play"
+  },
+  "standingsEmptyTeams": "Aún no hay equipos habilitados en la tabla de posiciones.",
+  "@standingsEmptyTeams": {
+    "description": "Mensaje cuando no hay equipos para calcular la tabla"
+  },
+  "standingsCompletedMatchesBadge": "{count, plural, =0{Sin partidos finalizados} =1{1 acta cerrada} other{{count} actas cerradas}}",
+  "@standingsCompletedMatchesBadge": {
+    "description": "Etiqueta de cantidad de partidos finalizados computados",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "standingsTiebreakerCaption": "Desempate activo: {criteria}",
+  "@standingsTiebreakerCaption": {
+    "description": "Leyenda de orden de desempate aplicado",
+    "placeholders": {
+      "criteria": {
+        "type": "String"
+      }
+    }
+  },
+  "standingsQualificationZoneLabel": "Zona de clasificación / podio",
+  "@standingsQualificationZoneLabel": {
+    "description": "Leyenda de zona de clasificación en la tabla"
+  },
+  "standingsTechnicalTieBadge": "Empate técnico",
+  "@standingsTechnicalTieBadge": {
+    "description": "Indicador de empate en todos los criterios configurados"
+  },
+  "knockoutBracketTitle": "Cuadro de Llaves Eliminatorias",
+  "@knockoutBracketTitle": {
+    "description": "Título de la sección de llaves eliminatorias"
+  },
+  "knockoutBracketSubtitle": "Avance automático de ganadores tras cierre de acta oficial",
+  "@knockoutBracketSubtitle": {
+    "description": "Subtítulo del cuadro de llaves"
+  },
+  "knockoutViewModeByRound": "Por Rondas",
+  "@knockoutViewModeByRound": {
+    "description": "Modo de vista por rondas individuales con tarjetas Vs"
+  },
+  "knockoutViewModePanoramic": "Visor 2D",
+  "@knockoutViewModePanoramic": {
+    "description": "Modo de visor panorámico desplazable en 2D"
+  },
+  "knockoutTbdTeam": "Por definir",
+  "@knockoutTbdTeam": {
+    "description": "Etiqueta cuando aún no se conoce el equipo clasificado"
+  },
+  "knockoutPenaltyShootoutBadge": "Penales: {homePen} - {awayPen}",
+  "@knockoutPenaltyShootoutBadge": {
+    "description": "Etiqueta de resultado de tanda de penales",
+    "placeholders": {
+      "homePen": {
+        "type": "int"
+      },
+      "awayPen": {
+        "type": "int"
+      }
+    }
+  },
+  "knockoutWinnerAdvancesBadge": "Clasifica: {team}",
+  "@knockoutWinnerAdvancesBadge": {
+    "description": "Etiqueta indicando el ganador que avanza de ronda",
+    "placeholders": {
+      "team": {
+        "type": "String"
+      }
+    }
+  },
+  "knockoutChampionBannerTitle": "Campeón Oficial: {team}",
+  "@knockoutChampionBannerTitle": {
+    "description": "Banner del equipo campeón de la final",
+    "placeholders": {
+      "team": {
+        "type": "String"
+      }
+    }
+  },
+  "rankingsSectionTitle": "Rankings y Estadísticas Deportivas",
+  "@rankingsSectionTitle": {
+    "description": "Título de la tarjeta de rankings deportivos"
+  },
+  "rankingsSectionSubtitle": "Líderes individuales y tabla disciplinaria Fair Play",
+  "@rankingsSectionSubtitle": {
+    "description": "Subtítulo de la tarjeta de rankings"
+  },
+  "rankingsCategoryScorers": "Goleadores",
+  "@rankingsCategoryScorers": {
+    "description": "Pestaña de máximos goleadores"
+  },
+  "rankingsCategoryAssists": "Asistencias",
+  "@rankingsCategoryAssists": {
+    "description": "Pestaña de líderes de asistencias"
+  },
+  "rankingsCategoryFairPlay": "Fair Play",
+  "@rankingsCategoryFairPlay": {
+    "description": "Pestaña de tabla disciplinaria Fair Play"
+  },
+  "rankingsEmptyScorers": "Aún no se han registrado goles en actas oficiales cerradas.",
+  "@rankingsEmptyScorers": {
+    "description": "Estado vacío de tabla de goleadores"
+  },
+  "rankingsEmptyAssists": "Aún no se han registrado asistencias en actas oficiales cerradas.",
+  "@rankingsEmptyAssists": {
+    "description": "Estado vacío de tabla de asistencias"
+  },
+  "rankingsEmptyFairPlay": "Aún no hay equipos evaluados en la clasificación Fair Play.",
+  "@rankingsEmptyFairPlay": {
+    "description": "Estado vacío de tabla Fair Play"
+  },
+  "rankingsGoalsUnit": "{count, plural, =1{1 gol} other{{count} goles}}",
+  "@rankingsGoalsUnit": {
+    "description": "Unidad de goles anotados",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rankingsAssistsUnit": "{count, plural, =1{1 asist.} other{{count} asist.}}",
+  "@rankingsAssistsUnit": {
+    "description": "Unidad de asistencias",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rankingsFairPlayPointsUnit": "{points} pts FP",
+  "@rankingsFairPlayPointsUnit": {
+    "description": "Unidad de puntos de penalización Fair Play",
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "rankingsFairPlayLegend": "Ponderación oficial: Amarilla (-1 pt) · Doble Amarilla/Roja (-3 pts) · Roja Directa (-3 pts)",
+  "@rankingsFairPlayLegend": {
+    "description": "Leyenda de ponderación de tarjetas en Fair Play"
   }
 }

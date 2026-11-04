@@ -1576,4 +1576,170 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get matchReportErrorInvalidSubstitution =>
       'El jugador que sale y el que entra deben ser diferentes y no estar expulsados.';
+
+  @override
+  String get competitiveViewStandings => 'Posiciones';
+
+  @override
+  String get competitiveViewBrackets => 'Llaves';
+
+  @override
+  String get competitiveViewRankings => 'Rankings';
+
+  @override
+  String get standingsTableTitle => 'Tabla de Posiciones Oficial';
+
+  @override
+  String get standingsTableSubtitle =>
+      'Clasificación determinista calculada a partir de actas oficiales cerradas';
+
+  @override
+  String get standingsColPos => 'POS';
+
+  @override
+  String get standingsColTeam => 'EQUIPO';
+
+  @override
+  String get standingsColPlayed => 'PJ';
+
+  @override
+  String get standingsColWon => 'PG';
+
+  @override
+  String get standingsColDrawn => 'PE';
+
+  @override
+  String get standingsColLost => 'PP';
+
+  @override
+  String get standingsColGoalsFor => 'GF';
+
+  @override
+  String get standingsColGoalsAgainst => 'GC';
+
+  @override
+  String get standingsColGoalDifference => 'DG';
+
+  @override
+  String get standingsColPoints => 'PTS';
+
+  @override
+  String get standingsColFairPlay => 'FP';
+
+  @override
+  String get standingsEmptyTeams =>
+      'Aún no hay equipos habilitados en la tabla de posiciones.';
+
+  @override
+  String standingsCompletedMatchesBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count actas cerradas',
+      one: '1 acta cerrada',
+      zero: 'Sin partidos finalizados',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String standingsTiebreakerCaption(String criteria) {
+    return 'Desempate activo: $criteria';
+  }
+
+  @override
+  String get standingsQualificationZoneLabel => 'Zona de clasificación / podio';
+
+  @override
+  String get standingsTechnicalTieBadge => 'Empate técnico';
+
+  @override
+  String get knockoutBracketTitle => 'Cuadro de Llaves Eliminatorias';
+
+  @override
+  String get knockoutBracketSubtitle =>
+      'Avance automático de ganadores tras cierre de acta oficial';
+
+  @override
+  String get knockoutViewModeByRound => 'Por Rondas';
+
+  @override
+  String get knockoutViewModePanoramic => 'Visor 2D';
+
+  @override
+  String get knockoutTbdTeam => 'Por definir';
+
+  @override
+  String knockoutPenaltyShootoutBadge(int homePen, int awayPen) {
+    return 'Penales: $homePen - $awayPen';
+  }
+
+  @override
+  String knockoutWinnerAdvancesBadge(String team) {
+    return 'Clasifica: $team';
+  }
+
+  @override
+  String knockoutChampionBannerTitle(String team) {
+    return 'Campeón Oficial: $team';
+  }
+
+  @override
+  String get rankingsSectionTitle => 'Rankings y Estadísticas Deportivas';
+
+  @override
+  String get rankingsSectionSubtitle =>
+      'Líderes individuales y tabla disciplinaria Fair Play';
+
+  @override
+  String get rankingsCategoryScorers => 'Goleadores';
+
+  @override
+  String get rankingsCategoryAssists => 'Asistencias';
+
+  @override
+  String get rankingsCategoryFairPlay => 'Fair Play';
+
+  @override
+  String get rankingsEmptyScorers =>
+      'Aún no se han registrado goles en actas oficiales cerradas.';
+
+  @override
+  String get rankingsEmptyAssists =>
+      'Aún no se han registrado asistencias en actas oficiales cerradas.';
+
+  @override
+  String get rankingsEmptyFairPlay =>
+      'Aún no hay equipos evaluados en la clasificación Fair Play.';
+
+  @override
+  String rankingsGoalsUnit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count goles',
+      one: '1 gol',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rankingsAssistsUnit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count asist.',
+      one: '1 asist.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rankingsFairPlayPointsUnit(int points) {
+    return '$points pts FP';
+  }
+
+  @override
+  String get rankingsFairPlayLegend =>
+      'Ponderación oficial: Amarilla (-1 pt) · Doble Amarilla/Roja (-3 pts) · Roja Directa (-3 pts)';
 }

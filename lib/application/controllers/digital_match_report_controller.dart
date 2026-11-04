@@ -368,6 +368,8 @@ class DigitalMatchReportController
   Future<bool> closeReport({
     required UserRole activeRole,
     required String userId,
+    int? homePenaltyScore,
+    int? awayPenaltyScore,
   }) async {
     final currentReport = state.report;
     final currentMatch = state.match;
@@ -380,6 +382,8 @@ class DigitalMatchReportController
         userId: userId,
         match: currentMatch,
         currentReport: currentReport,
+        homePenaltyScore: homePenaltyScore,
+        awayPenaltyScore: awayPenaltyScore,
         isOffline: state.isOfflineMode,
       );
 
@@ -387,6 +391,8 @@ class DigitalMatchReportController
         status: MatchStatus.completed,
         homeScore: updatedReport.homeScore,
         awayScore: updatedReport.awayScore,
+        homePenaltyScore: updatedReport.homePenaltyScore,
+        awayPenaltyScore: updatedReport.awayPenaltyScore,
       );
 
       state = state.copyWith(

@@ -11,6 +11,8 @@ class DigitalMatchReport {
     required this.awayTeamId,
     this.homeScore = 0,
     this.awayScore = 0,
+    this.homePenaltyScore,
+    this.awayPenaltyScore,
     this.currentPeriod = MatchPeriod.notStarted,
     this.periodStartedAt,
     this.elapsedSecondsBeforeCurrentPeriod = 0,
@@ -29,6 +31,14 @@ class DigitalMatchReport {
        assert(homeScore >= 0, 'homeScore cannot be negative'),
        assert(awayScore >= 0, 'awayScore cannot be negative'),
        assert(
+         homePenaltyScore == null || homePenaltyScore >= 0,
+         'homePenaltyScore cannot be negative',
+       ),
+       assert(
+         awayPenaltyScore == null || awayPenaltyScore >= 0,
+         'awayPenaltyScore cannot be negative',
+       ),
+       assert(
          elapsedSecondsBeforeCurrentPeriod >= 0,
          'elapsedSecondsBeforeCurrentPeriod cannot be negative',
        ),
@@ -41,6 +51,8 @@ class DigitalMatchReport {
   final String awayTeamId;
   final int homeScore;
   final int awayScore;
+  final int? homePenaltyScore;
+  final int? awayPenaltyScore;
   final MatchPeriod currentPeriod;
   final DateTime? periodStartedAt;
   final int elapsedSecondsBeforeCurrentPeriod;
@@ -98,6 +110,10 @@ class DigitalMatchReport {
     String? awayTeamId,
     int? homeScore,
     int? awayScore,
+    int? homePenaltyScore,
+    bool clearHomePenaltyScore = false,
+    int? awayPenaltyScore,
+    bool clearAwayPenaltyScore = false,
     MatchPeriod? currentPeriod,
     DateTime? periodStartedAt,
     bool clearPeriodStartedAt = false,
@@ -114,6 +130,12 @@ class DigitalMatchReport {
       awayTeamId: awayTeamId ?? this.awayTeamId,
       homeScore: homeScore ?? this.homeScore,
       awayScore: awayScore ?? this.awayScore,
+      homePenaltyScore: clearHomePenaltyScore
+          ? null
+          : (homePenaltyScore ?? this.homePenaltyScore),
+      awayPenaltyScore: clearAwayPenaltyScore
+          ? null
+          : (awayPenaltyScore ?? this.awayPenaltyScore),
       currentPeriod: currentPeriod ?? this.currentPeriod,
       periodStartedAt: clearPeriodStartedAt
           ? null
@@ -136,6 +158,8 @@ class DigitalMatchReport {
       'awayTeamId': awayTeamId,
       'homeScore': homeScore,
       'awayScore': awayScore,
+      'homePenaltyScore': homePenaltyScore,
+      'awayPenaltyScore': awayPenaltyScore,
       'currentPeriod': currentPeriod.name,
       'periodStartedAt': periodStartedAt?.toIso8601String(),
       'elapsedSecondsBeforeCurrentPeriod': elapsedSecondsBeforeCurrentPeriod,
@@ -162,6 +186,8 @@ class DigitalMatchReport {
       awayTeamId: json['awayTeamId'] as String? ?? '',
       homeScore: (json['homeScore'] as num?)?.toInt() ?? 0,
       awayScore: (json['awayScore'] as num?)?.toInt() ?? 0,
+      homePenaltyScore: (json['homePenaltyScore'] as num?)?.toInt(),
+      awayPenaltyScore: (json['awayPenaltyScore'] as num?)?.toInt(),
       currentPeriod: MatchPeriod.fromCode(json['currentPeriod'] as String?),
       periodStartedAt: json['periodStartedAt'] != null
           ? DateTime.tryParse(json['periodStartedAt'] as String)

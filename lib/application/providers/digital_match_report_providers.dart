@@ -24,12 +24,14 @@ final manageDigitalMatchReportUseCaseProvider =
       final matchesRepo = ref.watch(tournamentMatchesRepositoryProvider);
       final lineupsRepo = ref.watch(lineupsTrackingRepositoryProvider);
       final tournamentsRepo = ref.watch(tournamentsRepositoryProvider);
+      final teamsRepo = ref.watch(teamsRepositoryProvider);
 
       return ManageDigitalMatchReportUseCase(
         matchReportsRepository: reportsRepo,
         tournamentMatchesRepository: matchesRepo,
         lineupsTrackingRepository: lineupsRepo,
         tournamentsRepository: tournamentsRepo,
+        teamsRepository: teamsRepo,
       );
     });
 

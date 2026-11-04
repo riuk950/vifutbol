@@ -51,6 +51,14 @@ class LocalMatchReportsRepository implements MatchReportsRepository {
   }
 
   @override
+  Future<List<DigitalMatchReport>> loadReportsForTournament(
+    String tournamentId,
+  ) async {
+    final reports = await _loadAllReports();
+    return reports.where((r) => r.tournamentId == tournamentId).toList();
+  }
+
+  @override
   Future<DigitalMatchReport> saveReport(
     DigitalMatchReport report, {
     List<MatchEvent> newlyCreatedEvents = const [],

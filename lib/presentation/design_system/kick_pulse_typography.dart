@@ -58,4 +58,19 @@ class KickPulseTypography {
     letterSpacing: 0.5,
     color: KickPulseColors.textPrimary,
   );
+
+  /// Returns a tabular-nums (`FontFeature.tabularFigures()`) text style for
+  /// standings tables, scores, and sports rankings (`FR-010`).
+  static TextStyle statMetric({
+    double size = 13.0,
+    FontWeight weight = FontWeight.w600,
+    Color color = KickPulseColors.textPrimary,
+  }) {
+    return TextStyle(
+      fontSize: size,
+      fontWeight: weight,
+      color: color,
+      fontFeatures: tabularFontFeatures,
+    );
+  }
 }
