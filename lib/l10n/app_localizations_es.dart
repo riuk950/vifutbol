@@ -1333,4 +1333,247 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get fixtureErrorInvalidTimes =>
       'La hora de inicio o duración del partido no son válidas.';
+
+  @override
+  String get matchReportTitle => 'Acta Digital del Árbitro';
+
+  @override
+  String get matchReportHeaderTitle => 'Acta del Partido';
+
+  @override
+  String get matchPeriodNotStarted => 'Por Iniciar';
+
+  @override
+  String get matchPeriodFirstHalf => 'Primer Tiempo';
+
+  @override
+  String get matchPeriodHalfTime => 'Descanso';
+
+  @override
+  String get matchPeriodSecondHalf => 'Segundo Tiempo';
+
+  @override
+  String get matchPeriodFullTime => 'Tiempo Cumplido';
+
+  @override
+  String get matchPeriodClosed => 'Acta Cerrada';
+
+  @override
+  String get matchStatusLiveBadge => 'EN JUEGO';
+
+  @override
+  String get matchStatusFinishedBadge => 'FINALIZADO';
+
+  @override
+  String get matchActionStartMatch => 'Iniciar Partido';
+
+  @override
+  String get matchActionEndFirstHalf => 'Fin 1er Tiempo';
+
+  @override
+  String get matchActionStartSecondHalf => 'Iniciar 2do Tiempo';
+
+  @override
+  String get matchActionEndSecondHalf => 'Tiempo Cumplido';
+
+  @override
+  String get matchActionRecordGoal => 'Registrar Gol';
+
+  @override
+  String get matchActionRecordYellowCard => 'Tarjeta Amarilla';
+
+  @override
+  String get matchActionRecordRedCard => 'Tarjeta Roja';
+
+  @override
+  String get matchActionRecordSubstitution => 'Sustitución';
+
+  @override
+  String get matchActionCloseReport => 'Cerrar Acta Oficial';
+
+  @override
+  String get matchActionOpenRefereeReport => 'Acta Arbitral';
+
+  @override
+  String get matchActionViewReport => 'Ver Acta';
+
+  @override
+  String get matchReportOfflineBanner =>
+      'Modo sin conexión: cambios guardados en el dispositivo';
+
+  @override
+  String get matchReportOnlineStatus => 'En línea';
+
+  @override
+  String get matchReportOfflineStatus => 'Sin conexión';
+
+  @override
+  String matchReportPendingSyncCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cambios pendientes de sincronización',
+      one: '1 cambio pendiente de sincronización',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get matchReportSyncingEvents => 'Sincronizando eventos...';
+
+  @override
+  String get matchReportAllEventsSynced => 'Todos los eventos sincronizados';
+
+  @override
+  String get recordGoalDialogTitle => 'Registrar Gol';
+
+  @override
+  String get recordGoalTeamLabel => 'Equipo anotador';
+
+  @override
+  String get recordGoalMinuteLabel => 'Minuto del gol';
+
+  @override
+  String get recordGoalScorerLabel => 'Jugador anotador';
+
+  @override
+  String get recordGoalAssistantLabel => 'Jugador asistente (opcional)';
+
+  @override
+  String get recordGoalNoAssistantOption => 'Sin asistencia';
+
+  @override
+  String get recordGoalConfirmAction => 'Confirmar Gol';
+
+  @override
+  String get recordCardDialogTitle => 'Registrar Tarjeta Disciplinaria';
+
+  @override
+  String get recordCardYellowTitle => 'Tarjeta Amarilla';
+
+  @override
+  String get recordCardRedTitle => 'Tarjeta Roja Directa';
+
+  @override
+  String get recordCardPlayerLabel => 'Jugador amonestado / sancionado';
+
+  @override
+  String get recordCardConfirmAction => 'Confirmar Tarjeta';
+
+  @override
+  String get recordCardSecondYellowExpulsion =>
+      'Segunda Amarilla (Expulsión Automática)';
+
+  @override
+  String get recordSubstitutionDialogTitle => 'Registrar Sustitución';
+
+  @override
+  String get recordSubstitutionPlayerOutLabel => 'Jugador que sale';
+
+  @override
+  String get recordSubstitutionPlayerInLabel => 'Jugador que entra';
+
+  @override
+  String get recordSubstitutionConfirmAction => 'Confirmar Sustitución';
+
+  @override
+  String get matchEventUndoAction => 'Anular';
+
+  @override
+  String get matchEventUndoConfirmTitle => '¿Anular incidencia del acta?';
+
+  @override
+  String get matchEventUndoConfirmMessage =>
+      'Se recalculará el marcador y el estado de sanciones del partido.';
+
+  @override
+  String get matchEventUndoConfirmButton => 'Anular Incidencia';
+
+  @override
+  String get closeReportDialogTitle => 'Cierre Definitivo del Acta Oficial';
+
+  @override
+  String get closeReportSummaryTitle => 'Resumen Oficial del Encuentro';
+
+  @override
+  String closeReportFinalScore(String score) {
+    return 'Marcador Final: $score';
+  }
+
+  @override
+  String get closeReportWarningMessage =>
+      '¿Confirmas el cierre definitivo del acta? Esta acción es irreversible y bloqueará cualquier modificación posterior.';
+
+  @override
+  String get closeReportConfirmButton => 'Confirmar y Cerrar Acta';
+
+  @override
+  String get matchTimelineTitle => 'Línea de Tiempo';
+
+  @override
+  String get matchTimelineEmpty =>
+      'No hay incidencias registradas aún en el partido.';
+
+  @override
+  String matchEventGoalDescription(String player) {
+    return 'Gol de $player';
+  }
+
+  @override
+  String matchEventAssistantDescription(String player) {
+    return 'Asistencia: $player';
+  }
+
+  @override
+  String matchEventYellowCardDescription(String player) {
+    return 'Tarjeta Amarilla - $player';
+  }
+
+  @override
+  String matchEventSecondYellowRedDescription(String player) {
+    return 'Segunda Amarilla y Expulsión - $player';
+  }
+
+  @override
+  String matchEventDirectRedDescription(String player) {
+    return 'Tarjeta Roja Directa - $player';
+  }
+
+  @override
+  String matchEventSubstitutionDescription(String playerOut, String playerIn) {
+    return 'Sale $playerOut, entra $playerIn';
+  }
+
+  @override
+  String matchEventPeriodTransitionDescription(String period) {
+    return 'Inicio de $period';
+  }
+
+  @override
+  String get matchReportErrorUnauthorized =>
+      'No tienes permisos de árbitro u organizador para dirigir este partido.';
+
+  @override
+  String get matchReportErrorAlreadyClosed =>
+      'El acta oficial ya ha sido cerrada y no puede ser modificada.';
+
+  @override
+  String get matchReportErrorNotInProgress =>
+      'El partido debe estar en juego para registrar incidencias.';
+
+  @override
+  String get matchReportErrorInvalidMinute =>
+      'El minuto debe estar entre 1 y 130.';
+
+  @override
+  String get matchReportErrorPlayerExpelled =>
+      'El jugador ya fue expulsado y no puede realizar nuevas acciones en el partido.';
+
+  @override
+  String get matchReportErrorInvalidAssistant =>
+      'El jugador asistente no puede ser el mismo anotador ni pertenecer al equipo contrario.';
+
+  @override
+  String get matchReportErrorInvalidSubstitution =>
+      'El jugador que sale y el que entra deben ser diferentes y no estar expulsados.';
 }

@@ -58,6 +58,12 @@ class MatchLineupConvocation {
   bool get isSyncedWithRefereeReport =>
       confirmedAt != null && confirmedStarterPlayerIds.isNotEmpty;
 
+  /// Returns all player IDs included in this convocation (starters and substitutes).
+  List<String> get allPlayerIds => [
+    ...starterPlayerIds,
+    ...substitutePlayerIds,
+  ];
+
   MatchLineupConvocation copyWith({
     String? id,
     String? tournamentId,

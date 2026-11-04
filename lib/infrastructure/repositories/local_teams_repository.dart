@@ -181,7 +181,7 @@ class LocalTeamsRepository implements TeamsRepository {
             documentId: '20200001',
             shirtNumber: 1,
             position: PlayerPosition.goalkeeper,
-            isEligible: false,
+            isEligible: true,
           ),
           RegisteredPlayer(
             id: 'p-seed-rsc-2',
@@ -189,7 +189,7 @@ class LocalTeamsRepository implements TeamsRepository {
             documentId: '20200002',
             shirtNumber: 2,
             position: PlayerPosition.defender,
-            isEligible: false,
+            isEligible: true,
           ),
           RegisteredPlayer(
             id: 'p-seed-rsc-3',
@@ -197,7 +197,7 @@ class LocalTeamsRepository implements TeamsRepository {
             documentId: '20200003',
             shirtNumber: 6,
             position: PlayerPosition.midfielder,
-            isEligible: false,
+            isEligible: true,
           ),
           RegisteredPlayer(
             id: 'p-seed-rsc-4',
@@ -205,7 +205,7 @@ class LocalTeamsRepository implements TeamsRepository {
             documentId: '20200004',
             shirtNumber: 7,
             position: PlayerPosition.forward,
-            isEligible: false,
+            isEligible: true,
           ),
           RegisteredPlayer(
             id: 'p-seed-rsc-5',
@@ -213,7 +213,7 @@ class LocalTeamsRepository implements TeamsRepository {
             documentId: '20200005',
             shirtNumber: 10,
             position: PlayerPosition.midfielder,
-            isEligible: false,
+            isEligible: true,
           ),
         ],
       ),

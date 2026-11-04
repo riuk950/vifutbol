@@ -20,6 +20,7 @@ class MatchCard extends StatelessWidget {
     this.awayTeam,
     this.canSchedule = false,
     this.onScheduleTap,
+    this.onOpenReportTap,
   });
 
   final ChampionshipMatch match;
@@ -27,6 +28,7 @@ class MatchCard extends StatelessWidget {
   final TournamentTeam? awayTeam;
   final bool canSchedule;
   final VoidCallback? onScheduleTap;
+  final VoidCallback? onOpenReportTap;
 
   @override
   Widget build(BuildContext context) {
@@ -95,24 +97,37 @@ class MatchCard extends StatelessWidget {
                   ),
                 ),
 
-                // VS Badge
+                // VS Badge or Live/Final Score
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: KickPulseRadiiSpacing.spaceSm,
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: KickPulseColors.surfaceElevated,
+                    color: match.homeScore != null && match.awayScore != null
+                        ? KickPulseColors.surfaceBase
+                        : KickPulseColors.surfaceElevated,
                     borderRadius: BorderRadius.circular(
                       KickPulseRadiiSpacing.chipRadius,
                     ),
-                    border: Border.all(color: KickPulseColors.borderSubtle),
+                    border: Border.all(
+                      color: match.status == MatchStatus.inProgress
+                          ? KickPulseColors.accentLive
+                          : KickPulseColors.borderSubtle,
+                    ),
                   ),
                   child: Text(
-                    'VS',
+                    match.homeScore != null && match.awayScore != null
+                        ? '${match.homeScore} - ${match.awayScore}'
+                        : 'VS',
                     style: KickPulseTypography.captionMeta.copyWith(
-                      color: KickPulseColors.textSecondary,
+                      color: match.status == MatchStatus.inProgress
+                          ? KickPulseColors.accentLive
+                          : (match.homeScore != null
+                                ? Colors.white
+                                : KickPulseColors.textSecondary),
                       fontWeight: FontWeight.w800,
+                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
                 ),
@@ -245,44 +260,90 @@ class MatchCard extends StatelessWidget {
               ),
             ],
 
-            // Action button for Organizer
-            if (canSchedule) ...[
+            // Action buttons row
+            if (canSchedule ||
+                match.status == MatchStatus.scheduled ||
+                match.status == MatchStatus.inProgress ||
+                match.status == MatchStatus.completed) ...[
               const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton.icon(
-                  key: Key('schedule_match_button_${match.id}'),
-                  onPressed: onScheduleTap,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: KickPulseColors.surfaceElevated,
-                    foregroundColor: KickPulseColors.accentElectric,
-                    side: const BorderSide(
-                      color: KickPulseColors.accentElectric,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: KickPulseRadiiSpacing.spaceMd,
-                      vertical: KickPulseRadiiSpacing.spaceXs,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        KickPulseRadiiSpacing.chipRadius,
+              Wrap(
+                alignment: WrapAlignment.end,
+                spacing: KickPulseRadiiSpacing.spaceSm,
+                runSpacing: KickPulseRadiiSpacing.spaceXs,
+                children: [
+                  if (match.status != MatchStatus.pendingSchedule)
+                    OutlinedButton.icon(
+                      key: Key('open_match_report_button_${match.id}'),
+                      onPressed:
+                          onOpenReportTap ??
+                          () {
+                            Navigator.of(
+                              context,
+                            ).pushNamed('/matches/report', arguments: match);
+                          },
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: KickPulseColors.accentPrimary,
+                        side: const BorderSide(
+                          color: KickPulseColors.accentPrimary,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: KickPulseRadiiSpacing.spaceMd,
+                          vertical: KickPulseRadiiSpacing.spaceXs,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            KickPulseRadiiSpacing.chipRadius,
+                          ),
+                        ),
+                      ),
+                      icon: const Icon(Icons.assignment, size: 16),
+                      label: Text(
+                        match.status == MatchStatus.completed
+                            ? 'Ver Acta'
+                            : 'Acta Arbitral',
+                        style: KickPulseTypography.captionMeta.copyWith(
+                          color: KickPulseColors.accentPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  icon: Icon(
-                    match.isScheduled ? Icons.edit_calendar : Icons.add_alarm,
-                    size: 16,
-                  ),
-                  label: Text(
-                    match.isScheduled
-                        ? 'Reprogramar'
-                        : l10n.scheduleMatchAction,
-                    style: KickPulseTypography.captionMeta.copyWith(
-                      color: KickPulseColors.accentElectric,
-                      fontWeight: FontWeight.bold,
+                  if (canSchedule)
+                    ElevatedButton.icon(
+                      key: Key('schedule_match_button_${match.id}'),
+                      onPressed: onScheduleTap,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: KickPulseColors.surfaceElevated,
+                        foregroundColor: KickPulseColors.accentElectric,
+                        side: const BorderSide(
+                          color: KickPulseColors.accentElectric,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: KickPulseRadiiSpacing.spaceMd,
+                          vertical: KickPulseRadiiSpacing.spaceXs,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            KickPulseRadiiSpacing.chipRadius,
+                          ),
+                        ),
+                      ),
+                      icon: Icon(
+                        match.isScheduled
+                            ? Icons.edit_calendar
+                            : Icons.add_alarm,
+                        size: 16,
+                      ),
+                      label: Text(
+                        match.isScheduled
+                            ? 'Reprogramar'
+                            : l10n.scheduleMatchAction,
+                        style: KickPulseTypography.captionMeta.copyWith(
+                          color: KickPulseColors.accentElectric,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
+                ],
               ),
             ],
           ],

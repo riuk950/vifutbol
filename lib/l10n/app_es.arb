@@ -1702,5 +1702,329 @@
   "fixtureErrorInvalidTimes": "La hora de inicio o duración del partido no son válidas.",
   "@fixtureErrorInvalidTimes": {
     "description": "Error de fecha u hora no válida"
+  },
+  "matchReportTitle": "Acta Digital del Árbitro",
+  "@matchReportTitle": {
+    "description": "Título principal de la pantalla del acta digital del árbitro"
+  },
+  "matchReportHeaderTitle": "Acta del Partido",
+  "@matchReportHeaderTitle": {
+    "description": "Encabezado de la vista del acta"
+  },
+  "matchPeriodNotStarted": "Por Iniciar",
+  "@matchPeriodNotStarted": {
+    "description": "Periodo de partido: Por Iniciar"
+  },
+  "matchPeriodFirstHalf": "Primer Tiempo",
+  "@matchPeriodFirstHalf": {
+    "description": "Periodo de partido: Primer Tiempo"
+  },
+  "matchPeriodHalfTime": "Descanso",
+  "@matchPeriodHalfTime": {
+    "description": "Periodo de partido: Descanso"
+  },
+  "matchPeriodSecondHalf": "Segundo Tiempo",
+  "@matchPeriodSecondHalf": {
+    "description": "Periodo de partido: Segundo Tiempo"
+  },
+  "matchPeriodFullTime": "Tiempo Cumplido",
+  "@matchPeriodFullTime": {
+    "description": "Periodo de partido: Tiempo Cumplido"
+  },
+  "matchPeriodClosed": "Acta Cerrada",
+  "@matchPeriodClosed": {
+    "description": "Periodo de partido: Acta Cerrada"
+  },
+  "matchStatusLiveBadge": "EN JUEGO",
+  "@matchStatusLiveBadge": {
+    "description": "Insignia semántica de partido en juego en tiempo real"
+  },
+  "matchStatusFinishedBadge": "FINALIZADO",
+  "@matchStatusFinishedBadge": {
+    "description": "Insignia de partido finalizado"
+  },
+  "matchActionStartMatch": "Iniciar Partido",
+  "@matchActionStartMatch": {
+    "description": "Acción para iniciar el primer tiempo del encuentro"
+  },
+  "matchActionEndFirstHalf": "Fin 1er Tiempo",
+  "@matchActionEndFirstHalf": {
+    "description": "Acción para pausar el cronómetro e iniciar el descanso"
+  },
+  "matchActionStartSecondHalf": "Iniciar 2do Tiempo",
+  "@matchActionStartSecondHalf": {
+    "description": "Acción para reanudar el cronómetro e iniciar el segundo tiempo"
+  },
+  "matchActionEndSecondHalf": "Tiempo Cumplido",
+  "@matchActionEndSecondHalf": {
+    "description": "Acción para finalizar el tiempo reglamentario"
+  },
+  "matchActionRecordGoal": "Registrar Gol",
+  "@matchActionRecordGoal": {
+    "description": "Botón de acción rápida para registrar un gol"
+  },
+  "matchActionRecordYellowCard": "Tarjeta Amarilla",
+  "@matchActionRecordYellowCard": {
+    "description": "Botón de acción rápida para registrar una tarjeta amarilla"
+  },
+  "matchActionRecordRedCard": "Tarjeta Roja",
+  "@matchActionRecordRedCard": {
+    "description": "Botón de acción rápida para registrar una tarjeta roja directa"
+  },
+  "matchActionRecordSubstitution": "Sustitución",
+  "@matchActionRecordSubstitution": {
+    "description": "Botón de acción rápida para registrar una sustitución táctica"
+  },
+  "matchActionCloseReport": "Cerrar Acta Oficial",
+  "@matchActionCloseReport": {
+    "description": "Botón para confirmar el cierre definitivo del acta arbitral"
+  },
+  "matchActionOpenRefereeReport": "Acta Arbitral",
+  "@matchActionOpenRefereeReport": {
+    "description": "Botón en tarjeta de partido para abrir el acta como árbitro u organizador"
+  },
+  "matchActionViewReport": "Ver Acta",
+  "@matchActionViewReport": {
+    "description": "Botón en tarjeta de partido para consultar el acta en modo lectura"
+  },
+  "matchReportOfflineBanner": "Modo sin conexión: cambios guardados en el dispositivo",
+  "@matchReportOfflineBanner": {
+    "description": "Aviso explícito en español cuando se registran incidencias sin conexión a internet"
+  },
+  "matchReportOnlineStatus": "En línea",
+  "@matchReportOnlineStatus": {
+    "description": "Estado de conectividad en línea"
+  },
+  "matchReportOfflineStatus": "Sin conexión",
+  "@matchReportOfflineStatus": {
+    "description": "Estado de conectividad sin conexión"
+  },
+  "matchReportPendingSyncCount": "{count, plural, =1{1 cambio pendiente de sincronización} other{{count} cambios pendientes de sincronización}}",
+  "@matchReportPendingSyncCount": {
+    "description": "Contador de eventos pendientes en cola offline",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "matchReportSyncingEvents": "Sincronizando eventos...",
+  "@matchReportSyncingEvents": {
+    "description": "Mensaje mientras se sincroniza la cola de eventos"
+  },
+  "matchReportAllEventsSynced": "Todos los eventos sincronizados",
+  "@matchReportAllEventsSynced": {
+    "description": "Mensaje cuando la cola offline ha sido sincronizada exitosamente"
+  },
+  "recordGoalDialogTitle": "Registrar Gol",
+  "@recordGoalDialogTitle": {
+    "description": "Título del modal para registrar un gol"
+  },
+  "recordGoalTeamLabel": "Equipo anotador",
+  "@recordGoalTeamLabel": {
+    "description": "Etiqueta para seleccionar el equipo anotador"
+  },
+  "recordGoalMinuteLabel": "Minuto del gol",
+  "@recordGoalMinuteLabel": {
+    "description": "Etiqueta para el minuto de juego del gol"
+  },
+  "recordGoalScorerLabel": "Jugador anotador",
+  "@recordGoalScorerLabel": {
+    "description": "Etiqueta para seleccionar el jugador anotador"
+  },
+  "recordGoalAssistantLabel": "Jugador asistente (opcional)",
+  "@recordGoalAssistantLabel": {
+    "description": "Etiqueta para seleccionar el jugador asistente"
+  },
+  "recordGoalNoAssistantOption": "Sin asistencia",
+  "@recordGoalNoAssistantOption": {
+    "description": "Opción cuando un gol no tiene asistencia registrada"
+  },
+  "recordGoalConfirmAction": "Confirmar Gol",
+  "@recordGoalConfirmAction": {
+    "description": "Botón para confirmar el registro de gol"
+  },
+  "recordCardDialogTitle": "Registrar Tarjeta Disciplinaria",
+  "@recordCardDialogTitle": {
+    "description": "Título del modal para registrar tarjetas disciplinarias"
+  },
+  "recordCardYellowTitle": "Tarjeta Amarilla",
+  "@recordCardYellowTitle": {
+    "description": "Opción de tarjeta amarilla preventiva"
+  },
+  "recordCardRedTitle": "Tarjeta Roja Directa",
+  "@recordCardRedTitle": {
+    "description": "Opción de tarjeta roja directa"
+  },
+  "recordCardPlayerLabel": "Jugador amonestado / sancionado",
+  "@recordCardPlayerLabel": {
+    "description": "Etiqueta para seleccionar el jugador amonestado"
+  },
+  "recordCardConfirmAction": "Confirmar Tarjeta",
+  "@recordCardConfirmAction": {
+    "description": "Botón para confirmar la tarjeta disciplinaria"
+  },
+  "recordCardSecondYellowExpulsion": "Segunda Amarilla (Expulsión Automática)",
+  "@recordCardSecondYellowExpulsion": {
+    "description": "Aviso de expulsión por doble amarilla"
+  },
+  "recordSubstitutionDialogTitle": "Registrar Sustitución",
+  "@recordSubstitutionDialogTitle": {
+    "description": "Título del modal de sustitución de jugadores"
+  },
+  "recordSubstitutionPlayerOutLabel": "Jugador que sale",
+  "@recordSubstitutionPlayerOutLabel": {
+    "description": "Etiqueta para seleccionar el jugador que sale"
+  },
+  "recordSubstitutionPlayerInLabel": "Jugador que entra",
+  "@recordSubstitutionPlayerInLabel": {
+    "description": "Etiqueta para seleccionar el jugador que entra"
+  },
+  "recordSubstitutionConfirmAction": "Confirmar Sustitución",
+  "@recordSubstitutionConfirmAction": {
+    "description": "Botón para confirmar la sustitución"
+  },
+  "matchEventUndoAction": "Anular",
+  "@matchEventUndoAction": {
+    "description": "Acción para anular o deshacer una incidencia errónea"
+  },
+  "matchEventUndoConfirmTitle": "¿Anular incidencia del acta?",
+  "@matchEventUndoConfirmTitle": {
+    "description": "Título de diálogo para confirmar anulación de evento"
+  },
+  "matchEventUndoConfirmMessage": "Se recalculará el marcador y el estado de sanciones del partido.",
+  "@matchEventUndoConfirmMessage": {
+    "description": "Mensaje explicativo al anular una incidencia en vivo"
+  },
+  "matchEventUndoConfirmButton": "Anular Incidencia",
+  "@matchEventUndoConfirmButton": {
+    "description": "Botón de confirmación para anular incidencia"
+  },
+  "closeReportDialogTitle": "Cierre Definitivo del Acta Oficial",
+  "@closeReportDialogTitle": {
+    "description": "Título del diálogo de confirmación de cierre oficial"
+  },
+  "closeReportSummaryTitle": "Resumen Oficial del Encuentro",
+  "@closeReportSummaryTitle": {
+    "description": "Título del resumen de goles y tarjetas antes de cerrar"
+  },
+  "closeReportFinalScore": "Marcador Final: {score}",
+  "@closeReportFinalScore": {
+    "description": "Marcador final resumido",
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "closeReportWarningMessage": "¿Confirmas el cierre definitivo del acta? Esta acción es irreversible y bloqueará cualquier modificación posterior.",
+  "@closeReportWarningMessage": {
+    "description": "Advertencia de inmutabilidad al cerrar el acta"
+  },
+  "closeReportConfirmButton": "Confirmar y Cerrar Acta",
+  "@closeReportConfirmButton": {
+    "description": "Botón para firmar y cerrar el acta oficial"
+  },
+  "matchTimelineTitle": "Línea de Tiempo",
+  "@matchTimelineTitle": {
+    "description": "Título de la sección de incidencias del partido"
+  },
+  "matchTimelineEmpty": "No hay incidencias registradas aún en el partido.",
+  "@matchTimelineEmpty": {
+    "description": "Texto mostrado cuando no se han registrado eventos en el acta"
+  },
+  "matchEventGoalDescription": "Gol de {player}",
+  "@matchEventGoalDescription": {
+    "description": "Descripción de gol en la línea de tiempo",
+    "placeholders": {
+      "player": {
+        "type": "String"
+      }
+    }
+  },
+  "matchEventAssistantDescription": "Asistencia: {player}",
+  "@matchEventAssistantDescription": {
+    "description": "Descripción de asistencia en la línea de tiempo",
+    "placeholders": {
+      "player": {
+        "type": "String"
+      }
+    }
+  },
+  "matchEventYellowCardDescription": "Tarjeta Amarilla - {player}",
+  "@matchEventYellowCardDescription": {
+    "description": "Descripción de tarjeta amarilla en línea de tiempo",
+    "placeholders": {
+      "player": {
+        "type": "String"
+      }
+    }
+  },
+  "matchEventSecondYellowRedDescription": "Segunda Amarilla y Expulsión - {player}",
+  "@matchEventSecondYellowRedDescription": {
+    "description": "Descripción de expulsión por doble amarilla en línea de tiempo",
+    "placeholders": {
+      "player": {
+        "type": "String"
+      }
+    }
+  },
+  "matchEventDirectRedDescription": "Tarjeta Roja Directa - {player}",
+  "@matchEventDirectRedDescription": {
+    "description": "Descripción de tarjeta roja directa en línea de tiempo",
+    "placeholders": {
+      "player": {
+        "type": "String"
+      }
+    }
+  },
+  "matchEventSubstitutionDescription": "Sale {playerOut}, entra {playerIn}",
+  "@matchEventSubstitutionDescription": {
+    "description": "Descripción de sustitución en la línea de tiempo",
+    "placeholders": {
+      "playerOut": {
+        "type": "String"
+      },
+      "playerIn": {
+        "type": "String"
+      }
+    }
+  },
+  "matchEventPeriodTransitionDescription": "Inicio de {period}",
+  "@matchEventPeriodTransitionDescription": {
+    "description": "Descripción de cambio de periodo en la línea de tiempo",
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "matchReportErrorUnauthorized": "No tienes permisos de árbitro u organizador para dirigir este partido.",
+  "@matchReportErrorUnauthorized": {
+    "description": "Error cuando el rol no está autorizado para editar el acta"
+  },
+  "matchReportErrorAlreadyClosed": "El acta oficial ya ha sido cerrada y no puede ser modificada.",
+  "@matchReportErrorAlreadyClosed": {
+    "description": "Error al intentar editar un acta finalizada"
+  },
+  "matchReportErrorNotInProgress": "El partido debe estar en juego para registrar incidencias.",
+  "@matchReportErrorNotInProgress": {
+    "description": "Error cuando el partido no está en primer o segundo tiempo"
+  },
+  "matchReportErrorInvalidMinute": "El minuto debe estar entre 1 y 130.",
+  "@matchReportErrorInvalidMinute": {
+    "description": "Error de validación de minuto de juego"
+  },
+  "matchReportErrorPlayerExpelled": "El jugador ya fue expulsado y no puede realizar nuevas acciones en el partido.",
+  "@matchReportErrorPlayerExpelled": {
+    "description": "Error al intentar seleccionar a un jugador expulsado"
+  },
+  "matchReportErrorInvalidAssistant": "El jugador asistente no puede ser el mismo anotador ni pertenecer al equipo contrario.",
+  "@matchReportErrorInvalidAssistant": {
+    "description": "Error cuando el asistente coincide con el anotador"
+  },
+  "matchReportErrorInvalidSubstitution": "El jugador que sale y el que entra deben ser diferentes y no estar expulsados.",
+  "@matchReportErrorInvalidSubstitution": {
+    "description": "Error cuando los jugadores de la sustitución son inválidos"
   }
 }

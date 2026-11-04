@@ -2391,6 +2391,420 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'La hora de inicio o duración del partido no son válidas.'**
   String get fixtureErrorInvalidTimes;
+
+  /// Título principal de la pantalla del acta digital del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Acta Digital del Árbitro'**
+  String get matchReportTitle;
+
+  /// Encabezado de la vista del acta
+  ///
+  /// In es, this message translates to:
+  /// **'Acta del Partido'**
+  String get matchReportHeaderTitle;
+
+  /// Periodo de partido: Por Iniciar
+  ///
+  /// In es, this message translates to:
+  /// **'Por Iniciar'**
+  String get matchPeriodNotStarted;
+
+  /// Periodo de partido: Primer Tiempo
+  ///
+  /// In es, this message translates to:
+  /// **'Primer Tiempo'**
+  String get matchPeriodFirstHalf;
+
+  /// Periodo de partido: Descanso
+  ///
+  /// In es, this message translates to:
+  /// **'Descanso'**
+  String get matchPeriodHalfTime;
+
+  /// Periodo de partido: Segundo Tiempo
+  ///
+  /// In es, this message translates to:
+  /// **'Segundo Tiempo'**
+  String get matchPeriodSecondHalf;
+
+  /// Periodo de partido: Tiempo Cumplido
+  ///
+  /// In es, this message translates to:
+  /// **'Tiempo Cumplido'**
+  String get matchPeriodFullTime;
+
+  /// Periodo de partido: Acta Cerrada
+  ///
+  /// In es, this message translates to:
+  /// **'Acta Cerrada'**
+  String get matchPeriodClosed;
+
+  /// Insignia semántica de partido en juego en tiempo real
+  ///
+  /// In es, this message translates to:
+  /// **'EN JUEGO'**
+  String get matchStatusLiveBadge;
+
+  /// Insignia de partido finalizado
+  ///
+  /// In es, this message translates to:
+  /// **'FINALIZADO'**
+  String get matchStatusFinishedBadge;
+
+  /// Acción para iniciar el primer tiempo del encuentro
+  ///
+  /// In es, this message translates to:
+  /// **'Iniciar Partido'**
+  String get matchActionStartMatch;
+
+  /// Acción para pausar el cronómetro e iniciar el descanso
+  ///
+  /// In es, this message translates to:
+  /// **'Fin 1er Tiempo'**
+  String get matchActionEndFirstHalf;
+
+  /// Acción para reanudar el cronómetro e iniciar el segundo tiempo
+  ///
+  /// In es, this message translates to:
+  /// **'Iniciar 2do Tiempo'**
+  String get matchActionStartSecondHalf;
+
+  /// Acción para finalizar el tiempo reglamentario
+  ///
+  /// In es, this message translates to:
+  /// **'Tiempo Cumplido'**
+  String get matchActionEndSecondHalf;
+
+  /// Botón de acción rápida para registrar un gol
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar Gol'**
+  String get matchActionRecordGoal;
+
+  /// Botón de acción rápida para registrar una tarjeta amarilla
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjeta Amarilla'**
+  String get matchActionRecordYellowCard;
+
+  /// Botón de acción rápida para registrar una tarjeta roja directa
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjeta Roja'**
+  String get matchActionRecordRedCard;
+
+  /// Botón de acción rápida para registrar una sustitución táctica
+  ///
+  /// In es, this message translates to:
+  /// **'Sustitución'**
+  String get matchActionRecordSubstitution;
+
+  /// Botón para confirmar el cierre definitivo del acta arbitral
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar Acta Oficial'**
+  String get matchActionCloseReport;
+
+  /// Botón en tarjeta de partido para abrir el acta como árbitro u organizador
+  ///
+  /// In es, this message translates to:
+  /// **'Acta Arbitral'**
+  String get matchActionOpenRefereeReport;
+
+  /// Botón en tarjeta de partido para consultar el acta en modo lectura
+  ///
+  /// In es, this message translates to:
+  /// **'Ver Acta'**
+  String get matchActionViewReport;
+
+  /// Aviso explícito en español cuando se registran incidencias sin conexión a internet
+  ///
+  /// In es, this message translates to:
+  /// **'Modo sin conexión: cambios guardados en el dispositivo'**
+  String get matchReportOfflineBanner;
+
+  /// Estado de conectividad en línea
+  ///
+  /// In es, this message translates to:
+  /// **'En línea'**
+  String get matchReportOnlineStatus;
+
+  /// Estado de conectividad sin conexión
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión'**
+  String get matchReportOfflineStatus;
+
+  /// Contador de eventos pendientes en cola offline
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 cambio pendiente de sincronización} other{{count} cambios pendientes de sincronización}}'**
+  String matchReportPendingSyncCount(int count);
+
+  /// Mensaje mientras se sincroniza la cola de eventos
+  ///
+  /// In es, this message translates to:
+  /// **'Sincronizando eventos...'**
+  String get matchReportSyncingEvents;
+
+  /// Mensaje cuando la cola offline ha sido sincronizada exitosamente
+  ///
+  /// In es, this message translates to:
+  /// **'Todos los eventos sincronizados'**
+  String get matchReportAllEventsSynced;
+
+  /// Título del modal para registrar un gol
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar Gol'**
+  String get recordGoalDialogTitle;
+
+  /// Etiqueta para seleccionar el equipo anotador
+  ///
+  /// In es, this message translates to:
+  /// **'Equipo anotador'**
+  String get recordGoalTeamLabel;
+
+  /// Etiqueta para el minuto de juego del gol
+  ///
+  /// In es, this message translates to:
+  /// **'Minuto del gol'**
+  String get recordGoalMinuteLabel;
+
+  /// Etiqueta para seleccionar el jugador anotador
+  ///
+  /// In es, this message translates to:
+  /// **'Jugador anotador'**
+  String get recordGoalScorerLabel;
+
+  /// Etiqueta para seleccionar el jugador asistente
+  ///
+  /// In es, this message translates to:
+  /// **'Jugador asistente (opcional)'**
+  String get recordGoalAssistantLabel;
+
+  /// Opción cuando un gol no tiene asistencia registrada
+  ///
+  /// In es, this message translates to:
+  /// **'Sin asistencia'**
+  String get recordGoalNoAssistantOption;
+
+  /// Botón para confirmar el registro de gol
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar Gol'**
+  String get recordGoalConfirmAction;
+
+  /// Título del modal para registrar tarjetas disciplinarias
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar Tarjeta Disciplinaria'**
+  String get recordCardDialogTitle;
+
+  /// Opción de tarjeta amarilla preventiva
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjeta Amarilla'**
+  String get recordCardYellowTitle;
+
+  /// Opción de tarjeta roja directa
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjeta Roja Directa'**
+  String get recordCardRedTitle;
+
+  /// Etiqueta para seleccionar el jugador amonestado
+  ///
+  /// In es, this message translates to:
+  /// **'Jugador amonestado / sancionado'**
+  String get recordCardPlayerLabel;
+
+  /// Botón para confirmar la tarjeta disciplinaria
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar Tarjeta'**
+  String get recordCardConfirmAction;
+
+  /// Aviso de expulsión por doble amarilla
+  ///
+  /// In es, this message translates to:
+  /// **'Segunda Amarilla (Expulsión Automática)'**
+  String get recordCardSecondYellowExpulsion;
+
+  /// Título del modal de sustitución de jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar Sustitución'**
+  String get recordSubstitutionDialogTitle;
+
+  /// Etiqueta para seleccionar el jugador que sale
+  ///
+  /// In es, this message translates to:
+  /// **'Jugador que sale'**
+  String get recordSubstitutionPlayerOutLabel;
+
+  /// Etiqueta para seleccionar el jugador que entra
+  ///
+  /// In es, this message translates to:
+  /// **'Jugador que entra'**
+  String get recordSubstitutionPlayerInLabel;
+
+  /// Botón para confirmar la sustitución
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar Sustitución'**
+  String get recordSubstitutionConfirmAction;
+
+  /// Acción para anular o deshacer una incidencia errónea
+  ///
+  /// In es, this message translates to:
+  /// **'Anular'**
+  String get matchEventUndoAction;
+
+  /// Título de diálogo para confirmar anulación de evento
+  ///
+  /// In es, this message translates to:
+  /// **'¿Anular incidencia del acta?'**
+  String get matchEventUndoConfirmTitle;
+
+  /// Mensaje explicativo al anular una incidencia en vivo
+  ///
+  /// In es, this message translates to:
+  /// **'Se recalculará el marcador y el estado de sanciones del partido.'**
+  String get matchEventUndoConfirmMessage;
+
+  /// Botón de confirmación para anular incidencia
+  ///
+  /// In es, this message translates to:
+  /// **'Anular Incidencia'**
+  String get matchEventUndoConfirmButton;
+
+  /// Título del diálogo de confirmación de cierre oficial
+  ///
+  /// In es, this message translates to:
+  /// **'Cierre Definitivo del Acta Oficial'**
+  String get closeReportDialogTitle;
+
+  /// Título del resumen de goles y tarjetas antes de cerrar
+  ///
+  /// In es, this message translates to:
+  /// **'Resumen Oficial del Encuentro'**
+  String get closeReportSummaryTitle;
+
+  /// Marcador final resumido
+  ///
+  /// In es, this message translates to:
+  /// **'Marcador Final: {score}'**
+  String closeReportFinalScore(String score);
+
+  /// Advertencia de inmutabilidad al cerrar el acta
+  ///
+  /// In es, this message translates to:
+  /// **'¿Confirmas el cierre definitivo del acta? Esta acción es irreversible y bloqueará cualquier modificación posterior.'**
+  String get closeReportWarningMessage;
+
+  /// Botón para firmar y cerrar el acta oficial
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar y Cerrar Acta'**
+  String get closeReportConfirmButton;
+
+  /// Título de la sección de incidencias del partido
+  ///
+  /// In es, this message translates to:
+  /// **'Línea de Tiempo'**
+  String get matchTimelineTitle;
+
+  /// Texto mostrado cuando no se han registrado eventos en el acta
+  ///
+  /// In es, this message translates to:
+  /// **'No hay incidencias registradas aún en el partido.'**
+  String get matchTimelineEmpty;
+
+  /// Descripción de gol en la línea de tiempo
+  ///
+  /// In es, this message translates to:
+  /// **'Gol de {player}'**
+  String matchEventGoalDescription(String player);
+
+  /// Descripción de asistencia en la línea de tiempo
+  ///
+  /// In es, this message translates to:
+  /// **'Asistencia: {player}'**
+  String matchEventAssistantDescription(String player);
+
+  /// Descripción de tarjeta amarilla en línea de tiempo
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjeta Amarilla - {player}'**
+  String matchEventYellowCardDescription(String player);
+
+  /// Descripción de expulsión por doble amarilla en línea de tiempo
+  ///
+  /// In es, this message translates to:
+  /// **'Segunda Amarilla y Expulsión - {player}'**
+  String matchEventSecondYellowRedDescription(String player);
+
+  /// Descripción de tarjeta roja directa en línea de tiempo
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjeta Roja Directa - {player}'**
+  String matchEventDirectRedDescription(String player);
+
+  /// Descripción de sustitución en la línea de tiempo
+  ///
+  /// In es, this message translates to:
+  /// **'Sale {playerOut}, entra {playerIn}'**
+  String matchEventSubstitutionDescription(String playerOut, String playerIn);
+
+  /// Descripción de cambio de periodo en la línea de tiempo
+  ///
+  /// In es, this message translates to:
+  /// **'Inicio de {period}'**
+  String matchEventPeriodTransitionDescription(String period);
+
+  /// Error cuando el rol no está autorizado para editar el acta
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes permisos de árbitro u organizador para dirigir este partido.'**
+  String get matchReportErrorUnauthorized;
+
+  /// Error al intentar editar un acta finalizada
+  ///
+  /// In es, this message translates to:
+  /// **'El acta oficial ya ha sido cerrada y no puede ser modificada.'**
+  String get matchReportErrorAlreadyClosed;
+
+  /// Error cuando el partido no está en primer o segundo tiempo
+  ///
+  /// In es, this message translates to:
+  /// **'El partido debe estar en juego para registrar incidencias.'**
+  String get matchReportErrorNotInProgress;
+
+  /// Error de validación de minuto de juego
+  ///
+  /// In es, this message translates to:
+  /// **'El minuto debe estar entre 1 y 130.'**
+  String get matchReportErrorInvalidMinute;
+
+  /// Error al intentar seleccionar a un jugador expulsado
+  ///
+  /// In es, this message translates to:
+  /// **'El jugador ya fue expulsado y no puede realizar nuevas acciones en el partido.'**
+  String get matchReportErrorPlayerExpelled;
+
+  /// Error cuando el asistente coincide con el anotador
+  ///
+  /// In es, this message translates to:
+  /// **'El jugador asistente no puede ser el mismo anotador ni pertenecer al equipo contrario.'**
+  String get matchReportErrorInvalidAssistant;
+
+  /// Error cuando los jugadores de la sustitución son inválidos
+  ///
+  /// In es, this message translates to:
+  /// **'El jugador que sale y el que entra deben ser diferentes y no estar expulsados.'**
+  String get matchReportErrorInvalidSubstitution;
 }
 
 class _AppLocalizationsDelegate

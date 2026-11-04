@@ -194,3 +194,27 @@ class FixtureScheduleValidationFailure extends AppFailure {
     super.cause,
   ]);
 }
+
+/// Machine-readable error codes for digital match report operations.
+enum MatchReportErrorCode {
+  unauthorizedRole,
+  reportAlreadyClosed,
+  matchNotInProgress,
+  invalidMinute,
+  playerAlreadyExpelled,
+  invalidAssistantPlayer,
+  invalidSubstitutionPlayers,
+}
+
+/// Emitted when digital match report operations or event validations fail.
+class MatchReportValidationFailure extends AppFailure {
+  final MatchReportErrorCode code;
+  final String? details;
+
+  const MatchReportValidationFailure(
+    this.code, [
+    super.message = 'Validación de acta digital de partido fallida',
+    this.details,
+    super.cause,
+  ]);
+}

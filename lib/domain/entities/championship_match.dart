@@ -16,6 +16,8 @@ class ChampionshipMatch {
     this.refereeId,
     this.refereeName,
     this.status = MatchStatus.pendingSchedule,
+    this.homeScore,
+    this.awayScore,
     DateTime? updatedAt,
   }) : assert(id.isNotEmpty, 'Match id cannot be empty'),
        assert(tournamentId.isNotEmpty, 'Tournament id cannot be empty'),
@@ -27,6 +29,8 @@ class ChampionshipMatch {
          homeTeamId != awayTeamId,
          'homeTeamId and awayTeamId must be different',
        ),
+       assert(homeScore == null || homeScore >= 0, 'homeScore must be >= 0'),
+       assert(awayScore == null || awayScore >= 0, 'awayScore must be >= 0'),
        updatedAt = updatedAt ?? DateTime.now();
 
   final String id;
@@ -43,6 +47,8 @@ class ChampionshipMatch {
   final String? refereeId;
   final String? refereeName;
   final MatchStatus status;
+  final int? homeScore;
+  final int? awayScore;
   final DateTime updatedAt;
 
   bool get isScheduled =>
@@ -80,6 +86,10 @@ class ChampionshipMatch {
     String? refereeId,
     String? refereeName,
     MatchStatus? status,
+    int? homeScore,
+    bool clearHomeScore = false,
+    int? awayScore,
+    bool clearAwayScore = false,
     DateTime? updatedAt,
   }) {
     return ChampionshipMatch(
@@ -97,6 +107,8 @@ class ChampionshipMatch {
       refereeId: refereeId ?? this.refereeId,
       refereeName: refereeName ?? this.refereeName,
       status: status ?? this.status,
+      homeScore: clearHomeScore ? null : (homeScore ?? this.homeScore),
+      awayScore: clearAwayScore ? null : (awayScore ?? this.awayScore),
       updatedAt: updatedAt ?? DateTime.now(),
     );
   }
@@ -117,6 +129,8 @@ class ChampionshipMatch {
       'refereeId': refereeId,
       'refereeName': refereeName,
       'status': status.name,
+      'homeScore': homeScore,
+      'awayScore': awayScore,
       'updatedAt': updatedAt.toIso8601String(),
     };
   }
@@ -141,6 +155,8 @@ class ChampionshipMatch {
       refereeId: json['refereeId'] as String?,
       refereeName: json['refereeName'] as String?,
       status: MatchStatus.fromCode(json['status'] as String?),
+      homeScore: (json['homeScore'] as num?)?.toInt(),
+      awayScore: (json['awayScore'] as num?)?.toInt(),
       updatedAt: json['updatedAt'] != null
           ? DateTime.tryParse(json['updatedAt'] as String) ?? DateTime.now()
           : DateTime.now(),
@@ -164,7 +180,9 @@ class ChampionshipMatch {
         other.pitchName == pitchName &&
         other.refereeId == refereeId &&
         other.refereeName == refereeName &&
-        other.status == status;
+        other.status == status &&
+        other.homeScore == homeScore &&
+        other.awayScore == awayScore;
   }
 
   @override
@@ -179,5 +197,7 @@ class ChampionshipMatch {
     pitchId,
     refereeId,
     status,
+    homeScore,
+    awayScore,
   );
 }

@@ -1,10 +1,12 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:vifutbol/domain/entities/app_shell_section.dart';
+import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/presentation/auth/auth_gate.dart';
 import 'package:vifutbol/presentation/auth/role_onboarding_screen.dart';
 import 'package:vifutbol/presentation/auth/welcome_auth_screen.dart';
+import 'package:vifutbol/presentation/matches/digital_match_report_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
 import 'package:vifutbol/presentation/teams/coach_lineup_tracking_screen.dart';
 import 'package:vifutbol/presentation/teams/team_roster_detail_screen.dart';
@@ -90,6 +92,14 @@ class AppRouter {
       },
     );
 
+    final matchReportHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        final args = context?.settings?.arguments;
+        final match = args is ChampionshipMatch ? args : null;
+        return DigitalMatchReportScreen(initialMatch: match);
+      },
+    );
+
     router.define(
       '/',
       handler: rootHandler,
@@ -148,6 +158,11 @@ class AppRouter {
     router.define(
       '/tournaments/teams/lineup',
       handler: teamLineupTrackingHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/matches/report',
+      handler: matchReportHandler,
       transitionType: TransitionType.fadeIn,
     );
   }
