@@ -1905,6 +1905,228 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'El número de camiseta debe estar entre 1 y 99'**
   String get teamErrorInvalidShirtNumber;
+
+  /// Título de la pantalla de gestión de convocatoria y seguimiento del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Convocatoria y Seguimiento'**
+  String get lineupScreenTitle;
+
+  /// Pestaña de convocatoria del partido
+  ///
+  /// In es, this message translates to:
+  /// **'Convocatoria'**
+  String get lineupTabConvocation;
+
+  /// Pestaña de seguimiento interno del plantel
+  ///
+  /// In es, this message translates to:
+  /// **'Seguimiento Interno'**
+  String get lineupTabTracking;
+
+  /// Pestaña de nómina oficial sincronizada para el acta arbitral
+  ///
+  /// In es, this message translates to:
+  /// **'Acta Arbitral'**
+  String get lineupTabRefereeRoster;
+
+  /// Encabezado de la lista de titulares
+  ///
+  /// In es, this message translates to:
+  /// **'Titulares en Cancha'**
+  String get lineupStartersHeader;
+
+  /// Encabezado de la lista de suplentes
+  ///
+  /// In es, this message translates to:
+  /// **'Suplentes Habilitados'**
+  String get lineupSubstitutesHeader;
+
+  /// Encabezado de jugadores no convocados
+  ///
+  /// In es, this message translates to:
+  /// **'No Convocados'**
+  String get lineupNotConvokedHeader;
+
+  /// Etiqueta para jugador titular
+  ///
+  /// In es, this message translates to:
+  /// **'Titular'**
+  String get lineupRoleStarter;
+
+  /// Etiqueta para jugador suplente
+  ///
+  /// In es, this message translates to:
+  /// **'Suplente'**
+  String get lineupRoleSubstitute;
+
+  /// Etiqueta para jugador no convocado
+  ///
+  /// In es, this message translates to:
+  /// **'No convocado'**
+  String get lineupRoleNotConvoked;
+
+  /// Insignia de capitán designado
+  ///
+  /// In es, this message translates to:
+  /// **'Capitán'**
+  String get lineupCaptainBadge;
+
+  /// Acción para designar a un jugador titular como capitán
+  ///
+  /// In es, this message translates to:
+  /// **'Hacer Capitán'**
+  String get lineupSetCaptainAction;
+
+  /// Insignia de estado de borrador en edición
+  ///
+  /// In es, this message translates to:
+  /// **'Borrador sin Confirmar'**
+  String get lineupStatusDraft;
+
+  /// Insignia de convocatoria oficial confirmada
+  ///
+  /// In es, this message translates to:
+  /// **'Oficial Confirmada'**
+  String get lineupStatusConfirmed;
+
+  /// Botón de acción para confirmar y publicar la alineación oficial
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar Convocatoria Oficial'**
+  String get lineupConfirmAction;
+
+  /// Botón de acción para actualizar y reconfirmar una convocatoria previa
+  ///
+  /// In es, this message translates to:
+  /// **'Actualizar y Reconfirmar Convocatoria'**
+  String get lineupReconfirmAction;
+
+  /// Mensaje de éxito tras confirmar la alineación
+  ///
+  /// In es, this message translates to:
+  /// **'Alineación oficial confirmada y sincronizada con el acta arbitral'**
+  String get lineupSuccessConfirmation;
+
+  /// Mensaje informativo de conservación de borrador
+  ///
+  /// In es, this message translates to:
+  /// **'Borrador de convocatoria guardado automáticamente'**
+  String get lineupDraftSavedMessage;
+
+  /// Insignia disciplinaria para jugador suspendido por tarjeta roja o acumulación
+  ///
+  /// In es, this message translates to:
+  /// **'Suspendido ({count} {count, plural, =1{fecha} other{fechas}})'**
+  String lineupDisciplinarySuspended(int count);
+
+  /// Insignia preventiva para jugador a una tarjeta de la suspensión
+  ///
+  /// In es, this message translates to:
+  /// **'En capilla ({count} TA)'**
+  String lineupDisciplinaryWarning(int count);
+
+  /// Insignia para jugador habilitado
+  ///
+  /// In es, this message translates to:
+  /// **'Habilitado'**
+  String get lineupDisciplinaryEligible;
+
+  /// Conteo de partidos jugados
+  ///
+  /// In es, this message translates to:
+  /// **'Partidos: {count}'**
+  String lineupTrackingMatches(int count);
+
+  /// Conteo de goles anotados
+  ///
+  /// In es, this message translates to:
+  /// **'Goles: {count}'**
+  String lineupTrackingGoals(int count);
+
+  /// Conteo de asistencias
+  ///
+  /// In es, this message translates to:
+  /// **'Asistencias: {count}'**
+  String lineupTrackingAssists(int count);
+
+  /// Conteo de tarjetas amarillas
+  ///
+  /// In es, this message translates to:
+  /// **'Amarillas: {count}'**
+  String lineupTrackingYellowCards(int count);
+
+  /// Conteo de tarjetas rojas
+  ///
+  /// In es, this message translates to:
+  /// **'Rojas: {count}'**
+  String lineupTrackingRedCards(int count);
+
+  /// Fechas de suspensión pendientes
+  ///
+  /// In es, this message translates to:
+  /// **'Sanción: {count} {count, plural, =1{fecha} other{fechas}}'**
+  String lineupTrackingSuspensionPending(int count);
+
+  /// Botón para editar las estadísticas internas de un jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Actualizar Métricas'**
+  String get lineupTrackingEditAction;
+
+  /// Mensaje de éxito tras actualizar métricas de un jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Métricas de seguimiento actualizadas con éxito'**
+  String get lineupTrackingSaveSuccess;
+
+  /// Título de la nómina del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Nómina Oficial Sincronizada (Acta Arbitral)'**
+  String get lineupRefereeRosterTitle;
+
+  /// Mensaje cuando no hay alineación confirmada para el árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'El entrenador aún no ha confirmado la alineación oficial para este partido.'**
+  String get lineupRefereeRosterEmpty;
+
+  /// Botón de acción en la pantalla de detalle de equipo para abrir la convocatoria
+  ///
+  /// In es, this message translates to:
+  /// **'Gestionar Convocatoria y Seguimiento'**
+  String get lineupOpenAction;
+
+  /// Error cuando el número de titulares no coincide con la modalidad
+  ///
+  /// In es, this message translates to:
+  /// **'Debes seleccionar exactamente {required} titulares (actual: {selected}).'**
+  String lineupErrorStartersCount(int required, int selected);
+
+  /// Error cuando no se ha asignado capitán o el capitán no es titular
+  ///
+  /// In es, this message translates to:
+  /// **'Debes designar un capitán dentro de los jugadores titulares.'**
+  String get lineupErrorMissingCaptain;
+
+  /// Error al intentar incluir a un jugador sancionado
+  ///
+  /// In es, this message translates to:
+  /// **'No puedes convocar al jugador {name} porque se encuentra suspendido ({count} {count, plural, =1{fecha} other{fechas}}).'**
+  String lineupErrorSuspendedPlayer(String name, int count);
+
+  /// Error si el equipo aún no está habilitado
+  ///
+  /// In es, this message translates to:
+  /// **'El equipo debe estar oficialmente Habilitado para confirmar una alineación oficial.'**
+  String get lineupErrorTeamNotEligible;
+
+  /// Error si el usuario no tiene permisos
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes permisos para gestionar la convocatoria de este equipo.'**
+  String get lineupErrorUnauthorized;
 }
 
 class _AppLocalizationsDelegate

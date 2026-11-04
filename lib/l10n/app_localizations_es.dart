@@ -1021,4 +1021,161 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get teamErrorInvalidShirtNumber =>
       'El número de camiseta debe estar entre 1 y 99';
+
+  @override
+  String get lineupScreenTitle => 'Convocatoria y Seguimiento';
+
+  @override
+  String get lineupTabConvocation => 'Convocatoria';
+
+  @override
+  String get lineupTabTracking => 'Seguimiento Interno';
+
+  @override
+  String get lineupTabRefereeRoster => 'Acta Arbitral';
+
+  @override
+  String get lineupStartersHeader => 'Titulares en Cancha';
+
+  @override
+  String get lineupSubstitutesHeader => 'Suplentes Habilitados';
+
+  @override
+  String get lineupNotConvokedHeader => 'No Convocados';
+
+  @override
+  String get lineupRoleStarter => 'Titular';
+
+  @override
+  String get lineupRoleSubstitute => 'Suplente';
+
+  @override
+  String get lineupRoleNotConvoked => 'No convocado';
+
+  @override
+  String get lineupCaptainBadge => 'Capitán';
+
+  @override
+  String get lineupSetCaptainAction => 'Hacer Capitán';
+
+  @override
+  String get lineupStatusDraft => 'Borrador sin Confirmar';
+
+  @override
+  String get lineupStatusConfirmed => 'Oficial Confirmada';
+
+  @override
+  String get lineupConfirmAction => 'Confirmar Convocatoria Oficial';
+
+  @override
+  String get lineupReconfirmAction => 'Actualizar y Reconfirmar Convocatoria';
+
+  @override
+  String get lineupSuccessConfirmation =>
+      'Alineación oficial confirmada y sincronizada con el acta arbitral';
+
+  @override
+  String get lineupDraftSavedMessage =>
+      'Borrador de convocatoria guardado automáticamente';
+
+  @override
+  String lineupDisciplinarySuspended(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'fechas',
+      one: 'fecha',
+    );
+    return 'Suspendido ($count $_temp0)';
+  }
+
+  @override
+  String lineupDisciplinaryWarning(int count) {
+    return 'En capilla ($count TA)';
+  }
+
+  @override
+  String get lineupDisciplinaryEligible => 'Habilitado';
+
+  @override
+  String lineupTrackingMatches(int count) {
+    return 'Partidos: $count';
+  }
+
+  @override
+  String lineupTrackingGoals(int count) {
+    return 'Goles: $count';
+  }
+
+  @override
+  String lineupTrackingAssists(int count) {
+    return 'Asistencias: $count';
+  }
+
+  @override
+  String lineupTrackingYellowCards(int count) {
+    return 'Amarillas: $count';
+  }
+
+  @override
+  String lineupTrackingRedCards(int count) {
+    return 'Rojas: $count';
+  }
+
+  @override
+  String lineupTrackingSuspensionPending(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'fechas',
+      one: 'fecha',
+    );
+    return 'Sanción: $count $_temp0';
+  }
+
+  @override
+  String get lineupTrackingEditAction => 'Actualizar Métricas';
+
+  @override
+  String get lineupTrackingSaveSuccess =>
+      'Métricas de seguimiento actualizadas con éxito';
+
+  @override
+  String get lineupRefereeRosterTitle =>
+      'Nómina Oficial Sincronizada (Acta Arbitral)';
+
+  @override
+  String get lineupRefereeRosterEmpty =>
+      'El entrenador aún no ha confirmado la alineación oficial para este partido.';
+
+  @override
+  String get lineupOpenAction => 'Gestionar Convocatoria y Seguimiento';
+
+  @override
+  String lineupErrorStartersCount(int required, int selected) {
+    return 'Debes seleccionar exactamente $required titulares (actual: $selected).';
+  }
+
+  @override
+  String get lineupErrorMissingCaptain =>
+      'Debes designar un capitán dentro de los jugadores titulares.';
+
+  @override
+  String lineupErrorSuspendedPlayer(String name, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'fechas',
+      one: 'fecha',
+    );
+    return 'No puedes convocar al jugador $name porque se encuentra suspendido ($count $_temp0).';
+  }
+
+  @override
+  String get lineupErrorTeamNotEligible =>
+      'El equipo debe estar oficialmente Habilitado para confirmar una alineación oficial.';
+
+  @override
+  String get lineupErrorUnauthorized =>
+      'No tienes permisos para gestionar la convocatoria de este equipo.';
 }

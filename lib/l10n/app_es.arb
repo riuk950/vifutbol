@@ -1287,5 +1287,209 @@
   "teamErrorInvalidShirtNumber": "El número de camiseta debe estar entre 1 y 99",
   "@teamErrorInvalidShirtNumber": {
     "description": "Error cuando el dorsal está fuera del rango 1 a 99"
+  },
+  "lineupScreenTitle": "Convocatoria y Seguimiento",
+  "@lineupScreenTitle": {
+    "description": "Título de la pantalla de gestión de convocatoria y seguimiento del entrenador"
+  },
+  "lineupTabConvocation": "Convocatoria",
+  "@lineupTabConvocation": {
+    "description": "Pestaña de convocatoria del partido"
+  },
+  "lineupTabTracking": "Seguimiento Interno",
+  "@lineupTabTracking": {
+    "description": "Pestaña de seguimiento interno del plantel"
+  },
+  "lineupTabRefereeRoster": "Acta Arbitral",
+  "@lineupTabRefereeRoster": {
+    "description": "Pestaña de nómina oficial sincronizada para el acta arbitral"
+  },
+  "lineupStartersHeader": "Titulares en Cancha",
+  "@lineupStartersHeader": {
+    "description": "Encabezado de la lista de titulares"
+  },
+  "lineupSubstitutesHeader": "Suplentes Habilitados",
+  "@lineupSubstitutesHeader": {
+    "description": "Encabezado de la lista de suplentes"
+  },
+  "lineupNotConvokedHeader": "No Convocados",
+  "@lineupNotConvokedHeader": {
+    "description": "Encabezado de jugadores no convocados"
+  },
+  "lineupRoleStarter": "Titular",
+  "@lineupRoleStarter": {
+    "description": "Etiqueta para jugador titular"
+  },
+  "lineupRoleSubstitute": "Suplente",
+  "@lineupRoleSubstitute": {
+    "description": "Etiqueta para jugador suplente"
+  },
+  "lineupRoleNotConvoked": "No convocado",
+  "@lineupRoleNotConvoked": {
+    "description": "Etiqueta para jugador no convocado"
+  },
+  "lineupCaptainBadge": "Capitán",
+  "@lineupCaptainBadge": {
+    "description": "Insignia de capitán designado"
+  },
+  "lineupSetCaptainAction": "Hacer Capitán",
+  "@lineupSetCaptainAction": {
+    "description": "Acción para designar a un jugador titular como capitán"
+  },
+  "lineupStatusDraft": "Borrador sin Confirmar",
+  "@lineupStatusDraft": {
+    "description": "Insignia de estado de borrador en edición"
+  },
+  "lineupStatusConfirmed": "Oficial Confirmada",
+  "@lineupStatusConfirmed": {
+    "description": "Insignia de convocatoria oficial confirmada"
+  },
+  "lineupConfirmAction": "Confirmar Convocatoria Oficial",
+  "@lineupConfirmAction": {
+    "description": "Botón de acción para confirmar y publicar la alineación oficial"
+  },
+  "lineupReconfirmAction": "Actualizar y Reconfirmar Convocatoria",
+  "@lineupReconfirmAction": {
+    "description": "Botón de acción para actualizar y reconfirmar una convocatoria previa"
+  },
+  "lineupSuccessConfirmation": "Alineación oficial confirmada y sincronizada con el acta arbitral",
+  "@lineupSuccessConfirmation": {
+    "description": "Mensaje de éxito tras confirmar la alineación"
+  },
+  "lineupDraftSavedMessage": "Borrador de convocatoria guardado automáticamente",
+  "@lineupDraftSavedMessage": {
+    "description": "Mensaje informativo de conservación de borrador"
+  },
+  "lineupDisciplinarySuspended": "Suspendido ({count} {count, plural, =1{fecha} other{fechas}})",
+  "@lineupDisciplinarySuspended": {
+    "description": "Insignia disciplinaria para jugador suspendido por tarjeta roja o acumulación",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lineupDisciplinaryWarning": "En capilla ({count} TA)",
+  "@lineupDisciplinaryWarning": {
+    "description": "Insignia preventiva para jugador a una tarjeta de la suspensión",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lineupDisciplinaryEligible": "Habilitado",
+  "@lineupDisciplinaryEligible": {
+    "description": "Insignia para jugador habilitado"
+  },
+  "lineupTrackingMatches": "Partidos: {count}",
+  "@lineupTrackingMatches": {
+    "description": "Conteo de partidos jugados",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lineupTrackingGoals": "Goles: {count}",
+  "@lineupTrackingGoals": {
+    "description": "Conteo de goles anotados",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lineupTrackingAssists": "Asistencias: {count}",
+  "@lineupTrackingAssists": {
+    "description": "Conteo de asistencias",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lineupTrackingYellowCards": "Amarillas: {count}",
+  "@lineupTrackingYellowCards": {
+    "description": "Conteo de tarjetas amarillas",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lineupTrackingRedCards": "Rojas: {count}",
+  "@lineupTrackingRedCards": {
+    "description": "Conteo de tarjetas rojas",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lineupTrackingSuspensionPending": "Sanción: {count} {count, plural, =1{fecha} other{fechas}}",
+  "@lineupTrackingSuspensionPending": {
+    "description": "Fechas de suspensión pendientes",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lineupTrackingEditAction": "Actualizar Métricas",
+  "@lineupTrackingEditAction": {
+    "description": "Botón para editar las estadísticas internas de un jugador"
+  },
+  "lineupTrackingSaveSuccess": "Métricas de seguimiento actualizadas con éxito",
+  "@lineupTrackingSaveSuccess": {
+    "description": "Mensaje de éxito tras actualizar métricas de un jugador"
+  },
+  "lineupRefereeRosterTitle": "Nómina Oficial Sincronizada (Acta Arbitral)",
+  "@lineupRefereeRosterTitle": {
+    "description": "Título de la nómina del árbitro"
+  },
+  "lineupRefereeRosterEmpty": "El entrenador aún no ha confirmado la alineación oficial para este partido.",
+  "@lineupRefereeRosterEmpty": {
+    "description": "Mensaje cuando no hay alineación confirmada para el árbitro"
+  },
+  "lineupOpenAction": "Gestionar Convocatoria y Seguimiento",
+  "@lineupOpenAction": {
+    "description": "Botón de acción en la pantalla de detalle de equipo para abrir la convocatoria"
+  },
+  "lineupErrorStartersCount": "Debes seleccionar exactamente {required} titulares (actual: {selected}).",
+  "@lineupErrorStartersCount": {
+    "description": "Error cuando el número de titulares no coincide con la modalidad",
+    "placeholders": {
+      "required": {
+        "type": "int"
+      },
+      "selected": {
+        "type": "int"
+      }
+    }
+  },
+  "lineupErrorMissingCaptain": "Debes designar un capitán dentro de los jugadores titulares.",
+  "@lineupErrorMissingCaptain": {
+    "description": "Error cuando no se ha asignado capitán o el capitán no es titular"
+  },
+  "lineupErrorSuspendedPlayer": "No puedes convocar al jugador {name} porque se encuentra suspendido ({count} {count, plural, =1{fecha} other{fechas}}).",
+  "@lineupErrorSuspendedPlayer": {
+    "description": "Error al intentar incluir a un jugador sancionado",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lineupErrorTeamNotEligible": "El equipo debe estar oficialmente Habilitado para confirmar una alineación oficial.",
+  "@lineupErrorTeamNotEligible": {
+    "description": "Error si el equipo aún no está habilitado"
+  },
+  "lineupErrorUnauthorized": "No tienes permisos para gestionar la convocatoria de este equipo.",
+  "@lineupErrorUnauthorized": {
+    "description": "Error si el usuario no tiene permisos"
   }
 }

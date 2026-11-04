@@ -143,3 +143,27 @@ class TeamEligibilityValidationFailure extends AppFailure {
     super.cause,
   ]);
 }
+
+/// Machine-readable error codes for coach match convocations and internal tracking.
+enum LineupConvocationErrorCode {
+  unauthorizedRole,
+  teamNotFound,
+  teamNotEligible,
+  suspendedPlayerSelected,
+  invalidStartersCount,
+  missingCaptain,
+  invalidTrackingMetrics,
+}
+
+/// Emitted when match convocation, lineup validation, or internal tracking fails.
+class LineupConvocationValidationFailure extends AppFailure {
+  final LineupConvocationErrorCode code;
+  final String? details;
+
+  const LineupConvocationValidationFailure(
+    this.code, [
+    super.message = 'Validación de convocatoria o alineación fallida',
+    this.details,
+    super.cause,
+  ]);
+}

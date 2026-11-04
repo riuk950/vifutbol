@@ -209,87 +209,108 @@ class TeamRosterDetailScreen extends ConsumerWidget {
             const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
 
             // Actions for Organizer and Coach
-            if (canManageRoster ||
-                (canApproveEligibility && !isReadyOrEligible))
-              Padding(
-                padding: const EdgeInsets.only(
-                  bottom: KickPulseRadiiSpacing.spaceMd,
-                ),
-                child: Row(
-                  children: [
-                    if (canManageRoster)
-                      Expanded(
-                        child: KickPulseButton(
-                          key: const Key('enroll_player_button'),
-                          label: l10n.teamEnrollPlayerAction,
-                          icon: const Icon(Icons.person_add, size: 18),
-                          onPressed: () async {
-                            _showPlayerFormDialog(
-                              context,
-                              ref,
-                              team,
-                              tournament,
-                              activeRole,
-                              l10n,
-                            );
-                          },
-                        ),
-                      ),
-                    if (canManageRoster &&
-                        canApproveEligibility &&
-                        !isReadyOrEligible)
-                      const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
-                    if (canApproveEligibility && !isReadyOrEligible)
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          key: const Key('approve_team_eligibility_button'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: meetsMinQuota && withinMaxQuota
-                                ? KickPulseColors.accentPrimary
-                                : KickPulseColors.surfaceSubtle,
-                            foregroundColor: meetsMinQuota && withinMaxQuota
-                                ? Colors.black
-                                : KickPulseColors.textMuted,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: KickPulseRadiiSpacing.spaceSm,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  KickPulseRadiiSpacing.chipBorderRadius,
+            Padding(
+              padding: const EdgeInsets.only(
+                bottom: KickPulseRadiiSpacing.spaceMd,
+              ),
+              child: Column(
+                children: [
+                  // Open Lineup & Internal Tracking Button
+                  KickPulseButton(
+                    key: const Key('open_team_lineup_tracking_button'),
+                    label: l10n.lineupOpenAction,
+                    icon: const Icon(Icons.sports_soccer, size: 18),
+                    variant: KickPulseButtonVariant.secondary,
+                    isFullWidth: true,
+                    onPressed: () async {
+                      Navigator.pushNamed(context, '/tournaments/teams/lineup');
+                    },
+                  ),
+                  if (canManageRoster ||
+                      (canApproveEligibility && !isReadyOrEligible)) ...[
+                    const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+                    Row(
+                      children: [
+                        if (canManageRoster)
+                          Expanded(
+                            child: KickPulseButton(
+                              key: const Key('enroll_player_button'),
+                              label: l10n.teamEnrollPlayerAction,
+                              icon: const Icon(Icons.person_add, size: 18),
+                              onPressed: () async {
+                                _showPlayerFormDialog(
+                                  context,
+                                  ref,
+                                  team,
+                                  tournament,
+                                  activeRole,
+                                  l10n,
+                                );
+                              },
                             ),
                           ),
-                          icon: const Icon(Icons.verified),
-                          label: Text(l10n.teamApproveEligibilityAction),
-                          onPressed:
-                              (meetsMinQuota &&
-                                  withinMaxQuota &&
-                                  !teamsState.isSaving)
-                              ? () async {
-                                  final success = await ref
-                                      .read(teamsControllerProvider.notifier)
-                                      .approveTeamEligibility(
-                                        teamId: team.id,
-                                        tournament: tournament,
-                                        actorRole: activeRole,
-                                      );
-                                  if (success && context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          l10n.teamEligibilityApprovedSuccess,
-                                        ),
-                                        backgroundColor:
-                                            KickPulseColors.accentPrimary,
-                                      ),
-                                    );
-                                  }
-                                }
-                              : null,
-                        ),
-                      ),
+                        if (canManageRoster &&
+                            canApproveEligibility &&
+                            !isReadyOrEligible)
+                          const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
+                        if (canApproveEligibility && !isReadyOrEligible)
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              key: const Key('approve_team_eligibility_button'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: meetsMinQuota && withinMaxQuota
+                                    ? KickPulseColors.accentPrimary
+                                    : KickPulseColors.surfaceSubtle,
+                                foregroundColor: meetsMinQuota && withinMaxQuota
+                                    ? Colors.black
+                                    : KickPulseColors.textMuted,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: KickPulseRadiiSpacing.spaceSm,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      KickPulseRadiiSpacing.chipBorderRadius,
+                                ),
+                              ),
+                              icon: const Icon(Icons.verified),
+                              label: Text(l10n.teamApproveEligibilityAction),
+                              onPressed:
+                                  (meetsMinQuota &&
+                                      withinMaxQuota &&
+                                      !teamsState.isSaving)
+                                  ? () async {
+                                      final success = await ref
+                                          .read(
+                                            teamsControllerProvider.notifier,
+                                          )
+                                          .approveTeamEligibility(
+                                            teamId: team.id,
+                                            tournament: tournament,
+                                            actorRole: activeRole,
+                                          );
+                                      if (success && context.mounted) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              l10n.teamEligibilityApprovedSuccess,
+                                            ),
+                                            backgroundColor:
+                                                KickPulseColors.accentPrimary,
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  : null,
+                            ),
+                          ),
+                      ],
+                    ),
                   ],
-                ),
+                ],
               ),
+            ),
 
             // Roster Header
             Text(

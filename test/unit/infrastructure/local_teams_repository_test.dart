@@ -50,10 +50,10 @@ void main() {
       expect(atn.name, equals('Atlético Norte FC'));
       expect(atn.tournamentId, equals('tournament-seed-liga-clausura'));
       expect(atn.eligibilityStatus, equals(TeamEligibilityStatus.eligible));
-      expect(atn.players.length, equals(7));
+      expect(atn.players.length, equals(10));
       expect(
         atn.players.map((p) => p.shirtNumber).toList(),
-        equals([1, 4, 5, 8, 9, 10, 11]),
+        equals([1, 3, 4, 5, 6, 8, 9, 10, 11, 14]),
       );
 
       final rsc = teams.firstWhere((t) => t.shortCode == 'RSC');
