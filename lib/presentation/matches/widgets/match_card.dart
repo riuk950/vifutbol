@@ -1,0 +1,332 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:vifutbol/domain/entities/championship_match.dart';
+import 'package:vifutbol/domain/entities/match_enums.dart';
+import 'package:vifutbol/domain/entities/team_enums.dart';
+import 'package:vifutbol/domain/entities/tournament_team.dart';
+import 'package:vifutbol/l10n/app_localizations.dart';
+import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
+import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
+import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
+import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
+import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
+import 'package:vifutbol/presentation/teams/widgets/kick_pulse_team_crest.dart';
+
+class MatchCard extends StatelessWidget {
+  const MatchCard({
+    super.key,
+    required this.match,
+    this.homeTeam,
+    this.awayTeam,
+    this.canSchedule = false,
+    this.onScheduleTap,
+  });
+
+  final ChampionshipMatch match;
+  final TournamentTeam? homeTeam;
+  final TournamentTeam? awayTeam;
+  final bool canSchedule;
+  final VoidCallback? onScheduleTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final homeName = homeTeam?.name ?? match.homeTeamId;
+    final awayName = awayTeam?.name ?? match.awayTeamId;
+
+    return Semantics(
+      container: true,
+      label: 'Tarjeta de partido: $homeName contra $awayName',
+      child: KickPulseCard(
+        padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header: Round name and Status Pill
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    match.roundName,
+                    style: KickPulseTypography.captionMeta.copyWith(
+                      color: KickPulseColors.accentElectric,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
+                _buildStatusBadge(l10n, match.status),
+              ],
+            ),
+            const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+
+            // Teams Row with Crests
+            Row(
+              children: [
+                // Home Team
+                Expanded(
+                  child: Row(
+                    children: [
+                      KickPulseTeamCrest(
+                        shortCode:
+                            homeTeam?.shortCode ??
+                            (homeName.length >= 3
+                                ? homeName.substring(0, 3)
+                                : homeName),
+                        crestShape:
+                            homeTeam?.crestShape ?? TeamCrestShape.shield,
+                        primaryColorHex:
+                            homeTeam?.primaryColorHex ?? 0xFF00E676,
+                        secondaryColorHex:
+                            homeTeam?.secondaryColorHex ?? 0xFF0A0E17,
+                        size: 36,
+                      ),
+                      const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
+                      Expanded(
+                        child: Text(
+                          homeName,
+                          style: KickPulseTypography.cardTitle,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // VS Badge
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: KickPulseRadiiSpacing.spaceSm,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: KickPulseColors.surfaceElevated,
+                    borderRadius: BorderRadius.circular(
+                      KickPulseRadiiSpacing.chipRadius,
+                    ),
+                    border: Border.all(color: KickPulseColors.borderSubtle),
+                  ),
+                  child: Text(
+                    'VS',
+                    style: KickPulseTypography.captionMeta.copyWith(
+                      color: KickPulseColors.textSecondary,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+
+                // Away Team
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          awayName,
+                          style: KickPulseTypography.cardTitle,
+                          textAlign: TextAlign.end,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
+                      KickPulseTeamCrest(
+                        shortCode:
+                            awayTeam?.shortCode ??
+                            (awayName.length >= 3
+                                ? awayName.substring(0, 3)
+                                : awayName),
+                        crestShape:
+                            awayTeam?.crestShape ?? TeamCrestShape.shield,
+                        primaryColorHex:
+                            awayTeam?.primaryColorHex ?? 0xFF2979FF,
+                        secondaryColorHex:
+                            awayTeam?.secondaryColorHex ?? 0xFF0A0E17,
+                        size: 36,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            // Schedule info (if scheduled)
+            if (match.isScheduled) ...[
+              const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceSm),
+                decoration: BoxDecoration(
+                  color: KickPulseColors.surfaceElevated.withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(
+                    KickPulseRadiiSpacing.chipRadius,
+                  ),
+                  border: Border.all(color: KickPulseColors.borderSubtle),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Time and Date
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.calendar_today,
+                          size: 14,
+                          color: KickPulseColors.textSecondary,
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            _formatMatchDateTime(
+                              match.scheduledStartTime!,
+                              match.scheduledEndTime,
+                            ),
+                            style: KickPulseTypography.captionMeta.copyWith(
+                              color: KickPulseColors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+
+                    // Pitch
+                    if (match.pitchName != null) ...[
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.stadium_outlined,
+                            size: 14,
+                            color: KickPulseColors.textSecondary,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              match.pitchName!,
+                              style: KickPulseTypography.captionMeta.copyWith(
+                                color: KickPulseColors.textSecondary,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                    ],
+
+                    // Referee
+                    if (match.refereeName != null) ...[
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.sports,
+                            size: 14,
+                            color: KickPulseColors.accentElectric,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              'Árbitro: ${match.refereeName!}',
+                              style: KickPulseTypography.captionMeta.copyWith(
+                                color: KickPulseColors.accentElectric,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+
+            // Action button for Organizer
+            if (canSchedule) ...[
+              const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton.icon(
+                  key: Key('schedule_match_button_${match.id}'),
+                  onPressed: onScheduleTap,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: KickPulseColors.surfaceElevated,
+                    foregroundColor: KickPulseColors.accentElectric,
+                    side: const BorderSide(
+                      color: KickPulseColors.accentElectric,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: KickPulseRadiiSpacing.spaceMd,
+                      vertical: KickPulseRadiiSpacing.spaceXs,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        KickPulseRadiiSpacing.chipRadius,
+                      ),
+                    ),
+                  ),
+                  icon: Icon(
+                    match.isScheduled ? Icons.edit_calendar : Icons.add_alarm,
+                    size: 16,
+                  ),
+                  label: Text(
+                    match.isScheduled
+                        ? 'Reprogramar'
+                        : l10n.scheduleMatchAction,
+                    style: KickPulseTypography.captionMeta.copyWith(
+                      color: KickPulseColors.accentElectric,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(AppLocalizations l10n, MatchStatus status) {
+    return switch (status) {
+      MatchStatus.pendingSchedule => KickPulseBadge(
+        label: l10n.matchStatusPending,
+        variant: KickPulseBadgeVariant.neutral,
+      ),
+      MatchStatus.scheduled => KickPulseBadge(
+        label: l10n.matchStatusScheduled,
+        variant: KickPulseBadgeVariant.info,
+      ),
+      MatchStatus.inProgress => KickPulseBadge(
+        label: l10n.matchStatusInProgress,
+        variant: KickPulseBadgeVariant.live,
+      ),
+      MatchStatus.completed => KickPulseBadge(
+        label: l10n.matchStatusCompleted,
+        variant: KickPulseBadgeVariant.neutral,
+      ),
+      MatchStatus.cancelled => KickPulseBadge(
+        label: l10n.matchStatusCancelled,
+        variant: KickPulseBadgeVariant.warning,
+      ),
+    };
+  }
+
+  String _formatMatchDateTime(DateTime start, DateTime? end) {
+    final dateFormatter = DateFormat('EEE d MMM', 'es');
+    final timeFormatter = DateFormat('HH:mm');
+
+    final dateStr = dateFormatter.format(start);
+    final startTimeStr = timeFormatter.format(start);
+
+    if (end != null) {
+      final endTimeStr = timeFormatter.format(end);
+      return '$dateStr · $startTimeStr - $endTimeStr';
+    }
+    return '$dateStr · $startTimeStr';
+  }
+}

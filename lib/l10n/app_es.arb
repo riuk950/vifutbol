@@ -1491,5 +1491,216 @@
   "lineupErrorUnauthorized": "No tienes permisos para gestionar la convocatoria de este equipo.",
   "@lineupErrorUnauthorized": {
     "description": "Error si el usuario no tiene permisos"
+  },
+  "matchdayRoundChip": "Jornada {number}",
+  "@matchdayRoundChip": {
+    "description": "Etiqueta del chip de jornada en el selector horizontal",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "matchdayFilterAll": "Todos",
+  "@matchdayFilterAll": {
+    "description": "Filtro para ver todos los partidos"
+  },
+  "matchdayFilterPending": "Pendiente",
+  "@matchdayFilterPending": {
+    "description": "Filtro de partidos pendientes de programación"
+  },
+  "matchdayFilterScheduled": "Programado",
+  "@matchdayFilterScheduled": {
+    "description": "Filtro de partidos programados"
+  },
+  "matchdayFilterCompleted": "Finalizado",
+  "@matchdayFilterCompleted": {
+    "description": "Filtro de partidos finalizados"
+  },
+  "matchdayFilterTeamAll": "Todos los equipos",
+  "@matchdayFilterTeamAll": {
+    "description": "Opción para no filtrar por equipo"
+  },
+  "matchdayGenerateFixtureButton": "Generar Fixture",
+  "@matchdayGenerateFixtureButton": {
+    "description": "Botón del organizador para generar el fixture oficial"
+  },
+  "matchdayGenerateFixtureDialogTitle": "Generar Fixture Oficial",
+  "@matchdayGenerateFixtureDialogTitle": {
+    "description": "Título del diálogo de confirmación para generar fixture"
+  },
+  "matchdayGenerateFixtureDialogMessage": "¿Deseas generar automáticamente el fixture de partidos para este campeonato? Se crearán todas las jornadas correspondientes a los equipos habilitados.",
+  "@matchdayGenerateFixtureDialogMessage": {
+    "description": "Mensaje de confirmación de generación de fixture"
+  },
+  "matchdayGenerateFixtureConfirmButton": "Generar Calendario",
+  "@matchdayGenerateFixtureConfirmButton": {
+    "description": "Botón de confirmación en el diálogo de generación de fixture"
+  },
+  "matchdayGenerateFixtureCancelButton": "Cancelar",
+  "@matchdayGenerateFixtureCancelButton": {
+    "description": "Botón para cancelar la generación de fixture"
+  },
+  "matchdayFixtureGeneratedSuccess": "Fixture generado exitosamente ({count} partidos creados).",
+  "@matchdayFixtureGeneratedSuccess": {
+    "description": "Mensaje de éxito tras generar el fixture",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "matchdayEmptyFixtureTitle": "No hay partidos en el fixture",
+  "@matchdayEmptyFixtureTitle": {
+    "description": "Título de estado vacío en la pestaña de jornada"
+  },
+  "matchdayEmptyFixtureSubtitle": "Aún no se ha generado el calendario de partidos para este campeonato.",
+  "@matchdayEmptyFixtureSubtitle": {
+    "description": "Subtítulo de estado vacío en la pestaña de jornada"
+  },
+  "matchdayNoMatchesFiltered": "No hay partidos que coincidan con los filtros seleccionados.",
+  "@matchdayNoMatchesFiltered": {
+    "description": "Mensaje cuando ningún partido coincide con los filtros aplicados"
+  },
+  "matchStatusPending": "Pendiente de Programación",
+  "@matchStatusPending": {
+    "description": "Estado del partido: pendiente de asignación"
+  },
+  "matchStatusScheduled": "Programado",
+  "@matchStatusScheduled": {
+    "description": "Estado del partido: fecha y recursos asignados"
+  },
+  "matchStatusInProgress": "En Juego",
+  "@matchStatusInProgress": {
+    "description": "Estado del partido: en disputa activa"
+  },
+  "matchStatusCompleted": "Finalizado",
+  "@matchStatusCompleted": {
+    "description": "Estado del partido: finalizado con resultado oficial"
+  },
+  "matchStatusCancelled": "Cancelado",
+  "@matchStatusCancelled": {
+    "description": "Estado del partido: cancelado"
+  },
+  "scheduleMatchAction": "Programar Partido",
+  "@scheduleMatchAction": {
+    "description": "Acción para abrir el diálogo de programación de partido"
+  },
+  "scheduleMatchDialogTitle": "Programar Partido",
+  "@scheduleMatchDialogTitle": {
+    "description": "Título del modal de programación de partido"
+  },
+  "scheduleMatchDateLabel": "Fecha del Partido",
+  "@scheduleMatchDateLabel": {
+    "description": "Etiqueta para seleccionar la fecha del encuentro"
+  },
+  "scheduleMatchTimeLabel": "Hora de Inicio",
+  "@scheduleMatchTimeLabel": {
+    "description": "Etiqueta para seleccionar la hora de inicio del encuentro"
+  },
+  "scheduleMatchVenueLabel": "Sede Deportiva",
+  "@scheduleMatchVenueLabel": {
+    "description": "Etiqueta del selector de sede deportiva"
+  },
+  "scheduleMatchPitchLabel": "Cancha",
+  "@scheduleMatchPitchLabel": {
+    "description": "Etiqueta del selector de cancha específica"
+  },
+  "scheduleMatchRefereeLabel": "Árbitro Oficial",
+  "@scheduleMatchRefereeLabel": {
+    "description": "Etiqueta del selector de árbitro oficial"
+  },
+  "scheduleMatchSelectVenuePrompt": "Selecciona una sede",
+  "@scheduleMatchSelectVenuePrompt": {
+    "description": "Texto por defecto al elegir sede"
+  },
+  "scheduleMatchSelectPitchPrompt": "Selecciona una cancha",
+  "@scheduleMatchSelectPitchPrompt": {
+    "description": "Texto por defecto al elegir cancha"
+  },
+  "scheduleMatchSelectRefereePrompt": "Selecciona un árbitro",
+  "@scheduleMatchSelectRefereePrompt": {
+    "description": "Texto por defecto al elegir árbitro"
+  },
+  "scheduleMatchSaveButton": "Confirmar Programación",
+  "@scheduleMatchSaveButton": {
+    "description": "Botón para guardar la programación del partido"
+  },
+  "scheduleMatchSuccessMessage": "Partido programado exitosamente.",
+  "@scheduleMatchSuccessMessage": {
+    "description": "Notificación de guardado exitoso de partido programado"
+  },
+  "scheduleCollisionPitchTitle": "Conflicto de Cancha",
+  "@scheduleCollisionPitchTitle": {
+    "description": "Título de colisión por cruce en la misma cancha"
+  },
+  "scheduleCollisionRefereeTitle": "Conflicto de Árbitro",
+  "@scheduleCollisionRefereeTitle": {
+    "description": "Título de colisión por doble designación del árbitro"
+  },
+  "scheduleCollisionTeamTitle": "Conflicto de Equipo",
+  "@scheduleCollisionTeamTitle": {
+    "description": "Título de colisión por doble partido simultáneo del equipo"
+  },
+  "scheduleCollisionPitchMessage": "La cancha {pitchName} ya se encuentra ocupada en el horario seleccionado ({startTime} - {endTime}).",
+  "@scheduleCollisionPitchMessage": {
+    "description": "Mensaje de conflicto cuando la cancha está ocupada",
+    "placeholders": {
+      "pitchName": {
+        "type": "String"
+      },
+      "startTime": {
+        "type": "String"
+      },
+      "endTime": {
+        "type": "String"
+      }
+    }
+  },
+  "scheduleCollisionRefereeMessage": "El árbitro {refereeName} ya tiene otro partido designado en ese horario ({startTime} - {endTime}).",
+  "@scheduleCollisionRefereeMessage": {
+    "description": "Mensaje de conflicto cuando el árbitro está asignado a otro partido simultáneo",
+    "placeholders": {
+      "refereeName": {
+        "type": "String"
+      },
+      "startTime": {
+        "type": "String"
+      },
+      "endTime": {
+        "type": "String"
+      }
+    }
+  },
+  "scheduleCollisionTeamMessage": "El equipo {teamName} ya tiene otro partido programado en ese horario ({startTime} - {endTime}).",
+  "@scheduleCollisionTeamMessage": {
+    "description": "Mensaje de conflicto cuando un equipo tiene partidos superpuestos",
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      },
+      "startTime": {
+        "type": "String"
+      },
+      "endTime": {
+        "type": "String"
+      }
+    }
+  },
+  "fixtureErrorUnauthorized": "No tienes permisos de organizador para generar o programar partidos.",
+  "@fixtureErrorUnauthorized": {
+    "description": "Error cuando el usuario no tiene permisos de organizador"
+  },
+  "fixtureErrorInsufficientTeams": "Se requieren al menos 2 equipos habilitados para generar el fixture.",
+  "@fixtureErrorInsufficientTeams": {
+    "description": "Error cuando hay menos de 2 equipos habilitados"
+  },
+  "fixtureErrorRegenerationBlocked": "No se puede regenerar el fixture porque ya existen partidos en juego o finalizados.",
+  "@fixtureErrorRegenerationBlocked": {
+    "description": "Error al intentar regenerar fixture con actas disputadas"
+  },
+  "fixtureErrorInvalidTimes": "La hora de inicio o duración del partido no son válidas.",
+  "@fixtureErrorInvalidTimes": {
+    "description": "Error de fecha u hora no válida"
   }
 }

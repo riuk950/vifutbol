@@ -33,6 +33,9 @@ class TournamentTeam {
   /// Normalized team name for case-insensitive and trimmed uniqueness checks.
   String get normalizedName => name.trim().toLowerCase();
 
+  /// True if the team is officially eligible for fixtures and match play.
+  bool get isEligible => eligibilityStatus == TeamEligibilityStatus.eligible;
+
   /// True if current enrolled players satisfy the tournament's minimum requirement.
   bool meetsMinimumQuota(int minPlayers) => players.length >= minPlayers;
 

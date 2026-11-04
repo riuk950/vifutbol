@@ -167,3 +167,30 @@ class LineupConvocationValidationFailure extends AppFailure {
     super.cause,
   ]);
 }
+
+/// Machine-readable error codes for tournament fixture generation and match scheduling.
+enum FixtureScheduleErrorCode {
+  unauthorizedRole,
+  insufficientTeams,
+  tournamentClosed,
+  regenerationBlocked,
+  invalidScheduleTimes,
+  pitchScheduleCollision,
+  refereeScheduleCollision,
+  teamScheduleCollision,
+}
+
+/// Emitted when fixture generation, match scheduling, or collision validation fails.
+class FixtureScheduleValidationFailure extends AppFailure {
+  final FixtureScheduleErrorCode code;
+  final String? conflictingMatchId;
+  final String? conflictingEntityName;
+
+  const FixtureScheduleValidationFailure(
+    this.code, [
+    super.message = 'Validación de fixture o programación fallida',
+    this.conflictingMatchId,
+    this.conflictingEntityName,
+    super.cause,
+  ]);
+}

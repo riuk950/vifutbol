@@ -1,55 +1,145 @@
 import 'package:flutter/material.dart';
-import 'package:vifutbol/domain/entities/ui_view_state.dart';
-import 'package:vifutbol/domain/failures/app_failure.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vifutbol/application/providers/auth_providers.dart';
+import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
+import 'package:vifutbol/application/providers/teams_providers.dart';
+import 'package:vifutbol/application/providers/tournaments_providers.dart';
+import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/match_enums.dart';
+import 'package:vifutbol/domain/entities/role_permission_matrix.dart';
+import 'package:vifutbol/domain/entities/tournament_enums.dart';
+import 'package:vifutbol/domain/entities/tournament_rules_config.dart';
+import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
-import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_state_view.dart';
+import 'package:vifutbol/presentation/matches/dialogs/generate_fixture_confirmation_dialog.dart';
+import 'package:vifutbol/presentation/matches/widgets/match_card.dart';
+import 'package:vifutbol/presentation/matches/widgets/schedule_match_dialog.dart';
 
-enum DemoUiStateOption { loading, content, empty, error, success }
-
-class MatchdayTabView extends StatefulWidget {
+class MatchdayTabView extends ConsumerStatefulWidget {
   const MatchdayTabView({super.key});
 
   @override
-  State<MatchdayTabView> createState() => _MatchdayTabViewState();
+  ConsumerState<MatchdayTabView> createState() => _MatchdayTabViewState();
 }
 
-class _MatchdayTabViewState extends State<MatchdayTabView> {
-  DemoUiStateOption _selectedOption = DemoUiStateOption.content;
+class _MatchdayTabViewState extends ConsumerState<MatchdayTabView> {
+  String? _selectedTournamentId;
 
-  UiViewState<String> _buildCurrentState() {
-    return switch (_selectedOption) {
-      DemoUiStateOption.loading => const UiLoadingState<String>(),
-      DemoUiStateOption.content => const UiContentState<String>(
-        'Jornada 1 — Liga Metropolitana',
-      ),
-      DemoUiStateOption.empty => const UiEmptyState<String>(),
-      DemoUiStateOption.error => const UiErrorState<String>(
-        DataLoadFailure(
-          'No se pudieron sincronizar los partidos con el servidor.',
-        ),
-        canRetry: true,
-      ),
-      DemoUiStateOption.success => const UiSuccessState<String>(
-        'Acta deportiva actualizada',
-      ),
-    };
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initData();
+    });
+  }
+
+  void _initData() {
+    final tournamentsState = ref.read(tournamentsControllerProvider);
+    if (tournamentsState.tournaments.isNotEmpty) {
+      final tournamentId = tournamentsState.tournaments.first.id;
+      _selectedTournamentId = tournamentId;
+      ref
+          .read(matchesCatalogControllerProvider.notifier)
+          .loadTournamentMatches(tournamentId);
+      ref.read(teamsControllerProvider.notifier).loadTeams();
+    }
+  }
+
+  Future<void> _onGenerateFixture(
+    ChampionshipTournament tournament,
+    List<TournamentTeam> teams,
+  ) async {
+    final confirmed = await GenerateFixtureConfirmationDialog.show(context);
+    if (confirmed == true && mounted) {
+      final userRole = ref.read(activeUserRoleProvider);
+      final controller = ref.read(matchesCatalogControllerProvider.notifier);
+      final success = await controller.generateFixture(
+        tournament: tournament,
+        teams: teams,
+        userRole: userRole,
+      );
+
+      if (success && mounted) {
+        final l10n = AppLocalizations.of(context);
+        final matches = ref.read(matchesCatalogControllerProvider).matches;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.matchdayFixtureGeneratedSuccess(matches.length)),
+            backgroundColor: KickPulseColors.accentPrimary,
+          ),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final currentState = _buildCurrentState();
+    final tournamentsState = ref.watch(tournamentsControllerProvider);
+    final teamsState = ref.watch(teamsControllerProvider);
+    final catalogState = ref.watch(matchesCatalogControllerProvider);
+    final capabilities = ref.watch(activeRoleCapabilitiesProvider);
+    final canManageTournaments = capabilities.contains(
+      RoleCapability.manageTournaments,
+    );
+
+    // If no tournament is currently selected, pick first
+    if (_selectedTournamentId == null &&
+        tournamentsState.tournaments.isNotEmpty) {
+      _selectedTournamentId = tournamentsState.tournaments.first.id;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ref
+              .read(matchesCatalogControllerProvider.notifier)
+              .loadTournamentMatches(_selectedTournamentId!);
+          ref.read(teamsControllerProvider.notifier).loadTeams();
+        }
+      });
+    }
+
+    final currentTournament = tournamentsState.tournaments.firstWhere(
+      (t) => t.id == _selectedTournamentId,
+      orElse: () => tournamentsState.tournaments.isNotEmpty
+          ? tournamentsState.tournaments.first
+          : ChampionshipTournament(
+              id: 'tournament-seed-liga-clausura',
+              name: 'Liga Clausura ViFutbol 2026',
+              category: 'Libre Masculino',
+              startDate: DateTime(2026, 5, 1),
+              endDate: DateTime(2026, 9, 30),
+              format: TournamentFormat.league,
+              status: TournamentStatus.openRegistration,
+              rules: const TournamentRulesConfig(
+                pointsForWin: 3,
+                pointsForDraw: 1,
+                pointsForLoss: 0,
+                yellowCardSuspensionLimit: 3,
+                minPlayersPerTeam: 7,
+                maxPlayersPerTeam: 18,
+                halfDurationMinutes: 45,
+                leagueRounds: 1,
+              ),
+              updatedAt: DateTime.now(),
+            ),
+    );
+
+    final tournamentTeams = teamsState.teams
+        .where((t) => t.tournamentId == currentTournament.id)
+        .toList();
+
+    final teamsMap = {for (final t in tournamentTeams) t.id: t};
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Screen Header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -60,108 +150,291 @@ class _MatchdayTabViewState extends State<MatchdayTabView> {
               ),
             ],
           ),
-          const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+          const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
 
-          // State Demonstration Segmented Control for interactive verification
-          KickPulseCard(
-            padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceSm),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Verificación de Estados de Interfaz (5 Estados Base)',
-                  style: KickPulseTypography.captionMeta.copyWith(
-                    color: KickPulseColors.textSecondary,
+          // Tournament Header & Selector
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  currentTournament.name,
+                  style: KickPulseTypography.cardTitle.copyWith(
+                    color: KickPulseColors.accentPrimary,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (canManageTournaments)
+                ElevatedButton.icon(
+                  key: const Key('generate_fixture_button'),
+                  onPressed: catalogState.isSaving
+                      ? null
+                      : () => _onGenerateFixture(
+                          currentTournament,
+                          tournamentTeams,
+                        ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: KickPulseColors.accentPrimary,
+                    foregroundColor: KickPulseColors.surfaceBase,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: KickPulseRadiiSpacing.spaceMd,
+                      vertical: KickPulseRadiiSpacing.spaceXs,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        KickPulseRadiiSpacing.chipRadius,
+                      ),
+                    ),
+                  ),
+                  icon: const Icon(Icons.auto_awesome, size: 16),
+                  label: Text(
+                    l10n.matchdayGenerateFixtureButton,
+                    style: KickPulseTypography.captionMeta.copyWith(
+                      color: KickPulseColors.surfaceBase,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _buildStateChip('Carga', DemoUiStateOption.loading),
-                      const SizedBox(width: 6),
-                      _buildStateChip('Contenido', DemoUiStateOption.content),
-                      const SizedBox(width: 6),
-                      _buildStateChip('Vacío', DemoUiStateOption.empty),
-                      const SizedBox(width: 6),
-                      _buildStateChip('Error', DemoUiStateOption.error),
-                      const SizedBox(width: 6),
-                      _buildStateChip('Éxito', DemoUiStateOption.success),
-                    ],
+            ],
+          ),
+          const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+
+          // Error Message Banner (if any)
+          if (catalogState.errorMessage != null) ...[
+            Container(
+              padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceSm),
+              margin: const EdgeInsets.only(
+                bottom: KickPulseRadiiSpacing.spaceMd,
+              ),
+              decoration: BoxDecoration(
+                color: KickPulseColors.accentLive.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(
+                  KickPulseRadiiSpacing.chipRadius,
+                ),
+                border: Border.all(color: KickPulseColors.accentLive),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.error_outline,
+                    color: KickPulseColors.accentLive,
+                    size: 20,
                   ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      catalogState.errorMessage!,
+                      style: KickPulseTypography.captionMeta.copyWith(
+                        color: KickPulseColors.accentLive,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 16),
+                    onPressed: () => ref
+                        .read(matchesCatalogControllerProvider.notifier)
+                        .clearErrorMessage(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          // Round Selector Chips (Horizontal Scroll)
+          if (catalogState.availableRounds.isNotEmpty) ...[
+            SingleChildScrollView(
+              key: const Key('matchday_round_chips_list'),
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: catalogState.availableRounds.map((round) {
+                  final isSelected = catalogState.selectedRound == round;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: ChoiceChip(
+                      key: Key('round_chip_$round'),
+                      label: Text(
+                        l10n.matchdayRoundChip(round),
+                        style: KickPulseTypography.captionMeta.copyWith(
+                          color: isSelected
+                              ? KickPulseColors.surfaceBase
+                              : KickPulseColors.textSecondary,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
+                      ),
+                      selected: isSelected,
+                      selectedColor: KickPulseColors.accentPrimary,
+                      backgroundColor: KickPulseColors.surfaceElevated,
+                      onSelected: (_) {
+                        ref
+                            .read(matchesCatalogControllerProvider.notifier)
+                            .selectRound(round);
+                      },
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+          ],
+
+          // Filter Row: Status Filters
+          SingleChildScrollView(
+            key: const Key('matchday_status_filter_chips'),
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildStatusFilterChip(
+                  label: l10n.matchdayFilterAll,
+                  status: null,
+                  isSelected: catalogState.statusFilter == null,
+                ),
+                const SizedBox(width: 6),
+                _buildStatusFilterChip(
+                  label: l10n.matchdayFilterPending,
+                  status: MatchStatus.pendingSchedule,
+                  isSelected:
+                      catalogState.statusFilter == MatchStatus.pendingSchedule,
+                ),
+                const SizedBox(width: 6),
+                _buildStatusFilterChip(
+                  label: l10n.matchdayFilterScheduled,
+                  status: MatchStatus.scheduled,
+                  isSelected:
+                      catalogState.statusFilter == MatchStatus.scheduled,
+                ),
+                const SizedBox(width: 6),
+                _buildStatusFilterChip(
+                  label: l10n.matchdayFilterCompleted,
+                  status: MatchStatus.completed,
+                  isSelected:
+                      catalogState.statusFilter == MatchStatus.completed,
                 ),
               ],
             ),
           ),
           const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
 
-          // Interactive State View Renderer
-          KickPulseCard(
-            child: KickPulseStateView<String>(
-              state: currentState,
-              contentBuilder: (context, data) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          // Matches Content List
+          if (catalogState.isLoading) ...[
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.all(32.0),
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          ] else if (catalogState.matches.isEmpty) ...[
+            KickPulseCard(
+              padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceLg),
+              child: Center(
+                child: Column(
                   children: [
+                    const Icon(
+                      Icons.event_busy,
+                      size: 48,
+                      color: KickPulseColors.textSecondary,
+                    ),
+                    const SizedBox(height: 12),
                     Text(
-                      l10n.stateContentTitle,
+                      l10n.matchdayEmptyFixtureTitle,
                       style: KickPulseTypography.cardTitle,
                     ),
-                    const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+                    const SizedBox(height: 6),
                     Text(
-                      data,
-                      style: KickPulseTypography.displayScore.copyWith(
-                        fontSize: 18,
-                      ),
-                    ),
-                    const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
-                    Text(
-                      'Próximos partidos y resultados oficiales de la jornada.',
+                      l10n.matchdayEmptyFixtureSubtitle,
+                      textAlign: TextAlign.center,
                       style: KickPulseTypography.bodyPrimary.copyWith(
                         color: KickPulseColors.textSecondary,
                       ),
                     ),
+                    if (canManageTournaments) ...[
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        key: const Key('empty_generate_fixture_button'),
+                        onPressed: () => _onGenerateFixture(
+                          currentTournament,
+                          tournamentTeams,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: KickPulseColors.accentPrimary,
+                          foregroundColor: KickPulseColors.surfaceBase,
+                        ),
+                        icon: const Icon(Icons.auto_awesome, size: 16),
+                        label: Text(l10n.matchdayGenerateFixtureButton),
+                      ),
+                    ],
                   ],
+                ),
+              ),
+            ),
+          ] else if (catalogState.filteredMatches.isEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Center(
+                child: Text(
+                  l10n.matchdayNoMatchesFiltered,
+                  style: KickPulseTypography.bodyPrimary.copyWith(
+                    color: KickPulseColors.textSecondary,
+                  ),
+                ),
+              ),
+            ),
+          ] else ...[
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: catalogState.filteredMatches.length,
+              separatorBuilder: (context, index) =>
+                  const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+              itemBuilder: (context, index) {
+                final match = catalogState.filteredMatches[index];
+                return MatchCard(
+                  key: Key('match_card_${match.id}'),
+                  match: match,
+                  homeTeam: teamsMap[match.homeTeamId],
+                  awayTeam: teamsMap[match.awayTeamId],
+                  canSchedule: canManageTournaments,
+                  onScheduleTap: () {
+                    ScheduleMatchDialog.show(
+                      context: context,
+                      match: match,
+                      tournament: currentTournament,
+                    );
+                  },
                 );
               },
-              onRetry: () async {
-                setState(() {
-                  _selectedOption = DemoUiStateOption.content;
-                });
-              },
             ),
-          ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildStateChip(String label, DemoUiStateOption option) {
-    final isSelected = _selectedOption == option;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedOption = option;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
+  Widget _buildStatusFilterChip({
+    required String label,
+    required MatchStatus? status,
+    required bool isSelected,
+  }) {
+    return ChoiceChip(
+      label: Text(
+        label,
+        style: KickPulseTypography.captionMeta.copyWith(
           color: isSelected
-              ? KickPulseColors.accentPrimary
-              : KickPulseColors.surfaceSubtle,
-          borderRadius: KickPulseRadiiSpacing.chipBorderRadius,
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: isSelected ? Colors.black : KickPulseColors.textPrimary,
-          ),
+              ? KickPulseColors.surfaceBase
+              : KickPulseColors.textSecondary,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
+      selected: isSelected,
+      selectedColor: KickPulseColors.accentPrimary,
+      backgroundColor: KickPulseColors.surfaceElevated,
+      onSelected: (_) {
+        ref
+            .read(matchesCatalogControllerProvider.notifier)
+            .setStatusFilter(status);
+      },
     );
   }
 }

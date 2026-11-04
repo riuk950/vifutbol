@@ -2127,6 +2127,270 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No tienes permisos para gestionar la convocatoria de este equipo.'**
   String get lineupErrorUnauthorized;
+
+  /// Etiqueta del chip de jornada en el selector horizontal
+  ///
+  /// In es, this message translates to:
+  /// **'Jornada {number}'**
+  String matchdayRoundChip(int number);
+
+  /// Filtro para ver todos los partidos
+  ///
+  /// In es, this message translates to:
+  /// **'Todos'**
+  String get matchdayFilterAll;
+
+  /// Filtro de partidos pendientes de programación
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente'**
+  String get matchdayFilterPending;
+
+  /// Filtro de partidos programados
+  ///
+  /// In es, this message translates to:
+  /// **'Programado'**
+  String get matchdayFilterScheduled;
+
+  /// Filtro de partidos finalizados
+  ///
+  /// In es, this message translates to:
+  /// **'Finalizado'**
+  String get matchdayFilterCompleted;
+
+  /// Opción para no filtrar por equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Todos los equipos'**
+  String get matchdayFilterTeamAll;
+
+  /// Botón del organizador para generar el fixture oficial
+  ///
+  /// In es, this message translates to:
+  /// **'Generar Fixture'**
+  String get matchdayGenerateFixtureButton;
+
+  /// Título del diálogo de confirmación para generar fixture
+  ///
+  /// In es, this message translates to:
+  /// **'Generar Fixture Oficial'**
+  String get matchdayGenerateFixtureDialogTitle;
+
+  /// Mensaje de confirmación de generación de fixture
+  ///
+  /// In es, this message translates to:
+  /// **'¿Deseas generar automáticamente el fixture de partidos para este campeonato? Se crearán todas las jornadas correspondientes a los equipos habilitados.'**
+  String get matchdayGenerateFixtureDialogMessage;
+
+  /// Botón de confirmación en el diálogo de generación de fixture
+  ///
+  /// In es, this message translates to:
+  /// **'Generar Calendario'**
+  String get matchdayGenerateFixtureConfirmButton;
+
+  /// Botón para cancelar la generación de fixture
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get matchdayGenerateFixtureCancelButton;
+
+  /// Mensaje de éxito tras generar el fixture
+  ///
+  /// In es, this message translates to:
+  /// **'Fixture generado exitosamente ({count} partidos creados).'**
+  String matchdayFixtureGeneratedSuccess(int count);
+
+  /// Título de estado vacío en la pestaña de jornada
+  ///
+  /// In es, this message translates to:
+  /// **'No hay partidos en el fixture'**
+  String get matchdayEmptyFixtureTitle;
+
+  /// Subtítulo de estado vacío en la pestaña de jornada
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no se ha generado el calendario de partidos para este campeonato.'**
+  String get matchdayEmptyFixtureSubtitle;
+
+  /// Mensaje cuando ningún partido coincide con los filtros aplicados
+  ///
+  /// In es, this message translates to:
+  /// **'No hay partidos que coincidan con los filtros seleccionados.'**
+  String get matchdayNoMatchesFiltered;
+
+  /// Estado del partido: pendiente de asignación
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente de Programación'**
+  String get matchStatusPending;
+
+  /// Estado del partido: fecha y recursos asignados
+  ///
+  /// In es, this message translates to:
+  /// **'Programado'**
+  String get matchStatusScheduled;
+
+  /// Estado del partido: en disputa activa
+  ///
+  /// In es, this message translates to:
+  /// **'En Juego'**
+  String get matchStatusInProgress;
+
+  /// Estado del partido: finalizado con resultado oficial
+  ///
+  /// In es, this message translates to:
+  /// **'Finalizado'**
+  String get matchStatusCompleted;
+
+  /// Estado del partido: cancelado
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelado'**
+  String get matchStatusCancelled;
+
+  /// Acción para abrir el diálogo de programación de partido
+  ///
+  /// In es, this message translates to:
+  /// **'Programar Partido'**
+  String get scheduleMatchAction;
+
+  /// Título del modal de programación de partido
+  ///
+  /// In es, this message translates to:
+  /// **'Programar Partido'**
+  String get scheduleMatchDialogTitle;
+
+  /// Etiqueta para seleccionar la fecha del encuentro
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha del Partido'**
+  String get scheduleMatchDateLabel;
+
+  /// Etiqueta para seleccionar la hora de inicio del encuentro
+  ///
+  /// In es, this message translates to:
+  /// **'Hora de Inicio'**
+  String get scheduleMatchTimeLabel;
+
+  /// Etiqueta del selector de sede deportiva
+  ///
+  /// In es, this message translates to:
+  /// **'Sede Deportiva'**
+  String get scheduleMatchVenueLabel;
+
+  /// Etiqueta del selector de cancha específica
+  ///
+  /// In es, this message translates to:
+  /// **'Cancha'**
+  String get scheduleMatchPitchLabel;
+
+  /// Etiqueta del selector de árbitro oficial
+  ///
+  /// In es, this message translates to:
+  /// **'Árbitro Oficial'**
+  String get scheduleMatchRefereeLabel;
+
+  /// Texto por defecto al elegir sede
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona una sede'**
+  String get scheduleMatchSelectVenuePrompt;
+
+  /// Texto por defecto al elegir cancha
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona una cancha'**
+  String get scheduleMatchSelectPitchPrompt;
+
+  /// Texto por defecto al elegir árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona un árbitro'**
+  String get scheduleMatchSelectRefereePrompt;
+
+  /// Botón para guardar la programación del partido
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar Programación'**
+  String get scheduleMatchSaveButton;
+
+  /// Notificación de guardado exitoso de partido programado
+  ///
+  /// In es, this message translates to:
+  /// **'Partido programado exitosamente.'**
+  String get scheduleMatchSuccessMessage;
+
+  /// Título de colisión por cruce en la misma cancha
+  ///
+  /// In es, this message translates to:
+  /// **'Conflicto de Cancha'**
+  String get scheduleCollisionPitchTitle;
+
+  /// Título de colisión por doble designación del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Conflicto de Árbitro'**
+  String get scheduleCollisionRefereeTitle;
+
+  /// Título de colisión por doble partido simultáneo del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Conflicto de Equipo'**
+  String get scheduleCollisionTeamTitle;
+
+  /// Mensaje de conflicto cuando la cancha está ocupada
+  ///
+  /// In es, this message translates to:
+  /// **'La cancha {pitchName} ya se encuentra ocupada en el horario seleccionado ({startTime} - {endTime}).'**
+  String scheduleCollisionPitchMessage(
+    String pitchName,
+    String startTime,
+    String endTime,
+  );
+
+  /// Mensaje de conflicto cuando el árbitro está asignado a otro partido simultáneo
+  ///
+  /// In es, this message translates to:
+  /// **'El árbitro {refereeName} ya tiene otro partido designado en ese horario ({startTime} - {endTime}).'**
+  String scheduleCollisionRefereeMessage(
+    String refereeName,
+    String startTime,
+    String endTime,
+  );
+
+  /// Mensaje de conflicto cuando un equipo tiene partidos superpuestos
+  ///
+  /// In es, this message translates to:
+  /// **'El equipo {teamName} ya tiene otro partido programado en ese horario ({startTime} - {endTime}).'**
+  String scheduleCollisionTeamMessage(
+    String teamName,
+    String startTime,
+    String endTime,
+  );
+
+  /// Error cuando el usuario no tiene permisos de organizador
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes permisos de organizador para generar o programar partidos.'**
+  String get fixtureErrorUnauthorized;
+
+  /// Error cuando hay menos de 2 equipos habilitados
+  ///
+  /// In es, this message translates to:
+  /// **'Se requieren al menos 2 equipos habilitados para generar el fixture.'**
+  String get fixtureErrorInsufficientTeams;
+
+  /// Error al intentar regenerar fixture con actas disputadas
+  ///
+  /// In es, this message translates to:
+  /// **'No se puede regenerar el fixture porque ya existen partidos en juego o finalizados.'**
+  String get fixtureErrorRegenerationBlocked;
+
+  /// Error de fecha u hora no válida
+  ///
+  /// In es, this message translates to:
+  /// **'La hora de inicio o duración del partido no son válidas.'**
+  String get fixtureErrorInvalidTimes;
 }
 
 class _AppLocalizationsDelegate

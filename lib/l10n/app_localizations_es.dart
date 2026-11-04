@@ -1178,4 +1178,159 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get lineupErrorUnauthorized =>
       'No tienes permisos para gestionar la convocatoria de este equipo.';
+
+  @override
+  String matchdayRoundChip(int number) {
+    return 'Jornada $number';
+  }
+
+  @override
+  String get matchdayFilterAll => 'Todos';
+
+  @override
+  String get matchdayFilterPending => 'Pendiente';
+
+  @override
+  String get matchdayFilterScheduled => 'Programado';
+
+  @override
+  String get matchdayFilterCompleted => 'Finalizado';
+
+  @override
+  String get matchdayFilterTeamAll => 'Todos los equipos';
+
+  @override
+  String get matchdayGenerateFixtureButton => 'Generar Fixture';
+
+  @override
+  String get matchdayGenerateFixtureDialogTitle => 'Generar Fixture Oficial';
+
+  @override
+  String get matchdayGenerateFixtureDialogMessage =>
+      '¿Deseas generar automáticamente el fixture de partidos para este campeonato? Se crearán todas las jornadas correspondientes a los equipos habilitados.';
+
+  @override
+  String get matchdayGenerateFixtureConfirmButton => 'Generar Calendario';
+
+  @override
+  String get matchdayGenerateFixtureCancelButton => 'Cancelar';
+
+  @override
+  String matchdayFixtureGeneratedSuccess(int count) {
+    return 'Fixture generado exitosamente ($count partidos creados).';
+  }
+
+  @override
+  String get matchdayEmptyFixtureTitle => 'No hay partidos en el fixture';
+
+  @override
+  String get matchdayEmptyFixtureSubtitle =>
+      'Aún no se ha generado el calendario de partidos para este campeonato.';
+
+  @override
+  String get matchdayNoMatchesFiltered =>
+      'No hay partidos que coincidan con los filtros seleccionados.';
+
+  @override
+  String get matchStatusPending => 'Pendiente de Programación';
+
+  @override
+  String get matchStatusScheduled => 'Programado';
+
+  @override
+  String get matchStatusInProgress => 'En Juego';
+
+  @override
+  String get matchStatusCompleted => 'Finalizado';
+
+  @override
+  String get matchStatusCancelled => 'Cancelado';
+
+  @override
+  String get scheduleMatchAction => 'Programar Partido';
+
+  @override
+  String get scheduleMatchDialogTitle => 'Programar Partido';
+
+  @override
+  String get scheduleMatchDateLabel => 'Fecha del Partido';
+
+  @override
+  String get scheduleMatchTimeLabel => 'Hora de Inicio';
+
+  @override
+  String get scheduleMatchVenueLabel => 'Sede Deportiva';
+
+  @override
+  String get scheduleMatchPitchLabel => 'Cancha';
+
+  @override
+  String get scheduleMatchRefereeLabel => 'Árbitro Oficial';
+
+  @override
+  String get scheduleMatchSelectVenuePrompt => 'Selecciona una sede';
+
+  @override
+  String get scheduleMatchSelectPitchPrompt => 'Selecciona una cancha';
+
+  @override
+  String get scheduleMatchSelectRefereePrompt => 'Selecciona un árbitro';
+
+  @override
+  String get scheduleMatchSaveButton => 'Confirmar Programación';
+
+  @override
+  String get scheduleMatchSuccessMessage => 'Partido programado exitosamente.';
+
+  @override
+  String get scheduleCollisionPitchTitle => 'Conflicto de Cancha';
+
+  @override
+  String get scheduleCollisionRefereeTitle => 'Conflicto de Árbitro';
+
+  @override
+  String get scheduleCollisionTeamTitle => 'Conflicto de Equipo';
+
+  @override
+  String scheduleCollisionPitchMessage(
+    String pitchName,
+    String startTime,
+    String endTime,
+  ) {
+    return 'La cancha $pitchName ya se encuentra ocupada en el horario seleccionado ($startTime - $endTime).';
+  }
+
+  @override
+  String scheduleCollisionRefereeMessage(
+    String refereeName,
+    String startTime,
+    String endTime,
+  ) {
+    return 'El árbitro $refereeName ya tiene otro partido designado en ese horario ($startTime - $endTime).';
+  }
+
+  @override
+  String scheduleCollisionTeamMessage(
+    String teamName,
+    String startTime,
+    String endTime,
+  ) {
+    return 'El equipo $teamName ya tiene otro partido programado en ese horario ($startTime - $endTime).';
+  }
+
+  @override
+  String get fixtureErrorUnauthorized =>
+      'No tienes permisos de organizador para generar o programar partidos.';
+
+  @override
+  String get fixtureErrorInsufficientTeams =>
+      'Se requieren al menos 2 equipos habilitados para generar el fixture.';
+
+  @override
+  String get fixtureErrorRegenerationBlocked =>
+      'No se puede regenerar el fixture porque ya existen partidos en juego o finalizados.';
+
+  @override
+  String get fixtureErrorInvalidTimes =>
+      'La hora de inicio o duración del partido no son válidas.';
 }
