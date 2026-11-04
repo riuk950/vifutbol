@@ -10,9 +10,16 @@ enum _RankingCategory { scorers, assists, fairPlay }
 /// Displays individual & collective sports leaderboards (`Goleadores`, `Asistencias`, `Fair Play`)
 /// with `tabular-nums` alignment (`FR-007`, `FR-008`, `FR-009`, `FR-010`).
 class TournamentRankingsCard extends StatefulWidget {
-  const TournamentRankingsCard({super.key, required this.rankings});
+  const TournamentRankingsCard({
+    super.key,
+    required this.rankings,
+    this.onPlayerSelected,
+    this.onTeamSelected,
+  });
 
   final TournamentRankingsBundle rankings;
+  final ValueChanged<String>? onPlayerSelected;
+  final ValueChanged<String>? onTeamSelected;
 
   @override
   State<TournamentRankingsCard> createState() => _TournamentRankingsCardState();
@@ -153,88 +160,96 @@ class _TournamentRankingsCardState extends State<TournamentRankingsCard> {
                   ? l10n.rankingsGoalsUnit(entry.goals)
                   : null);
 
-        return Container(
+        return InkWell(
           key: rowKey,
-          margin: const EdgeInsets.only(bottom: 6),
-          padding: const EdgeInsets.symmetric(
-            horizontal: KickPulseRadiiSpacing.spaceSm,
-            vertical: 10,
-          ),
-          decoration: BoxDecoration(
-            color: KickPulseColors.surfaceElevated,
-            borderRadius: BorderRadius.circular(
-              KickPulseRadiiSpacing.chipRadius,
+          onTap: widget.onPlayerSelected != null
+              ? () => widget.onPlayerSelected!(entry.playerId)
+              : null,
+          borderRadius: BorderRadius.circular(KickPulseRadiiSpacing.chipRadius),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 6),
+            padding: const EdgeInsets.symmetric(
+              horizontal: KickPulseRadiiSpacing.spaceSm,
+              vertical: 10,
             ),
-          ),
-          child: Row(
-            children: <Widget>[
-              SizedBox(
-                width: 28,
-                child: Text(
-                  '${entry.rank}',
-                  style: KickPulseTypography.statMetric(
-                    size: 14,
-                    weight: FontWeight.w800,
-                    color: entry.rank == 1
-                        ? KickPulseColors.accentPrimary
-                        : KickPulseColors.textSecondary,
+            decoration: BoxDecoration(
+              color: KickPulseColors.surfaceElevated,
+              borderRadius: BorderRadius.circular(
+                KickPulseRadiiSpacing.chipRadius,
+              ),
+            ),
+            child: Row(
+              children: <Widget>[
+                SizedBox(
+                  width: 28,
+                  child: Text(
+                    '${entry.rank}',
+                    style: KickPulseTypography.statMetric(
+                      size: 14,
+                      weight: FontWeight.w800,
+                      color: entry.rank == 1
+                          ? KickPulseColors.accentPrimary
+                          : KickPulseColors.textSecondary,
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      '${entry.playerName} (#${entry.shirtNumber})',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: KickPulseTypography.bodyPrimary.copyWith(
-                        fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '${entry.playerName} (#${entry.shirtNumber})',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: KickPulseTypography.bodyPrimary.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    Text(
-                      '${entry.teamName} (${entry.teamShortCode})',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: KickPulseTypography.captionMeta,
-                    ),
-                  ],
+                      Text(
+                        '${entry.teamName} (${entry.teamShortCode})',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: KickPulseTypography.captionMeta,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              if (secondaryMetric != null) ...<Widget>[
-                const SizedBox(width: KickPulseRadiiSpacing.spaceXs),
-                Text(
-                  secondaryMetric,
-                  style: KickPulseTypography.statMetric(
-                    size: 12,
-                    weight: FontWeight.w500,
-                    color: KickPulseColors.textSecondary,
+                if (secondaryMetric != null) ...<Widget>[
+                  const SizedBox(width: KickPulseRadiiSpacing.spaceXs),
+                  Text(
+                    secondaryMetric,
+                    style: KickPulseTypography.statMetric(
+                      size: 12,
+                      weight: FontWeight.w500,
+                      color: KickPulseColors.textSecondary,
+                    ),
+                  ),
+                ],
+                const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: KickPulseColors.accentPrimary.withValues(
+                      alpha: 0.16,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      KickPulseRadiiSpacing.badgeRadius,
+                    ),
+                  ),
+                  child: Text(
+                    primaryMetric,
+                    style: KickPulseTypography.statMetric(
+                      size: 13,
+                      weight: FontWeight.w800,
+                      color: KickPulseColors.accentPrimary,
+                    ),
                   ),
                 ),
               ],
-              const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: KickPulseColors.accentPrimary.withValues(alpha: 0.16),
-                  borderRadius: BorderRadius.circular(
-                    KickPulseRadiiSpacing.badgeRadius,
-                  ),
-                ),
-                child: Text(
-                  primaryMetric,
-                  style: KickPulseTypography.statMetric(
-                    size: 13,
-                    weight: FontWeight.w800,
-                    color: KickPulseColors.accentPrimary,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         );
       }).toList(),
@@ -266,83 +281,95 @@ class _TournamentRankingsCardState extends State<TournamentRankingsCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         ...rows.map((row) {
-          return Container(
+          return InkWell(
             key: Key('fair_play_row_${row.teamId}'),
-            margin: const EdgeInsets.only(bottom: 6),
-            padding: const EdgeInsets.symmetric(
-              horizontal: KickPulseRadiiSpacing.spaceSm,
-              vertical: 10,
+            onTap: widget.onTeamSelected != null
+                ? () => widget.onTeamSelected!(row.teamId)
+                : null,
+            borderRadius: BorderRadius.circular(
+              KickPulseRadiiSpacing.chipRadius,
             ),
-            decoration: BoxDecoration(
-              color: KickPulseColors.surfaceElevated,
-              borderRadius: BorderRadius.circular(
-                KickPulseRadiiSpacing.chipRadius,
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 6),
+              padding: const EdgeInsets.symmetric(
+                horizontal: KickPulseRadiiSpacing.spaceSm,
+                vertical: 10,
               ),
-            ),
-            child: Row(
-              children: <Widget>[
-                SizedBox(
-                  width: 28,
-                  child: Text(
-                    '${row.rank}',
-                    style: KickPulseTypography.statMetric(
-                      size: 14,
-                      weight: FontWeight.w800,
-                      color: row.rank == 1
-                          ? KickPulseColors.accentPrimary
-                          : KickPulseColors.textSecondary,
+              decoration: BoxDecoration(
+                color: KickPulseColors.surfaceElevated,
+                borderRadius: BorderRadius.circular(
+                  KickPulseRadiiSpacing.chipRadius,
+                ),
+              ),
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: 28,
+                    child: Text(
+                      '${row.rank}',
+                      style: KickPulseTypography.statMetric(
+                        size: 14,
+                        weight: FontWeight.w800,
+                        color: row.rank == 1
+                            ? KickPulseColors.accentPrimary
+                            : KickPulseColors.textSecondary,
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        '${row.teamName} (${row.teamShortCode})',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: KickPulseTypography.bodyPrimary.copyWith(
-                          fontWeight: FontWeight.w600,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          '${row.teamName} (${row.teamShortCode})',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: KickPulseTypography.bodyPrimary.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'TA: ${row.yellowCards} · 2A/R: ${row.secondYellowRedCards} · TR: ${row.directRedCards}',
-                        style: KickPulseTypography.statMetric(
-                          size: 11,
-                          weight: FontWeight.w500,
-                          color: KickPulseColors.textSecondary,
+                        Text(
+                          'TA: ${row.yellowCards} · 2A/R: ${row.secondYellowRedCards} · TR: ${row.directRedCards}',
+                          style: KickPulseTypography.statMetric(
+                            size: 11,
+                            weight: FontWeight.w500,
+                            color: KickPulseColors.textSecondary,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: row.penaltyPoints == 0
-                        ? KickPulseColors.accentPrimary.withValues(alpha: 0.16)
-                        : KickPulseColors.accentWarning.withValues(alpha: 0.16),
-                    borderRadius: BorderRadius.circular(
-                      KickPulseRadiiSpacing.badgeRadius,
+                      ],
                     ),
                   ),
-                  child: Text(
-                    l10n.rankingsFairPlayPointsUnit(row.penaltyPoints),
-                    style: KickPulseTypography.statMetric(
-                      size: 13,
-                      weight: FontWeight.w800,
+                  const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
                       color: row.penaltyPoints == 0
-                          ? KickPulseColors.accentPrimary
-                          : KickPulseColors.accentWarning,
+                          ? KickPulseColors.accentPrimary.withValues(
+                              alpha: 0.16,
+                            )
+                          : KickPulseColors.accentWarning.withValues(
+                              alpha: 0.16,
+                            ),
+                      borderRadius: BorderRadius.circular(
+                        KickPulseRadiiSpacing.badgeRadius,
+                      ),
+                    ),
+                    child: Text(
+                      l10n.rankingsFairPlayPointsUnit(row.penaltyPoints),
+                      style: KickPulseTypography.statMetric(
+                        size: 13,
+                        weight: FontWeight.w800,
+                        color: row.penaltyPoints == 0
+                            ? KickPulseColors.accentPrimary
+                            : KickPulseColors.accentWarning,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         }),

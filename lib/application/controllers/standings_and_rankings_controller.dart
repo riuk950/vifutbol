@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/tournament_enums.dart';
 import '../providers/digital_match_report_providers.dart';
+import '../providers/foundation_providers.dart';
+import '../providers/lineups_tracking_providers.dart';
 import '../providers/matches_catalog_providers.dart';
 import '../providers/teams_providers.dart';
 import '../providers/tournaments_providers.dart';
@@ -87,6 +89,8 @@ final calculateTournamentStandingsAndRankingsUseCaseProvider =
           tournamentMatchesRepositoryProvider,
         ),
         matchReportsRepository: ref.watch(matchReportsRepositoryProvider),
+        lineupsTrackingRepository: ref.watch(lineupsTrackingRepositoryProvider),
+        localStorageRepository: ref.watch(localStorageRepositoryProvider),
       );
     });
 

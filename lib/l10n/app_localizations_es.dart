@@ -1742,4 +1742,94 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get rankingsFairPlayLegend =>
       'Ponderación oficial: Amarilla (-1 pt) · Doble Amarilla/Roja (-3 pts) · Roja Directa (-3 pts)';
+
+  @override
+  String get playerProfileTitle => 'Perfil de Rendimiento';
+
+  @override
+  String get playerProfileSubtitle =>
+      'Estadísticas oficiales consolidadas del torneo';
+
+  @override
+  String get playerProfileMyProfileButton => 'Mi Perfil Deportivo';
+
+  @override
+  String get playerDisciplinaryStatusEnabled => 'Habilitado';
+
+  @override
+  String get playerDisciplinaryStatusSuspended => 'Suspendido';
+
+  @override
+  String get playerMetricMatchesPlayed => 'Partidos';
+
+  @override
+  String get playerMetricStarts => 'Titularidades';
+
+  @override
+  String get playerMetricGoals => 'Goles';
+
+  @override
+  String get playerMetricAssists => 'Asistencias';
+
+  @override
+  String get playerMetricGoalAverage => 'Promedio de Gol';
+
+  @override
+  String get playerMetricYellowCards => 'Tarjetas Amarillas';
+
+  @override
+  String get playerMetricRedCards => 'Tarjetas Rojas';
+
+  @override
+  String get playerMatchBreakdownTitle => 'Historial Partido por Partido';
+
+  @override
+  String get playerEmptyParticipationsMessage =>
+      'Aún no registras participaciones en partidos oficiales de este torneo.';
+
+  @override
+  String get playerStarterBadge => 'Titular';
+
+  @override
+  String get playerSubstituteBadge => 'Suplente';
+
+  @override
+  String get teamDetailedStatsTitle => 'Ficha del Equipo';
+
+  @override
+  String get teamRecentFormTitle => 'Racha Reciente';
+
+  @override
+  String get teamRecentFormEmpty =>
+      'Aún no hay partidos finalizados para calcular la racha.';
+
+  @override
+  String get teamCompletedMatchesTitle => 'Historial de Resultados';
+
+  @override
+  String get teamCompletedMatchesEmpty =>
+      'No hay resultados oficiales registrados aún.';
+
+  @override
+  String get teamUpcomingMatchesTitle => 'Próximos Encuentros';
+
+  @override
+  String get teamUpcomingMatchesEmpty =>
+      'No hay próximos partidos programados.';
+
+  @override
+  String get teamSquadStatsTitle => 'Plantel y Aporte Individual';
+
+  @override
+  String get teamSquadStatsEmpty =>
+      'No hay jugadores inscritos en este equipo.';
+
+  @override
+  String get teamFormResultWin => 'V';
+
+  @override
+  String get teamFormResultDraw => 'E';
+
+  @override
+  String get teamFormResultLoss => 'D';
 }

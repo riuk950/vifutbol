@@ -90,6 +90,8 @@ void main() {
         teamsRepository: teamsRepo,
         tournamentMatchesRepository: matchesRepo,
         matchReportsRepository: reportsRepo,
+        lineupsTrackingRepository: lineupsRepo,
+        localStorageRepository: storage,
       );
     });
 
@@ -339,6 +341,84 @@ void main() {
         final finalTie = bracket.rounds[1].ties.first;
         expect(finalTie.homeTeamId, 't-2');
         expect(finalTie.awayTeamId, 't-3');
+      },
+    );
+
+    test(
+      'HU 8.2: Calculates playerProfilesById, teamDetailedStatsById, and persists offline profile cache',
+      () async {
+        final tournament = ChampionshipTournament(
+          id: 't-stats-82',
+          name: 'Torneo Estadísticas 2026',
+          category: 'Libre',
+          startDate: baseDate,
+          endDate: baseDate.add(const Duration(days: 30)),
+          format: TournamentFormat.league,
+          rules: const TournamentRulesConfig(yellowCardSuspensionLimit: 3),
+          updatedAt: baseDate,
+        );
+        await tournamentsRepo.saveTournament(tournament);
+
+        final p1 = const RegisteredPlayer(
+          id: 'pl-1',
+          fullName: 'Andrés Iniesta',
+          documentId: 'DOC-1',
+          shirtNumber: 8,
+          position: PlayerPosition.midfielder,
+          isEligible: true,
+        );
+        final p2 = const RegisteredPlayer(
+          id: 'pl-2',
+          fullName: 'Xavi Hernández',
+          documentId: 'DOC-2',
+          shirtNumber: 6,
+          position: PlayerPosition.midfielder,
+          isEligible: true,
+        );
+
+        final team = TournamentTeam(
+          id: 'team-fc',
+          tournamentId: tournament.id,
+          name: 'Barca FC',
+          shortCode: 'BAR',
+          players: [p1, p2],
+        );
+        await teamsRepo.saveTeam(team);
+
+        // Execute use case with current user id = pl-1
+        final snapshot = await standingsUseCase.execute(
+          tournament.id,
+          currentUserId: 'pl-1',
+        );
+
+        expect(snapshot.playerProfilesById.containsKey('pl-1'), isTrue);
+        expect(snapshot.playerProfilesById.containsKey('pl-2'), isTrue);
+        expect(snapshot.teamDetailedStatsById.containsKey('team-fc'), isTrue);
+
+        final profileP1 = snapshot.playerProfilesById['pl-1']!;
+        expect(profileP1.matchesPlayed, 0);
+        expect(profileP1.formattedGoalsAverage, '0.00');
+        expect(profileP1.hasParticipations, isFalse);
+
+        final teamStats = snapshot.teamDetailedStatsById['team-fc']!;
+        expect(teamStats.recentForm, isEmpty);
+        expect(teamStats.squadStats.length, 2);
+
+        // Verify offline cache persisted
+        final cachedJson = await storage.readString(
+          CalculateTournamentStandingsAndRankingsUseCase
+              .cachedProfileStorageKey,
+        );
+        expect(cachedJson, isNotNull);
+        expect(cachedJson!.contains('Andrés Iniesta'), isTrue);
+
+        // Query without currentUserId and verify cached profile loads from storage
+        final snapshotCached = await standingsUseCase.execute(tournament.id);
+        expect(snapshotCached.cachedMyPlayerProfile, isNotNull);
+        expect(
+          snapshotCached.cachedMyPlayerProfile!.fullName,
+          'Andrés Iniesta',
+        );
       },
     );
   });

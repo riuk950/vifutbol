@@ -4,6 +4,7 @@ import 'package:vifutbol/application/controllers/standings_and_rankings_controll
 import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/player_performance_profile.dart';
 import 'package:vifutbol/domain/entities/role_permission_matrix.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
@@ -12,7 +13,9 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dar
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_state_view.dart';
 import 'package:vifutbol/presentation/standings/widgets/knockout_bracket_card.dart';
+import 'package:vifutbol/presentation/standings/widgets/player_performance_profile_card.dart';
 import 'package:vifutbol/presentation/standings/widgets/standings_table_card.dart';
+import 'package:vifutbol/presentation/standings/widgets/team_detailed_stats_card.dart';
 import 'package:vifutbol/presentation/standings/widgets/tournament_rankings_card.dart';
 import 'package:vifutbol/presentation/teams/widgets/tournament_teams_section.dart';
 import 'package:vifutbol/presentation/tournaments/tournament_form_screen.dart';
@@ -253,6 +256,45 @@ class _TournamentCompetitiveSection extends ConsumerWidget {
 
   final ChampionshipTournament tournament;
 
+  void _openTeamDetails(
+    BuildContext context,
+    String teamId,
+    StandingsAndRankingsState compState,
+  ) {
+    final teamStats = compState.snapshot?.teamDetailedStatsById[teamId];
+    if (teamStats == null) return;
+
+    showTeamDetailedStatsSheet(
+      context: context,
+      teamStats: teamStats,
+      onPlayerSelected: (playerId) =>
+          _openPlayerProfile(context, playerId, compState),
+    );
+  }
+
+  void _openPlayerProfile(
+    BuildContext context,
+    String playerId,
+    StandingsAndRankingsState compState,
+  ) {
+    final profile = compState.snapshot?.playerProfilesById[playerId];
+    if (profile == null) return;
+
+    final allPlayers =
+        compState.snapshot?.playerProfilesById.values.toList() ??
+        <PlayerPerformanceProfile>[];
+
+    showPlayerPerformanceProfileSheet(
+      context: context,
+      profile: profile,
+      allTournamentPlayers: allPlayers,
+      onPlayerSelected: (selectedId) {
+        Navigator.of(context).pop();
+        _openPlayerProfile(context, selectedId, compState);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
@@ -264,40 +306,68 @@ class _TournamentCompetitiveSection extends ConsumerWidget {
     );
     final snapshot = compState.snapshot;
 
+    final myProfile =
+        snapshot?.cachedMyPlayerProfile ??
+        snapshot?.playerProfilesById.values.firstOrNull;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
           spacing: KickPulseRadiiSpacing.spaceSm,
           runSpacing: KickPulseRadiiSpacing.spaceXs,
           children: <Widget>[
-            if (tournament.format.hasStandingsTable)
-              ChoiceChip(
-                key: const Key('competitive_view_selector_standings'),
-                label: Text(l10n.competitiveViewStandings),
-                selected:
-                    compState.activeViewMode == CompetitiveViewMode.standings,
-                onSelected: (_) => compController.selectViewMode(
-                  CompetitiveViewMode.standings,
+            Wrap(
+              spacing: KickPulseRadiiSpacing.spaceSm,
+              runSpacing: KickPulseRadiiSpacing.spaceXs,
+              children: <Widget>[
+                if (tournament.format.hasStandingsTable)
+                  ChoiceChip(
+                    key: const Key('competitive_view_selector_standings'),
+                    label: Text(l10n.competitiveViewStandings),
+                    selected:
+                        compState.activeViewMode ==
+                        CompetitiveViewMode.standings,
+                    onSelected: (_) => compController.selectViewMode(
+                      CompetitiveViewMode.standings,
+                    ),
+                  ),
+                if (tournament.format.hasKnockoutBracket)
+                  ChoiceChip(
+                    key: const Key('competitive_view_selector_brackets'),
+                    label: Text(l10n.competitiveViewBrackets),
+                    selected:
+                        compState.activeViewMode ==
+                        CompetitiveViewMode.brackets,
+                    onSelected: (_) => compController.selectViewMode(
+                      CompetitiveViewMode.brackets,
+                    ),
+                  ),
+                ChoiceChip(
+                  key: const Key('competitive_view_selector_rankings'),
+                  label: Text(l10n.competitiveViewRankings),
+                  selected:
+                      compState.activeViewMode == CompetitiveViewMode.rankings,
+                  onSelected: (_) => compController.selectViewMode(
+                    CompetitiveViewMode.rankings,
+                  ),
                 ),
-              ),
-            if (tournament.format.hasKnockoutBracket)
-              ChoiceChip(
-                key: const Key('competitive_view_selector_brackets'),
-                label: Text(l10n.competitiveViewBrackets),
-                selected:
-                    compState.activeViewMode == CompetitiveViewMode.brackets,
-                onSelected: (_) =>
-                    compController.selectViewMode(CompetitiveViewMode.brackets),
-              ),
-            ChoiceChip(
-              key: const Key('competitive_view_selector_rankings'),
-              label: Text(l10n.competitiveViewRankings),
-              selected:
-                  compState.activeViewMode == CompetitiveViewMode.rankings,
-              onSelected: (_) =>
-                  compController.selectViewMode(CompetitiveViewMode.rankings),
+              ],
             ),
+            if (myProfile != null)
+              OutlinedButton.icon(
+                key: const Key('open_my_player_profile_button'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: KickPulseColors.accentPrimary,
+                  side: const BorderSide(color: KickPulseColors.accentPrimary),
+                ),
+                onPressed: () =>
+                    _openPlayerProfile(context, myProfile.playerId, compState),
+                icon: const Icon(Icons.person_pin_rounded, size: 18),
+                label: Text(l10n.playerProfileMyProfileButton),
+              ),
           ],
         ),
         const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
@@ -308,12 +378,20 @@ class _TournamentCompetitiveSection extends ConsumerWidget {
           StandingsTableCard(
             mainTable: snapshot.mainStandingsTable,
             groupTables: snapshot.groupStandingsTables,
+            onTeamSelected: (teamId) =>
+                _openTeamDetails(context, teamId, compState),
           )
         else if (compState.activeViewMode == CompetitiveViewMode.brackets &&
             snapshot.knockoutBracket != null)
           KnockoutBracketCard(bracket: snapshot.knockoutBracket!)
         else
-          TournamentRankingsCard(rankings: snapshot.rankings),
+          TournamentRankingsCard(
+            rankings: snapshot.rankings,
+            onPlayerSelected: (playerId) =>
+                _openPlayerProfile(context, playerId, compState),
+            onTeamSelected: (teamId) =>
+                _openTeamDetails(context, teamId, compState),
+          ),
       ],
     );
   }

@@ -3051,6 +3051,174 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Ponderación oficial: Amarilla (-1 pt) · Doble Amarilla/Roja (-3 pts) · Roja Directa (-3 pts)'**
   String get rankingsFairPlayLegend;
+
+  /// Título del perfil de rendimiento del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil de Rendimiento'**
+  String get playerProfileTitle;
+
+  /// Subtítulo del perfil de rendimiento del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Estadísticas oficiales consolidadas del torneo'**
+  String get playerProfileSubtitle;
+
+  /// Botón de acceso directo a mi perfil deportivo
+  ///
+  /// In es, this message translates to:
+  /// **'Mi Perfil Deportivo'**
+  String get playerProfileMyProfileButton;
+
+  /// Estado disciplinario habilitado
+  ///
+  /// In es, this message translates to:
+  /// **'Habilitado'**
+  String get playerDisciplinaryStatusEnabled;
+
+  /// Estado disciplinario suspendido
+  ///
+  /// In es, this message translates to:
+  /// **'Suspendido'**
+  String get playerDisciplinaryStatusSuspended;
+
+  /// Etiqueta métrica de partidos jugados
+  ///
+  /// In es, this message translates to:
+  /// **'Partidos'**
+  String get playerMetricMatchesPlayed;
+
+  /// Etiqueta métrica de titularidades
+  ///
+  /// In es, this message translates to:
+  /// **'Titularidades'**
+  String get playerMetricStarts;
+
+  /// Etiqueta métrica de goles anotados
+  ///
+  /// In es, this message translates to:
+  /// **'Goles'**
+  String get playerMetricGoals;
+
+  /// Etiqueta métrica de asistencias dadas
+  ///
+  /// In es, this message translates to:
+  /// **'Asistencias'**
+  String get playerMetricAssists;
+
+  /// Etiqueta métrica de promedio de gol por partido
+  ///
+  /// In es, this message translates to:
+  /// **'Promedio de Gol'**
+  String get playerMetricGoalAverage;
+
+  /// Etiqueta métrica de tarjetas amarillas
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjetas Amarillas'**
+  String get playerMetricYellowCards;
+
+  /// Etiqueta métrica de tarjetas rojas
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjetas Rojas'**
+  String get playerMetricRedCards;
+
+  /// Título de la sección de partidos disputados por el jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Historial Partido por Partido'**
+  String get playerMatchBreakdownTitle;
+
+  /// Mensaje exacto cuando un jugador no registra participaciones oficiales
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no registras participaciones en partidos oficiales de este torneo.'**
+  String get playerEmptyParticipationsMessage;
+
+  /// Insignia de titular en el partido
+  ///
+  /// In es, this message translates to:
+  /// **'Titular'**
+  String get playerStarterBadge;
+
+  /// Insignia de suplente en el partido
+  ///
+  /// In es, this message translates to:
+  /// **'Suplente'**
+  String get playerSubstituteBadge;
+
+  /// Título de la ficha de estadísticas detalladas del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Ficha del Equipo'**
+  String get teamDetailedStatsTitle;
+
+  /// Título de la racha de los últimos 5 partidos
+  ///
+  /// In es, this message translates to:
+  /// **'Racha Reciente'**
+  String get teamRecentFormTitle;
+
+  /// Mensaje de racha vacía para el equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay partidos finalizados para calcular la racha.'**
+  String get teamRecentFormEmpty;
+
+  /// Título de la lista de partidos completados por el equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Historial de Resultados'**
+  String get teamCompletedMatchesTitle;
+
+  /// Mensaje cuando no hay partidos finalizados para el equipo
+  ///
+  /// In es, this message translates to:
+  /// **'No hay resultados oficiales registrados aún.'**
+  String get teamCompletedMatchesEmpty;
+
+  /// Título de los próximos rivales programados del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Próximos Encuentros'**
+  String get teamUpcomingMatchesTitle;
+
+  /// Mensaje cuando no hay partidos futuros programados
+  ///
+  /// In es, this message translates to:
+  /// **'No hay próximos partidos programados.'**
+  String get teamUpcomingMatchesEmpty;
+
+  /// Título del listado de plantilla del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Plantel y Aporte Individual'**
+  String get teamSquadStatsTitle;
+
+  /// Mensaje cuando la plantilla está vacía
+  ///
+  /// In es, this message translates to:
+  /// **'No hay jugadores inscritos en este equipo.'**
+  String get teamSquadStatsEmpty;
+
+  /// Código de victoria en racha
+  ///
+  /// In es, this message translates to:
+  /// **'V'**
+  String get teamFormResultWin;
+
+  /// Código de empate en racha
+  ///
+  /// In es, this message translates to:
+  /// **'E'**
+  String get teamFormResultDraw;
+
+  /// Código de derrota en racha
+  ///
+  /// In es, this message translates to:
+  /// **'D'**
+  String get teamFormResultLoss;
 }
 
 class _AppLocalizationsDelegate

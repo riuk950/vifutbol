@@ -13,10 +13,12 @@ class StandingsTableCard extends StatefulWidget {
     super.key,
     required this.mainTable,
     this.groupTables = const <StandingsTable>[],
+    this.onTeamSelected,
   });
 
   final StandingsTable mainTable;
   final List<StandingsTable> groupTables;
+  final ValueChanged<String>? onTeamSelected;
 
   @override
   State<StandingsTableCard> createState() => _StandingsTableCardState();
@@ -282,75 +284,81 @@ class _StandingsTableCardState extends State<StandingsTableCard> {
         ? '+${row.goalDifference}'
         : '${row.goalDifference}';
 
-    return Container(
+    return InkWell(
       key: Key('standings_row_${row.teamId}'),
-      margin: const EdgeInsets.only(bottom: 4),
-      padding: const EdgeInsets.symmetric(
-        horizontal: KickPulseRadiiSpacing.spaceSm,
-        vertical: 8,
-      ),
-      decoration: BoxDecoration(
-        color: row.position.isEven
-            ? KickPulseColors.surfaceElevated.withValues(alpha: 0.55)
-            : KickPulseColors.surfaceElevated,
-        borderRadius: BorderRadius.circular(KickPulseRadiiSpacing.chipRadius),
-        border: Border(
-          left: BorderSide(
-            color: row.isQualified
-                ? KickPulseColors.accentPrimary
-                : Colors.transparent,
-            width: 3,
+      onTap: widget.onTeamSelected != null
+          ? () => widget.onTeamSelected!(row.teamId)
+          : null,
+      borderRadius: BorderRadius.circular(KickPulseRadiiSpacing.chipRadius),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 4),
+        padding: const EdgeInsets.symmetric(
+          horizontal: KickPulseRadiiSpacing.spaceSm,
+          vertical: 8,
+        ),
+        decoration: BoxDecoration(
+          color: row.position.isEven
+              ? KickPulseColors.surfaceElevated.withValues(alpha: 0.55)
+              : KickPulseColors.surfaceElevated,
+          borderRadius: BorderRadius.circular(KickPulseRadiiSpacing.chipRadius),
+          border: Border(
+            left: BorderSide(
+              color: row.isQualified
+                  ? KickPulseColors.accentPrimary
+                  : Colors.transparent,
+              width: 3,
+            ),
           ),
         ),
-      ),
-      child: Row(
-        children: <Widget>[
-          SizedBox(
-            width: 35,
-            child: Text(
-              '${row.position}',
-              style: KickPulseTypography.statMetric(
-                size: 13,
-                weight: FontWeight.w700,
-                color: row.isQualified
-                    ? KickPulseColors.accentPrimary
-                    : KickPulseColors.textSecondary,
+        child: Row(
+          children: <Widget>[
+            SizedBox(
+              width: 35,
+              child: Text(
+                '${row.position}',
+                style: KickPulseTypography.statMetric(
+                  size: 13,
+                  weight: FontWeight.w700,
+                  color: row.isQualified
+                      ? KickPulseColors.accentPrimary
+                      : KickPulseColors.textSecondary,
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            width: 150,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  '${row.teamName} (${row.teamShortCode})',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: KickPulseTypography.bodyPrimary.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                if (row.isTiedOnAllCriteria)
+            SizedBox(
+              width: 150,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
                   Text(
-                    l10n.standingsTechnicalTieBadge,
-                    style: KickPulseTypography.microBadge.copyWith(
-                      color: KickPulseColors.accentWarning,
+                    '${row.teamName} (${row.teamShortCode})',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: KickPulseTypography.bodyPrimary.copyWith(
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-              ],
+                  if (row.isTiedOnAllCriteria)
+                    Text(
+                      l10n.standingsTechnicalTieBadge,
+                      style: KickPulseTypography.microBadge.copyWith(
+                        color: KickPulseColors.accentWarning,
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-          _buildStatCell('${row.played}', tabularStyle),
-          _buildStatCell('${row.won}', mutedTabularStyle),
-          _buildStatCell('${row.drawn}', mutedTabularStyle),
-          _buildStatCell('${row.lost}', mutedTabularStyle),
-          _buildStatCell('${row.goalsFor}', mutedTabularStyle),
-          _buildStatCell('${row.goalsAgainst}', mutedTabularStyle),
-          _buildStatCell(dgFormatted, tabularStyle),
-          _buildStatCell('${row.fairPlayPenaltyPoints}', mutedTabularStyle),
-          _buildStatCell('${row.points}', pointsStyle, width: 44),
-        ],
+            _buildStatCell('${row.played}', tabularStyle),
+            _buildStatCell('${row.won}', mutedTabularStyle),
+            _buildStatCell('${row.drawn}', mutedTabularStyle),
+            _buildStatCell('${row.lost}', mutedTabularStyle),
+            _buildStatCell('${row.goalsFor}', mutedTabularStyle),
+            _buildStatCell('${row.goalsAgainst}', mutedTabularStyle),
+            _buildStatCell(dgFormatted, tabularStyle),
+            _buildStatCell('${row.fairPlayPenaltyPoints}', mutedTabularStyle),
+            _buildStatCell('${row.points}', pointsStyle, width: 44),
+          ],
+        ),
       ),
     );
   }

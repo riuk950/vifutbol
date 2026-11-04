@@ -2233,5 +2233,117 @@
   "rankingsFairPlayLegend": "Ponderación oficial: Amarilla (-1 pt) · Doble Amarilla/Roja (-3 pts) · Roja Directa (-3 pts)",
   "@rankingsFairPlayLegend": {
     "description": "Leyenda de ponderación de tarjetas en Fair Play"
+  },
+  "playerProfileTitle": "Perfil de Rendimiento",
+  "@playerProfileTitle": {
+    "description": "Título del perfil de rendimiento del jugador"
+  },
+  "playerProfileSubtitle": "Estadísticas oficiales consolidadas del torneo",
+  "@playerProfileSubtitle": {
+    "description": "Subtítulo del perfil de rendimiento del jugador"
+  },
+  "playerProfileMyProfileButton": "Mi Perfil Deportivo",
+  "@playerProfileMyProfileButton": {
+    "description": "Botón de acceso directo a mi perfil deportivo"
+  },
+  "playerDisciplinaryStatusEnabled": "Habilitado",
+  "@playerDisciplinaryStatusEnabled": {
+    "description": "Estado disciplinario habilitado"
+  },
+  "playerDisciplinaryStatusSuspended": "Suspendido",
+  "@playerDisciplinaryStatusSuspended": {
+    "description": "Estado disciplinario suspendido"
+  },
+  "playerMetricMatchesPlayed": "Partidos",
+  "@playerMetricMatchesPlayed": {
+    "description": "Etiqueta métrica de partidos jugados"
+  },
+  "playerMetricStarts": "Titularidades",
+  "@playerMetricStarts": {
+    "description": "Etiqueta métrica de titularidades"
+  },
+  "playerMetricGoals": "Goles",
+  "@playerMetricGoals": {
+    "description": "Etiqueta métrica de goles anotados"
+  },
+  "playerMetricAssists": "Asistencias",
+  "@playerMetricAssists": {
+    "description": "Etiqueta métrica de asistencias dadas"
+  },
+  "playerMetricGoalAverage": "Promedio de Gol",
+  "@playerMetricGoalAverage": {
+    "description": "Etiqueta métrica de promedio de gol por partido"
+  },
+  "playerMetricYellowCards": "Tarjetas Amarillas",
+  "@playerMetricYellowCards": {
+    "description": "Etiqueta métrica de tarjetas amarillas"
+  },
+  "playerMetricRedCards": "Tarjetas Rojas",
+  "@playerMetricRedCards": {
+    "description": "Etiqueta métrica de tarjetas rojas"
+  },
+  "playerMatchBreakdownTitle": "Historial Partido por Partido",
+  "@playerMatchBreakdownTitle": {
+    "description": "Título de la sección de partidos disputados por el jugador"
+  },
+  "playerEmptyParticipationsMessage": "Aún no registras participaciones en partidos oficiales de este torneo.",
+  "@playerEmptyParticipationsMessage": {
+    "description": "Mensaje exacto cuando un jugador no registra participaciones oficiales"
+  },
+  "playerStarterBadge": "Titular",
+  "@playerStarterBadge": {
+    "description": "Insignia de titular en el partido"
+  },
+  "playerSubstituteBadge": "Suplente",
+  "@playerSubstituteBadge": {
+    "description": "Insignia de suplente en el partido"
+  },
+  "teamDetailedStatsTitle": "Ficha del Equipo",
+  "@teamDetailedStatsTitle": {
+    "description": "Título de la ficha de estadísticas detalladas del equipo"
+  },
+  "teamRecentFormTitle": "Racha Reciente",
+  "@teamRecentFormTitle": {
+    "description": "Título de la racha de los últimos 5 partidos"
+  },
+  "teamRecentFormEmpty": "Aún no hay partidos finalizados para calcular la racha.",
+  "@teamRecentFormEmpty": {
+    "description": "Mensaje de racha vacía para el equipo"
+  },
+  "teamCompletedMatchesTitle": "Historial de Resultados",
+  "@teamCompletedMatchesTitle": {
+    "description": "Título de la lista de partidos completados por el equipo"
+  },
+  "teamCompletedMatchesEmpty": "No hay resultados oficiales registrados aún.",
+  "@teamCompletedMatchesEmpty": {
+    "description": "Mensaje cuando no hay partidos finalizados para el equipo"
+  },
+  "teamUpcomingMatchesTitle": "Próximos Encuentros",
+  "@teamUpcomingMatchesTitle": {
+    "description": "Título de los próximos rivales programados del equipo"
+  },
+  "teamUpcomingMatchesEmpty": "No hay próximos partidos programados.",
+  "@teamUpcomingMatchesEmpty": {
+    "description": "Mensaje cuando no hay partidos futuros programados"
+  },
+  "teamSquadStatsTitle": "Plantel y Aporte Individual",
+  "@teamSquadStatsTitle": {
+    "description": "Título del listado de plantilla del equipo"
+  },
+  "teamSquadStatsEmpty": "No hay jugadores inscritos en este equipo.",
+  "@teamSquadStatsEmpty": {
+    "description": "Mensaje cuando la plantilla está vacía"
+  },
+  "teamFormResultWin": "V",
+  "@teamFormResultWin": {
+    "description": "Código de victoria en racha"
+  },
+  "teamFormResultDraw": "E",
+  "@teamFormResultDraw": {
+    "description": "Código de empate en racha"
+  },
+  "teamFormResultLoss": "D",
+  "@teamFormResultLoss": {
+    "description": "Código de derrota en racha"
   }
 }
