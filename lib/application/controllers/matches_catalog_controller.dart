@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/use_cases/fixture_scheduling_use_case.dart';
+import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/match_referee.dart';
@@ -19,9 +21,11 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
 
   final TournamentMatchesRepository matchesRepository;
   final FixtureSchedulingUseCase fixtureSchedulingUseCase;
+  StreamSubscription<List<ChampionshipMatch>>? _matchesSubscription;
 
   Future<void> loadTournamentMatches(String tournamentId) async {
     state = state.copyWith(isLoading: true, errorMessage: () => null);
+    await _matchesSubscription?.cancel();
     try {
       final matches = await matchesRepository.loadMatchesForTournament(
         tournamentId,
@@ -43,6 +47,33 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
         selectedRound: selectedRound,
         isLoading: false,
       );
+
+      _matchesSubscription = matchesRepository
+          .watchMatchesForTournament(tournamentId)
+          .listen(
+            (updatedMatches) {
+              int currentRound = state.selectedRound;
+              if (updatedMatches.isNotEmpty) {
+                final available =
+                    updatedMatches.map((m) => m.roundNumber).toSet().toList()
+                      ..sort();
+                if (!available.contains(currentRound)) {
+                  currentRound = available.first;
+                }
+              }
+              state = state.copyWith(
+                matches: updatedMatches,
+                selectedRound: currentRound,
+                isLoading: false,
+              );
+            },
+            onError: (dynamic e) {
+              state = state.copyWith(
+                isLoading: false,
+                errorMessage: () => e is AppFailure ? e.message : e.toString(),
+              );
+            },
+          );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -140,5 +171,11 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
       );
       return false;
     }
+  }
+
+  @override
+  void dispose() {
+    _matchesSubscription?.cancel();
+    super.dispose();
   }
 }

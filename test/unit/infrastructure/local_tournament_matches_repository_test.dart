@@ -115,5 +115,43 @@ void main() {
       final loaded = await repository.loadMatchesForTournament('tourn-batch');
       expect(loaded.length, 2);
     });
+
+    test('streams reactive updates for tournament matches', () async {
+      final initialMatches = await repository.loadMatchesForTournament(
+        'tourn-stream',
+      );
+      expect(initialMatches, isEmpty);
+
+      final stream = repository.watchMatchesForTournament('tourn-stream');
+      final emissions = <List<ChampionshipMatch>>[];
+      final sub = stream.listen(emissions.add);
+
+      // Allow initial yield
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(emissions.length, 1);
+      expect(emissions.first, isEmpty);
+
+      final newMatch = ChampionshipMatch(
+        id: 'stream-match-1',
+        tournamentId: 'tourn-stream',
+        roundNumber: 1,
+        roundName: 'Jornada 1',
+        homeTeamId: 'h1',
+        awayTeamId: 'a1',
+        status: MatchStatus.inProgress,
+        homeScore: 1,
+        awayScore: 0,
+      );
+
+      await repository.saveMatch(newMatch);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      expect(emissions.length, 2);
+      expect(emissions[1].length, 1);
+      expect(emissions[1].first.status, MatchStatus.inProgress);
+      expect(emissions[1].first.homeScore, 1);
+
+      await sub.cancel();
+    });
   });
 }

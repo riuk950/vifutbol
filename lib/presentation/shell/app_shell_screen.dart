@@ -4,6 +4,7 @@ import 'package:vifutbol/application/controllers/app_shell_controller.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/domain/entities/app_shell_section.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
+import 'package:vifutbol/presentation/alerts/widgets/fan_alerts_bell_action.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
@@ -65,7 +66,13 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
       appBar: AppBar(
         title: Row(
           children: [
-            Text(l10n.appTitle, style: KickPulseTypography.screenTitle),
+            Flexible(
+              child: Text(
+                l10n.appTitle,
+                style: KickPulseTypography.screenTitle,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
             if (envConfig.showEnvironmentBanner) ...[
               const SizedBox(width: 8.0),
               KickPulseBadge(
@@ -75,6 +82,7 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
             ],
           ],
         ),
+        actions: const [FanAlertsBellAction(userId: 'user-active-current')],
       ),
       body: Column(
         children: [

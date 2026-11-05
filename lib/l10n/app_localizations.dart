@@ -3219,6 +3219,252 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'D'**
   String get teamFormResultLoss;
+
+  /// Etiqueta del selector de partidos en jornada
+  ///
+  /// In es, this message translates to:
+  /// **'Partidos'**
+  String get segmentedMatches;
+
+  /// Etiqueta del selector de noticias en jornada
+  ///
+  /// In es, this message translates to:
+  /// **'Noticias'**
+  String get segmentedNews;
+
+  /// Insignia semántica para partidos en juego
+  ///
+  /// In es, this message translates to:
+  /// **'EN VIVO'**
+  String get matchLiveBadge;
+
+  /// Título de la sección destacada de partidos en juego
+  ///
+  /// In es, this message translates to:
+  /// **'Partidos en Juego'**
+  String get matchLiveSectionTitle;
+
+  /// Minuto transcurrido del partido en vivo
+  ///
+  /// In es, this message translates to:
+  /// **'Minuto {minute}\''**
+  String matchLiveMinute(int minute);
+
+  /// Periodo del partido en vivo
+  ///
+  /// In es, this message translates to:
+  /// **'Periodo: {period}'**
+  String matchLivePeriod(String period);
+
+  /// Aviso de desconexión en seguimiento en vivo
+  ///
+  /// In es, this message translates to:
+  /// **'Modo sin conexión - Marcador en caché'**
+  String get matchLiveOfflineBanner;
+
+  /// Título del feed de noticias del torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Comunicados y Noticias Oficiales'**
+  String get newsFeedTitle;
+
+  /// Filtro para ver todas las categorías de noticias
+  ///
+  /// In es, this message translates to:
+  /// **'Todas'**
+  String get newsCategoryAll;
+
+  /// Categoría avisos generales
+  ///
+  /// In es, this message translates to:
+  /// **'Avisos Generales'**
+  String get newsCategoryGeneral;
+
+  /// Categoría boletines disciplinarios
+  ///
+  /// In es, this message translates to:
+  /// **'Boletines Disciplinarios'**
+  String get newsCategoryDisciplinary;
+
+  /// Categoría reprogramaciones
+  ///
+  /// In es, this message translates to:
+  /// **'Reprogramaciones'**
+  String get newsCategoryRescheduling;
+
+  /// Estado vacío del feed de noticias
+  ///
+  /// In es, this message translates to:
+  /// **'No hay noticias ni comunicados oficiales publicados para este torneo.'**
+  String get newsFeedEmpty;
+
+  /// Botón de acción para publicar noticias (solo organizador)
+  ///
+  /// In es, this message translates to:
+  /// **'Nueva Noticia'**
+  String get newsCreateButton;
+
+  /// Título del diálogo modal de creación de noticia
+  ///
+  /// In es, this message translates to:
+  /// **'Publicar Noticia Oficial'**
+  String get newsCreateDialogTitle;
+
+  /// Campo de título de noticia
+  ///
+  /// In es, this message translates to:
+  /// **'Título del Comunicado'**
+  String get newsTitleField;
+
+  /// Error de validación de título de noticia
+  ///
+  /// In es, this message translates to:
+  /// **'El título debe tener entre 3 y 120 caracteres'**
+  String get newsTitleValidation;
+
+  /// Campo de contenido de noticia
+  ///
+  /// In es, this message translates to:
+  /// **'Contenido del Comunicado'**
+  String get newsBodyField;
+
+  /// Error de validación de contenido de noticia
+  ///
+  /// In es, this message translates to:
+  /// **'El contenido debe tener entre 5 y 3000 caracteres'**
+  String get newsBodyValidation;
+
+  /// Selector de categoría de noticia
+  ///
+  /// In es, this message translates to:
+  /// **'Categoría'**
+  String get newsCategoryField;
+
+  /// Interruptor para fijar comunicado
+  ///
+  /// In es, this message translates to:
+  /// **'Fijar en la parte superior'**
+  String get newsPinnedField;
+
+  /// Botón de confirmación para publicar
+  ///
+  /// In es, this message translates to:
+  /// **'Publicar Comunicado'**
+  String get newsPublishSubmit;
+
+  /// Título de confirmación de borrado de noticia
+  ///
+  /// In es, this message translates to:
+  /// **'¿Eliminar comunicado?'**
+  String get newsDeleteConfirmTitle;
+
+  /// Mensaje de confirmación de borrado de noticia
+  ///
+  /// In es, this message translates to:
+  /// **'Esta acción eliminará permanentemente la noticia oficial seleccionada.'**
+  String get newsDeleteConfirmMessage;
+
+  /// Confirmación tras borrar noticia
+  ///
+  /// In es, this message translates to:
+  /// **'Comunicado eliminado correctamente'**
+  String get newsDeletedSuccess;
+
+  /// Confirmación tras publicar noticia
+  ///
+  /// In es, this message translates to:
+  /// **'Comunicado publicado con éxito'**
+  String get newsPublishedSuccess;
+
+  /// Notificación al marcar un equipo favorito
+  ///
+  /// In es, this message translates to:
+  /// **'{teamName} añadido a tus equipos favoritos'**
+  String favoriteTeamAdded(String teamName);
+
+  /// Notificación al desmarcar un equipo favorito
+  ///
+  /// In es, this message translates to:
+  /// **'{teamName} eliminado de tus favoritos'**
+  String favoriteTeamRemoved(String teamName);
+
+  /// Tooltip del icono de favorito
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar como equipo favorito'**
+  String get favoriteToggleTooltip;
+
+  /// Mensaje de alertas activadas para equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Alertas activadas para {teamName}'**
+  String favoriteNotificationsEnabled(String teamName);
+
+  /// Mensaje de alertas silenciadas para equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Alertas desactivadas para {teamName}'**
+  String favoriteNotificationsDisabled(String teamName);
+
+  /// Título de la bandeja interna de alertas
+  ///
+  /// In es, this message translates to:
+  /// **'Bandeja de Alertas'**
+  String get alertsTrayTitle;
+
+  /// Estado vacío de la bandeja de alertas
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes alertas o notificaciones pendientes.'**
+  String get alertsTrayEmpty;
+
+  /// Botón para marcar todas las alertas como leídas
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar todo como leído'**
+  String get alertsMarkAllRead;
+
+  /// Tooltip del badge de alertas no leídas
+  ///
+  /// In es, this message translates to:
+  /// **'{count} alertas no leídas'**
+  String alertsUnreadBadgeTooltip(int count);
+
+  /// Aviso informativo si se rechazaron permisos push
+  ///
+  /// In es, this message translates to:
+  /// **'Notificaciones del sistema desactivadas. Puedes consultar todas las alertas en esta bandeja.'**
+  String get alertsPushDeniedWarning;
+
+  /// Etiqueta de alerta previa a partido
+  ///
+  /// In es, this message translates to:
+  /// **'Próximo Partido'**
+  String get alertTypeUpcoming;
+
+  /// Etiqueta de alerta de pitazo inicial
+  ///
+  /// In es, this message translates to:
+  /// **'Partido Iniciado'**
+  String get alertTypeStarted;
+
+  /// Etiqueta de alerta de gol anotado
+  ///
+  /// In es, this message translates to:
+  /// **'¡Gol!'**
+  String get alertTypeGoal;
+
+  /// Etiqueta de alerta de pitazo final
+  ///
+  /// In es, this message translates to:
+  /// **'Resultado Final'**
+  String get alertTypeEnded;
+
+  /// Etiqueta de alerta de comunicado publicado
+  ///
+  /// In es, this message translates to:
+  /// **'Nuevo Comunicado'**
+  String get alertTypeNews;
 }
 
 class _AppLocalizationsDelegate

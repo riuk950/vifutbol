@@ -1,0 +1,197 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:vifutbol/application/controllers/tournament_news_controller.dart';
+import 'package:vifutbol/application/providers/auth_providers.dart';
+import 'package:vifutbol/application/providers/tournament_news_providers.dart';
+import 'package:vifutbol/application/use_cases/manage_tournament_news_use_cases.dart';
+import 'package:vifutbol/domain/entities/app_environment.dart';
+import 'package:vifutbol/domain/entities/local_storage_status.dart';
+import 'package:vifutbol/domain/entities/tournament_news_category.dart';
+import 'package:vifutbol/domain/entities/tournament_news_item.dart';
+import 'package:vifutbol/domain/entities/user_role.dart';
+import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
+import 'package:vifutbol/infrastructure/repositories/local_tournament_news_repository.dart';
+import 'package:vifutbol/l10n/app_localizations.dart';
+import 'package:vifutbol/presentation/news/tournament_news_feed_view.dart';
+import 'package:vifutbol/presentation/news/widgets/tournament_news_card.dart';
+
+class _MockNewsStorage implements LocalStorageRepository {
+  final Map<String, String> _data = {};
+
+  @override
+  Future<LocalStorageStatus> initialize(String storagePrefix) async =>
+      LocalStorageStatus(isPersistent: true, storageNamespace: storagePrefix);
+
+  @override
+  Future<String?> readString(String key) async => _data[key];
+
+  @override
+  Future<void> writeString(String key, String value) async {
+    _data[key] = value;
+  }
+
+  @override
+  Future<void> clearNamespace() async => _data.clear();
+
+  @override
+  bool get isUsingFallbackMemory => true;
+}
+
+void main() {
+  testWidgets('News feed renders items, category filters, and adapts by role', (
+    tester,
+  ) async {
+    final storage = _MockNewsStorage();
+    final config = EnvironmentConfig.production();
+    final repo = LocalTournamentNewsRepository(
+      storage: storage,
+      config: config,
+    );
+
+    final item1 = TournamentNewsItem(
+      id: 'news-1',
+      tournamentId: 'tourn-news-1',
+      title: 'Aviso de Reprogramación Cancha 1',
+      body: 'Por mantenimiento, los partidos se trasladan a la cancha 2.',
+      category: TournamentNewsCategory.rescheduling,
+      publishedAt: DateTime(2026, 11, 5, 8, 0),
+      authorUserId: 'org-1',
+      authorName: 'Comité Organizador',
+    );
+
+    final item2 = TournamentNewsItem(
+      id: 'news-2',
+      tournamentId: 'tourn-news-1',
+      title: 'Boletín Disciplinario de Sanciones',
+      body: 'Lista de jugadores suspendidos para la fecha 2.',
+      category: TournamentNewsCategory.disciplinary,
+      publishedAt: DateTime(2026, 11, 5, 9, 0),
+      authorUserId: 'org-1',
+      authorName: 'Tribunal de Penas',
+    );
+
+    await repo.saveNewsItem(item1);
+    await repo.saveNewsItem(item2);
+
+    final publishUseCase = PublishTournamentNewsUseCase(newsRepository: repo);
+    final deleteUseCase = DeleteTournamentNewsUseCase(newsRepository: repo);
+
+    // 1. Test as Fan: no create button, no delete button
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          activeUserRoleProvider.overrideWith((ref) => UserRole.fan),
+          tournamentNewsRepositoryProvider.overrideWithValue(repo),
+          tournamentNewsControllerProvider.overrideWith(
+            (ref) => TournamentNewsController(
+              newsRepository: repo,
+              publishUseCase: publishUseCase,
+              deleteUseCase: deleteUseCase,
+            ),
+          ),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: Locale('es'),
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: TournamentNewsFeedView(tournamentId: 'tourn-news-1'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Verify news items rendered
+    expect(find.byType(TournamentNewsCard), findsNWidgets(2));
+    expect(find.text('Aviso de Reprogramación Cancha 1'), findsOneWidget);
+    expect(find.text('Boletín Disciplinario de Sanciones'), findsOneWidget);
+
+    // Verify fan does NOT see create button or delete action
+    expect(find.byKey(const Key('create_news_button')), findsNothing);
+    expect(find.byIcon(Icons.delete_outline), findsNothing);
+
+    // Filter by Disciplinary
+    await tester.tap(
+      find.widgetWithText(ChoiceChip, 'Boletines Disciplinarios'),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TournamentNewsCard), findsOneWidget);
+    expect(find.text('Boletín Disciplinario de Sanciones'), findsOneWidget);
+    expect(find.text('Aviso de Reprogramación Cancha 1'), findsNothing);
+  });
+
+  testWidgets('News feed shows create button and delete option for organizer', (
+    tester,
+  ) async {
+    final storage = _MockNewsStorage();
+    final config = EnvironmentConfig.production();
+    final repo = LocalTournamentNewsRepository(
+      storage: storage,
+      config: config,
+    );
+
+    final item = TournamentNewsItem(
+      id: 'news-3',
+      tournamentId: 'tourn-news-2',
+      title: 'Aviso General para Delegados',
+      body: 'Reunión informativa el próximo viernes a las 19:00.',
+      category: TournamentNewsCategory.general,
+      publishedAt: DateTime(2026, 11, 5, 8, 0),
+      authorUserId: 'org-1',
+      authorName: 'Organizador Oficial',
+    );
+    await repo.saveNewsItem(item);
+
+    final publishUseCase = PublishTournamentNewsUseCase(newsRepository: repo);
+    final deleteUseCase = DeleteTournamentNewsUseCase(newsRepository: repo);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          activeUserRoleProvider.overrideWith((ref) => UserRole.organizer),
+          tournamentNewsRepositoryProvider.overrideWithValue(repo),
+          tournamentNewsControllerProvider.overrideWith(
+            (ref) => TournamentNewsController(
+              newsRepository: repo,
+              publishUseCase: publishUseCase,
+              deleteUseCase: deleteUseCase,
+            ),
+          ),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: Locale('es'),
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: TournamentNewsFeedView(tournamentId: 'tourn-news-2'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Verify create button and delete icon are visible for Organizer
+    expect(find.byKey(const Key('create_news_button')), findsOneWidget);
+    expect(find.byIcon(Icons.delete_outline), findsOneWidget);
+  });
+}

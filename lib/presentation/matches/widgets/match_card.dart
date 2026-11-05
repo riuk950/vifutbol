@@ -363,7 +363,7 @@ class MatchCard extends StatelessWidget {
         variant: KickPulseBadgeVariant.info,
       ),
       MatchStatus.inProgress => KickPulseBadge(
-        label: l10n.matchStatusInProgress,
+        label: l10n.matchLiveBadge,
         variant: KickPulseBadgeVariant.live,
       ),
       MatchStatus.completed => KickPulseBadge(

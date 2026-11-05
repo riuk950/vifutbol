@@ -2345,5 +2345,204 @@
   "teamFormResultLoss": "D",
   "@teamFormResultLoss": {
     "description": "Código de derrota en racha"
+  },
+  "segmentedMatches": "Partidos",
+  "@segmentedMatches": {
+    "description": "Etiqueta del selector de partidos en jornada"
+  },
+  "segmentedNews": "Noticias",
+  "@segmentedNews": {
+    "description": "Etiqueta del selector de noticias en jornada"
+  },
+  "matchLiveBadge": "EN VIVO",
+  "@matchLiveBadge": {
+    "description": "Insignia semántica para partidos en juego"
+  },
+  "matchLiveSectionTitle": "Partidos en Juego",
+  "@matchLiveSectionTitle": {
+    "description": "Título de la sección destacada de partidos en juego"
+  },
+  "matchLiveMinute": "Minuto {minute}'",
+  "@matchLiveMinute": {
+    "description": "Minuto transcurrido del partido en vivo",
+    "placeholders": {
+      "minute": {
+        "type": "int"
+      }
+    }
+  },
+  "matchLivePeriod": "Periodo: {period}",
+  "@matchLivePeriod": {
+    "description": "Periodo del partido en vivo",
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "matchLiveOfflineBanner": "Modo sin conexión - Marcador en caché",
+  "@matchLiveOfflineBanner": {
+    "description": "Aviso de desconexión en seguimiento en vivo"
+  },
+  "newsFeedTitle": "Comunicados y Noticias Oficiales",
+  "@newsFeedTitle": {
+    "description": "Título del feed de noticias del torneo"
+  },
+  "newsCategoryAll": "Todas",
+  "@newsCategoryAll": {
+    "description": "Filtro para ver todas las categorías de noticias"
+  },
+  "newsCategoryGeneral": "Avisos Generales",
+  "@newsCategoryGeneral": {
+    "description": "Categoría avisos generales"
+  },
+  "newsCategoryDisciplinary": "Boletines Disciplinarios",
+  "@newsCategoryDisciplinary": {
+    "description": "Categoría boletines disciplinarios"
+  },
+  "newsCategoryRescheduling": "Reprogramaciones",
+  "@newsCategoryRescheduling": {
+    "description": "Categoría reprogramaciones"
+  },
+  "newsFeedEmpty": "No hay noticias ni comunicados oficiales publicados para este torneo.",
+  "@newsFeedEmpty": {
+    "description": "Estado vacío del feed de noticias"
+  },
+  "newsCreateButton": "Nueva Noticia",
+  "@newsCreateButton": {
+    "description": "Botón de acción para publicar noticias (solo organizador)"
+  },
+  "newsCreateDialogTitle": "Publicar Noticia Oficial",
+  "@newsCreateDialogTitle": {
+    "description": "Título del diálogo modal de creación de noticia"
+  },
+  "newsTitleField": "Título del Comunicado",
+  "@newsTitleField": {
+    "description": "Campo de título de noticia"
+  },
+  "newsTitleValidation": "El título debe tener entre 3 y 120 caracteres",
+  "@newsTitleValidation": {
+    "description": "Error de validación de título de noticia"
+  },
+  "newsBodyField": "Contenido del Comunicado",
+  "@newsBodyField": {
+    "description": "Campo de contenido de noticia"
+  },
+  "newsBodyValidation": "El contenido debe tener entre 5 y 3000 caracteres",
+  "@newsBodyValidation": {
+    "description": "Error de validación de contenido de noticia"
+  },
+  "newsCategoryField": "Categoría",
+  "@newsCategoryField": {
+    "description": "Selector de categoría de noticia"
+  },
+  "newsPinnedField": "Fijar en la parte superior",
+  "@newsPinnedField": {
+    "description": "Interruptor para fijar comunicado"
+  },
+  "newsPublishSubmit": "Publicar Comunicado",
+  "@newsPublishSubmit": {
+    "description": "Botón de confirmación para publicar"
+  },
+  "newsDeleteConfirmTitle": "¿Eliminar comunicado?",
+  "@newsDeleteConfirmTitle": {
+    "description": "Título de confirmación de borrado de noticia"
+  },
+  "newsDeleteConfirmMessage": "Esta acción eliminará permanentemente la noticia oficial seleccionada.",
+  "@newsDeleteConfirmMessage": {
+    "description": "Mensaje de confirmación de borrado de noticia"
+  },
+  "newsDeletedSuccess": "Comunicado eliminado correctamente",
+  "@newsDeletedSuccess": {
+    "description": "Confirmación tras borrar noticia"
+  },
+  "newsPublishedSuccess": "Comunicado publicado con éxito",
+  "@newsPublishedSuccess": {
+    "description": "Confirmación tras publicar noticia"
+  },
+  "favoriteTeamAdded": "{teamName} añadido a tus equipos favoritos",
+  "@favoriteTeamAdded": {
+    "description": "Notificación al marcar un equipo favorito",
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      }
+    }
+  },
+  "favoriteTeamRemoved": "{teamName} eliminado de tus favoritos",
+  "@favoriteTeamRemoved": {
+    "description": "Notificación al desmarcar un equipo favorito",
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      }
+    }
+  },
+  "favoriteToggleTooltip": "Marcar como equipo favorito",
+  "@favoriteToggleTooltip": {
+    "description": "Tooltip del icono de favorito"
+  },
+  "favoriteNotificationsEnabled": "Alertas activadas para {teamName}",
+  "@favoriteNotificationsEnabled": {
+    "description": "Mensaje de alertas activadas para equipo",
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      }
+    }
+  },
+  "favoriteNotificationsDisabled": "Alertas desactivadas para {teamName}",
+  "@favoriteNotificationsDisabled": {
+    "description": "Mensaje de alertas silenciadas para equipo",
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      }
+    }
+  },
+  "alertsTrayTitle": "Bandeja de Alertas",
+  "@alertsTrayTitle": {
+    "description": "Título de la bandeja interna de alertas"
+  },
+  "alertsTrayEmpty": "No tienes alertas o notificaciones pendientes.",
+  "@alertsTrayEmpty": {
+    "description": "Estado vacío de la bandeja de alertas"
+  },
+  "alertsMarkAllRead": "Marcar todo como leído",
+  "@alertsMarkAllRead": {
+    "description": "Botón para marcar todas las alertas como leídas"
+  },
+  "alertsUnreadBadgeTooltip": "{count} alertas no leídas",
+  "@alertsUnreadBadgeTooltip": {
+    "description": "Tooltip del badge de alertas no leídas",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "alertsPushDeniedWarning": "Notificaciones del sistema desactivadas. Puedes consultar todas las alertas en esta bandeja.",
+  "@alertsPushDeniedWarning": {
+    "description": "Aviso informativo si se rechazaron permisos push"
+  },
+  "alertTypeUpcoming": "Próximo Partido",
+  "@alertTypeUpcoming": {
+    "description": "Etiqueta de alerta previa a partido"
+  },
+  "alertTypeStarted": "Partido Iniciado",
+  "@alertTypeStarted": {
+    "description": "Etiqueta de alerta de pitazo inicial"
+  },
+  "alertTypeGoal": "¡Gol!",
+  "@alertTypeGoal": {
+    "description": "Etiqueta de alerta de gol anotado"
+  },
+  "alertTypeEnded": "Resultado Final",
+  "@alertTypeEnded": {
+    "description": "Etiqueta de alerta de pitazo final"
+  },
+  "alertTypeNews": "Nuevo Comunicado",
+  "@alertTypeNews": {
+    "description": "Etiqueta de alerta de comunicado publicado"
   }
 }

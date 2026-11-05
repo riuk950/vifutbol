@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
@@ -15,6 +16,9 @@ class LocalTournamentMatchesRepository implements TournamentMatchesRepository {
   final LocalStorageRepository storage;
   final EnvironmentConfig config;
 
+  final StreamController<List<ChampionshipMatch>> _matchesStreamController =
+      StreamController<List<ChampionshipMatch>>.broadcast();
+
   static const String matchesStorageKey = 'vifutbol.matches.v1';
   static const String refereesStorageKey = 'vifutbol.referees.v1';
 
@@ -24,6 +28,18 @@ class LocalTournamentMatchesRepository implements TournamentMatchesRepository {
   ) async {
     final allMatches = await _loadAllMatches();
     return allMatches.where((m) => m.tournamentId == tournamentId).toList();
+  }
+
+  @override
+  Stream<List<ChampionshipMatch>> watchMatchesForTournament(
+    String tournamentId,
+  ) async* {
+    final initial = await loadMatchesForTournament(tournamentId);
+    yield initial;
+    yield* _matchesStreamController.stream.map(
+      (matches) =>
+          matches.where((m) => m.tournamentId == tournamentId).toList(),
+    );
   }
 
   @override
@@ -107,6 +123,9 @@ class LocalTournamentMatchesRepository implements TournamentMatchesRepository {
   Future<void> _persistMatches(List<ChampionshipMatch> matches) async {
     final jsonList = matches.map((m) => m.toJson()).toList();
     await storage.writeString(matchesStorageKey, jsonEncode(jsonList));
+    if (!_matchesStreamController.isClosed) {
+      _matchesStreamController.add(matches);
+    }
   }
 
   Future<void> _persistReferees(List<MatchReferee> referees) async {

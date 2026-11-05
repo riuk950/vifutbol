@@ -1832,4 +1832,147 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get teamFormResultLoss => 'D';
+
+  @override
+  String get segmentedMatches => 'Partidos';
+
+  @override
+  String get segmentedNews => 'Noticias';
+
+  @override
+  String get matchLiveBadge => 'EN VIVO';
+
+  @override
+  String get matchLiveSectionTitle => 'Partidos en Juego';
+
+  @override
+  String matchLiveMinute(int minute) {
+    return 'Minuto $minute\'';
+  }
+
+  @override
+  String matchLivePeriod(String period) {
+    return 'Periodo: $period';
+  }
+
+  @override
+  String get matchLiveOfflineBanner => 'Modo sin conexión - Marcador en caché';
+
+  @override
+  String get newsFeedTitle => 'Comunicados y Noticias Oficiales';
+
+  @override
+  String get newsCategoryAll => 'Todas';
+
+  @override
+  String get newsCategoryGeneral => 'Avisos Generales';
+
+  @override
+  String get newsCategoryDisciplinary => 'Boletines Disciplinarios';
+
+  @override
+  String get newsCategoryRescheduling => 'Reprogramaciones';
+
+  @override
+  String get newsFeedEmpty =>
+      'No hay noticias ni comunicados oficiales publicados para este torneo.';
+
+  @override
+  String get newsCreateButton => 'Nueva Noticia';
+
+  @override
+  String get newsCreateDialogTitle => 'Publicar Noticia Oficial';
+
+  @override
+  String get newsTitleField => 'Título del Comunicado';
+
+  @override
+  String get newsTitleValidation =>
+      'El título debe tener entre 3 y 120 caracteres';
+
+  @override
+  String get newsBodyField => 'Contenido del Comunicado';
+
+  @override
+  String get newsBodyValidation =>
+      'El contenido debe tener entre 5 y 3000 caracteres';
+
+  @override
+  String get newsCategoryField => 'Categoría';
+
+  @override
+  String get newsPinnedField => 'Fijar en la parte superior';
+
+  @override
+  String get newsPublishSubmit => 'Publicar Comunicado';
+
+  @override
+  String get newsDeleteConfirmTitle => '¿Eliminar comunicado?';
+
+  @override
+  String get newsDeleteConfirmMessage =>
+      'Esta acción eliminará permanentemente la noticia oficial seleccionada.';
+
+  @override
+  String get newsDeletedSuccess => 'Comunicado eliminado correctamente';
+
+  @override
+  String get newsPublishedSuccess => 'Comunicado publicado con éxito';
+
+  @override
+  String favoriteTeamAdded(String teamName) {
+    return '$teamName añadido a tus equipos favoritos';
+  }
+
+  @override
+  String favoriteTeamRemoved(String teamName) {
+    return '$teamName eliminado de tus favoritos';
+  }
+
+  @override
+  String get favoriteToggleTooltip => 'Marcar como equipo favorito';
+
+  @override
+  String favoriteNotificationsEnabled(String teamName) {
+    return 'Alertas activadas para $teamName';
+  }
+
+  @override
+  String favoriteNotificationsDisabled(String teamName) {
+    return 'Alertas desactivadas para $teamName';
+  }
+
+  @override
+  String get alertsTrayTitle => 'Bandeja de Alertas';
+
+  @override
+  String get alertsTrayEmpty =>
+      'No tienes alertas o notificaciones pendientes.';
+
+  @override
+  String get alertsMarkAllRead => 'Marcar todo como leído';
+
+  @override
+  String alertsUnreadBadgeTooltip(int count) {
+    return '$count alertas no leídas';
+  }
+
+  @override
+  String get alertsPushDeniedWarning =>
+      'Notificaciones del sistema desactivadas. Puedes consultar todas las alertas en esta bandeja.';
+
+  @override
+  String get alertTypeUpcoming => 'Próximo Partido';
+
+  @override
+  String get alertTypeStarted => 'Partido Iniciado';
+
+  @override
+  String get alertTypeGoal => '¡Gol!';
+
+  @override
+  String get alertTypeEnded => 'Resultado Final';
+
+  @override
+  String get alertTypeNews => 'Nuevo Comunicado';
 }

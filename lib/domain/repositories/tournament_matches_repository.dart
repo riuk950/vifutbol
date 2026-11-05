@@ -15,4 +15,10 @@ abstract class TournamentMatchesRepository {
 
   /// Loads active official referees available for match assignment.
   Future<List<MatchReferee>> loadOfficialReferees();
+
+  /// Streams matches for a tournament, emitting immediately upon subscription
+  /// and whenever matches in the tournament are created, modified, or updated in status/score.
+  Stream<List<ChampionshipMatch>> watchMatchesForTournament(
+    String tournamentId,
+  );
 }

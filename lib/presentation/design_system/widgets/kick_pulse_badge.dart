@@ -59,9 +59,12 @@ class KickPulseBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (leading != null) ...[leading!, const SizedBox(width: 4.0)],
-          Text(
-            label,
-            style: KickPulseTypography.microBadge.copyWith(color: textColor),
+          Flexible(
+            child: Text(
+              label,
+              style: KickPulseTypography.microBadge.copyWith(color: textColor),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),
