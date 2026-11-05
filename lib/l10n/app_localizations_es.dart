@@ -12,13 +12,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'vifutbol';
 
   @override
-  String get tabMatchday => 'Jornada';
+  String get tabMatchday => 'Partidos';
 
   @override
-  String get tabStandings => 'Posiciones';
+  String get tabMatches => 'Partidos';
+
+  @override
+  String get tabStandings => 'Explorar';
+
+  @override
+  String get tabExplore => 'Explorar';
 
   @override
   String get tabVenues => 'Sedes';
+
+  @override
+  String get tabNews => 'Noticias';
 
   @override
   String get tabProfile => 'Perfil';
@@ -1230,6 +1239,21 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get matchdayNoMatchesFiltered =>
       'No hay partidos que coincidan con los filtros seleccionados.';
+
+  @override
+  String get matchdayDateToday => 'Hoy';
+
+  @override
+  String get matchdayDateTomorrow => 'Mañana';
+
+  @override
+  String matchdayUnscheduledSectionTitle(int count) {
+    return 'Por programar ($count)';
+  }
+
+  @override
+  String get matchdayNoMatchesForDate =>
+      'No hay partidos programados para esta fecha.';
 
   @override
   String get matchStatusPending => 'Pendiente de Programación';

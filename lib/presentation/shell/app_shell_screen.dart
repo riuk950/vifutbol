@@ -9,9 +9,9 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
 import 'package:vifutbol/presentation/shell/tabs/matchday_tab_view.dart';
+import 'package:vifutbol/presentation/shell/tabs/news_tab_view.dart';
 import 'package:vifutbol/presentation/shell/tabs/profile_tab_view.dart';
 import 'package:vifutbol/presentation/shell/tabs/standings_tab_view.dart';
-import 'package:vifutbol/presentation/shell/tabs/venues_tab_view.dart';
 import 'package:vifutbol/presentation/shell/widgets/connectivity_banner.dart';
 
 /// Root App Shell container with 4-tab bottom navigation, environment badge,
@@ -93,7 +93,7 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
               children: const [
                 MatchdayTabView(),
                 StandingsTabView(),
-                VenuesTabView(),
+                NewsTabView(),
                 ProfileTabView(),
               ],
             ),
@@ -117,20 +117,20 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
             label: l10n.tabMatchday,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.format_list_numbered_outlined),
+            icon: const Icon(Icons.explore_outlined),
             selectedIcon: const Icon(
-              Icons.format_list_numbered,
+              Icons.explore,
               color: KickPulseColors.accentPrimary,
             ),
             label: l10n.tabStandings,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.location_on_outlined),
+            icon: const Icon(Icons.newspaper_outlined),
             selectedIcon: const Icon(
-              Icons.location_on,
+              Icons.newspaper,
               color: KickPulseColors.accentPrimary,
             ),
-            label: l10n.tabVenues,
+            label: l10n.tabNews,
           ),
           NavigationDestination(
             icon: const Icon(Icons.person_outline),

@@ -100,23 +100,41 @@ abstract class AppLocalizations {
   /// **'vifutbol'**
   String get appTitle;
 
-  /// Pestaña de Jornada en la navegación inferior
+  /// Pestaña de Partidos en la navegación inferior
   ///
   /// In es, this message translates to:
-  /// **'Jornada'**
+  /// **'Partidos'**
   String get tabMatchday;
 
-  /// Pestaña de Posiciones en la navegación inferior
+  /// Pestaña de Partidos en la navegación inferior
   ///
   /// In es, this message translates to:
-  /// **'Posiciones'**
+  /// **'Partidos'**
+  String get tabMatches;
+
+  /// Pestaña de Explorar en la navegación inferior
+  ///
+  /// In es, this message translates to:
+  /// **'Explorar'**
   String get tabStandings;
+
+  /// Pestaña de Explorar en la navegación inferior
+  ///
+  /// In es, this message translates to:
+  /// **'Explorar'**
+  String get tabExplore;
 
   /// Pestaña de Sedes en la navegación inferior
   ///
   /// In es, this message translates to:
   /// **'Sedes'**
   String get tabVenues;
+
+  /// Pestaña de Noticias en la navegación inferior
+  ///
+  /// In es, this message translates to:
+  /// **'Noticias'**
+  String get tabNews;
 
   /// Pestaña de Perfil en la navegación inferior
   ///
@@ -2217,6 +2235,30 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No hay partidos que coincidan con los filtros seleccionados.'**
   String get matchdayNoMatchesFiltered;
+
+  /// Chip selector de fecha: día de hoy
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy'**
+  String get matchdayDateToday;
+
+  /// Chip selector de fecha: día de mañana
+  ///
+  /// In es, this message translates to:
+  /// **'Mañana'**
+  String get matchdayDateTomorrow;
+
+  /// Título de la sección de partidos por programar exclusiva para el Organizador
+  ///
+  /// In es, this message translates to:
+  /// **'Por programar ({count})'**
+  String matchdayUnscheduledSectionTitle(int count);
+
+  /// Mensaje informativo cuando no existen partidos en la fecha calendario seleccionada
+  ///
+  /// In es, this message translates to:
+  /// **'No hay partidos programados para esta fecha.'**
+  String get matchdayNoMatchesForDate;
 
   /// Estado del partido: pendiente de asignación
   ///

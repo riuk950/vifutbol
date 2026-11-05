@@ -4,17 +4,29 @@
   "@appTitle": {
     "description": "Título principal de la aplicación"
   },
-  "tabMatchday": "Jornada",
+  "tabMatchday": "Partidos",
   "@tabMatchday": {
-    "description": "Pestaña de Jornada en la navegación inferior"
+    "description": "Pestaña de Partidos en la navegación inferior"
   },
-  "tabStandings": "Posiciones",
+  "tabMatches": "Partidos",
+  "@tabMatches": {
+    "description": "Pestaña de Partidos en la navegación inferior"
+  },
+  "tabStandings": "Explorar",
   "@tabStandings": {
-    "description": "Pestaña de Posiciones en la navegación inferior"
+    "description": "Pestaña de Explorar en la navegación inferior"
+  },
+  "tabExplore": "Explorar",
+  "@tabExplore": {
+    "description": "Pestaña de Explorar en la navegación inferior"
   },
   "tabVenues": "Sedes",
   "@tabVenues": {
     "description": "Pestaña de Sedes en la navegación inferior"
+  },
+  "tabNews": "Noticias",
+  "@tabNews": {
+    "description": "Pestaña de Noticias en la navegación inferior"
   },
   "tabProfile": "Perfil",
   "@tabProfile": {
@@ -1561,6 +1573,27 @@
   "matchdayNoMatchesFiltered": "No hay partidos que coincidan con los filtros seleccionados.",
   "@matchdayNoMatchesFiltered": {
     "description": "Mensaje cuando ningún partido coincide con los filtros aplicados"
+  },
+  "matchdayDateToday": "Hoy",
+  "@matchdayDateToday": {
+    "description": "Chip selector de fecha: día de hoy"
+  },
+  "matchdayDateTomorrow": "Mañana",
+  "@matchdayDateTomorrow": {
+    "description": "Chip selector de fecha: día de mañana"
+  },
+  "matchdayUnscheduledSectionTitle": "Por programar ({count})",
+  "@matchdayUnscheduledSectionTitle": {
+    "description": "Título de la sección de partidos por programar exclusiva para el Organizador",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "matchdayNoMatchesForDate": "No hay partidos programados para esta fecha.",
+  "@matchdayNoMatchesForDate": {
+    "description": "Mensaje informativo cuando no existen partidos en la fecha calendario seleccionada"
   },
   "matchStatusPending": "Pendiente de Programación",
   "@matchStatusPending": {

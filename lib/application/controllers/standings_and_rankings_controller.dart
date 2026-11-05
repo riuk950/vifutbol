@@ -68,9 +68,13 @@ class StandingsAndRankingsController
     state = state.copyWith(isLoading: true, clearErrorMessage: true);
     try {
       final snapshot = await useCase.execute(tournamentId);
-      state = state.copyWith(isLoading: false, snapshot: snapshot);
+      if (mounted) {
+        state = state.copyWith(isLoading: false, snapshot: snapshot);
+      }
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      if (mounted) {
+        state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      }
     }
   }
 

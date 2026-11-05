@@ -6,6 +6,7 @@ import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/geo_coordinate.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
+import 'package:vifutbol/domain/entities/matches_catalog_state.dart';
 import 'package:vifutbol/domain/entities/sports_venue.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
@@ -184,6 +185,49 @@ void main() {
       );
       expect(scheduled.status, MatchStatus.scheduled);
       expect(scheduled.refereeName, referees.first.fullName);
+      // Auto transitions selectedDate to scheduled day
+      expect(controller.state.selectedDate, DateTime(2026, 7, 1));
     });
+
+    test(
+      'calendar date filtering, unscheduled matches and date selection',
+      () async {
+        await controller.loadTournamentMatches('tournament-seed-liga-clausura');
+
+        // Seed matches include 1 scheduled and 1 pendingSchedule
+        expect(controller.state.unscheduledMatches.length, 1);
+        expect(
+          controller.state.unscheduledMatches.first.id,
+          'match-seed-clausura-2',
+        );
+
+        // availableCalendarDates includes at least today, tomorrow, and match scheduled date
+        expect(
+          controller.state.availableCalendarDates.length,
+          greaterThanOrEqualTo(2),
+        );
+
+        final scheduledMatch = controller.state.matches.firstWhere(
+          (m) => m.status == MatchStatus.scheduled,
+        );
+        final scheduledDay = MatchesCatalogState.normalizeDate(
+          scheduledMatch.scheduledStartTime!,
+        );
+
+        // Select that specific calendar day
+        controller.selectDate(scheduledDay);
+        expect(controller.state.selectedDate, scheduledDay);
+        expect(controller.state.scheduledMatchesForSelectedDate.length, 1);
+        expect(
+          controller.state.scheduledMatchesForSelectedDate.first.id,
+          scheduledMatch.id,
+        );
+
+        // Select today (no matches scheduled in seed)
+        final today = MatchesCatalogState.normalizeDate(DateTime.now());
+        controller.selectDate(today);
+        expect(controller.state.scheduledMatchesForSelectedDate, isEmpty);
+      },
+    );
   });
 }

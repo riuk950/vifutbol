@@ -47,10 +47,10 @@ class _FanAlertsBellActionState extends ConsumerState<FanAlertsBellAction> {
   }
 
   void _handleDeepLink(MatchLiveAlert alert) {
-    // 1. Switch active shell section to matchday
+    // 1. Switch active shell section to matches
     ref
         .read(appShellControllerProvider.notifier)
-        .setSection(AppShellSection.matchday);
+        .setSection(AppShellSection.matches);
 
     // 2. Load the tournament matches if needed
     ref

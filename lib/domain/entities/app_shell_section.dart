@@ -1,11 +1,25 @@
 /// Sections available in the bottom navigation bar of the App Shell.
-enum AppShellSection { matchday, standings, venues, profile }
+enum AppShellSection {
+  matches,
+  explore,
+  news,
+  profile;
+
+  /// Compatibility alias for [matches].
+  static const AppShellSection matchday = AppShellSection.matches;
+
+  /// Compatibility alias for [explore].
+  static const AppShellSection standings = AppShellSection.explore;
+
+  /// Compatibility alias for [news].
+  static const AppShellSection venues = AppShellSection.news;
+}
 
 /// Domain state representation of the App Shell container.
 class AppShellState {
   final AppShellSection activeSection;
 
-  const AppShellState({this.activeSection = AppShellSection.matchday});
+  const AppShellState({this.activeSection = AppShellSection.matches});
 
   AppShellState copyWith({AppShellSection? activeSection}) {
     return AppShellState(activeSection: activeSection ?? this.activeSection);

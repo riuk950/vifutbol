@@ -87,8 +87,7 @@ class LocalTournamentNewsRepository implements TournamentNewsRepository {
 
   Future<List<TournamentNewsItem>> _loadAllNews() async {
     try {
-      final dynamic future = storage.readString(newsStorageKey);
-      final raw = future is Future ? await future : null;
+      final raw = await storage.readString(newsStorageKey);
       if (raw != null && raw.trim().isNotEmpty) {
         final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;
         return decoded

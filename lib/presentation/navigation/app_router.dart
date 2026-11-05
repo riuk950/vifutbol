@@ -8,6 +8,7 @@ import 'package:vifutbol/presentation/auth/role_onboarding_screen.dart';
 import 'package:vifutbol/presentation/auth/welcome_auth_screen.dart';
 import 'package:vifutbol/presentation/matches/digital_match_report_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
+import 'package:vifutbol/presentation/shell/tabs/venues_tab_view.dart';
 import 'package:vifutbol/presentation/teams/coach_lineup_tracking_screen.dart';
 import 'package:vifutbol/presentation/teams/team_roster_detail_screen.dart';
 import 'package:vifutbol/presentation/tournaments/tournament_form_screen.dart';
@@ -42,21 +43,27 @@ class AppRouter {
       },
     );
 
-    final matchdayHandler = Handler(
+    final matchesHandler = Handler(
       handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
-        return const AppShellScreen(initialSection: AppShellSection.matchday);
+        return const AppShellScreen(initialSection: AppShellSection.matches);
       },
     );
 
-    final standingsHandler = Handler(
+    final exploreHandler = Handler(
       handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
-        return const AppShellScreen(initialSection: AppShellSection.standings);
+        return const AppShellScreen(initialSection: AppShellSection.explore);
+      },
+    );
+
+    final newsHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const AppShellScreen(initialSection: AppShellSection.news);
       },
     );
 
     final venuesHandler = Handler(
       handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
-        return const AppShellScreen(initialSection: AppShellSection.venues);
+        return const Scaffold(body: VenuesTabView());
       },
     );
 
@@ -121,13 +128,28 @@ class AppRouter {
       transitionType: TransitionType.fadeIn,
     );
     router.define(
+      '/matches',
+      handler: matchesHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+    router.define(
       '/matchday',
-      handler: matchdayHandler,
+      handler: matchesHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/explore',
+      handler: exploreHandler,
       transitionType: TransitionType.fadeIn,
     );
     router.define(
       '/standings',
-      handler: standingsHandler,
+      handler: exploreHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/news',
+      handler: newsHandler,
       transitionType: TransitionType.fadeIn,
     );
     router.define(

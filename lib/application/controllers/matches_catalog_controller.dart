@@ -41,10 +41,14 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
         }
       }
 
+      DateTime selectedDate =
+          state.selectedDate ?? _resolveInitialDate(matches);
+
       state = state.copyWith(
         matches: matches,
         referees: referees,
         selectedRound: selectedRound,
+        selectedDate: selectedDate,
         isLoading: false,
       );
 
@@ -61,9 +65,12 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
                   currentRound = available.first;
                 }
               }
+              final currentDate =
+                  state.selectedDate ?? _resolveInitialDate(updatedMatches);
               state = state.copyWith(
                 matches: updatedMatches,
                 selectedRound: currentRound,
+                selectedDate: currentDate,
                 isLoading: false,
               );
             },
@@ -84,6 +91,44 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
 
   void selectRound(int roundNumber) {
     state = state.copyWith(selectedRound: roundNumber);
+  }
+
+  void selectDate(DateTime date) {
+    final normalized = MatchesCatalogState.normalizeDate(date);
+    state = state.copyWith(selectedDate: normalized);
+  }
+
+  DateTime _resolveInitialDate(List<ChampionshipMatch> matches) {
+    final today = MatchesCatalogState.normalizeDate(DateTime.now());
+    final hasMatchesToday = matches.any((m) {
+      if (m.scheduledStartTime == null) return false;
+      return MatchesCatalogState.normalizeDate(m.scheduledStartTime!) == today;
+    });
+
+    if (hasMatchesToday) {
+      return today;
+    }
+
+    final scheduledDates =
+        matches
+            .where((m) => m.scheduledStartTime != null)
+            .map(
+              (m) => MatchesCatalogState.normalizeDate(m.scheduledStartTime!),
+            )
+            .toSet()
+            .toList()
+          ..sort();
+
+    if (scheduledDates.isNotEmpty) {
+      // Find nearest upcoming date >= today, or most recent past date
+      final upcoming = scheduledDates.where((d) => !d.isBefore(today)).toList();
+      if (upcoming.isNotEmpty) {
+        return upcoming.first;
+      }
+      return scheduledDates.last;
+    }
+
+    return today;
   }
 
   void setStatusFilter(MatchStatus? status) {
@@ -162,7 +207,15 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
         tournament.id,
       );
 
-      state = state.copyWith(matches: updatedMatches, isSaving: false);
+      final scheduledDate = MatchesCatalogState.normalizeDate(
+        scheduledStartTime,
+      );
+
+      state = state.copyWith(
+        matches: updatedMatches,
+        selectedDate: scheduledDate,
+        isSaving: false,
+      );
       return true;
     } catch (e) {
       state = state.copyWith(

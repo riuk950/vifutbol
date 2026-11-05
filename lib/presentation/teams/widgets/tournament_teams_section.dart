@@ -232,7 +232,12 @@ class _TeamCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: KickPulseRadiiSpacing.spaceXs),
-                    KickPulseBadge(label: statusLabel, variant: badgeVariant),
+                    Flexible(
+                      child: KickPulseBadge(
+                        label: statusLabel,
+                        variant: badgeVariant,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: KickPulseRadiiSpacing.spaceXs),

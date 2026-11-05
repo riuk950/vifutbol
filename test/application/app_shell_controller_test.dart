@@ -28,19 +28,26 @@ void main() {
     test('cycles through all four bottom navigation sections', () {
       final controller = AppShellController();
 
-      expect(controller.state.activeSection, AppShellSection.matchday);
+      expect(controller.state.activeSection, AppShellSection.matches);
 
-      controller.setSection(AppShellSection.standings);
-      expect(controller.state.activeSection, AppShellSection.standings);
+      controller.setSection(AppShellSection.explore);
+      expect(controller.state.activeSection, AppShellSection.explore);
 
-      controller.setSection(AppShellSection.venues);
-      expect(controller.state.activeSection, AppShellSection.venues);
+      controller.setSection(AppShellSection.news);
+      expect(controller.state.activeSection, AppShellSection.news);
 
       controller.setSection(AppShellSection.profile);
       expect(controller.state.activeSection, AppShellSection.profile);
 
       controller.setSectionByIndex(0);
-      expect(controller.state.activeSection, AppShellSection.matchday);
+      expect(controller.state.activeSection, AppShellSection.matches);
+
+      // Verify out-of-bounds indexing does not alter state
+      controller.setSectionByIndex(-1);
+      expect(controller.state.activeSection, AppShellSection.matches);
+
+      controller.setSectionByIndex(4);
+      expect(controller.state.activeSection, AppShellSection.matches);
     });
   });
 

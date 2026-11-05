@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/connectivity_status.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
+import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/repositories/connectivity_repository.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
@@ -52,6 +54,7 @@ class FakeConnectivityRepository implements ConnectivityRepository {
 Widget createTestApp({
   EnvironmentConfig? config,
   double textScaleFactor = 1.0,
+  UserRole role = UserRole.fan,
 }) {
   final activeConfig = config ?? EnvironmentConfig.development();
   return ProviderScope(
@@ -63,6 +66,7 @@ Widget createTestApp({
       connectivityRepositoryProvider.overrideWithValue(
         FakeConnectivityRepository(),
       ),
+      activeUserRoleProvider.overrideWith((ref) => role),
     ],
     child: MaterialApp(
       theme: KickPulseTheme.darkTheme,
@@ -88,17 +92,45 @@ Widget createTestApp({
 
 void main() {
   group('AppShellScreen & Spanish Localization Widget Tests', () {
-    testWidgets('renders all 4 bottom navigation tabs in 100% Spanish', (
-      tester,
-    ) async {
-      await tester.pumpWidget(createTestApp());
-      await tester.pumpAndSettle();
+    testWidgets(
+      'renders all 4 bottom navigation tabs in 100% Spanish across all 5 roles',
+      (tester) async {
+        for (final role in UserRole.values) {
+          await tester.pumpWidget(createTestApp(role: role));
+          await tester.pumpAndSettle();
 
-      expect(find.text('Jornada'), findsWidgets);
-      expect(find.text('Posiciones'), findsOneWidget);
-      expect(find.text('Sedes'), findsOneWidget);
-      expect(find.text('Perfil'), findsOneWidget);
-    });
+          expect(
+            find.descendant(
+              of: find.byType(NavigationBar),
+              matching: find.text('Partidos'),
+            ),
+            findsOneWidget,
+          );
+          expect(
+            find.descendant(
+              of: find.byType(NavigationBar),
+              matching: find.text('Explorar'),
+            ),
+            findsOneWidget,
+          );
+          expect(
+            find.descendant(
+              of: find.byType(NavigationBar),
+              matching: find.text('Noticias'),
+            ),
+            findsOneWidget,
+          );
+          expect(
+            find.descendant(
+              of: find.byType(NavigationBar),
+              matching: find.text('Perfil'),
+            ),
+            findsOneWidget,
+          );
+          expect(find.text('Sedes'), findsNothing);
+        }
+      },
+    );
 
     testWidgets('switches sections when tapping bottom navigation bar', (
       tester,
@@ -106,30 +138,71 @@ void main() {
       await tester.pumpWidget(createTestApp());
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Posiciones'));
+      await tester.tap(find.text('Explorar'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Posiciones'), findsWidgets);
+      expect(find.text('Explorar'), findsWidgets);
 
-      await tester.tap(find.text('Sedes'));
+      await tester.tap(find.text('Noticias'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Sedes'), findsWidgets);
+      expect(find.text('Noticias'), findsWidgets);
     });
 
-    testWidgets('renders at 130% text scaling without layout overflows', (
-      tester,
-    ) async {
-      tester.view.physicalSize = const Size(1080, 2400);
-      tester.view.devicePixelRatio = 3.0;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
+    testWidgets(
+      'renders at compact 320x640 viewport and 130% text scaling across all 4 tabs without overflows',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(createTestApp(textScaleFactor: 1.3));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(createTestApp(textScaleFactor: 1.3));
+        await tester.pumpAndSettle();
 
-      expect(tester.takeException(), isNull);
-    });
+        expect(tester.takeException(), isNull);
+
+        // Tab 1: Partidos (active by default)
+        expect(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Partidos'),
+          ),
+          findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
+
+        // Tab 2: Explorar
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Explorar'),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+
+        // Tab 3: Noticias
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Noticias'),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+
+        // Tab 4: Perfil
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Perfil'),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets(
       'KickPulseButton enforces minimum 44x44px touch target and single-flight lock',

@@ -471,5 +471,119 @@ void main() {
         );
       },
     );
+
+    testWidgets(
+      'Scenario 4: Calendar date filtering, removed segmented button, and Organizer-only unscheduled section',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(430, 932));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+
+        final fixtureUseCase = FixtureSchedulingUseCase(
+          matchesRepository: matchesRepo,
+        );
+        final matchesController = MatchesCatalogController(
+          matchesRepository: matchesRepo,
+          fixtureSchedulingUseCase: fixtureUseCase,
+        );
+
+        // Preload matches - fixture generates 2 pendingSchedule matches
+        await matchesController.generateFixture(
+          tournament: testTournament,
+          teams: testTeams,
+          userRole: UserRole.organizer,
+        );
+
+        // 1. Mount for Fan:
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              environmentConfigProvider.overrideWithValue(devConfig),
+              localStorageRepositoryProvider.overrideWithValue(storage),
+              venuesRepositoryProvider.overrideWithValue(venuesRepo),
+              tournamentMatchesRepositoryProvider.overrideWithValue(
+                matchesRepo,
+              ),
+              fixtureSchedulingUseCaseProvider.overrideWithValue(
+                fixtureUseCase,
+              ),
+              matchesCatalogControllerProvider.overrideWith(
+                (ref) => matchesController,
+              ),
+              activeUserRoleProvider.overrideWithValue(UserRole.fan),
+            ],
+            child: const MaterialApp(
+              localizationsDelegates: [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: Scaffold(body: MatchdayTabView()),
+            ),
+          ),
+        );
+
+        await tester.pumpAndSettle();
+
+        // Verify segment button is completely removed
+        expect(
+          find.byKey(const Key('matchday_segmented_button')),
+          findsNothing,
+        );
+
+        // Verify Fan does NOT see "Por programar (N)"
+        expect(
+          find.byKey(const Key('unscheduled_matches_section')),
+          findsNothing,
+        );
+
+        // 2. Mount for Organizer:
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              environmentConfigProvider.overrideWithValue(devConfig),
+              localStorageRepositoryProvider.overrideWithValue(storage),
+              venuesRepositoryProvider.overrideWithValue(venuesRepo),
+              tournamentMatchesRepositoryProvider.overrideWithValue(
+                matchesRepo,
+              ),
+              fixtureSchedulingUseCaseProvider.overrideWithValue(
+                fixtureUseCase,
+              ),
+              matchesCatalogControllerProvider.overrideWith(
+                (ref) => matchesController,
+              ),
+              activeUserRoleProvider.overrideWithValue(UserRole.organizer),
+            ],
+            child: const MaterialApp(
+              localizationsDelegates: [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: Scaffold(body: MatchdayTabView()),
+            ),
+          ),
+        );
+
+        await tester.pumpAndSettle();
+
+        // Verify Organizer sees "Por programar (2)"
+        expect(
+          find.byKey(const Key('unscheduled_matches_section')),
+          findsOneWidget,
+        );
+        expect(find.text('Por programar (2)'), findsOneWidget);
+
+        // Verify calendar date chips strip exists
+        expect(
+          find.byKey(const Key('matchday_date_chips_list')),
+          findsOneWidget,
+        );
+      },
+    );
   });
 }
