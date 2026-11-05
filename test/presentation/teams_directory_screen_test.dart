@@ -1,0 +1,392 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:vifutbol/application/controllers/teams_controller.dart';
+import 'package:vifutbol/application/controllers/tournaments_controller.dart';
+import 'package:vifutbol/application/providers/auth_providers.dart';
+import 'package:vifutbol/application/providers/foundation_providers.dart';
+import 'package:vifutbol/application/providers/teams_providers.dart';
+import 'package:vifutbol/application/providers/tournaments_providers.dart';
+import 'package:vifutbol/domain/entities/app_environment.dart';
+import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/connectivity_status.dart';
+import 'package:vifutbol/domain/entities/local_storage_status.dart';
+import 'package:vifutbol/domain/entities/tournament_draft.dart';
+import 'package:vifutbol/domain/entities/tournament_enums.dart';
+import 'package:vifutbol/domain/entities/tournament_team.dart';
+import 'package:vifutbol/domain/entities/user_role.dart';
+import 'package:vifutbol/domain/repositories/connectivity_repository.dart';
+import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
+import 'package:vifutbol/domain/repositories/teams_repository.dart';
+import 'package:vifutbol/domain/repositories/tournaments_repository.dart';
+import 'package:vifutbol/l10n/app_localizations.dart';
+import 'package:vifutbol/presentation/design_system/kick_pulse_theme.dart';
+import 'package:vifutbol/presentation/directories/teams_directory_screen.dart';
+import 'package:vifutbol/presentation/teams/team_roster_detail_screen.dart';
+
+class FakeLocalStorageRepository implements LocalStorageRepository {
+  final Map<String, String> _store = {};
+
+  @override
+  bool get isUsingFallbackMemory => false;
+
+  @override
+  Future<void> clearNamespace() async => _store.clear();
+
+  @override
+  Future<LocalStorageStatus> initialize(String storagePrefix) async {
+    return LocalStorageStatus(
+      isPersistent: true,
+      storageNamespace: storagePrefix,
+    );
+  }
+
+  @override
+  Future<String?> readString(String key) async => _store[key];
+
+  @override
+  Future<void> writeString(String key, String value) async {
+    _store[key] = value;
+  }
+}
+
+class FakeConnectivityRepository implements ConnectivityRepository {
+  @override
+  Stream<NetworkConnectionStatus> get onConnectivityChanged =>
+      Stream.value(NetworkConnectionStatus.connected);
+
+  @override
+  Future<NetworkConnectionStatus> checkConnectivity() async =>
+      NetworkConnectionStatus.connected;
+}
+
+class FakeTournamentsRepository implements TournamentsRepository {
+  final List<ChampionshipTournament> tournaments;
+
+  FakeTournamentsRepository(this.tournaments);
+
+  @override
+  Future<List<ChampionshipTournament>> loadTournaments() async => tournaments;
+
+  @override
+  Future<ChampionshipTournament> saveTournament(
+    ChampionshipTournament tournament,
+  ) async => tournament;
+
+  @override
+  Future<TournamentDraft?> loadDraft() async => null;
+
+  @override
+  Future<void> saveDraft(dynamic draft) async {}
+
+  @override
+  Future<void> clearDraft() async {}
+}
+
+class FakeTeamsRepository implements TeamsRepository {
+  final List<TournamentTeam> teams;
+
+  FakeTeamsRepository(this.teams);
+
+  @override
+  Future<List<TournamentTeam>> loadTeams() async => teams;
+
+  @override
+  Future<List<TournamentTeam>> loadTeamsForTournament(
+    String tournamentId,
+  ) async {
+    return teams.where((t) => t.tournamentId == tournamentId).toList();
+  }
+
+  @override
+  Future<TournamentTeam> saveTeam(TournamentTeam team) async => team;
+
+  @override
+  Future<void> replaceTeamsForTournament(
+    String tournamentId,
+    List<TournamentTeam> updatedTeams,
+  ) async {}
+}
+
+Widget createTeamsTestApp({
+  required List<ChampionshipTournament> tournaments,
+  required List<TournamentTeam> teams,
+  UserRole role = UserRole.fan,
+}) {
+  return ProviderScope(
+    key: UniqueKey(),
+    overrides: [
+      environmentConfigProvider.overrideWithValue(
+        EnvironmentConfig.development(),
+      ),
+      localStorageRepositoryProvider.overrideWithValue(
+        FakeLocalStorageRepository(),
+      ),
+      connectivityRepositoryProvider.overrideWithValue(
+        FakeConnectivityRepository(),
+      ),
+      activeUserRoleProvider.overrideWith((ref) => role),
+      teamsRepositoryProvider.overrideWithValue(FakeTeamsRepository(teams)),
+      tournamentsControllerProvider.overrideWith((ref) {
+        return TournamentsController(
+          tournamentsRepository: FakeTournamentsRepository(tournaments),
+          manageTournamentsUseCase: ref.watch(manageTournamentsUseCaseProvider),
+        );
+      }),
+      teamsControllerProvider.overrideWith((ref) {
+        return TeamsController(
+          teamsRepository: FakeTeamsRepository(teams),
+          manageTeamsEligibilityUseCase: ref.watch(
+            manageTeamsEligibilityUseCaseProvider,
+          ),
+        );
+      }),
+    ],
+    child: MaterialApp(
+      theme: KickPulseTheme.darkTheme,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('es')],
+      home: const TeamsDirectoryScreen(),
+    ),
+  );
+}
+
+void main() {
+  final tournament1 = ChampionshipTournament(
+    id: 't-1',
+    name: 'Liga Premier Apertura',
+    category: 'Libre Masculino',
+    format: TournamentFormat.league,
+    status: TournamentStatus.inProgress,
+    startDate: DateTime(2026, 3, 1),
+    endDate: DateTime(2026, 6, 30),
+    updatedAt: DateTime(2026, 3, 1),
+  );
+
+  final tournament2 = ChampionshipTournament(
+    id: 't-2',
+    name: 'Copa Élite Verano',
+    category: 'Sub-20',
+    format: TournamentFormat.knockoutCup,
+    status: TournamentStatus.openRegistration,
+    startDate: DateTime(2026, 7, 1),
+    endDate: DateTime(2026, 8, 15),
+    updatedAt: DateTime(2026, 7, 1),
+  );
+
+  final team1 = TournamentTeam(
+    id: 'team-1',
+    tournamentId: 't-1',
+    name: 'Tigres FC',
+    shortCode: 'TIG',
+  );
+
+  final team2 = TournamentTeam(
+    id: 'team-2',
+    tournamentId: 't-1',
+    name: 'Águilas Doradas',
+    shortCode: 'AGU',
+  );
+
+  final team3 = TournamentTeam(
+    id: 'team-3',
+    tournamentId: 't-2',
+    name: 'Atlético Halcones',
+    shortCode: 'HAL',
+  );
+
+  group('TeamsDirectoryScreen Widget Tests', () {
+    testWidgets(
+      'renders teams across tournaments and horizontal filter chips',
+      (tester) async {
+        await tester.pumpWidget(
+          createTeamsTestApp(
+            tournaments: [tournament1, tournament2],
+            teams: [team1, team2, team3],
+            role: UserRole.fan,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // All 3 teams displayed initially
+        expect(find.byKey(const Key('team_item_team-1')), findsOneWidget);
+        expect(find.byKey(const Key('team_item_team-2')), findsOneWidget);
+        expect(find.byKey(const Key('team_item_team-3')), findsOneWidget);
+
+        // Chips displayed
+        expect(
+          find.byKey(const Key('teams_tournament_chip_all')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('teams_tournament_chip_t-1')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('teams_tournament_chip_t-2')),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'filters teams when selecting tournament chip and resets with "Todos"',
+      (tester) async {
+        await tester.pumpWidget(
+          createTeamsTestApp(
+            tournaments: [tournament1, tournament2],
+            teams: [team1, team2, team3],
+            role: UserRole.fan,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Select t-2 chip (Copa Élite Verano)
+        await tester.tap(find.byKey(const Key('teams_tournament_chip_t-2')));
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(const Key('team_item_team-1')), findsNothing);
+        expect(find.byKey(const Key('team_item_team-2')), findsNothing);
+        expect(find.byKey(const Key('team_item_team-3')), findsOneWidget);
+
+        // Select 'Todos' chip
+        await tester.tap(find.byKey(const Key('teams_tournament_chip_all')));
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(const Key('team_item_team-1')), findsOneWidget);
+        expect(find.byKey(const Key('team_item_team-2')), findsOneWidget);
+        expect(find.byKey(const Key('team_item_team-3')), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'real-time search with accent-insensitivity filters correctly',
+      (tester) async {
+        await tester.pumpWidget(
+          createTeamsTestApp(
+            tournaments: [tournament1, tournament2],
+            teams: [team1, team2, team3],
+            role: UserRole.fan,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Search 'aguilas' should match 'Águilas Doradas'
+        await tester.enterText(
+          find.byKey(const Key('teams_search_bar')),
+          'aguilas',
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(const Key('team_item_team-1')), findsNothing);
+        expect(find.byKey(const Key('team_item_team-2')), findsOneWidget);
+        expect(find.byKey(const Key('team_item_team-3')), findsNothing);
+
+        // Clear search
+        await tester.tap(find.byKey(const Key('search_bar_clear_button')));
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(const Key('team_item_team-1')), findsOneWidget);
+        expect(find.byKey(const Key('team_item_team-2')), findsOneWidget);
+        expect(find.byKey(const Key('team_item_team-3')), findsOneWidget);
+      },
+    );
+
+    testWidgets('displays empty state when search matches nothing', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        createTeamsTestApp(
+          tournaments: [tournament1, tournament2],
+          teams: [team1, team2, team3],
+          role: UserRole.fan,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.enterText(
+        find.byKey(const Key('teams_search_bar')),
+        'Equipo Fantasma',
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('teams_empty_state')), findsOneWidget);
+      expect(
+        find.text('No se encontraron equipos con ese criterio.'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('tapping team opens TeamRosterDetailScreen', (tester) async {
+      await tester.pumpWidget(
+        createTeamsTestApp(
+          tournaments: [tournament1],
+          teams: [team1],
+          role: UserRole.fan,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('team_item_team-1')));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(TeamRosterDetailScreen), findsOneWidget);
+    });
+
+    testWidgets(
+      'renders create team button for organizer and coach, hides for fan',
+      (tester) async {
+        // Fan role
+        await tester.pumpWidget(
+          createTeamsTestApp(
+            tournaments: [tournament1],
+            teams: [team1],
+            role: UserRole.fan,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('create_team_from_directory_button')),
+          findsNothing,
+        );
+
+        // Coach role
+        await tester.pumpWidget(
+          createTeamsTestApp(
+            tournaments: [tournament1],
+            teams: [team1],
+            role: UserRole.coach,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('create_team_from_directory_button')),
+          findsOneWidget,
+        );
+
+        // Organizer role
+        await tester.pumpWidget(
+          createTeamsTestApp(
+            tournaments: [tournament1],
+            teams: [team1],
+            role: UserRole.organizer,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('create_team_from_directory_button')),
+          findsOneWidget,
+        );
+      },
+    );
+  });
+}

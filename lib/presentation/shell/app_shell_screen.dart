@@ -12,6 +12,7 @@ import 'package:vifutbol/presentation/shell/tabs/matchday_tab_view.dart';
 import 'package:vifutbol/presentation/shell/tabs/news_tab_view.dart';
 import 'package:vifutbol/presentation/shell/tabs/profile_tab_view.dart';
 import 'package:vifutbol/presentation/shell/tabs/standings_tab_view.dart';
+import 'package:vifutbol/presentation/shell/widgets/app_navigation_drawer.dart';
 import 'package:vifutbol/presentation/shell/widgets/connectivity_banner.dart';
 
 /// Root App Shell container with 4-tab bottom navigation, environment badge,
@@ -63,8 +64,18 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
     );
 
     return Scaffold(
+      drawer: const AppNavigationDrawer(),
       appBar: AppBar(
+        leading: Builder(
+          builder: (context) => IconButton(
+            key: const Key('app_bar_drawer_button'),
+            icon: const Icon(Icons.menu),
+            tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
         title: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Flexible(
               child: Text(
@@ -74,7 +85,7 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
               ),
             ),
             if (envConfig.showEnvironmentBanner) ...[
-              const SizedBox(width: 8.0),
+              const SizedBox(width: 6.0),
               KickPulseBadge(
                 label: l10n.envDevBadge,
                 variant: KickPulseBadgeVariant.dev,

@@ -3711,6 +3711,114 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Sin goles registrados'**
   String get honorRollNoGoals;
+
+  /// Título del menú lateral de navegación
+  ///
+  /// In es, this message translates to:
+  /// **'Menú Principal'**
+  String get drawerTitle;
+
+  /// Nombre mostrado para el usuario anónimo o invitado en el drawer
+  ///
+  /// In es, this message translates to:
+  /// **'Aficionado Invitado'**
+  String get drawerGuestUser;
+
+  /// Subtítulo mostrado para el usuario anónimo o invitado en el drawer
+  ///
+  /// In es, this message translates to:
+  /// **'Sesión deportiva local'**
+  String get drawerGuestEmail;
+
+  /// Opción de competiciones en el menú lateral
+  ///
+  /// In es, this message translates to:
+  /// **'Competiciones'**
+  String get drawerCompetitions;
+
+  /// Opción de equipos en el menú lateral
+  ///
+  /// In es, this message translates to:
+  /// **'Equipos'**
+  String get drawerTeams;
+
+  /// Opción de jugadores en el menú lateral
+  ///
+  /// In es, this message translates to:
+  /// **'Jugadores'**
+  String get drawerPlayers;
+
+  /// Opción de sedes en el menú lateral
+  ///
+  /// In es, this message translates to:
+  /// **'Sedes'**
+  String get drawerVenues;
+
+  /// Pista del buscador de competiciones
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar competiciones...'**
+  String get searchCompetitionsHint;
+
+  /// Pista del buscador de equipos
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar equipos...'**
+  String get searchTeamsHint;
+
+  /// Pista del buscador de jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar jugadores...'**
+  String get searchPlayersHint;
+
+  /// Opción para mostrar todos los torneos en el filtro horizontal
+  ///
+  /// In es, this message translates to:
+  /// **'Todos'**
+  String get filterAllTournaments;
+
+  /// Mensaje de estado vacío en el directorio de competiciones
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontraron competiciones con ese criterio.'**
+  String get noCompetitionsFound;
+
+  /// Mensaje de estado vacío en el directorio de equipos
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontraron equipos con ese criterio.'**
+  String get noTeamsFound;
+
+  /// Mensaje de estado vacío en el directorio de jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontraron jugadores con ese criterio.'**
+  String get noPlayersFound;
+
+  /// Acción para crear un nuevo campeonato desde el directorio
+  ///
+  /// In es, this message translates to:
+  /// **'Crear competición'**
+  String get createCompetitionAction;
+
+  /// Acción para inscribir un equipo desde el directorio
+  ///
+  /// In es, this message translates to:
+  /// **'Inscribir equipo'**
+  String get registerTeamAction;
+
+  /// Acción para registrar un jugador desde el directorio
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar jugador'**
+  String get registerPlayerAction;
+
+  /// Acción para limpiar el texto ingresado en el buscador
+  ///
+  /// In es, this message translates to:
+  /// **'Limpiar búsqueda'**
+  String get clearSearchAction;
 }
 
 class _AppLocalizationsDelegate

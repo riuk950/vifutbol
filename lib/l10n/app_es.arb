@@ -2748,5 +2748,77 @@
   "honorRollNoGoals": "Sin goles registrados",
   "@honorRollNoGoals": {
     "description": "Mensaje si no se registraron goles en todo el campeonato"
+  },
+  "drawerTitle": "Menú Principal",
+  "@drawerTitle": {
+    "description": "Título del menú lateral de navegación"
+  },
+  "drawerGuestUser": "Aficionado Invitado",
+  "@drawerGuestUser": {
+    "description": "Nombre mostrado para el usuario anónimo o invitado en el drawer"
+  },
+  "drawerGuestEmail": "Sesión deportiva local",
+  "@drawerGuestEmail": {
+    "description": "Subtítulo mostrado para el usuario anónimo o invitado en el drawer"
+  },
+  "drawerCompetitions": "Competiciones",
+  "@drawerCompetitions": {
+    "description": "Opción de competiciones en el menú lateral"
+  },
+  "drawerTeams": "Equipos",
+  "@drawerTeams": {
+    "description": "Opción de equipos en el menú lateral"
+  },
+  "drawerPlayers": "Jugadores",
+  "@drawerPlayers": {
+    "description": "Opción de jugadores en el menú lateral"
+  },
+  "drawerVenues": "Sedes",
+  "@drawerVenues": {
+    "description": "Opción de sedes en el menú lateral"
+  },
+  "searchCompetitionsHint": "Buscar competiciones...",
+  "@searchCompetitionsHint": {
+    "description": "Pista del buscador de competiciones"
+  },
+  "searchTeamsHint": "Buscar equipos...",
+  "@searchTeamsHint": {
+    "description": "Pista del buscador de equipos"
+  },
+  "searchPlayersHint": "Buscar jugadores...",
+  "@searchPlayersHint": {
+    "description": "Pista del buscador de jugadores"
+  },
+  "filterAllTournaments": "Todos",
+  "@filterAllTournaments": {
+    "description": "Opción para mostrar todos los torneos en el filtro horizontal"
+  },
+  "noCompetitionsFound": "No se encontraron competiciones con ese criterio.",
+  "@noCompetitionsFound": {
+    "description": "Mensaje de estado vacío en el directorio de competiciones"
+  },
+  "noTeamsFound": "No se encontraron equipos con ese criterio.",
+  "@noTeamsFound": {
+    "description": "Mensaje de estado vacío en el directorio de equipos"
+  },
+  "noPlayersFound": "No se encontraron jugadores con ese criterio.",
+  "@noPlayersFound": {
+    "description": "Mensaje de estado vacío en el directorio de jugadores"
+  },
+  "createCompetitionAction": "Crear competición",
+  "@createCompetitionAction": {
+    "description": "Acción para crear un nuevo campeonato desde el directorio"
+  },
+  "registerTeamAction": "Inscribir equipo",
+  "@registerTeamAction": {
+    "description": "Acción para inscribir un equipo desde el directorio"
+  },
+  "registerPlayerAction": "Registrar jugador",
+  "@registerPlayerAction": {
+    "description": "Acción para registrar un jugador desde el directorio"
+  },
+  "clearSearchAction": "Limpiar búsqueda",
+  "@clearSearchAction": {
+    "description": "Acción para limpiar el texto ingresado en el buscador"
   }
 }

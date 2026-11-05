@@ -6,6 +6,9 @@ import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/presentation/auth/auth_gate.dart';
 import 'package:vifutbol/presentation/auth/role_onboarding_screen.dart';
 import 'package:vifutbol/presentation/auth/welcome_auth_screen.dart';
+import 'package:vifutbol/presentation/directories/competitions_directory_screen.dart';
+import 'package:vifutbol/presentation/directories/players_directory_screen.dart';
+import 'package:vifutbol/presentation/directories/teams_directory_screen.dart';
 import 'package:vifutbol/presentation/matches/digital_match_report_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/venues_tab_view.dart';
@@ -61,9 +64,30 @@ class AppRouter {
       },
     );
 
+    final competitionsHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const CompetitionsDirectoryScreen();
+      },
+    );
+
+    final teamsHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const TeamsDirectoryScreen();
+      },
+    );
+
+    final playersHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const PlayersDirectoryScreen();
+      },
+    );
+
     final venuesHandler = Handler(
       handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
-        return const Scaffold(body: VenuesTabView());
+        return Scaffold(
+          appBar: AppBar(title: const Text('Sedes Deportivas')),
+          body: const VenuesTabView(),
+        );
       },
     );
 
@@ -151,6 +175,21 @@ class AppRouter {
       '/news',
       handler: newsHandler,
       transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/competitions',
+      handler: competitionsHandler,
+      transitionType: TransitionType.native,
+    );
+    router.define(
+      '/teams',
+      handler: teamsHandler,
+      transitionType: TransitionType.native,
+    );
+    router.define(
+      '/players',
+      handler: playersHandler,
+      transitionType: TransitionType.native,
     );
     router.define(
       '/venues',

@@ -2123,4 +2123,59 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get honorRollNoGoals => 'Sin goles registrados';
+
+  @override
+  String get drawerTitle => 'Menú Principal';
+
+  @override
+  String get drawerGuestUser => 'Aficionado Invitado';
+
+  @override
+  String get drawerGuestEmail => 'Sesión deportiva local';
+
+  @override
+  String get drawerCompetitions => 'Competiciones';
+
+  @override
+  String get drawerTeams => 'Equipos';
+
+  @override
+  String get drawerPlayers => 'Jugadores';
+
+  @override
+  String get drawerVenues => 'Sedes';
+
+  @override
+  String get searchCompetitionsHint => 'Buscar competiciones...';
+
+  @override
+  String get searchTeamsHint => 'Buscar equipos...';
+
+  @override
+  String get searchPlayersHint => 'Buscar jugadores...';
+
+  @override
+  String get filterAllTournaments => 'Todos';
+
+  @override
+  String get noCompetitionsFound =>
+      'No se encontraron competiciones con ese criterio.';
+
+  @override
+  String get noTeamsFound => 'No se encontraron equipos con ese criterio.';
+
+  @override
+  String get noPlayersFound => 'No se encontraron jugadores con ese criterio.';
+
+  @override
+  String get createCompetitionAction => 'Crear competición';
+
+  @override
+  String get registerTeamAction => 'Inscribir equipo';
+
+  @override
+  String get registerPlayerAction => 'Registrar jugador';
+
+  @override
+  String get clearSearchAction => 'Limpiar búsqueda';
 }
