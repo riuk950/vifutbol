@@ -87,6 +87,19 @@ class LocalMatchReportsRepository implements MatchReportsRepository {
   }
 
   @override
+  Future<void> replaceReportsForTournament(
+    String tournamentId,
+    List<DigitalMatchReport> reports,
+  ) async {
+    final allReports = await _loadAllReports();
+    final otherReports = allReports
+        .where((r) => r.tournamentId != tournamentId)
+        .toList();
+    final updated = [...otherReports, ...reports];
+    await _persistReports(updated);
+  }
+
+  @override
   Future<List<MatchEvent>> loadPendingSyncQueue(String matchId) async {
     final allQueued = await _loadSyncQueue();
     return allQueued.where((e) => e.matchId == matchId).toList();

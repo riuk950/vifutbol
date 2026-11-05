@@ -112,6 +112,13 @@ class FixtureSchedulingUseCase {
       );
     }
 
+    if (tournament.status == TournamentStatus.finished) {
+      throw const FixtureScheduleValidationFailure(
+        FixtureScheduleErrorCode.tournamentClosed,
+        'El torneo ya se encuentra finalizado.',
+      );
+    }
+
     // 2. Load existing matches
     final existingMatches = await matchesRepository.loadMatchesForTournament(
       tournament.id,

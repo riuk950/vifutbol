@@ -104,6 +104,9 @@ enum TournamentValidationErrorCode {
   invalidGroupStageConfig,
   criticalRulesImmutableWithoutAudit,
   tournamentAlreadyFinished,
+  invalidBackupPackage,
+  missingTwoStepConfirmation,
+  pendingMandatoryMatchesForSeasonClosure,
 }
 
 /// Emitted when championship tournament or custom rule validation fails.

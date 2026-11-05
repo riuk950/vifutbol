@@ -65,6 +65,17 @@ class LocalTournamentNewsRepository implements TournamentNewsRepository {
     await _persistNews(updated);
   }
 
+  @override
+  Future<void> replaceNewsForTournament(
+    String tournamentId,
+    List<TournamentNewsItem> items,
+  ) async {
+    final all = await _loadAllNews();
+    final otherNews = all.where((n) => n.tournamentId != tournamentId).toList();
+    final updated = [...otherNews, ...items];
+    await _persistNews(updated);
+  }
+
   void _sortNews(List<TournamentNewsItem> items) {
     items.sort((a, b) {
       if (a.isPinned != b.isPinned) {

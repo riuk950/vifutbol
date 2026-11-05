@@ -26,4 +26,11 @@ abstract class MatchReportsRepository {
   /// Idempotently synchronizes pending offline events for [matchId],
   /// marking all events in the report as synced and clearing the queue.
   Future<DigitalMatchReport> synchronizePendingEvents(String matchId);
+
+  /// Replaces all digital match reports belonging to [tournamentId] with [reports],
+  /// preserving reports from other tournaments.
+  Future<void> replaceReportsForTournament(
+    String tournamentId,
+    List<DigitalMatchReport> reports,
+  );
 }

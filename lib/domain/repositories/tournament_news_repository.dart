@@ -12,4 +12,11 @@ abstract class TournamentNewsRepository {
 
   /// Permanently deletes a news item by its unique ID.
   Future<void> deleteNewsItem(String newsItemId);
+
+  /// Replaces all news items belonging to [tournamentId] with [items],
+  /// preserving news items from other tournaments.
+  Future<void> replaceNewsForTournament(
+    String tournamentId,
+    List<TournamentNewsItem> items,
+  );
 }

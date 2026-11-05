@@ -33,6 +33,15 @@ class _FakeTeamsRepository implements TeamsRepository {
     }
     return team;
   }
+
+  @override
+  Future<void> replaceTeamsForTournament(
+    String tournamentId,
+    List<TournamentTeam> teams,
+  ) async {
+    _teams.removeWhere((t) => t.tournamentId == tournamentId);
+    _teams.addAll(teams);
+  }
 }
 
 void main() {

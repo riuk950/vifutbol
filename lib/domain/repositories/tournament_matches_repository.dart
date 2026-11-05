@@ -21,4 +21,11 @@ abstract class TournamentMatchesRepository {
   Stream<List<ChampionshipMatch>> watchMatchesForTournament(
     String tournamentId,
   );
+
+  /// Replaces all matches belonging to [tournamentId] with [matches],
+  /// preserving matches from other tournaments.
+  Future<void> replaceMatchesForTournament(
+    String tournamentId,
+    List<ChampionshipMatch> matches,
+  );
 }

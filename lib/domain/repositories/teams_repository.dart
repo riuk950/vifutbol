@@ -10,4 +10,11 @@ abstract interface class TeamsRepository {
 
   /// Persists or updates a team in storage.
   Future<TournamentTeam> saveTeam(TournamentTeam team);
+
+  /// Replaces all teams belonging to [tournamentId] with [teams],
+  /// preserving teams from other tournaments.
+  Future<void> replaceTeamsForTournament(
+    String tournamentId,
+    List<TournamentTeam> teams,
+  );
 }

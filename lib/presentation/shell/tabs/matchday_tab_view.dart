@@ -232,6 +232,8 @@ class _MatchdayTabViewState extends ConsumerState<MatchdayTabView> {
             TournamentNewsFeedView(
               key: Key('tournament_news_feed_${currentTournament.id}'),
               tournamentId: currentTournament.id,
+              isHistoricalReadOnly:
+                  currentTournament.status == TournamentStatus.finished,
             ),
           ] else ...[
             // Live Matches Section (if any inProgress matches)

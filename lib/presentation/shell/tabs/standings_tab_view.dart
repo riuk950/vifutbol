@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/controllers/standings_and_rankings_controller.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
+import 'package:vifutbol/application/providers/backup_and_season_closure_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/player_performance_profile.dart';
@@ -14,11 +15,14 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_state_view.dart';
 import 'package:vifutbol/presentation/standings/widgets/knockout_bracket_card.dart';
 import 'package:vifutbol/presentation/standings/widgets/player_performance_profile_card.dart';
+import 'package:vifutbol/presentation/standings/widgets/season_honor_roll_card.dart';
 import 'package:vifutbol/presentation/standings/widgets/standings_table_card.dart';
 import 'package:vifutbol/presentation/standings/widgets/team_detailed_stats_card.dart';
 import 'package:vifutbol/presentation/standings/widgets/tournament_rankings_card.dart';
 import 'package:vifutbol/presentation/teams/widgets/tournament_teams_section.dart';
 import 'package:vifutbol/presentation/tournaments/tournament_form_screen.dart';
+import 'package:vifutbol/presentation/tournaments/widgets/season_closure_confirmation_dialog.dart';
+import 'package:vifutbol/presentation/tournaments/widgets/tournament_backup_sheet.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/tournament_rules_summary_card.dart';
 
 /// Standings & Championship Tournaments Center (`Posiciones`) displaying
@@ -231,7 +235,47 @@ class StandingsTabView extends ConsumerWidget {
                           actorRole: activeRole,
                         );
                       },
+                      onBackupPressed: () => TournamentBackupSheet.show(
+                        context: context,
+                        tournament: selected,
+                      ),
+                      onCloseSeasonPressed: () =>
+                          SeasonClosureConfirmationDialog.show(
+                            context,
+                            tournament: selected,
+                            actorRole: activeRole,
+                            onSeasonClosed: () {
+                              controller.loadCatalog();
+                              ref.invalidate(
+                                tournamentHonorRollProvider(selected.id),
+                              );
+                            },
+                          ),
                     ),
+                    if (selected.status == TournamentStatus.finished) ...[
+                      const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
+                      Consumer(
+                        builder: (context, ref, _) {
+                          final honorRollAsync = ref.watch(
+                            tournamentHonorRollProvider(selected.id),
+                          );
+                          return honorRollAsync.when(
+                            data: (honorRoll) => honorRoll != null
+                                ? SeasonHonorRollCard(honorRoll: honorRoll)
+                                : const SizedBox.shrink(),
+                            loading: () => const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(
+                                  KickPulseRadiiSpacing.spaceMd,
+                                ),
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
+                            error: (_, _) => const SizedBox.shrink(),
+                          );
+                        },
+                      ),
+                    ],
                     const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
                     TournamentTeamsSection(
                       tournament: selected,

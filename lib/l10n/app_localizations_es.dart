@@ -1975,4 +1975,128 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get alertTypeNews => 'Nuevo Comunicado';
+
+  @override
+  String get backupModalTitle => 'Respaldo del Campeonato';
+
+  @override
+  String get backupExportTab => 'Exportar';
+
+  @override
+  String get backupImportTab => 'Importar';
+
+  @override
+  String get backupExportButton => 'Exportar respaldo';
+
+  @override
+  String get backupCopyJsonAction => 'Copiar paquete de respaldo';
+
+  @override
+  String get backupCopySuccess =>
+      'Copia de respaldo copiada al portapapeles con éxito';
+
+  @override
+  String backupSummaryTeams(int count) {
+    return '$count equipos inscritos';
+  }
+
+  @override
+  String backupSummaryPlayers(int count) {
+    return '$count jugadores registrados';
+  }
+
+  @override
+  String backupSummaryMatches(int count) {
+    return '$count partidos programados';
+  }
+
+  @override
+  String backupSummaryReports(int count) {
+    return '$count actas oficiales';
+  }
+
+  @override
+  String backupSummaryNews(int count) {
+    return '$count comunicados oficiales';
+  }
+
+  @override
+  String get backupImportInputLabel => 'Contenido JSON del respaldo';
+
+  @override
+  String get backupImportInputHint =>
+      'Pega aquí el contenido JSON del archivo de respaldo...';
+
+  @override
+  String get backupValidateAction => 'Validar respaldo';
+
+  @override
+  String get backupRestoreAction => 'Restaurar campeonato';
+
+  @override
+  String get backupInvalidMessage =>
+      'El archivo de respaldo no es válido o está incompleto. No se realizaron cambios.';
+
+  @override
+  String get backupTwoStepCheckbox =>
+      'Confirmo que deseo sobrescribir los datos de este campeonato con el respaldo seleccionado.';
+
+  @override
+  String get backupRestoreSuccess =>
+      'El campeonato fue restaurado con éxito desde el respaldo.';
+
+  @override
+  String get backupActionButton => 'Respaldo del torneo';
+
+  @override
+  String get seasonClosureAction => 'Finalizar Campeonato';
+
+  @override
+  String get seasonClosureDialogTitle => 'Cierre Oficial de Temporada';
+
+  @override
+  String get seasonClosurePendingMatchesError =>
+      'Todos los partidos obligatorios deben estar finalizados antes de cerrar el campeonato.';
+
+  @override
+  String get seasonClosureTwoStepCheckbox =>
+      'Confirmo que deseo proclamar a los campeones y cerrar la temporada en modo histórico permanente.';
+
+  @override
+  String get seasonClosureConfirmAction => 'Confirmar Cierre Oficial';
+
+  @override
+  String get seasonClosureSuccess =>
+      '¡Temporada finalizada! El Cuadro de Honor oficial ha sido publicado.';
+
+  @override
+  String get seasonReadOnlyBadge => 'Temporada Finalizada · Consulta Histórica';
+
+  @override
+  String get honorRollTitle => 'Cuadro de Honor Oficial';
+
+  @override
+  String get honorRollChampion => 'Campeón Oficial';
+
+  @override
+  String get honorRollRunnerUp => 'Subcampeón';
+
+  @override
+  String get honorRollTopScorer => 'Máximo Goleador';
+
+  @override
+  String get honorRollBestDefense => 'Valla Menos Vencida';
+
+  @override
+  String honorRollGoalsCount(int count) {
+    return '$count goles';
+  }
+
+  @override
+  String honorRollGoalsAgainstCount(int count) {
+    return '$count goles recibidos';
+  }
+
+  @override
+  String get honorRollNoGoals => 'Sin goles registrados';
 }

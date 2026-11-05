@@ -2544,5 +2544,176 @@
   "alertTypeNews": "Nuevo Comunicado",
   "@alertTypeNews": {
     "description": "Etiqueta de alerta de comunicado publicado"
+  },
+  "backupModalTitle": "Respaldo del Campeonato",
+  "@backupModalTitle": {
+    "description": "Título del modal de respaldo y restauración"
+  },
+  "backupExportTab": "Exportar",
+  "@backupExportTab": {
+    "description": "Pestaña de exportación de respaldo"
+  },
+  "backupImportTab": "Importar",
+  "@backupImportTab": {
+    "description": "Pestaña de importación de respaldo"
+  },
+  "backupExportButton": "Exportar respaldo",
+  "@backupExportButton": {
+    "description": "Botón de exportar respaldo"
+  },
+  "backupCopyJsonAction": "Copiar paquete de respaldo",
+  "@backupCopyJsonAction": {
+    "description": "Acción para copiar paquete JSON al portapapeles"
+  },
+  "backupCopySuccess": "Copia de respaldo copiada al portapapeles con éxito",
+  "@backupCopySuccess": {
+    "description": "Mensaje de éxito al copiar respaldo"
+  },
+  "backupSummaryTeams": "{count} equipos inscritos",
+  "@backupSummaryTeams": {
+    "description": "Resumen de equipos en respaldo",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupSummaryPlayers": "{count} jugadores registrados",
+  "@backupSummaryPlayers": {
+    "description": "Resumen de jugadores en respaldo",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupSummaryMatches": "{count} partidos programados",
+  "@backupSummaryMatches": {
+    "description": "Resumen de partidos en respaldo",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupSummaryReports": "{count} actas oficiales",
+  "@backupSummaryReports": {
+    "description": "Resumen de actas en respaldo",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupSummaryNews": "{count} comunicados oficiales",
+  "@backupSummaryNews": {
+    "description": "Resumen de comunicados en respaldo",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupImportInputLabel": "Contenido JSON del respaldo",
+  "@backupImportInputLabel": {
+    "description": "Etiqueta para campo de texto con respaldo JSON"
+  },
+  "backupImportInputHint": "Pega aquí el contenido JSON del archivo de respaldo...",
+  "@backupImportInputHint": {
+    "description": "Pista del campo de respaldo JSON"
+  },
+  "backupValidateAction": "Validar respaldo",
+  "@backupValidateAction": {
+    "description": "Botón para validar el respaldo antes de restaurar"
+  },
+  "backupRestoreAction": "Restaurar campeonato",
+  "@backupRestoreAction": {
+    "description": "Botón para ejecutar la restauración del respaldo"
+  },
+  "backupInvalidMessage": "El archivo de respaldo no es válido o está incompleto. No se realizaron cambios.",
+  "@backupInvalidMessage": {
+    "description": "Mensaje exacto mostrado cuando el archivo de respaldo es inválido o corrupto"
+  },
+  "backupTwoStepCheckbox": "Confirmo que deseo sobrescribir los datos de este campeonato con el respaldo seleccionado.",
+  "@backupTwoStepCheckbox": {
+    "description": "Casilla de verificación de seguridad de dos pasos para restaurar respaldo"
+  },
+  "backupRestoreSuccess": "El campeonato fue restaurado con éxito desde el respaldo.",
+  "@backupRestoreSuccess": {
+    "description": "Mensaje de éxito tras restaurar respaldo"
+  },
+  "backupActionButton": "Respaldo del torneo",
+  "@backupActionButton": {
+    "description": "Botón en la barra de gestión para abrir el modal de respaldo"
+  },
+  "seasonClosureAction": "Finalizar Campeonato",
+  "@seasonClosureAction": {
+    "description": "Botón para iniciar el cierre oficial de la temporada"
+  },
+  "seasonClosureDialogTitle": "Cierre Oficial de Temporada",
+  "@seasonClosureDialogTitle": {
+    "description": "Título del diálogo de cierre de temporada"
+  },
+  "seasonClosurePendingMatchesError": "Todos los partidos obligatorios deben estar finalizados antes de cerrar el campeonato.",
+  "@seasonClosurePendingMatchesError": {
+    "description": "Error al intentar cerrar la temporada con partidos pendientes"
+  },
+  "seasonClosureTwoStepCheckbox": "Confirmo que deseo proclamar a los campeones y cerrar la temporada en modo histórico permanente.",
+  "@seasonClosureTwoStepCheckbox": {
+    "description": "Casilla de verificación obligatoria para el cierre definitivo de temporada"
+  },
+  "seasonClosureConfirmAction": "Confirmar Cierre Oficial",
+  "@seasonClosureConfirmAction": {
+    "description": "Botón final para confirmar el cierre oficial"
+  },
+  "seasonClosureSuccess": "¡Temporada finalizada! El Cuadro de Honor oficial ha sido publicado.",
+  "@seasonClosureSuccess": {
+    "description": "Mensaje de confirmación tras finalizar temporada"
+  },
+  "seasonReadOnlyBadge": "Temporada Finalizada · Consulta Histórica",
+  "@seasonReadOnlyBadge": {
+    "description": "Badge informativo de torneo en modo solo lectura permanente"
+  },
+  "honorRollTitle": "Cuadro de Honor Oficial",
+  "@honorRollTitle": {
+    "description": "Título del cuadro de honor oficial de la temporada"
+  },
+  "honorRollChampion": "Campeón Oficial",
+  "@honorRollChampion": {
+    "description": "Etiqueta para el campeón del torneo"
+  },
+  "honorRollRunnerUp": "Subcampeón",
+  "@honorRollRunnerUp": {
+    "description": "Etiqueta para el subcampeón del torneo"
+  },
+  "honorRollTopScorer": "Máximo Goleador",
+  "@honorRollTopScorer": {
+    "description": "Etiqueta para el máximo anotador del torneo"
+  },
+  "honorRollBestDefense": "Valla Menos Vencida",
+  "@honorRollBestDefense": {
+    "description": "Etiqueta para el equipo con la mejor defensa"
+  },
+  "honorRollGoalsCount": "{count} goles",
+  "@honorRollGoalsCount": {
+    "description": "Conteo de goles del goleador",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "honorRollGoalsAgainstCount": "{count} goles recibidos",
+  "@honorRollGoalsAgainstCount": {
+    "description": "Conteo de goles recibidos de la valla menos vencida",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "honorRollNoGoals": "Sin goles registrados",
+  "@honorRollNoGoals": {
+    "description": "Mensaje si no se registraron goles en todo el campeonato"
   }
 }

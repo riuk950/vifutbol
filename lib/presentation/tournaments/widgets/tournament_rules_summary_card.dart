@@ -67,12 +67,16 @@ class TournamentRulesSummaryCard extends StatelessWidget {
     required this.isOrganizer,
     this.onEditPressed,
     this.onTransitionStatusPressed,
+    this.onBackupPressed,
+    this.onCloseSeasonPressed,
   });
 
   final ChampionshipTournament tournament;
   final bool isOrganizer;
   final VoidCallback? onEditPressed;
   final ValueChanged<TournamentStatus>? onTransitionStatusPressed;
+  final VoidCallback? onBackupPressed;
+  final VoidCallback? onCloseSeasonPressed;
 
   Color _statusColor(TournamentStatus status) {
     switch (status) {
@@ -157,45 +161,90 @@ class TournamentRulesSummaryCard extends StatelessWidget {
                 '${_formatDate(tournament.startDate)} — ${_formatDate(tournament.endDate)}',
                 style: KickPulseTypography.captionMeta,
               ),
-              if (isOrganizer && tournament.status.isEditable) ...[
+              if (isOrganizer) ...[
                 const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
                 Wrap(
                   spacing: KickPulseRadiiSpacing.spaceSm,
                   runSpacing: KickPulseRadiiSpacing.spaceSm,
                   children: [
-                    OutlinedButton.icon(
-                      key: const Key('edit_tournament_rules_button'),
-                      onPressed: onEditPressed,
-                      icon: const Icon(Icons.tune, size: 18),
-                      label: Text(l10n.tournamentsEditAction),
-                    ),
-                    if (tournament.status == TournamentStatus.openRegistration)
-                      ElevatedButton.icon(
-                        key: const Key('start_tournament_status_button'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: KickPulseColors.accentPrimary,
-                          foregroundColor: KickPulseColors.canvasBackground,
-                        ),
-                        onPressed: onTransitionStatusPressed == null
-                            ? null
-                            : () => onTransitionStatusPressed!(
-                                TournamentStatus.inProgress,
-                              ),
-                        icon: const Icon(Icons.play_arrow_rounded, size: 18),
-                        label: Text(l10n.tournamentStartAction),
-                      ),
-                    if (tournament.status == TournamentStatus.inProgress)
+                    if (tournament.status.isEditable) ...[
                       OutlinedButton.icon(
-                        key: const Key('finish_tournament_status_button'),
-                        onPressed: onTransitionStatusPressed == null
-                            ? null
-                            : () => onTransitionStatusPressed!(
-                                TournamentStatus.finished,
-                              ),
-                        icon: const Icon(Icons.flag_outlined, size: 18),
-                        label: Text(l10n.tournamentFinishAction),
+                        key: const Key('edit_tournament_rules_button'),
+                        onPressed: onEditPressed,
+                        icon: const Icon(Icons.tune, size: 18),
+                        label: Text(l10n.tournamentsEditAction),
                       ),
+                      if (tournament.status ==
+                          TournamentStatus.openRegistration)
+                        ElevatedButton.icon(
+                          key: const Key('start_tournament_status_button'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: KickPulseColors.accentPrimary,
+                            foregroundColor: KickPulseColors.canvasBackground,
+                          ),
+                          onPressed: onTransitionStatusPressed == null
+                              ? null
+                              : () => onTransitionStatusPressed!(
+                                  TournamentStatus.inProgress,
+                                ),
+                          icon: const Icon(Icons.play_arrow_rounded, size: 18),
+                          label: Text(l10n.tournamentStartAction),
+                        ),
+                      if (tournament.status == TournamentStatus.inProgress)
+                        OutlinedButton.icon(
+                          key: const Key('finish_tournament_status_button'),
+                          onPressed:
+                              onCloseSeasonPressed ??
+                              (onTransitionStatusPressed == null
+                                  ? null
+                                  : () => onTransitionStatusPressed!(
+                                      TournamentStatus.finished,
+                                    )),
+                          icon: const Icon(Icons.flag_outlined, size: 18),
+                          label: Text(l10n.seasonClosureAction),
+                        ),
+                    ],
+                    OutlinedButton.icon(
+                      key: const Key('tournament_backup_action_button'),
+                      onPressed: onBackupPressed,
+                      icon: const Icon(Icons.backup_outlined, size: 18),
+                      label: Text(l10n.backupActionButton),
+                    ),
                   ],
+                ),
+              ],
+              if (tournament.status == TournamentStatus.finished) ...[
+                const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+                Container(
+                  key: const Key('season_readonly_notice_banner'),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: KickPulseRadiiSpacing.spaceSm,
+                    vertical: KickPulseRadiiSpacing.spaceXs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: KickPulseColors.surfaceSubtle,
+                    borderRadius: BorderRadius.circular(
+                      KickPulseRadiiSpacing.chipRadius,
+                    ),
+                    border: Border.all(color: KickPulseColors.borderSubtle),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.lock_clock_outlined,
+                        size: 16,
+                        color: KickPulseColors.textSecondary,
+                      ),
+                      const SizedBox(width: KickPulseRadiiSpacing.spaceXs),
+                      Flexible(
+                        child: Text(
+                          l10n.seasonReadOnlyBadge,
+                          style: KickPulseTypography.captionMeta,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ],

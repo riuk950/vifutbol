@@ -251,6 +251,13 @@ class ManageTeamsEligibilityUseCase {
       );
     }
 
+    if (tournament.status == TournamentStatus.finished) {
+      throw const TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.tournamentRegistrationsClosed,
+        'El campeonato ha finalizado y se encuentra en modo de solo lectura histórica.',
+      );
+    }
+
     final tournamentTeams = await _repository.loadTeamsForTournament(
       tournament.id,
     );
@@ -310,6 +317,12 @@ class ManageTeamsEligibilityUseCase {
   }
 
   void _ensureOpenRegistration(ChampionshipTournament tournament) {
+    if (tournament.status == TournamentStatus.finished) {
+      throw const TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.tournamentRegistrationsClosed,
+        'El campeonato ha finalizado y se encuentra en modo de solo lectura histórica.',
+      );
+    }
     if (tournament.status != TournamentStatus.openRegistration) {
       throw const TeamEligibilityValidationFailure(
         TeamEligibilityErrorCode.tournamentRegistrationsClosed,

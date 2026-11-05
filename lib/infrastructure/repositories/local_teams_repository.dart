@@ -66,6 +66,19 @@ class LocalTeamsRepository implements TeamsRepository {
     return team;
   }
 
+  @override
+  Future<void> replaceTeamsForTournament(
+    String tournamentId,
+    List<TournamentTeam> teams,
+  ) async {
+    final allTeams = await loadTeams();
+    final otherTeams = allTeams
+        .where((t) => t.tournamentId != tournamentId)
+        .toList();
+    final updated = [...otherTeams, ...teams];
+    await _persistTeams(updated);
+  }
+
   Future<void> _persistTeams(List<TournamentTeam> teams) async {
     final serialized = jsonEncode(teams.map((t) => t.toJson()).toList());
     await storage.writeString(catalogStorageKey, serialized);

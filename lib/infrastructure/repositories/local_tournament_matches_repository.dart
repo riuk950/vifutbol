@@ -78,6 +78,19 @@ class LocalTournamentMatchesRepository implements TournamentMatchesRepository {
   }
 
   @override
+  Future<void> replaceMatchesForTournament(
+    String tournamentId,
+    List<ChampionshipMatch> matches,
+  ) async {
+    final allMatches = await _loadAllMatches();
+    final otherMatches = allMatches
+        .where((m) => m.tournamentId != tournamentId)
+        .toList();
+    final updatedList = [...otherMatches, ...matches];
+    await _persistMatches(updatedList);
+  }
+
+  @override
   Future<List<MatchReferee>> loadOfficialReferees() async {
     final raw = await storage.readString(refereesStorageKey);
     if (raw != null && raw.trim().isNotEmpty) {

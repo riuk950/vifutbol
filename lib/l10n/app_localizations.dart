@@ -3465,6 +3465,210 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Nuevo Comunicado'**
   String get alertTypeNews;
+
+  /// Título del modal de respaldo y restauración
+  ///
+  /// In es, this message translates to:
+  /// **'Respaldo del Campeonato'**
+  String get backupModalTitle;
+
+  /// Pestaña de exportación de respaldo
+  ///
+  /// In es, this message translates to:
+  /// **'Exportar'**
+  String get backupExportTab;
+
+  /// Pestaña de importación de respaldo
+  ///
+  /// In es, this message translates to:
+  /// **'Importar'**
+  String get backupImportTab;
+
+  /// Botón de exportar respaldo
+  ///
+  /// In es, this message translates to:
+  /// **'Exportar respaldo'**
+  String get backupExportButton;
+
+  /// Acción para copiar paquete JSON al portapapeles
+  ///
+  /// In es, this message translates to:
+  /// **'Copiar paquete de respaldo'**
+  String get backupCopyJsonAction;
+
+  /// Mensaje de éxito al copiar respaldo
+  ///
+  /// In es, this message translates to:
+  /// **'Copia de respaldo copiada al portapapeles con éxito'**
+  String get backupCopySuccess;
+
+  /// Resumen de equipos en respaldo
+  ///
+  /// In es, this message translates to:
+  /// **'{count} equipos inscritos'**
+  String backupSummaryTeams(int count);
+
+  /// Resumen de jugadores en respaldo
+  ///
+  /// In es, this message translates to:
+  /// **'{count} jugadores registrados'**
+  String backupSummaryPlayers(int count);
+
+  /// Resumen de partidos en respaldo
+  ///
+  /// In es, this message translates to:
+  /// **'{count} partidos programados'**
+  String backupSummaryMatches(int count);
+
+  /// Resumen de actas en respaldo
+  ///
+  /// In es, this message translates to:
+  /// **'{count} actas oficiales'**
+  String backupSummaryReports(int count);
+
+  /// Resumen de comunicados en respaldo
+  ///
+  /// In es, this message translates to:
+  /// **'{count} comunicados oficiales'**
+  String backupSummaryNews(int count);
+
+  /// Etiqueta para campo de texto con respaldo JSON
+  ///
+  /// In es, this message translates to:
+  /// **'Contenido JSON del respaldo'**
+  String get backupImportInputLabel;
+
+  /// Pista del campo de respaldo JSON
+  ///
+  /// In es, this message translates to:
+  /// **'Pega aquí el contenido JSON del archivo de respaldo...'**
+  String get backupImportInputHint;
+
+  /// Botón para validar el respaldo antes de restaurar
+  ///
+  /// In es, this message translates to:
+  /// **'Validar respaldo'**
+  String get backupValidateAction;
+
+  /// Botón para ejecutar la restauración del respaldo
+  ///
+  /// In es, this message translates to:
+  /// **'Restaurar campeonato'**
+  String get backupRestoreAction;
+
+  /// Mensaje exacto mostrado cuando el archivo de respaldo es inválido o corrupto
+  ///
+  /// In es, this message translates to:
+  /// **'El archivo de respaldo no es válido o está incompleto. No se realizaron cambios.'**
+  String get backupInvalidMessage;
+
+  /// Casilla de verificación de seguridad de dos pasos para restaurar respaldo
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmo que deseo sobrescribir los datos de este campeonato con el respaldo seleccionado.'**
+  String get backupTwoStepCheckbox;
+
+  /// Mensaje de éxito tras restaurar respaldo
+  ///
+  /// In es, this message translates to:
+  /// **'El campeonato fue restaurado con éxito desde el respaldo.'**
+  String get backupRestoreSuccess;
+
+  /// Botón en la barra de gestión para abrir el modal de respaldo
+  ///
+  /// In es, this message translates to:
+  /// **'Respaldo del torneo'**
+  String get backupActionButton;
+
+  /// Botón para iniciar el cierre oficial de la temporada
+  ///
+  /// In es, this message translates to:
+  /// **'Finalizar Campeonato'**
+  String get seasonClosureAction;
+
+  /// Título del diálogo de cierre de temporada
+  ///
+  /// In es, this message translates to:
+  /// **'Cierre Oficial de Temporada'**
+  String get seasonClosureDialogTitle;
+
+  /// Error al intentar cerrar la temporada con partidos pendientes
+  ///
+  /// In es, this message translates to:
+  /// **'Todos los partidos obligatorios deben estar finalizados antes de cerrar el campeonato.'**
+  String get seasonClosurePendingMatchesError;
+
+  /// Casilla de verificación obligatoria para el cierre definitivo de temporada
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmo que deseo proclamar a los campeones y cerrar la temporada en modo histórico permanente.'**
+  String get seasonClosureTwoStepCheckbox;
+
+  /// Botón final para confirmar el cierre oficial
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar Cierre Oficial'**
+  String get seasonClosureConfirmAction;
+
+  /// Mensaje de confirmación tras finalizar temporada
+  ///
+  /// In es, this message translates to:
+  /// **'¡Temporada finalizada! El Cuadro de Honor oficial ha sido publicado.'**
+  String get seasonClosureSuccess;
+
+  /// Badge informativo de torneo en modo solo lectura permanente
+  ///
+  /// In es, this message translates to:
+  /// **'Temporada Finalizada · Consulta Histórica'**
+  String get seasonReadOnlyBadge;
+
+  /// Título del cuadro de honor oficial de la temporada
+  ///
+  /// In es, this message translates to:
+  /// **'Cuadro de Honor Oficial'**
+  String get honorRollTitle;
+
+  /// Etiqueta para el campeón del torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Campeón Oficial'**
+  String get honorRollChampion;
+
+  /// Etiqueta para el subcampeón del torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Subcampeón'**
+  String get honorRollRunnerUp;
+
+  /// Etiqueta para el máximo anotador del torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Máximo Goleador'**
+  String get honorRollTopScorer;
+
+  /// Etiqueta para el equipo con la mejor defensa
+  ///
+  /// In es, this message translates to:
+  /// **'Valla Menos Vencida'**
+  String get honorRollBestDefense;
+
+  /// Conteo de goles del goleador
+  ///
+  /// In es, this message translates to:
+  /// **'{count} goles'**
+  String honorRollGoalsCount(int count);
+
+  /// Conteo de goles recibidos de la valla menos vencida
+  ///
+  /// In es, this message translates to:
+  /// **'{count} goles recibidos'**
+  String honorRollGoalsAgainstCount(int count);
+
+  /// Mensaje si no se registraron goles en todo el campeonato
+  ///
+  /// In es, this message translates to:
+  /// **'Sin goles registrados'**
+  String get honorRollNoGoals;
 }
 
 class _AppLocalizationsDelegate

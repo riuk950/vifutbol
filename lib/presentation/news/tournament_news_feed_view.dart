@@ -14,9 +14,14 @@ import 'package:vifutbol/presentation/news/widgets/tournament_news_card.dart';
 import 'package:vifutbol/presentation/news/widgets/tournament_news_filter_bar.dart';
 
 class TournamentNewsFeedView extends ConsumerStatefulWidget {
-  const TournamentNewsFeedView({super.key, required this.tournamentId});
+  const TournamentNewsFeedView({
+    super.key,
+    required this.tournamentId,
+    this.isHistoricalReadOnly = false,
+  });
 
   final String tournamentId;
+  final bool isHistoricalReadOnly;
 
   @override
   ConsumerState<TournamentNewsFeedView> createState() =>
@@ -127,6 +132,7 @@ class _TournamentNewsFeedViewState
     final l10n = AppLocalizations.of(context);
     final newsState = ref.watch(tournamentNewsControllerProvider);
     final userRole = ref.watch(activeUserRoleProvider);
+    final isFinished = widget.isHistoricalReadOnly;
     final isOrganizer = userRole == UserRole.organizer;
 
     final filteredNews = newsState.filteredNews;
@@ -134,6 +140,43 @@ class _TournamentNewsFeedViewState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (isFinished) ...[
+          Container(
+            key: const Key('news_readonly_badge'),
+            margin: const EdgeInsets.only(
+              bottom: KickPulseRadiiSpacing.spaceSm,
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: KickPulseRadiiSpacing.spaceSm,
+              vertical: KickPulseRadiiSpacing.spaceXs,
+            ),
+            decoration: BoxDecoration(
+              color: KickPulseColors.surfaceSubtle,
+              borderRadius: BorderRadius.circular(
+                KickPulseRadiiSpacing.badgeRadius,
+              ),
+              border: Border.all(color: KickPulseColors.borderSubtle),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.lock_clock_outlined,
+                  size: 14,
+                  color: KickPulseColors.textSecondary,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  l10n.seasonReadOnlyBadge,
+                  style: KickPulseTypography.captionMeta.copyWith(
+                    color: KickPulseColors.textSecondary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
         // Filter bar & Header
         Row(
           children: [
@@ -147,7 +190,7 @@ class _TournamentNewsFeedViewState
                 },
               ),
             ),
-            if (isOrganizer) ...[
+            if (isOrganizer && !isFinished) ...[
               const SizedBox(width: 8),
               ElevatedButton.icon(
                 key: const Key('create_news_button'),
@@ -216,7 +259,7 @@ class _TournamentNewsFeedViewState
               return TournamentNewsCard(
                 key: Key('news_card_${item.id}'),
                 newsItem: item,
-                canDelete: isOrganizer,
+                canDelete: isOrganizer && !isFinished,
                 onDelete: () => _onDeleteNews(item, userRole),
               );
             },
