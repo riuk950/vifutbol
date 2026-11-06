@@ -306,6 +306,14 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
 
+        final expectedRoleKeys = {
+          UserRole.organizer: const Key('organizer_panel_content'),
+          UserRole.coach: const Key('coach_panel_content'),
+          UserRole.referee: const Key('referee_panel_content'),
+          UserRole.player: const Key('player_panel_content'),
+          UserRole.fan: const Key('fan_panel_restricted_content'),
+        };
+
         for (final role in UserRole.values) {
           await tester.pumpWidget(
             createResponsiveApp(
@@ -319,11 +327,8 @@ void main() {
 
           expect(tester.takeException(), isNull);
           expect(find.byKey(const Key('panel_screen')), findsOneWidget);
-          expect(
-            find.byKey(const Key('panel_placeholder_content')),
-            findsOneWidget,
-          );
-          expect(find.byKey(const Key('panel_back_button')), findsOneWidget);
+          expect(find.byKey(const Key('panel_screen_title')), findsOneWidget);
+          expect(find.byKey(expectedRoleKeys[role]!), findsOneWidget);
         }
       },
     );

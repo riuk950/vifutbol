@@ -3903,6 +3903,240 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Herramientas de gestión y métricas disponibles para tu rol deportivo.'**
   String get panelPlaceholderSubtitle;
+
+  /// Título del panel para el rol Organizador
+  ///
+  /// In es, this message translates to:
+  /// **'Panel de Organización'**
+  String get panelTitleOrganizer;
+
+  /// Título del panel para el rol Entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Panel Técnico'**
+  String get panelTitleCoach;
+
+  /// Título del panel para el rol Árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Panel Arbitral'**
+  String get panelTitleReferee;
+
+  /// Título del panel para el rol Jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Ficha del Jugador'**
+  String get panelTitlePlayer;
+
+  /// Título de la sección de resumen del organizador
+  ///
+  /// In es, this message translates to:
+  /// **'Resumen General'**
+  String get organizerSummaryTitle;
+
+  /// Etiqueta para la métrica de torneos activos
+  ///
+  /// In es, this message translates to:
+  /// **'Torneos en Curso'**
+  String get organizerMetricActiveTournaments;
+
+  /// Etiqueta para la métrica de partidos pendientes de programación
+  ///
+  /// In es, this message translates to:
+  /// **'Partidos por Programar'**
+  String get organizerMetricPendingMatches;
+
+  /// Etiqueta para la métrica de torneos sin fixture generado
+  ///
+  /// In es, this message translates to:
+  /// **'Torneos sin Fixture'**
+  String get organizerMetricUnseededTournaments;
+
+  /// Título del bloque de acciones rápidas del organizador
+  ///
+  /// In es, this message translates to:
+  /// **'Acciones Rápidas'**
+  String get organizerQuickActionsTitle;
+
+  /// Botón de acción rápida para generar fixture
+  ///
+  /// In es, this message translates to:
+  /// **'Generar Fixture'**
+  String get organizerActionGenerateFixture;
+
+  /// Botón de acción rápida para programar partidos
+  ///
+  /// In es, this message translates to:
+  /// **'Programar Partido'**
+  String get organizerActionScheduleMatches;
+
+  /// Botón de acción rápida para copia de seguridad
+  ///
+  /// In es, this message translates to:
+  /// **'Copia de Seguridad'**
+  String get organizerActionBackup;
+
+  /// Título del bloque de resumen del equipo para el entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Estado del Equipo'**
+  String get coachSummaryTitle;
+
+  /// Etiqueta de total de jugadores en plantilla
+  ///
+  /// In es, this message translates to:
+  /// **'Plantilla Total'**
+  String get coachMetricTotalPlayers;
+
+  /// Etiqueta de jugadores habilitados
+  ///
+  /// In es, this message translates to:
+  /// **'Habilitados'**
+  String get coachMetricEligiblePlayers;
+
+  /// Etiqueta de jugadores suspendidos
+  ///
+  /// In es, this message translates to:
+  /// **'Suspendidos'**
+  String get coachMetricSuspendedPlayers;
+
+  /// Título del bloque de acciones para el entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Acciones Técnicas'**
+  String get coachQuickActionsTitle;
+
+  /// Botón de acción para gestionar la alineación del próximo partido
+  ///
+  /// In es, this message translates to:
+  /// **'Convocatoria para el Próximo Partido'**
+  String get coachActionMatchLineup;
+
+  /// Botón de acción para gestionar la plantilla de jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'Gestionar Plantilla'**
+  String get coachActionManageRoster;
+
+  /// Título para el card de próximo partido del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Próximo Encuentro'**
+  String get coachNextMatchTitle;
+
+  /// Mensaje cuando no hay próximo partido programado para el equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Sin partidos programados próximamente'**
+  String get coachNoUpcomingMatch;
+
+  /// Título de la lista de partidos asignados al árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Partidos Asignados'**
+  String get refereeAssignedMatchesTitle;
+
+  /// Botón de acción para abrir el acta digital del partido
+  ///
+  /// In es, this message translates to:
+  /// **'Acta Digital'**
+  String get refereeActionDigitalReport;
+
+  /// Título del estado vacío para el árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Sin partidos asignados'**
+  String get refereeEmptyMatchesTitle;
+
+  /// Descripción del estado vacío para el árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Actualmente no tienes partidos designados para dirigir.'**
+  String get refereeEmptyMatchesMessage;
+
+  /// Título del estado de elegibilidad del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Estatus Deportivo'**
+  String get playerStatusTitle;
+
+  /// Estado de jugador habilitado
+  ///
+  /// In es, this message translates to:
+  /// **'Habilitado'**
+  String get playerStatusEligible;
+
+  /// Estado de jugador suspendido o sancionado
+  ///
+  /// In es, this message translates to:
+  /// **'Sancionado'**
+  String get playerStatusSuspended;
+
+  /// Título de la sección de estadísticas del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Estadísticas de Temporada'**
+  String get playerStatsTitle;
+
+  /// Etiqueta de goles anotados
+  ///
+  /// In es, this message translates to:
+  /// **'Goles'**
+  String get playerStatGoals;
+
+  /// Etiqueta de asistencias realizadas
+  ///
+  /// In es, this message translates to:
+  /// **'Asistencias'**
+  String get playerStatAssists;
+
+  /// Etiqueta de tarjetas amarillas
+  ///
+  /// In es, this message translates to:
+  /// **'T. Amarillas'**
+  String get playerStatYellowCards;
+
+  /// Etiqueta de tarjetas rojas
+  ///
+  /// In es, this message translates to:
+  /// **'T. Rojas'**
+  String get playerStatRedCards;
+
+  /// Etiqueta de partidos jugados
+  ///
+  /// In es, this message translates to:
+  /// **'Partidos'**
+  String get playerStatMatchesPlayed;
+
+  /// Título para el próximo partido del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Próximo Partido'**
+  String get playerNextMatchTitle;
+
+  /// Mensaje cuando el jugador no tiene próximo partido
+  ///
+  /// In es, this message translates to:
+  /// **'Sin partido programado próximamente'**
+  String get playerNoUpcomingMatch;
+
+  /// Título de la vista restrictiva para aficionados
+  ///
+  /// In es, this message translates to:
+  /// **'Acceso Restringido'**
+  String get fanRestrictedTitle;
+
+  /// Mensaje informativo en la vista restrictiva de panel
+  ///
+  /// In es, this message translates to:
+  /// **'El Panel Administrativo está reservado exclusivamente para Organizadores, Entrenadores, Árbitros y Jugadores federados.'**
+  String get fanRestrictedMessage;
+
+  /// Botón para retornar a la pantalla de partidos desde la vista restringida
+  ///
+  /// In es, this message translates to:
+  /// **'Volver a Partidos'**
+  String get fanRestrictedReturnAction;
 }
 
 class _AppLocalizationsDelegate

@@ -2231,4 +2231,123 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get panelPlaceholderSubtitle =>
       'Herramientas de gestión y métricas disponibles para tu rol deportivo.';
+
+  @override
+  String get panelTitleOrganizer => 'Panel de Organización';
+
+  @override
+  String get panelTitleCoach => 'Panel Técnico';
+
+  @override
+  String get panelTitleReferee => 'Panel Arbitral';
+
+  @override
+  String get panelTitlePlayer => 'Ficha del Jugador';
+
+  @override
+  String get organizerSummaryTitle => 'Resumen General';
+
+  @override
+  String get organizerMetricActiveTournaments => 'Torneos en Curso';
+
+  @override
+  String get organizerMetricPendingMatches => 'Partidos por Programar';
+
+  @override
+  String get organizerMetricUnseededTournaments => 'Torneos sin Fixture';
+
+  @override
+  String get organizerQuickActionsTitle => 'Acciones Rápidas';
+
+  @override
+  String get organizerActionGenerateFixture => 'Generar Fixture';
+
+  @override
+  String get organizerActionScheduleMatches => 'Programar Partido';
+
+  @override
+  String get organizerActionBackup => 'Copia de Seguridad';
+
+  @override
+  String get coachSummaryTitle => 'Estado del Equipo';
+
+  @override
+  String get coachMetricTotalPlayers => 'Plantilla Total';
+
+  @override
+  String get coachMetricEligiblePlayers => 'Habilitados';
+
+  @override
+  String get coachMetricSuspendedPlayers => 'Suspendidos';
+
+  @override
+  String get coachQuickActionsTitle => 'Acciones Técnicas';
+
+  @override
+  String get coachActionMatchLineup => 'Convocatoria para el Próximo Partido';
+
+  @override
+  String get coachActionManageRoster => 'Gestionar Plantilla';
+
+  @override
+  String get coachNextMatchTitle => 'Próximo Encuentro';
+
+  @override
+  String get coachNoUpcomingMatch => 'Sin partidos programados próximamente';
+
+  @override
+  String get refereeAssignedMatchesTitle => 'Partidos Asignados';
+
+  @override
+  String get refereeActionDigitalReport => 'Acta Digital';
+
+  @override
+  String get refereeEmptyMatchesTitle => 'Sin partidos asignados';
+
+  @override
+  String get refereeEmptyMatchesMessage =>
+      'Actualmente no tienes partidos designados para dirigir.';
+
+  @override
+  String get playerStatusTitle => 'Estatus Deportivo';
+
+  @override
+  String get playerStatusEligible => 'Habilitado';
+
+  @override
+  String get playerStatusSuspended => 'Sancionado';
+
+  @override
+  String get playerStatsTitle => 'Estadísticas de Temporada';
+
+  @override
+  String get playerStatGoals => 'Goles';
+
+  @override
+  String get playerStatAssists => 'Asistencias';
+
+  @override
+  String get playerStatYellowCards => 'T. Amarillas';
+
+  @override
+  String get playerStatRedCards => 'T. Rojas';
+
+  @override
+  String get playerStatMatchesPlayed => 'Partidos';
+
+  @override
+  String get playerNextMatchTitle => 'Próximo Partido';
+
+  @override
+  String get playerNoUpcomingMatch => 'Sin partido programado próximamente';
+
+  @override
+  String get fanRestrictedTitle => 'Acceso Restringido';
+
+  @override
+  String get fanRestrictedMessage =>
+      'El Panel Administrativo está reservado exclusivamente para Organizadores, Entrenadores, Árbitros y Jugadores federados.';
+
+  @override
+  String get fanRestrictedReturnAction => 'Volver a Partidos';
 }

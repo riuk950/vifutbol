@@ -2882,5 +2882,161 @@
   "panelPlaceholderSubtitle": "Herramientas de gestión y métricas disponibles para tu rol deportivo.",
   "@panelPlaceholderSubtitle": {
     "description": "Descripción del estado preparatorio del panel"
+  },
+  "panelTitleOrganizer": "Panel de Organización",
+  "@panelTitleOrganizer": {
+    "description": "Título del panel para el rol Organizador"
+  },
+  "panelTitleCoach": "Panel Técnico",
+  "@panelTitleCoach": {
+    "description": "Título del panel para el rol Entrenador"
+  },
+  "panelTitleReferee": "Panel Arbitral",
+  "@panelTitleReferee": {
+    "description": "Título del panel para el rol Árbitro"
+  },
+  "panelTitlePlayer": "Ficha del Jugador",
+  "@panelTitlePlayer": {
+    "description": "Título del panel para el rol Jugador"
+  },
+  "organizerSummaryTitle": "Resumen General",
+  "@organizerSummaryTitle": {
+    "description": "Título de la sección de resumen del organizador"
+  },
+  "organizerMetricActiveTournaments": "Torneos en Curso",
+  "@organizerMetricActiveTournaments": {
+    "description": "Etiqueta para la métrica de torneos activos"
+  },
+  "organizerMetricPendingMatches": "Partidos por Programar",
+  "@organizerMetricPendingMatches": {
+    "description": "Etiqueta para la métrica de partidos pendientes de programación"
+  },
+  "organizerMetricUnseededTournaments": "Torneos sin Fixture",
+  "@organizerMetricUnseededTournaments": {
+    "description": "Etiqueta para la métrica de torneos sin fixture generado"
+  },
+  "organizerQuickActionsTitle": "Acciones Rápidas",
+  "@organizerQuickActionsTitle": {
+    "description": "Título del bloque de acciones rápidas del organizador"
+  },
+  "organizerActionGenerateFixture": "Generar Fixture",
+  "@organizerActionGenerateFixture": {
+    "description": "Botón de acción rápida para generar fixture"
+  },
+  "organizerActionScheduleMatches": "Programar Partido",
+  "@organizerActionScheduleMatches": {
+    "description": "Botón de acción rápida para programar partidos"
+  },
+  "organizerActionBackup": "Copia de Seguridad",
+  "@organizerActionBackup": {
+    "description": "Botón de acción rápida para copia de seguridad"
+  },
+  "coachSummaryTitle": "Estado del Equipo",
+  "@coachSummaryTitle": {
+    "description": "Título del bloque de resumen del equipo para el entrenador"
+  },
+  "coachMetricTotalPlayers": "Plantilla Total",
+  "@coachMetricTotalPlayers": {
+    "description": "Etiqueta de total de jugadores en plantilla"
+  },
+  "coachMetricEligiblePlayers": "Habilitados",
+  "@coachMetricEligiblePlayers": {
+    "description": "Etiqueta de jugadores habilitados"
+  },
+  "coachMetricSuspendedPlayers": "Suspendidos",
+  "@coachMetricSuspendedPlayers": {
+    "description": "Etiqueta de jugadores suspendidos"
+  },
+  "coachQuickActionsTitle": "Acciones Técnicas",
+  "@coachQuickActionsTitle": {
+    "description": "Título del bloque de acciones para el entrenador"
+  },
+  "coachActionMatchLineup": "Convocatoria para el Próximo Partido",
+  "@coachActionMatchLineup": {
+    "description": "Botón de acción para gestionar la alineación del próximo partido"
+  },
+  "coachActionManageRoster": "Gestionar Plantilla",
+  "@coachActionManageRoster": {
+    "description": "Botón de acción para gestionar la plantilla de jugadores"
+  },
+  "coachNextMatchTitle": "Próximo Encuentro",
+  "@coachNextMatchTitle": {
+    "description": "Título para el card de próximo partido del equipo"
+  },
+  "coachNoUpcomingMatch": "Sin partidos programados próximamente",
+  "@coachNoUpcomingMatch": {
+    "description": "Mensaje cuando no hay próximo partido programado para el equipo"
+  },
+  "refereeAssignedMatchesTitle": "Partidos Asignados",
+  "@refereeAssignedMatchesTitle": {
+    "description": "Título de la lista de partidos asignados al árbitro"
+  },
+  "refereeActionDigitalReport": "Acta Digital",
+  "@refereeActionDigitalReport": {
+    "description": "Botón de acción para abrir el acta digital del partido"
+  },
+  "refereeEmptyMatchesTitle": "Sin partidos asignados",
+  "@refereeEmptyMatchesTitle": {
+    "description": "Título del estado vacío para el árbitro"
+  },
+  "refereeEmptyMatchesMessage": "Actualmente no tienes partidos designados para dirigir.",
+  "@refereeEmptyMatchesMessage": {
+    "description": "Descripción del estado vacío para el árbitro"
+  },
+  "playerStatusTitle": "Estatus Deportivo",
+  "@playerStatusTitle": {
+    "description": "Título del estado de elegibilidad del jugador"
+  },
+  "playerStatusEligible": "Habilitado",
+  "@playerStatusEligible": {
+    "description": "Estado de jugador habilitado"
+  },
+  "playerStatusSuspended": "Sancionado",
+  "@playerStatusSuspended": {
+    "description": "Estado de jugador suspendido o sancionado"
+  },
+  "playerStatsTitle": "Estadísticas de Temporada",
+  "@playerStatsTitle": {
+    "description": "Título de la sección de estadísticas del jugador"
+  },
+  "playerStatGoals": "Goles",
+  "@playerStatGoals": {
+    "description": "Etiqueta de goles anotados"
+  },
+  "playerStatAssists": "Asistencias",
+  "@playerStatAssists": {
+    "description": "Etiqueta de asistencias realizadas"
+  },
+  "playerStatYellowCards": "T. Amarillas",
+  "@playerStatYellowCards": {
+    "description": "Etiqueta de tarjetas amarillas"
+  },
+  "playerStatRedCards": "T. Rojas",
+  "@playerStatRedCards": {
+    "description": "Etiqueta de tarjetas rojas"
+  },
+  "playerStatMatchesPlayed": "Partidos",
+  "@playerStatMatchesPlayed": {
+    "description": "Etiqueta de partidos jugados"
+  },
+  "playerNextMatchTitle": "Próximo Partido",
+  "@playerNextMatchTitle": {
+    "description": "Título para el próximo partido del jugador"
+  },
+  "playerNoUpcomingMatch": "Sin partido programado próximamente",
+  "@playerNoUpcomingMatch": {
+    "description": "Mensaje cuando el jugador no tiene próximo partido"
+  },
+  "fanRestrictedTitle": "Acceso Restringido",
+  "@fanRestrictedTitle": {
+    "description": "Título de la vista restrictiva para aficionados"
+  },
+  "fanRestrictedMessage": "El Panel Administrativo está reservado exclusivamente para Organizadores, Entrenadores, Árbitros y Jugadores federados.",
+  "@fanRestrictedMessage": {
+    "description": "Mensaje informativo en la vista restrictiva de panel"
+  },
+  "fanRestrictedReturnAction": "Volver a Partidos",
+  "@fanRestrictedReturnAction": {
+    "description": "Botón para retornar a la pantalla de partidos desde la vista restringida"
   }
 }
