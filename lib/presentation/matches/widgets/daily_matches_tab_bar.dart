@@ -100,7 +100,10 @@ class DailyMatchesTabBar extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    DateFormat('EEE d MMM y', 'es').format(dateState.selectedDate),
+                    DateFormat(
+                      'EEE d MMM y',
+                      'es',
+                    ).format(dateState.selectedDate),
                     style: KickPulseTypography.captionMeta.copyWith(
                       color: KickPulseColors.accentPrimary,
                       fontWeight: FontWeight.bold,
@@ -166,7 +169,9 @@ class DailyMatchesTabBar extends StatelessWidget {
                     color: isSelected
                         ? KickPulseColors.textPrimary
                         : KickPulseColors.textTertiary,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ),
               ],

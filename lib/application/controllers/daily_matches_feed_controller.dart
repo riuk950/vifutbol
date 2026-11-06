@@ -150,9 +150,7 @@ List<TournamentMatchesGroup> groupMatchesByActiveTournaments({
         t.status == TournamentStatus.inProgress;
   }).toList();
 
-  final activeTournamentsMap = {
-    for (final t in activeTournaments) t.id: t,
-  };
+  final activeTournamentsMap = {for (final t in activeTournaments) t.id: t};
 
   final Map<String, List<ChampionshipMatch>> matchesByTournament = {};
 
@@ -166,9 +164,7 @@ List<TournamentMatchesGroup> groupMatchesByActiveTournaments({
     if (matchDate != normalizedTarget) continue;
 
     if (activeTournamentsMap.containsKey(match.tournamentId)) {
-      matchesByTournament
-          .putIfAbsent(match.tournamentId, () => [])
-          .add(match);
+      matchesByTournament.putIfAbsent(match.tournamentId, () => []).add(match);
     }
   }
 
@@ -212,7 +208,7 @@ List<TournamentMatchesGroup> groupMatchesByActiveTournaments({
 /// Notifier para el feed diario de partidos.
 class DailyMatchesFeedController extends StateNotifier<DailyMatchesFeedState> {
   DailyMatchesFeedController(this.ref)
-      : super(DailyMatchesFeedState(dateState: DailyMatchesDateState.today())) {
+    : super(DailyMatchesFeedState(dateState: DailyMatchesDateState.today())) {
     _init();
   }
 
@@ -246,10 +242,12 @@ class DailyMatchesFeedController extends StateNotifier<DailyMatchesFeedState> {
         .length;
 
     final unseededCount = tournamentsState.tournaments
-        .where((t) =>
-            (t.status == TournamentStatus.openRegistration ||
-                t.status == TournamentStatus.inProgress) &&
-            !matchesCatalogState.matches.any((m) => m.tournamentId == t.id))
+        .where(
+          (t) =>
+              (t.status == TournamentStatus.openRegistration ||
+                  t.status == TournamentStatus.inProgress) &&
+              !matchesCatalogState.matches.any((m) => m.tournamentId == t.id),
+        )
         .length;
 
     final groups = groupMatchesByActiveTournaments(

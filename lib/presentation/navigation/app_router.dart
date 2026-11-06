@@ -7,6 +7,7 @@ import 'package:vifutbol/presentation/auth/auth_gate.dart';
 import 'package:vifutbol/presentation/auth/role_onboarding_screen.dart';
 import 'package:vifutbol/presentation/auth/welcome_auth_screen.dart';
 import 'package:vifutbol/presentation/directories/competitions_directory_screen.dart';
+import 'package:vifutbol/presentation/tournaments/competition_detail_screen.dart';
 import 'package:vifutbol/presentation/directories/players_directory_screen.dart';
 import 'package:vifutbol/presentation/directories/teams_directory_screen.dart';
 import 'package:vifutbol/presentation/matches/digital_match_report_screen.dart';
@@ -75,6 +76,13 @@ class AppRouter {
     final competitionsHandler = Handler(
       handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
         return const CompetitionsDirectoryScreen();
+      },
+    );
+
+    final competitionDetailHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        final id = params['id']?.first ?? '';
+        return CompetitionDetailScreen(tournamentId: id);
       },
     );
 
@@ -192,6 +200,11 @@ class AppRouter {
     router.define(
       '/competitions',
       handler: competitionsHandler,
+      transitionType: TransitionType.native,
+    );
+    router.define(
+      '/competitions/:id',
+      handler: competitionDetailHandler,
       transitionType: TransitionType.native,
     );
     router.define(

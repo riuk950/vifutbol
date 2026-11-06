@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vifutbol/application/controllers/app_shell_controller.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/directory_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
-import 'package:vifutbol/domain/entities/app_shell_section.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/role_permission_matrix.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
@@ -17,6 +15,7 @@ import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dar
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_search_bar.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_state_view.dart';
+import 'package:vifutbol/presentation/tournaments/competition_detail_screen.dart';
 import 'package:vifutbol/presentation/tournaments/tournament_form_screen.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/tournament_rules_summary_card.dart';
 
@@ -70,10 +69,12 @@ class _CompetitionsDirectoryScreenState
     ref
         .read(tournamentsControllerProvider.notifier)
         .selectTournament(tournament.id);
-    ref
-        .read(appShellControllerProvider.notifier)
-        .setSection(AppShellSection.explore);
-    Navigator.of(context).pop();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CompetitionDetailScreen(tournamentId: tournament.id),
+        settings: RouteSettings(name: '/competitions/${tournament.id}'),
+      ),
+    );
   }
 
   void _openCreateTournament(BuildContext context) {

@@ -21,24 +21,40 @@ void main() {
         expect(team.eligibilityStatus, equals(TeamEligibilityStatus.eligible));
 
         // Verificamos unicidad de equipos y códigos
-        expect(teamIds.add(team.id), isTrue, reason: 'Duplicate team ID: ${team.id}');
-        expect(shortCodes.add(team.shortCode), isTrue, reason: 'Duplicate short code: ${team.shortCode}');
+        expect(
+          teamIds.add(team.id),
+          isTrue,
+          reason: 'Duplicate team ID: ${team.id}',
+        );
+        expect(
+          shortCodes.add(team.shortCode),
+          isTrue,
+          reason: 'Duplicate short code: ${team.shortCode}',
+        );
 
         // Verificamos plantilla de jugadores
         final shirtNumbers = team.players.map((p) => p.shirtNumber).toSet();
         expect(shirtNumbers.length, equals(18));
         expect(shirtNumbers.contains(1), isTrue); // Arquero titular
 
-        final goalkeepers = team.players.where((p) => p.position == PlayerPosition.goalkeeper);
+        final goalkeepers = team.players.where(
+          (p) => p.position == PlayerPosition.goalkeeper,
+        );
         expect(goalkeepers.length, equals(2));
 
-        final defenders = team.players.where((p) => p.position == PlayerPosition.defender);
+        final defenders = team.players.where(
+          (p) => p.position == PlayerPosition.defender,
+        );
         expect(defenders.length, equals(6));
 
-        final midfielders = team.players.where((p) => p.position == PlayerPosition.midfielder);
+        final midfielders = team.players.where(
+          (p) => p.position == PlayerPosition.midfielder,
+        );
         expect(midfielders.length, equals(6));
 
-        final forwards = team.players.where((p) => p.position == PlayerPosition.forward);
+        final forwards = team.players.where(
+          (p) => p.position == PlayerPosition.forward,
+        );
         expect(forwards.length, equals(4));
 
         for (final player in team.players) {

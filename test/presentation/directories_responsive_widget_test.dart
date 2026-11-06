@@ -29,6 +29,7 @@ import 'package:vifutbol/presentation/directories/teams_directory_screen.dart';
 import 'package:vifutbol/presentation/panel/panel_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
 import 'package:vifutbol/presentation/shell/widgets/app_navigation_drawer.dart';
+import 'package:vifutbol/presentation/tournaments/competition_detail_screen.dart';
 
 class FakeLocalStorageRepository implements LocalStorageRepository {
   final Map<String, String> _store = {};
@@ -355,6 +356,36 @@ void main() {
         expect(find.byType(NavigationBar), findsOneWidget);
         expect(find.byType(NavigationDestination), findsNWidgets(3));
         expect(find.text('Explorar'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'CompetitionDetailScreen renders without RenderFlex overflow at 320x640 with 130% text scaling',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        await tester.pumpWidget(
+          createResponsiveApp(
+            child: const CompetitionDetailScreen(tournamentId: 't-1'),
+            tournaments: [tournament],
+            teams: [team],
+            role: UserRole.organizer,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(
+          find.byKey(const Key('competition_detail_screen')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('competition_detail_tab_bar')),
+          findsOneWidget,
+        );
       },
     );
   });

@@ -73,8 +73,9 @@ class _MatchdayTabViewState extends ConsumerState<MatchdayTabView> {
   void _onOpenScheduleDialogForPending(BuildContext context) {
     final matches = ref.read(matchesCatalogControllerProvider).matches;
     final tournaments = ref.read(tournamentsControllerProvider).tournaments;
-    final pendingMatches =
-        matches.where((m) => m.scheduledStartTime == null).toList();
+    final pendingMatches = matches
+        .where((m) => m.scheduledStartTime == null)
+        .toList();
 
     if (pendingMatches.isEmpty) return;
 
@@ -133,10 +134,12 @@ class _MatchdayTabViewState extends ConsumerState<MatchdayTabView> {
               unseededTournamentsCount: feedState.unseededTournamentsCount,
               onScheduleTap: () => _onOpenScheduleDialogForPending(context),
               onGenerateFixtureTap: () {
-                final tournaments =
-                    ref.read(tournamentsControllerProvider).tournaments;
-                final matches =
-                    ref.read(matchesCatalogControllerProvider).matches;
+                final tournaments = ref
+                    .read(tournamentsControllerProvider)
+                    .tournaments;
+                final matches = ref
+                    .read(matchesCatalogControllerProvider)
+                    .matches;
                 final teams = ref.read(teamsControllerProvider).teams;
                 final unseeded = tournaments.firstWhere(
                   (t) =>
@@ -185,21 +188,20 @@ class _MatchdayTabViewState extends ConsumerState<MatchdayTabView> {
                     )
                   else
                     SliverPadding(
-                      padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
+                      padding: const EdgeInsets.all(
+                        KickPulseRadiiSpacing.spaceMd,
+                      ),
                       sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final group = feedState.tournamentGroups[index];
-                            return TournamentMatchesGroupCard(
-                              key: Key('tournament_group_${group.tournament.id}'),
-                              group: group,
-                              onMatchTap: _onOpenMatchReport,
-                              onTournamentTap: () =>
-                                  _onOpenCompetitionDetail(group.tournament.id),
-                            );
-                          },
-                          childCount: feedState.tournamentGroups.length,
-                        ),
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final group = feedState.tournamentGroups[index];
+                          return TournamentMatchesGroupCard(
+                            key: Key('tournament_group_${group.tournament.id}'),
+                            group: group,
+                            onMatchTap: _onOpenMatchReport,
+                            onTournamentTap: () =>
+                                _onOpenCompetitionDetail(group.tournament.id),
+                          );
+                        }, childCount: feedState.tournamentGroups.length),
                       ),
                     ),
                 ],

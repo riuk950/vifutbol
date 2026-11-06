@@ -2350,4 +2350,35 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get fanRestrictedReturnAction => 'Volver a Partidos';
+
+  @override
+  String get competitionDetailTabMatches => 'Partidos';
+
+  @override
+  String get competitionDetailTabStandings => 'Clasificación';
+
+  @override
+  String get competitionDetailTabInfo => 'Información';
+
+  @override
+  String get fixtureEmptyMatchesTitle => 'Calendario en Preparación';
+
+  @override
+  String get fixtureEmptyMatchesMessage =>
+      'Esta competición aún no tiene partidos programados en su calendario oficial.';
+
+  @override
+  String get fixturePendingScheduleBadge => 'Pendiente de programación';
+
+  @override
+  String fixtureRoundLabel(int roundNumber) {
+    return 'Jornada $roundNumber';
+  }
+
+  @override
+  String get competitionInfoTitle => 'Reglamento Oficial';
+
+  @override
+  String get competitionInfoMessage =>
+      'El sistema oficial de puntuación, desempates y normas disciplinarias estará disponible próximamente.';
 }

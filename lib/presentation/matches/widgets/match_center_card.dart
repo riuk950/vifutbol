@@ -72,7 +72,8 @@ class MatchCenterCard extends StatelessWidget {
                       ),
                       const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
                       KickPulseTeamCrest(
-                        shortCode: homeTeam?.shortCode ??
+                        shortCode:
+                            homeTeam?.shortCode ??
                             (homeName.length >= 3
                                 ? homeName.substring(0, 3)
                                 : homeName),
@@ -108,9 +109,7 @@ class MatchCenterCard extends StatelessWidget {
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildCenterContent(context, l10n),
-                    ],
+                    children: [_buildCenterContent(context, l10n)],
                   ),
                 ),
 
@@ -122,7 +121,8 @@ class MatchCenterCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       KickPulseTeamCrest(
-                        shortCode: awayTeam?.shortCode ??
+                        shortCode:
+                            awayTeam?.shortCode ??
                             (awayName.length >= 3
                                 ? awayName.substring(0, 3)
                                 : awayName),

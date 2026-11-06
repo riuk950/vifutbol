@@ -38,11 +38,7 @@ class OrganizerPendingMatchesBanner extends StatelessWidget {
           color: KickPulseColors.accentWarning.withValues(alpha: 0.5),
         ),
         boxShadow: const [
-          BoxShadow(
-            color: Colors.black38,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black38, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -114,14 +110,17 @@ class OrganizerPendingMatchesBanner extends StatelessWidget {
                   icon: const Icon(Icons.calendar_today, size: 14),
                   label: const Text('Programar'),
                 ),
-              if (onGenerateFixtureTap != null && unseededTournamentsCount > 0) ...[
+              if (onGenerateFixtureTap != null &&
+                  unseededTournamentsCount > 0) ...[
                 const SizedBox(width: 8),
                 OutlinedButton.icon(
                   key: const Key('organizer_generate_fixture_button'),
                   onPressed: onGenerateFixtureTap,
                   style: OutlinedButton.styleFrom(
                     foregroundColor: KickPulseColors.accentPrimary,
-                    side: const BorderSide(color: KickPulseColors.accentPrimary),
+                    side: const BorderSide(
+                      color: KickPulseColors.accentPrimary,
+                    ),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12.0,
                       vertical: 6.0,

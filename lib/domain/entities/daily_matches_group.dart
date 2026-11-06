@@ -3,12 +3,7 @@ import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
 
 /// Enum para representar la selección en la barra de navegación rápida de fechas.
-enum MatchesDailyTab {
-  yesterday,
-  today,
-  tomorrow,
-  customDate,
-}
+enum MatchesDailyTab { yesterday, today, tomorrow, customDate }
 
 /// Agrupa una competición activa con los partidos del día correspondientes.
 class TournamentMatchesGroup {

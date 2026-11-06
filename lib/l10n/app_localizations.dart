@@ -4137,6 +4137,60 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Volver a Partidos'**
   String get fanRestrictedReturnAction;
+
+  /// Pestaña de Partidos en el detalle de competición
+  ///
+  /// In es, this message translates to:
+  /// **'Partidos'**
+  String get competitionDetailTabMatches;
+
+  /// Pestaña de Clasificación en el detalle de competición
+  ///
+  /// In es, this message translates to:
+  /// **'Clasificación'**
+  String get competitionDetailTabStandings;
+
+  /// Pestaña de Información en el detalle de competición
+  ///
+  /// In es, this message translates to:
+  /// **'Información'**
+  String get competitionDetailTabInfo;
+
+  /// Título de estado vacío en la pestaña de partidos cuando el torneo no tiene fixture
+  ///
+  /// In es, this message translates to:
+  /// **'Calendario en Preparación'**
+  String get fixtureEmptyMatchesTitle;
+
+  /// Mensaje de estado vacío en la pestaña de partidos cuando el torneo no tiene fixture
+  ///
+  /// In es, this message translates to:
+  /// **'Esta competición aún no tiene partidos programados en su calendario oficial.'**
+  String get fixtureEmptyMatchesMessage;
+
+  /// Insignia indicando que el partido aún no tiene fecha u hora asignada
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente de programación'**
+  String get fixturePendingScheduleBadge;
+
+  /// Encabezado de bloque de jornada en el fixture
+  ///
+  /// In es, this message translates to:
+  /// **'Jornada {roundNumber}'**
+  String fixtureRoundLabel(int roundNumber);
+
+  /// Título de la sección de reglamento en la pestaña Información
+  ///
+  /// In es, this message translates to:
+  /// **'Reglamento Oficial'**
+  String get competitionInfoTitle;
+
+  /// Mensaje en la pestaña Información sobre el reglamento de la competición
+  ///
+  /// In es, this message translates to:
+  /// **'El sistema oficial de puntuación, desempates y normas disciplinarias estará disponible próximamente.'**
+  String get competitionInfoMessage;
 }
 
 class _AppLocalizationsDelegate

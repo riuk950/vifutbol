@@ -20,10 +20,18 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('3 partidos pendientes de programar fecha y sede'), findsOneWidget);
-    expect(find.byKey(const Key('organizer_schedule_pending_button')), findsOneWidget);
+    expect(
+      find.text('3 partidos pendientes de programar fecha y sede'),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('organizer_schedule_pending_button')),
+      findsOneWidget,
+    );
 
-    await tester.tap(find.byKey(const Key('organizer_schedule_pending_button')));
+    await tester.tap(
+      find.byKey(const Key('organizer_schedule_pending_button')),
+    );
     await tester.pump();
 
     expect(scheduleTapped, isTrue);

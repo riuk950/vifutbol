@@ -51,11 +51,15 @@ class _FakeConnectivityRepository implements ConnectivityRepository {
 }
 
 List<Override> _testOverrides() => [
-      environmentConfigProvider.overrideWithValue(EnvironmentConfig.development()),
-      localStorageRepositoryProvider.overrideWithValue(_FakeLocalStorageRepository()),
-      connectivityRepositoryProvider.overrideWithValue(_FakeConnectivityRepository()),
-      activeUserRoleProvider.overrideWith((ref) => UserRole.fan),
-    ];
+  environmentConfigProvider.overrideWithValue(EnvironmentConfig.development()),
+  localStorageRepositoryProvider.overrideWithValue(
+    _FakeLocalStorageRepository(),
+  ),
+  connectivityRepositoryProvider.overrideWithValue(
+    _FakeConnectivityRepository(),
+  ),
+  activeUserRoleProvider.overrideWith((ref) => UserRole.fan),
+];
 
 void main() {
   testWidgets('shows calendar action icon in AppBar when in matchday section', (
@@ -81,9 +85,7 @@ void main() {
   testWidgets('hides calendar action icon in AppBar when in profile section', (
     tester,
   ) async {
-    final container = ProviderContainer(
-      overrides: _testOverrides(),
-    );
+    final container = ProviderContainer(overrides: _testOverrides());
     container
         .read(appShellControllerProvider.notifier)
         .setSection(AppShellSection.profile);

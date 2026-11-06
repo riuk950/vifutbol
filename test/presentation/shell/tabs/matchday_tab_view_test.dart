@@ -101,9 +101,15 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          environmentConfigProvider.overrideWithValue(EnvironmentConfig.development()),
-          localStorageRepositoryProvider.overrideWithValue(_FakeLocalStorageRepository()),
-          connectivityRepositoryProvider.overrideWithValue(_FakeConnectivityRepository()),
+          environmentConfigProvider.overrideWithValue(
+            EnvironmentConfig.development(),
+          ),
+          localStorageRepositoryProvider.overrideWithValue(
+            _FakeLocalStorageRepository(),
+          ),
+          connectivityRepositoryProvider.overrideWithValue(
+            _FakeConnectivityRepository(),
+          ),
           activeUserRoleProvider.overrideWith((ref) => UserRole.fan),
           dailyMatchesFeedControllerProvider.overrideWith(
             (ref) => _FakeDailyMatchesFeedController(ref, emptyState),
@@ -120,7 +126,10 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('No hay partidos programados para esta fecha'), findsOneWidget);
+    expect(
+      find.text('No hay partidos programados para esta fecha'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('renders tournament group card when matches are available', (
@@ -137,9 +146,15 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          environmentConfigProvider.overrideWithValue(EnvironmentConfig.development()),
-          localStorageRepositoryProvider.overrideWithValue(_FakeLocalStorageRepository()),
-          connectivityRepositoryProvider.overrideWithValue(_FakeConnectivityRepository()),
+          environmentConfigProvider.overrideWithValue(
+            EnvironmentConfig.development(),
+          ),
+          localStorageRepositoryProvider.overrideWithValue(
+            _FakeLocalStorageRepository(),
+          ),
+          connectivityRepositoryProvider.overrideWithValue(
+            _FakeConnectivityRepository(),
+          ),
           activeUserRoleProvider.overrideWith((ref) => UserRole.fan),
           dailyMatchesFeedControllerProvider.overrideWith(
             (ref) => _FakeDailyMatchesFeedController(ref, populatedState),

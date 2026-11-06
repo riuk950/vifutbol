@@ -23,9 +23,7 @@ void main() {
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: const Locale('es'),
-        home: Scaffold(
-          body: MatchCenterCard(match: scheduledMatch),
-        ),
+        home: Scaffold(body: MatchCenterCard(match: scheduledMatch)),
       ),
     );
 
@@ -36,7 +34,9 @@ void main() {
     expect(find.text('18:30'), findsOneWidget);
   });
 
-  testWidgets('renders live match with score and EN VIVO badge', (tester) async {
+  testWidgets('renders live match with score and EN VIVO badge', (
+    tester,
+  ) async {
     final liveMatch = ChampionshipMatch(
       id: 'm-live',
       tournamentId: 't-1',
@@ -55,9 +55,7 @@ void main() {
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: const Locale('es'),
-        home: Scaffold(
-          body: MatchCenterCard(match: liveMatch),
-        ),
+        home: Scaffold(body: MatchCenterCard(match: liveMatch)),
       ),
     );
 

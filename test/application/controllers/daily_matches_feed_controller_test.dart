@@ -20,7 +20,9 @@ void main() {
     });
 
     test('selects yesterday tab and updates date accordingly', () {
-      final state = DailyMatchesDateState.today().withTab(MatchesDailyTab.yesterday);
+      final state = DailyMatchesDateState.today().withTab(
+        MatchesDailyTab.yesterday,
+      );
       final yesterday = DateTime.now().subtract(const Duration(days: 1));
 
       expect(state.activeTab, equals(MatchesDailyTab.yesterday));
@@ -29,7 +31,9 @@ void main() {
     });
 
     test('selects tomorrow tab and updates date accordingly', () {
-      final state = DailyMatchesDateState.today().withTab(MatchesDailyTab.tomorrow);
+      final state = DailyMatchesDateState.today().withTab(
+        MatchesDailyTab.tomorrow,
+      );
       final tomorrow = DateTime.now().add(const Duration(days: 1));
 
       expect(state.activeTab, equals(MatchesDailyTab.tomorrow));
@@ -106,37 +110,40 @@ void main() {
       expect(groups, isEmpty);
     });
 
-    test('excludes matches without scheduledStartTime or on different date', () {
-      final matches = [
-        ChampionshipMatch(
-          id: 'm-pending',
-          tournamentId: 'tour-1',
-          roundNumber: 1,
-          roundName: 'Jornada 1',
-          homeTeamId: 'h1',
-          awayTeamId: 'a1',
-          status: MatchStatus.pendingSchedule,
-        ),
-        ChampionshipMatch(
-          id: 'm-other-day',
-          tournamentId: 'tour-1',
-          roundNumber: 1,
-          roundName: 'Jornada 1',
-          homeTeamId: 'h1',
-          awayTeamId: 'a1',
-          scheduledStartTime: DateTime(2026, 11, 7, 10, 0),
-          status: MatchStatus.scheduled,
-        ),
-      ];
+    test(
+      'excludes matches without scheduledStartTime or on different date',
+      () {
+        final matches = [
+          ChampionshipMatch(
+            id: 'm-pending',
+            tournamentId: 'tour-1',
+            roundNumber: 1,
+            roundName: 'Jornada 1',
+            homeTeamId: 'h1',
+            awayTeamId: 'a1',
+            status: MatchStatus.pendingSchedule,
+          ),
+          ChampionshipMatch(
+            id: 'm-other-day',
+            tournamentId: 'tour-1',
+            roundNumber: 1,
+            roundName: 'Jornada 1',
+            homeTeamId: 'h1',
+            awayTeamId: 'a1',
+            scheduledStartTime: DateTime(2026, 11, 7, 10, 0),
+            status: MatchStatus.scheduled,
+          ),
+        ];
 
-      final groups = groupMatchesByActiveTournaments(
-        matches: matches,
-        tournaments: [tActive1],
-        targetDate: targetDate,
-      );
+        final groups = groupMatchesByActiveTournaments(
+          matches: matches,
+          tournaments: [tActive1],
+          targetDate: targetDate,
+        );
 
-      expect(groups, isEmpty);
-    });
+        expect(groups, isEmpty);
+      },
+    );
 
     test('groups matches and puts live tournaments first', () {
       final matches = [
@@ -169,7 +176,10 @@ void main() {
       );
 
       expect(groups.length, equals(2));
-      expect(groups.first.tournament.id, equals('tour-2')); // Live tournament goes first
+      expect(
+        groups.first.tournament.id,
+        equals('tour-2'),
+      ); // Live tournament goes first
       expect(groups.first.hasLiveMatches, isTrue);
       expect(groups[1].tournament.id, equals('tour-1'));
     });
