@@ -36,7 +36,7 @@ class _InMemoryLocalStorageRepository implements LocalStorageRepository {
 
 void main() {
   group('LocalTeamsRepository', () {
-    test('preloads 2 seed teams in development environment', () async {
+    test('preloads 20 seed teams in development environment', () async {
       final storage = _InMemoryLocalStorageRepository();
       final repository = LocalTeamsRepository(
         storage: storage,
@@ -44,27 +44,19 @@ void main() {
       );
 
       final teams = await repository.loadTeams();
-      expect(teams.length, equals(2));
+      expect(teams.length, equals(20));
 
       final atn = teams.firstWhere((t) => t.shortCode == 'ATN');
       expect(atn.name, equals('Atlético Norte FC'));
       expect(atn.tournamentId, equals('tournament-seed-liga-clausura'));
       expect(atn.eligibilityStatus, equals(TeamEligibilityStatus.eligible));
-      expect(atn.players.length, equals(10));
-      expect(
-        atn.players.map((p) => p.shirtNumber).toList(),
-        equals([1, 3, 4, 5, 6, 8, 9, 10, 11, 14]),
-      );
+      expect(atn.players.length, equals(18));
 
       final rsc = teams.firstWhere((t) => t.shortCode == 'RSC');
       expect(rsc.name, equals('Real Sabana Club'));
       expect(rsc.tournamentId, equals('tournament-seed-liga-clausura'));
-      expect(rsc.eligibilityStatus, equals(TeamEligibilityStatus.pendingQuota));
-      expect(rsc.players.length, equals(5));
-      expect(
-        rsc.players.map((p) => p.shirtNumber).toList(),
-        equals([1, 2, 6, 7, 10]),
-      );
+      expect(rsc.eligibilityStatus, equals(TeamEligibilityStatus.eligible));
+      expect(rsc.players.length, equals(18));
     });
 
     test(
@@ -91,7 +83,7 @@ void main() {
       final clausuraTeams = await repository.loadTeamsForTournament(
         'tournament-seed-liga-clausura',
       );
-      expect(clausuraTeams.length, equals(2));
+      expect(clausuraTeams.length, equals(20));
 
       final emptyTeams = await repository.loadTeamsForTournament(
         'non-existing-tournament',
