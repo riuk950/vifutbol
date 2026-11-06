@@ -3819,6 +3819,72 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Limpiar búsqueda'**
   String get clearSearchAction;
+
+  /// Etiqueta para la pestaña de partidos de ayer
+  ///
+  /// In es, this message translates to:
+  /// **'Ayer'**
+  String get tabYesterday;
+
+  /// Etiqueta para la pestaña de partidos de hoy
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy'**
+  String get tabToday;
+
+  /// Etiqueta para la pestaña de partidos de mañana
+  ///
+  /// In es, this message translates to:
+  /// **'Mañana'**
+  String get tabTomorrow;
+
+  /// Tooltip para el botón de calendario en la barra superior
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar fecha del calendario'**
+  String get calendarPickerTooltip;
+
+  /// Mensaje principal cuando no hay partidos en la fecha seleccionada
+  ///
+  /// In es, this message translates to:
+  /// **'No hay partidos programados para esta fecha'**
+  String get emptyMatchesForDate;
+
+  /// Sugerencia en el estado vacío de la vista de partidos
+  ///
+  /// In es, this message translates to:
+  /// **'Prueba seleccionando otro día o consulta el calendario completo.'**
+  String get emptyMatchesSuggestion;
+
+  /// Insignia para partidos que están en juego
+  ///
+  /// In es, this message translates to:
+  /// **'EN VIVO'**
+  String get liveMatchBadge;
+
+  /// Etiqueta para partidos finalizados
+  ///
+  /// In es, this message translates to:
+  /// **'Final'**
+  String get finalMatchBadge;
+
+  /// Etiqueta para partidos cancelados
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelado'**
+  String get cancelledMatchBadge;
+
+  /// Aviso para el organizador sobre partidos pendientes de fecha y hora
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 partido pendiente de programar} other{{count} partidos pendientes de programar}}'**
+  String organizerPendingMatchesAlert(int count);
+
+  /// Botón de acción en el aviso de partidos pendientes
+  ///
+  /// In es, this message translates to:
+  /// **'Programar partidos'**
+  String get organizerPendingMatchesAction;
 }
 
 class _AppLocalizationsDelegate

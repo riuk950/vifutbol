@@ -2178,4 +2178,47 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get clearSearchAction => 'Limpiar búsqueda';
+
+  @override
+  String get tabYesterday => 'Ayer';
+
+  @override
+  String get tabToday => 'Hoy';
+
+  @override
+  String get tabTomorrow => 'Mañana';
+
+  @override
+  String get calendarPickerTooltip => 'Seleccionar fecha del calendario';
+
+  @override
+  String get emptyMatchesForDate =>
+      'No hay partidos programados para esta fecha';
+
+  @override
+  String get emptyMatchesSuggestion =>
+      'Prueba seleccionando otro día o consulta el calendario completo.';
+
+  @override
+  String get liveMatchBadge => 'EN VIVO';
+
+  @override
+  String get finalMatchBadge => 'Final';
+
+  @override
+  String get cancelledMatchBadge => 'Cancelado';
+
+  @override
+  String organizerPendingMatchesAlert(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count partidos pendientes de programar',
+      one: '1 partido pendiente de programar',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get organizerPendingMatchesAction => 'Programar partidos';
 }

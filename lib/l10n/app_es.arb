@@ -2820,5 +2820,55 @@
   "clearSearchAction": "Limpiar búsqueda",
   "@clearSearchAction": {
     "description": "Acción para limpiar el texto ingresado en el buscador"
+  },
+  "tabYesterday": "Ayer",
+  "@tabYesterday": {
+    "description": "Etiqueta para la pestaña de partidos de ayer"
+  },
+  "tabToday": "Hoy",
+  "@tabToday": {
+    "description": "Etiqueta para la pestaña de partidos de hoy"
+  },
+  "tabTomorrow": "Mañana",
+  "@tabTomorrow": {
+    "description": "Etiqueta para la pestaña de partidos de mañana"
+  },
+  "calendarPickerTooltip": "Seleccionar fecha del calendario",
+  "@calendarPickerTooltip": {
+    "description": "Tooltip para el botón de calendario en la barra superior"
+  },
+  "emptyMatchesForDate": "No hay partidos programados para esta fecha",
+  "@emptyMatchesForDate": {
+    "description": "Mensaje principal cuando no hay partidos en la fecha seleccionada"
+  },
+  "emptyMatchesSuggestion": "Prueba seleccionando otro día o consulta el calendario completo.",
+  "@emptyMatchesSuggestion": {
+    "description": "Sugerencia en el estado vacío de la vista de partidos"
+  },
+  "liveMatchBadge": "EN VIVO",
+  "@liveMatchBadge": {
+    "description": "Insignia para partidos que están en juego"
+  },
+  "finalMatchBadge": "Final",
+  "@finalMatchBadge": {
+    "description": "Etiqueta para partidos finalizados"
+  },
+  "cancelledMatchBadge": "Cancelado",
+  "@cancelledMatchBadge": {
+    "description": "Etiqueta para partidos cancelados"
+  },
+  "organizerPendingMatchesAlert": "{count, plural, =1{1 partido pendiente de programar} other{{count} partidos pendientes de programar}}",
+  "@organizerPendingMatchesAlert": {
+    "description": "Aviso para el organizador sobre partidos pendientes de fecha y hora",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "organizerPendingMatchesAction": "Programar partidos",
+  "@organizerPendingMatchesAction": {
+    "description": "Botón de acción en el aviso de partidos pendientes"
   }
 }

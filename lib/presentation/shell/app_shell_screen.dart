@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/controllers/app_shell_controller.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
+import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/domain/entities/app_shell_section.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/alerts/widgets/fan_alerts_bell_action.dart';
@@ -53,11 +54,48 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
     super.didChangeAppLifecycleState(state);
   }
 
+  Future<void> _onPickCalendarDate(BuildContext context) async {
+    final feedState = ref.read(dailyMatchesFeedControllerProvider);
+    final initialDate = feedState.dateState.selectedDate;
+    final now = DateTime.now();
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(now.year - 2),
+      lastDate: DateTime(now.year + 2),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: KickPulseColors.accentPrimary,
+              onPrimary: KickPulseColors.surfaceBase,
+              surface: KickPulseColors.surfaceElevated,
+              onSurface: KickPulseColors.textPrimary,
+            ),
+            dialogTheme: const DialogThemeData(
+              backgroundColor: KickPulseColors.surfaceBase,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      ref
+          .read(dailyMatchesFeedControllerProvider.notifier)
+          .selectCustomDate(picked);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final shellState = ref.watch(appShellControllerProvider);
     final envConfig = ref.watch(environmentConfigProvider);
     final l10n = AppLocalizations.of(context);
+    final isCalendarVisible =
+        shellState.activeSection == AppShellSection.matchday;
 
     final currentIndex = AppShellSection.values.indexOf(
       shellState.activeSection,
@@ -93,7 +131,16 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
             ],
           ],
         ),
-        actions: const [FanAlertsBellAction(userId: 'user-active-current')],
+        actions: [
+          if (isCalendarVisible)
+            IconButton(
+              key: const Key('app_bar_calendar_action'),
+              icon: const Icon(Icons.calendar_month_outlined),
+              tooltip: l10n.calendarPickerTooltip,
+              onPressed: () => _onPickCalendarDate(context),
+            ),
+          const FanAlertsBellAction(userId: 'user-active-current'),
+        ],
       ),
       body: Column(
         children: [
