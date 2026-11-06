@@ -10,6 +10,7 @@ import 'package:vifutbol/presentation/directories/competitions_directory_screen.
 import 'package:vifutbol/presentation/directories/players_directory_screen.dart';
 import 'package:vifutbol/presentation/directories/teams_directory_screen.dart';
 import 'package:vifutbol/presentation/matches/digital_match_report_screen.dart';
+import 'package:vifutbol/presentation/panel/panel_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/venues_tab_view.dart';
 import 'package:vifutbol/presentation/teams/coach_lineup_tracking_screen.dart';
@@ -54,7 +55,14 @@ class AppRouter {
 
     final exploreHandler = Handler(
       handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
-        return const AppShellScreen(initialSection: AppShellSection.explore);
+        // Safe redirect: Explore is temporarily hidden, fallback to Matches per HU 12.1
+        return const AppShellScreen(initialSection: AppShellSection.matches);
+      },
+    );
+
+    final panelHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const PanelScreen();
       },
     );
 
@@ -175,6 +183,11 @@ class AppRouter {
       '/news',
       handler: newsHandler,
       transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/panel',
+      handler: panelHandler,
+      transitionType: TransitionType.native,
     );
     router.define(
       '/competitions',

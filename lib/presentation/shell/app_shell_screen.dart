@@ -12,7 +12,6 @@ import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dar
 import 'package:vifutbol/presentation/shell/tabs/matchday_tab_view.dart';
 import 'package:vifutbol/presentation/shell/tabs/news_tab_view.dart';
 import 'package:vifutbol/presentation/shell/tabs/profile_tab_view.dart';
-import 'package:vifutbol/presentation/shell/tabs/standings_tab_view.dart';
 import 'package:vifutbol/presentation/shell/widgets/app_navigation_drawer.dart';
 import 'package:vifutbol/presentation/shell/widgets/connectivity_banner.dart';
 
@@ -97,9 +96,12 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
     final isCalendarVisible =
         shellState.activeSection == AppShellSection.matchday;
 
-    final currentIndex = AppShellSection.values.indexOf(
-      shellState.activeSection,
-    );
+    final visualIndex = switch (shellState.activeSection) {
+      AppShellSection.matches => 0,
+      AppShellSection.news => 1,
+      AppShellSection.profile => 2,
+      AppShellSection.explore => 0,
+    };
 
     return Scaffold(
       drawer: const AppNavigationDrawer(),
@@ -147,10 +149,9 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
           const ConnectivityBanner(),
           Expanded(
             child: IndexedStack(
-              index: currentIndex,
+              index: visualIndex,
               children: const [
                 MatchdayTabView(),
-                StandingsTabView(),
                 NewsTabView(),
                 ProfileTabView(),
               ],
@@ -159,11 +160,17 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
         ],
       ),
       bottomNavigationBar: NavigationBar(
-        selectedIndex: currentIndex,
+        selectedIndex: visualIndex,
         onDestinationSelected: (index) {
+          final targetSection = switch (index) {
+            0 => AppShellSection.matches,
+            1 => AppShellSection.news,
+            2 => AppShellSection.profile,
+            _ => AppShellSection.matches,
+          };
           ref
               .read(appShellControllerProvider.notifier)
-              .setSectionByIndex(index);
+              .setSection(targetSection);
         },
         destinations: [
           NavigationDestination(
@@ -173,14 +180,6 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
               color: KickPulseColors.accentPrimary,
             ),
             label: l10n.tabMatchday,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.explore_outlined),
-            selectedIcon: const Icon(
-              Icons.explore,
-              color: KickPulseColors.accentPrimary,
-            ),
-            label: l10n.tabStandings,
           ),
           NavigationDestination(
             icon: const Icon(Icons.newspaper_outlined),

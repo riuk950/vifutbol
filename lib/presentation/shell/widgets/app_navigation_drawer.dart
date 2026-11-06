@@ -51,6 +51,8 @@ class AppNavigationDrawer extends ConsumerWidget {
         ? user!.email
         : l10n.drawerGuestEmail;
 
+    final isPanelVisible = activeRole != UserRole.fan;
+
     return Drawer(
       key: const Key('app_navigation_drawer'),
       backgroundColor: KickPulseColors.canvasBackground,
@@ -150,6 +152,31 @@ class AppNavigationDrawer extends ConsumerWidget {
                   horizontal: KickPulseRadiiSpacing.spaceSm,
                 ),
                 children: [
+                  if (isPanelVisible) ...[
+                    ListTile(
+                      key: const Key('drawer_destination_panel'),
+                      leading: const Icon(
+                        Icons.dashboard_outlined,
+                        color: KickPulseColors.accentElectric,
+                      ),
+                      title: Text(
+                        l10n.drawerPanel,
+                        style: KickPulseTypography.bodyPrimary,
+                      ),
+                      trailing: const Icon(
+                        Icons.chevron_right,
+                        size: 20,
+                        color: KickPulseColors.textSecondary,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          KickPulseRadiiSpacing.chipRadius,
+                        ),
+                      ),
+                      onTap: () => _navigateTo(context, '/panel'),
+                    ),
+                    const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
+                  ],
                   ListTile(
                     key: const Key('drawer_destination_competitions'),
                     leading: const Icon(

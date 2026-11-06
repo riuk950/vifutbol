@@ -13,6 +13,7 @@ import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_theme.dart';
 import 'package:vifutbol/presentation/navigation/app_router.dart';
+import 'package:vifutbol/presentation/panel/panel_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
 import 'package:vifutbol/presentation/shell/widgets/app_navigation_drawer.dart';
 
@@ -185,5 +186,104 @@ void main() {
 
       expect(find.byType(AppShellScreen), findsOneWidget);
     });
+
+    testWidgets(
+      'renders Panel item in position 0 for operational roles (organizer, coach, referee, player)',
+      (tester) async {
+        const operationalRoles = [
+          UserRole.organizer,
+          UserRole.coach,
+          UserRole.referee,
+          UserRole.player,
+        ];
+
+        for (final role in operationalRoles) {
+          await tester.pumpWidget(createDrawerTestApp(role: role));
+          await tester.pumpAndSettle();
+
+          // Open drawer
+          await tester.tap(find.byKey(const Key('app_bar_drawer_button')));
+          await tester.pumpAndSettle();
+
+          // Verify Panel item exists and displays "Panel"
+          final panelFinder = find.byKey(const Key('drawer_destination_panel'));
+          expect(panelFinder, findsOneWidget);
+          expect(
+            find.descendant(of: panelFinder, matching: find.text('Panel')),
+            findsOneWidget,
+          );
+
+          // Verify Panel is above Competiciones (position 0)
+          final competitionsFinder = find.byKey(
+            const Key('drawer_destination_competitions'),
+          );
+          expect(competitionsFinder, findsOneWidget);
+
+          final panelDy = tester.getTopLeft(panelFinder).dy;
+          final competitionsDy = tester.getTopLeft(competitionsFinder).dy;
+          expect(panelDy, lessThan(competitionsDy));
+
+          // Close drawer
+          final scaffoldState = tester.state<ScaffoldState>(
+            find.byType(Scaffold).first,
+          );
+          scaffoldState.closeDrawer();
+          await tester.pumpAndSettle();
+        }
+      },
+    );
+
+    testWidgets('hides Panel item completely for fan role', (tester) async {
+      await tester.pumpWidget(createDrawerTestApp(role: UserRole.fan));
+      await tester.pumpAndSettle();
+
+      // Open drawer
+      await tester.tap(find.byKey(const Key('app_bar_drawer_button')));
+      await tester.pumpAndSettle();
+
+      // Verify Panel item is absent
+      expect(find.byKey(const Key('drawer_destination_panel')), findsNothing);
+      expect(
+        find.descendant(
+          of: find.byType(AppNavigationDrawer),
+          matching: find.text('Panel'),
+        ),
+        findsNothing,
+      );
+
+      // Verify other destinations remain
+      expect(
+        find.byKey(const Key('drawer_destination_competitions')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets(
+      'tapping Panel closes drawer and navigates to PanelScreen with BackButton',
+      (tester) async {
+        await tester.pumpWidget(createDrawerTestApp(role: UserRole.organizer));
+        await tester.pumpAndSettle();
+
+        // Open drawer
+        await tester.tap(find.byKey(const Key('app_bar_drawer_button')));
+        await tester.pumpAndSettle();
+
+        // Tap Panel item
+        await tester.tap(find.byKey(const Key('drawer_destination_panel')));
+        await tester.pumpAndSettle();
+
+        // Verify drawer is closed and PanelScreen is mounted
+        expect(find.byType(AppNavigationDrawer), findsNothing);
+        expect(find.byType(PanelScreen), findsOneWidget);
+        expect(find.byKey(const Key('panel_back_button')), findsOneWidget);
+
+        // Tap BackButton returns to AppShellScreen
+        await tester.tap(find.byKey(const Key('panel_back_button')));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(AppShellScreen), findsOneWidget);
+        expect(find.byType(PanelScreen), findsNothing);
+      },
+    );
   });
 }

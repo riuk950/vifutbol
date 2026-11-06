@@ -2870,5 +2870,17 @@
   "organizerPendingMatchesAction": "Programar partidos",
   "@organizerPendingMatchesAction": {
     "description": "Botón de acción en el aviso de partidos pendientes"
+  },
+  "drawerPanel": "Panel",
+  "@drawerPanel": {
+    "description": "Etiqueta para la opción Panel en el menú lateral"
+  },
+  "panelPlaceholderTitle": "Panel de Control Operativo",
+  "@panelPlaceholderTitle": {
+    "description": "Título del estado preparatorio del panel"
+  },
+  "panelPlaceholderSubtitle": "Herramientas de gestión y métricas disponibles para tu rol deportivo.",
+  "@panelPlaceholderSubtitle": {
+    "description": "Descripción del estado preparatorio del panel"
   }
 }

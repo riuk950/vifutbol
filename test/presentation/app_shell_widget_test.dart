@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
+import 'package:vifutbol/domain/entities/app_shell_section.dart';
 import 'package:vifutbol/domain/entities/connectivity_status.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
@@ -55,6 +56,7 @@ Widget createTestApp({
   EnvironmentConfig? config,
   double textScaleFactor = 1.0,
   UserRole role = UserRole.fan,
+  AppShellSection? initialSection,
 }) {
   final activeConfig = config ?? EnvironmentConfig.development();
   return ProviderScope(
@@ -85,7 +87,7 @@ Widget createTestApp({
           child: child!,
         );
       },
-      home: const AppShellScreen(),
+      home: AppShellScreen(initialSection: initialSection),
     ),
   );
 }
@@ -93,7 +95,7 @@ Widget createTestApp({
 void main() {
   group('AppShellScreen & Spanish Localization Widget Tests', () {
     testWidgets(
-      'renders all 4 bottom navigation tabs in 100% Spanish across all 5 roles',
+      'renders exactly 3 bottom navigation tabs in 100% Spanish across all 5 roles and hides Explorar',
       (tester) async {
         for (final role in UserRole.values) {
           await tester.pumpWidget(createTestApp(role: role));
@@ -103,13 +105,6 @@ void main() {
             find.descendant(
               of: find.byType(NavigationBar),
               matching: find.text('Partidos'),
-            ),
-            findsOneWidget,
-          );
-          expect(
-            find.descendant(
-              of: find.byType(NavigationBar),
-              matching: find.text('Explorar'),
             ),
             findsOneWidget,
           );
@@ -127,6 +122,14 @@ void main() {
             ),
             findsOneWidget,
           );
+          expect(
+            find.descendant(
+              of: find.byType(NavigationBar),
+              matching: find.text('Explorar'),
+            ),
+            findsNothing,
+          );
+          expect(find.byType(NavigationDestination), findsNWidgets(3));
           expect(find.text('Sedes'), findsNothing);
         }
       },
@@ -138,19 +141,60 @@ void main() {
       await tester.pumpWidget(createTestApp());
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Explorar'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Noticias'),
+        ),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.text('Explorar'), findsWidgets);
+      final navBar = tester.widget<NavigationBar>(find.byType(NavigationBar));
+      expect(navBar.selectedIndex, 1);
 
-      await tester.tap(find.text('Noticias'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Perfil'),
+        ),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.text('Noticias'), findsWidgets);
+      final navBarAfterProfile = tester.widget<NavigationBar>(
+        find.byType(NavigationBar),
+      );
+      expect(navBarAfterProfile.selectedIndex, 2);
+
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Partidos'),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final navBarAfterMatches = tester.widget<NavigationBar>(
+        find.byType(NavigationBar),
+      );
+      expect(navBarAfterMatches.selectedIndex, 0);
     });
 
     testWidgets(
-      'renders at compact 320x640 viewport and 130% text scaling across all 4 tabs without overflows',
+      'safely handles AppShellSection.explore fallback by showing Partidos',
+      (tester) async {
+        await tester.pumpWidget(
+          createTestApp(initialSection: AppShellSection.explore),
+        );
+        await tester.pumpAndSettle();
+
+        final navBar = tester.widget<NavigationBar>(find.byType(NavigationBar));
+        expect(navBar.selectedIndex, 0);
+        expect(find.text('Explorar'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'renders at compact 320x640 viewport and 130% text scaling across all 3 tabs without overflows',
       (tester) async {
         tester.view.physicalSize = const Size(320, 640);
         tester.view.devicePixelRatio = 1.0;
@@ -172,17 +216,7 @@ void main() {
         );
         expect(tester.takeException(), isNull);
 
-        // Tab 2: Explorar
-        await tester.tap(
-          find.descendant(
-            of: find.byType(NavigationBar),
-            matching: find.text('Explorar'),
-          ),
-        );
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-
-        // Tab 3: Noticias
+        // Tab 2: Noticias
         await tester.tap(
           find.descendant(
             of: find.byType(NavigationBar),
@@ -192,7 +226,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
 
-        // Tab 4: Perfil
+        // Tab 3: Perfil
         await tester.tap(
           find.descendant(
             of: find.byType(NavigationBar),

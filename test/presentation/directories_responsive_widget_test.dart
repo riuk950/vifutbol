@@ -26,6 +26,8 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_theme.dart';
 import 'package:vifutbol/presentation/directories/competitions_directory_screen.dart';
 import 'package:vifutbol/presentation/directories/players_directory_screen.dart';
 import 'package:vifutbol/presentation/directories/teams_directory_screen.dart';
+import 'package:vifutbol/presentation/panel/panel_screen.dart';
+import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
 import 'package:vifutbol/presentation/shell/widgets/app_navigation_drawer.dart';
 
 class FakeLocalStorageRepository implements LocalStorageRepository {
@@ -295,5 +297,60 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.byKey(const Key('player_item_p-1')), findsOneWidget);
     });
+
+    testWidgets(
+      'PanelScreen renders without RenderFlex overflow at 320x640 with 130% text scaling',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        for (final role in UserRole.values) {
+          await tester.pumpWidget(
+            createResponsiveApp(
+              child: const PanelScreen(),
+              tournaments: [tournament],
+              teams: [team],
+              role: role,
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(tester.takeException(), isNull);
+          expect(find.byKey(const Key('panel_screen')), findsOneWidget);
+          expect(
+            find.byKey(const Key('panel_placeholder_content')),
+            findsOneWidget,
+          );
+          expect(find.byKey(const Key('panel_back_button')), findsOneWidget);
+        }
+      },
+    );
+
+    testWidgets(
+      'AppShellScreen renders with 3 tabs without RenderFlex overflow at 320x640 with 130% text scaling',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        await tester.pumpWidget(
+          createResponsiveApp(
+            child: const AppShellScreen(),
+            tournaments: [tournament],
+            teams: [team],
+            role: UserRole.organizer,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(find.byType(NavigationBar), findsOneWidget);
+        expect(find.byType(NavigationDestination), findsNWidgets(3));
+        expect(find.text('Explorar'), findsNothing);
+      },
+    );
   });
 }

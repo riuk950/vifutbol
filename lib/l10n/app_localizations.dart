@@ -3885,6 +3885,24 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Programar partidos'**
   String get organizerPendingMatchesAction;
+
+  /// Etiqueta para la opción Panel en el menú lateral
+  ///
+  /// In es, this message translates to:
+  /// **'Panel'**
+  String get drawerPanel;
+
+  /// Título del estado preparatorio del panel
+  ///
+  /// In es, this message translates to:
+  /// **'Panel de Control Operativo'**
+  String get panelPlaceholderTitle;
+
+  /// Descripción del estado preparatorio del panel
+  ///
+  /// In es, this message translates to:
+  /// **'Herramientas de gestión y métricas disponibles para tu rol deportivo.'**
+  String get panelPlaceholderSubtitle;
 }
 
 class _AppLocalizationsDelegate

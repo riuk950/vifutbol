@@ -2221,4 +2221,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get organizerPendingMatchesAction => 'Programar partidos';
+
+  @override
+  String get drawerPanel => 'Panel';
+
+  @override
+  String get panelPlaceholderTitle => 'Panel de Control Operativo';
+
+  @override
+  String get panelPlaceholderSubtitle =>
+      'Herramientas de gestión y métricas disponibles para tu rol deportivo.';
 }
