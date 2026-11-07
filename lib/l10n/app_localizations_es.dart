@@ -2405,4 +2405,28 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get competitionRankingsEmptyDescription =>
       'Los rankings de goleadores, tarjetas y vallas invictas se actualizarán con los eventos oficiales.';
+
+  @override
+  String get competitionMainVenueTitle => 'Sede Principal';
+
+  @override
+  String get competitionMainVenueAddress => 'Dirección';
+
+  @override
+  String competitionMainVenuePitches(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count canchas disponibles',
+      one: '1 cancha disponible',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get competitionInfoNotFoundTitle => 'Competición No Encontrada';
+
+  @override
+  String get competitionInfoNotFoundDescription =>
+      'No se pudo cargar la información reglamentaria del campeonato solicitado.';
 }

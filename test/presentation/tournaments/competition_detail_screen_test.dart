@@ -259,7 +259,11 @@ void main() {
           find.byKey(const Key('competition_detail_info_content')),
           findsOneWidget,
         );
-        expect(find.text('Reglamento Oficial'), findsOneWidget);
+        expect(
+          find.byKey(const Key('competition_tournament_rules_card')),
+          findsOneWidget,
+        );
+        expect(find.text('Sistema de Puntuación'), findsOneWidget);
 
         // 4. Switch back to Partidos
         final matchesTab = find.byKey(

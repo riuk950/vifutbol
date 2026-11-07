@@ -100,6 +100,15 @@ class TournamentRulesSummaryCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final rules = tournament.rules;
     final statusColor = _statusColor(tournament.status);
+    final hasActionButtons =
+        (tournament.status.isEditable &&
+            (onEditPressed != null ||
+                (onTransitionStatusPressed != null &&
+                    tournament.status == TournamentStatus.openRegistration) ||
+                ((onCloseSeasonPressed != null ||
+                        onTransitionStatusPressed != null) &&
+                    tournament.status == TournamentStatus.inProgress))) ||
+        onBackupPressed != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,55 +170,56 @@ class TournamentRulesSummaryCard extends StatelessWidget {
                 '${_formatDate(tournament.startDate)} — ${_formatDate(tournament.endDate)}',
                 style: KickPulseTypography.captionMeta,
               ),
-              if (isOrganizer) ...[
+              if (isOrganizer && hasActionButtons) ...[
                 const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
                 Wrap(
                   spacing: KickPulseRadiiSpacing.spaceSm,
                   runSpacing: KickPulseRadiiSpacing.spaceSm,
                   children: [
                     if (tournament.status.isEditable) ...[
-                      OutlinedButton.icon(
-                        key: const Key('edit_tournament_rules_button'),
-                        onPressed: onEditPressed,
-                        icon: const Icon(Icons.tune, size: 18),
-                        label: Text(l10n.tournamentsEditAction),
-                      ),
+                      if (onEditPressed != null)
+                        OutlinedButton.icon(
+                          key: const Key('edit_tournament_rules_button'),
+                          onPressed: onEditPressed,
+                          icon: const Icon(Icons.tune, size: 18),
+                          label: Text(l10n.tournamentsEditAction),
+                        ),
                       if (tournament.status ==
-                          TournamentStatus.openRegistration)
+                              TournamentStatus.openRegistration &&
+                          onTransitionStatusPressed != null)
                         ElevatedButton.icon(
                           key: const Key('start_tournament_status_button'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: KickPulseColors.accentPrimary,
                             foregroundColor: KickPulseColors.canvasBackground,
                           ),
-                          onPressed: onTransitionStatusPressed == null
-                              ? null
-                              : () => onTransitionStatusPressed!(
-                                  TournamentStatus.inProgress,
-                                ),
+                          onPressed: () => onTransitionStatusPressed!(
+                            TournamentStatus.inProgress,
+                          ),
                           icon: const Icon(Icons.play_arrow_rounded, size: 18),
                           label: Text(l10n.tournamentStartAction),
                         ),
-                      if (tournament.status == TournamentStatus.inProgress)
+                      if (tournament.status == TournamentStatus.inProgress &&
+                          (onCloseSeasonPressed != null ||
+                              onTransitionStatusPressed != null))
                         OutlinedButton.icon(
                           key: const Key('finish_tournament_status_button'),
                           onPressed:
                               onCloseSeasonPressed ??
-                              (onTransitionStatusPressed == null
-                                  ? null
-                                  : () => onTransitionStatusPressed!(
-                                      TournamentStatus.finished,
-                                    )),
+                              () => onTransitionStatusPressed!(
+                                TournamentStatus.finished,
+                              ),
                           icon: const Icon(Icons.flag_outlined, size: 18),
                           label: Text(l10n.seasonClosureAction),
                         ),
                     ],
-                    OutlinedButton.icon(
-                      key: const Key('tournament_backup_action_button'),
-                      onPressed: onBackupPressed,
-                      icon: const Icon(Icons.backup_outlined, size: 18),
-                      label: Text(l10n.backupActionButton),
-                    ),
+                    if (onBackupPressed != null)
+                      OutlinedButton.icon(
+                        key: const Key('tournament_backup_action_button'),
+                        onPressed: onBackupPressed,
+                        icon: const Icon(Icons.backup_outlined, size: 18),
+                        label: Text(l10n.backupActionButton),
+                      ),
                   ],
                 ),
               ],
@@ -469,9 +479,10 @@ class TournamentRulesSummaryCard extends StatelessWidget {
             ),
           ),
         ],
-        if (tournament.auditTrail.isNotEmpty) ...[
+        if (isOrganizer && tournament.auditTrail.isNotEmpty) ...[
           const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
           KickPulseCard(
+            key: const Key('tournament_audit_trail_card'),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -572,18 +583,23 @@ class _RuleRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, size: 18, color: KickPulseColors.accentElectric),
         const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
-        Expanded(child: Text(label, style: KickPulseTypography.captionMeta)),
-        const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
-        Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.end,
-            style: KickPulseTypography.bodyPrimary.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: KickPulseTypography.captionMeta),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: KickPulseTypography.bodyPrimary.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
         ),
       ],

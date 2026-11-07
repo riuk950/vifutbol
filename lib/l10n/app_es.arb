@@ -3108,5 +3108,31 @@
   "competitionRankingsEmptyDescription": "Los rankings de goleadores, tarjetas y vallas invictas se actualizarán con los eventos oficiales.",
   "@competitionRankingsEmptyDescription": {
     "description": "Descripción de estado vacío cuando no hay estadísticas individuales en la competición"
+  },
+  "competitionMainVenueTitle": "Sede Principal",
+  "@competitionMainVenueTitle": {
+    "description": "Título de la tarjeta resumen de la sede principal del campeonato"
+  },
+  "competitionMainVenueAddress": "Dirección",
+  "@competitionMainVenueAddress": {
+    "description": "Etiqueta para la dirección de la sede principal"
+  },
+  "competitionMainVenuePitches": "{count, plural, =1{1 cancha disponible} other{{count} canchas disponibles}}",
+  "@competitionMainVenuePitches": {
+    "description": "Cantidad de canchas disponibles en la sede principal",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "competitionInfoNotFoundTitle": "Competición No Encontrada",
+  "@competitionInfoNotFoundTitle": {
+    "description": "Título de estado no encontrado en la pestaña de información"
+  },
+  "competitionInfoNotFoundDescription": "No se pudo cargar la información reglamentaria del campeonato solicitado.",
+  "@competitionInfoNotFoundDescription": {
+    "description": "Descripción cuando la competición no existe en el catálogo"
   }
 }

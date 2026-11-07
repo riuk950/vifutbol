@@ -386,6 +386,21 @@ void main() {
           find.byKey(const Key('competition_detail_tab_bar')),
           findsOneWidget,
         );
+
+        // Switch to Información tab
+        final infoTab = find.byKey(const Key('competition_detail_tab_info'));
+        await tester.tap(infoTab);
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(
+          find.byKey(const Key('competition_detail_info_content')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('competition_tournament_rules_card')),
+          findsOneWidget,
+        );
       },
     );
   });

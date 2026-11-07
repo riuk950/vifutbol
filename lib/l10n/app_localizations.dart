@@ -4233,6 +4233,36 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Los rankings de goleadores, tarjetas y vallas invictas se actualizarán con los eventos oficiales.'**
   String get competitionRankingsEmptyDescription;
+
+  /// Título de la tarjeta resumen de la sede principal del campeonato
+  ///
+  /// In es, this message translates to:
+  /// **'Sede Principal'**
+  String get competitionMainVenueTitle;
+
+  /// Etiqueta para la dirección de la sede principal
+  ///
+  /// In es, this message translates to:
+  /// **'Dirección'**
+  String get competitionMainVenueAddress;
+
+  /// Cantidad de canchas disponibles en la sede principal
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 cancha disponible} other{{count} canchas disponibles}}'**
+  String competitionMainVenuePitches(int count);
+
+  /// Título de estado no encontrado en la pestaña de información
+  ///
+  /// In es, this message translates to:
+  /// **'Competición No Encontrada'**
+  String get competitionInfoNotFoundTitle;
+
+  /// Descripción cuando la competición no existe en el catálogo
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo cargar la información reglamentaria del campeonato solicitado.'**
+  String get competitionInfoNotFoundDescription;
 }
 
 class _AppLocalizationsDelegate
