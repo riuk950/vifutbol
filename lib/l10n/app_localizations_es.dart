@@ -2381,4 +2381,28 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get competitionInfoMessage =>
       'El sistema oficial de puntuación, desempates y normas disciplinarias estará disponible próximamente.';
+
+  @override
+  String get competitionStandingsSubviewsTitle => 'Vista competitiva';
+
+  @override
+  String get competitionStandingsEmptyTitle => 'Sin Clasificación Disponible';
+
+  @override
+  String get competitionStandingsEmptyDescription =>
+      'La tabla de posiciones se generará cuando se registren los primeros resultados oficiales.';
+
+  @override
+  String get competitionBracketsEmptyTitle => 'Sin Llaves Disponibles';
+
+  @override
+  String get competitionBracketsEmptyDescription =>
+      'El cuadro eliminatorio se generará al definirse los cruces de la fase final.';
+
+  @override
+  String get competitionRankingsEmptyTitle => 'Sin Estadísticas Disponibles';
+
+  @override
+  String get competitionRankingsEmptyDescription =>
+      'Los rankings de goleadores, tarjetas y vallas invictas se actualizarán con los eventos oficiales.';
 }

@@ -3080,5 +3080,33 @@
   "competitionInfoMessage": "El sistema oficial de puntuación, desempates y normas disciplinarias estará disponible próximamente.",
   "@competitionInfoMessage": {
     "description": "Mensaje en la pestaña Información sobre el reglamento de la competición"
+  },
+  "competitionStandingsSubviewsTitle": "Vista competitiva",
+  "@competitionStandingsSubviewsTitle": {
+    "description": "Título o accesibilidad del selector de subvistas en la pestaña Clasificación"
+  },
+  "competitionStandingsEmptyTitle": "Sin Clasificación Disponible",
+  "@competitionStandingsEmptyTitle": {
+    "description": "Título de estado vacío cuando no hay posiciones en la competición"
+  },
+  "competitionStandingsEmptyDescription": "La tabla de posiciones se generará cuando se registren los primeros resultados oficiales.",
+  "@competitionStandingsEmptyDescription": {
+    "description": "Descripción de estado vacío cuando no hay posiciones en la competición"
+  },
+  "competitionBracketsEmptyTitle": "Sin Llaves Disponibles",
+  "@competitionBracketsEmptyTitle": {
+    "description": "Título de estado vacío cuando el torneo eliminatorio aún no tiene llaves generadas"
+  },
+  "competitionBracketsEmptyDescription": "El cuadro eliminatorio se generará al definirse los cruces de la fase final.",
+  "@competitionBracketsEmptyDescription": {
+    "description": "Descripción de estado vacío cuando el torneo eliminatorio aún no tiene llaves generadas"
+  },
+  "competitionRankingsEmptyTitle": "Sin Estadísticas Disponibles",
+  "@competitionRankingsEmptyTitle": {
+    "description": "Título de estado vacío cuando no hay estadísticas individuales en la competición"
+  },
+  "competitionRankingsEmptyDescription": "Los rankings de goleadores, tarjetas y vallas invictas se actualizarán con los eventos oficiales.",
+  "@competitionRankingsEmptyDescription": {
+    "description": "Descripción de estado vacío cuando no hay estadísticas individuales en la competición"
   }
 }

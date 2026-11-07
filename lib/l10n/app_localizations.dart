@@ -4191,6 +4191,48 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'El sistema oficial de puntuación, desempates y normas disciplinarias estará disponible próximamente.'**
   String get competitionInfoMessage;
+
+  /// Título o accesibilidad del selector de subvistas en la pestaña Clasificación
+  ///
+  /// In es, this message translates to:
+  /// **'Vista competitiva'**
+  String get competitionStandingsSubviewsTitle;
+
+  /// Título de estado vacío cuando no hay posiciones en la competición
+  ///
+  /// In es, this message translates to:
+  /// **'Sin Clasificación Disponible'**
+  String get competitionStandingsEmptyTitle;
+
+  /// Descripción de estado vacío cuando no hay posiciones en la competición
+  ///
+  /// In es, this message translates to:
+  /// **'La tabla de posiciones se generará cuando se registren los primeros resultados oficiales.'**
+  String get competitionStandingsEmptyDescription;
+
+  /// Título de estado vacío cuando el torneo eliminatorio aún no tiene llaves generadas
+  ///
+  /// In es, this message translates to:
+  /// **'Sin Llaves Disponibles'**
+  String get competitionBracketsEmptyTitle;
+
+  /// Descripción de estado vacío cuando el torneo eliminatorio aún no tiene llaves generadas
+  ///
+  /// In es, this message translates to:
+  /// **'El cuadro eliminatorio se generará al definirse los cruces de la fase final.'**
+  String get competitionBracketsEmptyDescription;
+
+  /// Título de estado vacío cuando no hay estadísticas individuales en la competición
+  ///
+  /// In es, this message translates to:
+  /// **'Sin Estadísticas Disponibles'**
+  String get competitionRankingsEmptyTitle;
+
+  /// Descripción de estado vacío cuando no hay estadísticas individuales en la competición
+  ///
+  /// In es, this message translates to:
+  /// **'Los rankings de goleadores, tarjetas y vallas invictas se actualizarán con los eventos oficiales.'**
+  String get competitionRankingsEmptyDescription;
 }
 
 class _AppLocalizationsDelegate
