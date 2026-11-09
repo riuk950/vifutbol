@@ -4491,6 +4491,84 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Horario pendiente'**
   String get teamMatchDetailModalPendingSchedule;
+
+  /// Título de la sección de porteros en la pestaña de plantilla
+  ///
+  /// In es, this message translates to:
+  /// **'Porteros'**
+  String get teamSquadGoalkeepersSectionTitle;
+
+  /// Título de la sección de defensas en la pestaña de plantilla
+  ///
+  /// In es, this message translates to:
+  /// **'Defensas'**
+  String get teamSquadDefendersSectionTitle;
+
+  /// Título de la sección de centrocampistas en la pestaña de plantilla
+  ///
+  /// In es, this message translates to:
+  /// **'Centrocampistas'**
+  String get teamSquadMidfieldersSectionTitle;
+
+  /// Título de la sección de delanteros en la pestaña de plantilla
+  ///
+  /// In es, this message translates to:
+  /// **'Delanteros'**
+  String get teamSquadForwardsSectionTitle;
+
+  /// Etiqueta para posición táctica de portero
+  ///
+  /// In es, this message translates to:
+  /// **'Portero'**
+  String get teamSquadPositionGoalkeeper;
+
+  /// Etiqueta para posición táctica de defensa
+  ///
+  /// In es, this message translates to:
+  /// **'Defensa'**
+  String get teamSquadPositionDefender;
+
+  /// Etiqueta para posición táctica de centrocampista
+  ///
+  /// In es, this message translates to:
+  /// **'Centrocampista'**
+  String get teamSquadPositionMidfielder;
+
+  /// Etiqueta para posición táctica de delantero
+  ///
+  /// In es, this message translates to:
+  /// **'Delantero'**
+  String get teamSquadPositionForward;
+
+  /// Etiqueta semántica para jugador habilitado
+  ///
+  /// In es, this message translates to:
+  /// **'Habilitado'**
+  String get teamSquadPlayerStatusEligible;
+
+  /// Etiqueta semántica para jugador suspendido o sancionado
+  ///
+  /// In es, this message translates to:
+  /// **'Suspendido'**
+  String get teamSquadPlayerStatusSuspended;
+
+  /// Título del estado vacío cuando el equipo no tiene jugadores inscritos
+  ///
+  /// In es, this message translates to:
+  /// **'Plantilla sin jugadores inscritos'**
+  String get teamSquadEmptyGlobalTitle;
+
+  /// Mensaje descriptivo del estado vacío de plantilla sin jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'Este equipo aún no registra jugadores inscritos en su nómina oficial.'**
+  String get teamSquadEmptyGlobalMessage;
+
+  /// Mensaje contextual cuando no hay jugadores en una posición táctica específica
+  ///
+  /// In es, this message translates to:
+  /// **'Sin jugadores registrados en esta posición'**
+  String get teamSquadEmptyPositionMessage;
 }
 
 class _AppLocalizationsDelegate

@@ -529,7 +529,11 @@ void main() {
 
         expect(tester.takeException(), isNull);
         expect(
-          find.byKey(const Key('team_squad_tab_placeholder')),
+          find.byKey(const PageStorageKey('team_squad_tab_view')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('team_squad_header_goalkeeper')),
           findsOneWidget,
         );
       },

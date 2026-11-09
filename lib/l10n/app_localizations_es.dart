@@ -2548,4 +2548,45 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get teamMatchDetailModalPendingSchedule => 'Horario pendiente';
+
+  @override
+  String get teamSquadGoalkeepersSectionTitle => 'Porteros';
+
+  @override
+  String get teamSquadDefendersSectionTitle => 'Defensas';
+
+  @override
+  String get teamSquadMidfieldersSectionTitle => 'Centrocampistas';
+
+  @override
+  String get teamSquadForwardsSectionTitle => 'Delanteros';
+
+  @override
+  String get teamSquadPositionGoalkeeper => 'Portero';
+
+  @override
+  String get teamSquadPositionDefender => 'Defensa';
+
+  @override
+  String get teamSquadPositionMidfielder => 'Centrocampista';
+
+  @override
+  String get teamSquadPositionForward => 'Delantero';
+
+  @override
+  String get teamSquadPlayerStatusEligible => 'Habilitado';
+
+  @override
+  String get teamSquadPlayerStatusSuspended => 'Suspendido';
+
+  @override
+  String get teamSquadEmptyGlobalTitle => 'Plantilla sin jugadores inscritos';
+
+  @override
+  String get teamSquadEmptyGlobalMessage =>
+      'Este equipo aún no registra jugadores inscritos en su nómina oficial.';
+
+  @override
+  String get teamSquadEmptyPositionMessage =>
+      'Sin jugadores registrados en esta posición';
 }

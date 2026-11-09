@@ -3286,5 +3286,57 @@
   "teamMatchDetailModalPendingSchedule": "Horario pendiente",
   "@teamMatchDetailModalPendingSchedule": {
     "description": "Texto cuando la fecha y hora del partido están pendientes de programación"
+  },
+  "teamSquadGoalkeepersSectionTitle": "Porteros",
+  "@teamSquadGoalkeepersSectionTitle": {
+    "description": "Título de la sección de porteros en la pestaña de plantilla"
+  },
+  "teamSquadDefendersSectionTitle": "Defensas",
+  "@teamSquadDefendersSectionTitle": {
+    "description": "Título de la sección de defensas en la pestaña de plantilla"
+  },
+  "teamSquadMidfieldersSectionTitle": "Centrocampistas",
+  "@teamSquadMidfieldersSectionTitle": {
+    "description": "Título de la sección de centrocampistas en la pestaña de plantilla"
+  },
+  "teamSquadForwardsSectionTitle": "Delanteros",
+  "@teamSquadForwardsSectionTitle": {
+    "description": "Título de la sección de delanteros en la pestaña de plantilla"
+  },
+  "teamSquadPositionGoalkeeper": "Portero",
+  "@teamSquadPositionGoalkeeper": {
+    "description": "Etiqueta para posición táctica de portero"
+  },
+  "teamSquadPositionDefender": "Defensa",
+  "@teamSquadPositionDefender": {
+    "description": "Etiqueta para posición táctica de defensa"
+  },
+  "teamSquadPositionMidfielder": "Centrocampista",
+  "@teamSquadPositionMidfielder": {
+    "description": "Etiqueta para posición táctica de centrocampista"
+  },
+  "teamSquadPositionForward": "Delantero",
+  "@teamSquadPositionForward": {
+    "description": "Etiqueta para posición táctica de delantero"
+  },
+  "teamSquadPlayerStatusEligible": "Habilitado",
+  "@teamSquadPlayerStatusEligible": {
+    "description": "Etiqueta semántica para jugador habilitado"
+  },
+  "teamSquadPlayerStatusSuspended": "Suspendido",
+  "@teamSquadPlayerStatusSuspended": {
+    "description": "Etiqueta semántica para jugador suspendido o sancionado"
+  },
+  "teamSquadEmptyGlobalTitle": "Plantilla sin jugadores inscritos",
+  "@teamSquadEmptyGlobalTitle": {
+    "description": "Título del estado vacío cuando el equipo no tiene jugadores inscritos"
+  },
+  "teamSquadEmptyGlobalMessage": "Este equipo aún no registra jugadores inscritos en su nómina oficial.",
+  "@teamSquadEmptyGlobalMessage": {
+    "description": "Mensaje descriptivo del estado vacío de plantilla sin jugadores"
+  },
+  "teamSquadEmptyPositionMessage": "Sin jugadores registrados en esta posición",
+  "@teamSquadEmptyPositionMessage": {
+    "description": "Mensaje contextual cuando no hay jugadores en una posición táctica específica"
   }
 }

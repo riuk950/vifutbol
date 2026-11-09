@@ -5,12 +5,14 @@ import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
+import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/teams/models/team_match_summary.dart';
 import 'package:vifutbol/presentation/teams/models/team_matches_schedule.dart';
+import 'package:vifutbol/presentation/teams/models/team_squad_roster.dart';
 import 'package:vifutbol/presentation/teams/team_detail_screen.dart';
 
 void main() {
@@ -51,6 +53,7 @@ void main() {
     required String teamId,
     required TeamMatchSummary summary,
     TeamMatchesSchedule? schedule,
+    TeamSquadRoster? roster,
   }) {
     final effectiveSchedule =
         schedule ??
@@ -59,6 +62,17 @@ void main() {
           upcomingMatches: const [],
           completedMatches: const [],
         );
+    final effectiveRoster =
+        roster ??
+        TeamSquadRoster(
+          teamId: teamId,
+          team: summary.team,
+          goalkeepers: const [],
+          defenders: const [],
+          midfielders: const [],
+          forwards: const [],
+          allProfiles: const [],
+        );
 
     return ProviderScope(
       overrides: [
@@ -66,6 +80,7 @@ void main() {
         teamMatchesScheduleProvider(
           teamId,
         ).overrideWithValue(effectiveSchedule),
+        teamSquadRosterProvider(teamId).overrideWithValue(effectiveRoster),
       ],
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -214,7 +229,7 @@ void main() {
     );
 
     testWidgets(
-      'allows switching between tabs and renders matches tab view and squad placeholder',
+      'allows switching between tabs and renders matches tab view and squad tab view',
       (tester) async {
         final summary = TeamMatchSummary(
           team: testTeam,
@@ -240,11 +255,8 @@ void main() {
         await tester.tap(find.byKey(const Key('team_detail_tab_squad')));
         await tester.pumpAndSettle();
 
-        expect(
-          find.byKey(const Key('team_squad_tab_placeholder')),
-          findsOneWidget,
-        );
-        expect(find.text('Plantilla Oficial'), findsOneWidget);
+        expect(find.byKey(const Key('team_squad_empty_state')), findsOneWidget);
+        expect(find.text('Plantilla sin jugadores inscritos'), findsOneWidget);
 
         // Return to "Información"
         await tester.tap(find.byKey(const Key('team_detail_tab_info')));
@@ -533,6 +545,297 @@ void main() {
         expect(
           find.text('Sin partidos finalizados registrados'),
           findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'renders registered squad players in ascending shirtNumber order with position and eligibility badges (US1)',
+      (tester) async {
+        final players = [
+          const RegisteredPlayer(
+            id: 'p-gk',
+            fullName: 'Marc-André ter Stegen',
+            documentId: 'DOC-1',
+            shirtNumber: 1,
+            position: PlayerPosition.goalkeeper,
+            isEligible: true,
+          ),
+          const RegisteredPlayer(
+            id: 'p-def',
+            fullName: 'Ronald Araújo',
+            documentId: 'DOC-2',
+            shirtNumber: 4,
+            position: PlayerPosition.defender,
+            isEligible: true,
+          ),
+          const RegisteredPlayer(
+            id: 'p-mid',
+            fullName: 'Pedri González',
+            documentId: 'DOC-3',
+            shirtNumber: 8,
+            position: PlayerPosition.midfielder,
+            isEligible: true,
+          ),
+          const RegisteredPlayer(
+            id: 'p-fwd',
+            fullName: 'Robert Lewandowski',
+            documentId: 'DOC-4',
+            shirtNumber: 9,
+            position: PlayerPosition.forward,
+            isEligible: false,
+          ),
+        ];
+
+        final squadTeam = TournamentTeam(
+          id: 'team-1',
+          tournamentId: 'tour-1',
+          name: 'Atlético Norte FC',
+          shortCode: 'ATN',
+          players: players,
+        );
+
+        final summary = TeamMatchSummary(
+          team: squadTeam,
+          tournament: testTournament,
+        );
+
+        final roster = TeamSquadRoster.fromCatalog(
+          teamId: 'team-1',
+          teams: [squadTeam],
+        );
+
+        await tester.pumpWidget(
+          createTestWidget(teamId: 'team-1', summary: summary, roster: roster),
+        );
+        await tester.pumpAndSettle();
+
+        // Switch to "Plantilla" tab
+        await tester.tap(find.byKey(const Key('team_detail_tab_squad')));
+        await tester.pumpAndSettle();
+
+        // Player 1 (GK)
+        expect(
+          find.byKey(const Key('team_squad_player_item_p-gk')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('team_squad_player_shirt_p-gk')),
+          findsOneWidget,
+        );
+        expect(find.text('#1'), findsOneWidget);
+        expect(find.text('Marc-André ter Stegen'), findsOneWidget);
+        expect(
+          find.byKey(const Key('team_squad_player_position_badge_p-gk')),
+          findsOneWidget,
+        );
+        expect(find.text('Portero'), findsOneWidget);
+        expect(
+          find.byKey(const Key('team_squad_player_eligibility_badge_p-gk')),
+          findsOneWidget,
+        );
+        expect(find.text('Habilitado'), findsNWidgets(3)); // 3 eligible players
+
+        // Player 4 (FWD) - Suspended
+        expect(
+          find.byKey(const Key('team_squad_player_item_p-fwd')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('team_squad_player_shirt_p-fwd')),
+          findsOneWidget,
+        );
+        expect(find.text('#9'), findsOneWidget);
+        expect(find.text('Robert Lewandowski'), findsOneWidget);
+        expect(
+          find.byKey(const Key('team_squad_player_position_badge_p-fwd')),
+          findsOneWidget,
+        );
+        expect(find.text('Delantero'), findsOneWidget);
+        expect(
+          find.byKey(const Key('team_squad_player_eligibility_badge_p-fwd')),
+          findsOneWidget,
+        );
+        expect(find.text('Suspendido'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'renders 4 fixed tactical blocks and contextual empty state for line without players (US2)',
+      (tester) async {
+        final players = [
+          const RegisteredPlayer(
+            id: 'p-gk',
+            fullName: 'Thibaut Courtois',
+            documentId: 'DOC-1',
+            shirtNumber: 1,
+            position: PlayerPosition.goalkeeper,
+            isEligible: true,
+          ),
+          const RegisteredPlayer(
+            id: 'p-def',
+            fullName: 'David Alaba',
+            documentId: 'DOC-2',
+            shirtNumber: 4,
+            position: PlayerPosition.defender,
+            isEligible: true,
+          ),
+          const RegisteredPlayer(
+            id: 'p-mid',
+            fullName: 'Luka Modric',
+            documentId: 'DOC-3',
+            shirtNumber: 10,
+            position: PlayerPosition.midfielder,
+            isEligible: true,
+          ),
+          // Notice: 0 Forwards
+        ];
+
+        final squadTeam = TournamentTeam(
+          id: 'team-1',
+          tournamentId: 'tour-1',
+          name: 'Atlético Norte FC',
+          shortCode: 'ATN',
+          players: players,
+        );
+
+        final summary = TeamMatchSummary(
+          team: squadTeam,
+          tournament: testTournament,
+        );
+
+        final roster = TeamSquadRoster.fromCatalog(
+          teamId: 'team-1',
+          teams: [squadTeam],
+        );
+
+        await tester.pumpWidget(
+          createTestWidget(teamId: 'team-1', summary: summary, roster: roster),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byKey(const Key('team_detail_tab_squad')));
+        await tester.pumpAndSettle();
+
+        // Section Headers
+        expect(
+          find.byKey(const Key('team_squad_header_goalkeeper')),
+          findsOneWidget,
+        );
+        expect(find.text('Porteros'), findsOneWidget);
+
+        expect(
+          find.byKey(const Key('team_squad_header_defender')),
+          findsOneWidget,
+        );
+        expect(find.text('Defensas'), findsOneWidget);
+
+        expect(
+          find.byKey(const Key('team_squad_header_midfielder')),
+          findsOneWidget,
+        );
+        expect(find.text('Centrocampistas'), findsOneWidget);
+
+        expect(
+          find.byKey(const Key('team_squad_header_forward')),
+          findsOneWidget,
+        );
+        expect(find.text('Delanteros'), findsOneWidget);
+
+        // Forward section is empty
+        expect(
+          find.byKey(const Key('team_squad_empty_forward')),
+          findsOneWidget,
+        );
+        expect(
+          find.text('Sin jugadores registrados en esta posición'),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'opens player performance profile sheet on card tap and supports squad switcher (US3)',
+      (tester) async {
+        final players = [
+          const RegisteredPlayer(
+            id: 'p-1',
+            fullName: 'Player Alpha',
+            documentId: 'DOC-1',
+            shirtNumber: 1,
+            position: PlayerPosition.goalkeeper,
+            isEligible: true,
+          ),
+          const RegisteredPlayer(
+            id: 'p-2',
+            fullName: 'Player Beta',
+            documentId: 'DOC-2',
+            shirtNumber: 10,
+            position: PlayerPosition.midfielder,
+            isEligible: true,
+          ),
+        ];
+
+        final squadTeam = TournamentTeam(
+          id: 'team-1',
+          tournamentId: 'tour-1',
+          name: 'Atlético Norte FC',
+          shortCode: 'ATN',
+          players: players,
+        );
+
+        final summary = TeamMatchSummary(
+          team: squadTeam,
+          tournament: testTournament,
+        );
+
+        final roster = TeamSquadRoster.fromCatalog(
+          teamId: 'team-1',
+          teams: [squadTeam],
+        );
+
+        await tester.pumpWidget(
+          createTestWidget(teamId: 'team-1', summary: summary, roster: roster),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byKey(const Key('team_detail_tab_squad')));
+        await tester.pumpAndSettle();
+
+        // Tap Player Alpha card
+        await tester.tap(find.byKey(const Key('team_squad_player_item_p-1')));
+        await tester.pumpAndSettle();
+
+        // Bottom sheet opened
+        expect(
+          find.byKey(const Key('player_performance_profile_card')),
+          findsOneWidget,
+        );
+        expect(find.text('Player Alpha'), findsWidgets);
+        expect(
+          find.byKey(const Key('player_disciplinary_badge')),
+          findsOneWidget,
+        );
+
+        // Switch to Player Beta via squad switcher chip
+        final switcherBeta = find.byKey(const Key('player_switcher_chip_p-2'));
+        expect(switcherBeta, findsOneWidget);
+        await tester.tap(switcherBeta);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Player Beta'), findsWidgets);
+
+        // Close modal
+        final closeButton = find.byKey(
+          const Key('close_player_profile_button'),
+        );
+        expect(closeButton, findsOneWidget);
+        await tester.tap(closeButton);
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('player_performance_profile_card')),
+          findsNothing,
         );
       },
     );
