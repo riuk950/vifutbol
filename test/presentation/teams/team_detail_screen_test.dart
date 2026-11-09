@@ -10,6 +10,7 @@ import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/teams/models/team_match_summary.dart';
+import 'package:vifutbol/presentation/teams/models/team_matches_schedule.dart';
 import 'package:vifutbol/presentation/teams/team_detail_screen.dart';
 
 void main() {
@@ -49,9 +50,23 @@ void main() {
   Widget createTestWidget({
     required String teamId,
     required TeamMatchSummary summary,
+    TeamMatchesSchedule? schedule,
   }) {
+    final effectiveSchedule =
+        schedule ??
+        TeamMatchesSchedule(
+          teamId: teamId,
+          upcomingMatches: const [],
+          completedMatches: const [],
+        );
+
     return ProviderScope(
-      overrides: [teamMatchSummaryProvider(teamId).overrideWithValue(summary)],
+      overrides: [
+        teamMatchSummaryProvider(teamId).overrideWithValue(summary),
+        teamMatchesScheduleProvider(
+          teamId,
+        ).overrideWithValue(effectiveSchedule),
+      ],
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
@@ -199,7 +214,7 @@ void main() {
     );
 
     testWidgets(
-      'allows switching between tabs and renders placeholders for matches and squad',
+      'allows switching between tabs and renders matches tab view and squad placeholder',
       (tester) async {
         final summary = TeamMatchSummary(
           team: testTeam,
@@ -216,10 +231,10 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(
-          find.byKey(const Key('team_matches_tab_placeholder')),
+          find.byKey(const Key('team_matches_empty_state')),
           findsOneWidget,
         );
-        expect(find.text('Calendario del Equipo'), findsOneWidget);
+        expect(find.text('Sin partidos en el calendario'), findsOneWidget);
 
         // Tap on "Plantilla" tab
         await tester.tap(find.byKey(const Key('team_detail_tab_squad')));
@@ -236,6 +251,289 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.byKey(const Key('team_club_profile_card')), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'renders upcoming matches in chronological order in Partidos tab (US1)',
+      (tester) async {
+        final summary = TeamMatchSummary(
+          team: testTeam,
+          tournament: testTournament,
+        );
+
+        final upcomingMatch = ChampionshipMatch(
+          id: 'm-up-1',
+          tournamentId: 'tour-1',
+          roundNumber: 3,
+          roundName: 'Jornada 3',
+          homeTeamId: 'team-1',
+          awayTeamId: 'team-2',
+          status: MatchStatus.scheduled,
+          scheduledStartTime: DateTime(2026, 3, 20, 16, 0),
+          pitchName: 'Cancha 1 - Principal',
+        );
+
+        final schedule = TeamMatchesSchedule(
+          teamId: 'team-1',
+          upcomingMatches: [
+            TeamScheduledMatchItem(
+              match: upcomingMatch,
+              homeTeam: testTeam,
+              awayTeam: opponentTeam,
+              isHome: true,
+              outcome: null,
+            ),
+          ],
+          completedMatches: const [],
+        );
+
+        await tester.pumpWidget(
+          createTestWidget(
+            teamId: 'team-1',
+            summary: summary,
+            schedule: schedule,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Switch to Partidos tab
+        await tester.tap(find.byKey(const Key('team_detail_tab_matches')));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('team_upcoming_matches_header')),
+          findsOneWidget,
+        );
+        expect(find.text('Próximos Partidos'), findsOneWidget);
+        expect(
+          find.byKey(const Key('team_upcoming_match_item_m-up-1')),
+          findsOneWidget,
+        );
+        expect(find.text('Jornada 3'), findsOneWidget);
+        expect(find.text('Cancha 1 - Principal'), findsOneWidget);
+        expect(find.text('Local'), findsOneWidget);
+        expect(find.text('Deportivo Sur'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'renders completed matches with semantic outcome badges in Partidos tab (US2)',
+      (tester) async {
+        final summary = TeamMatchSummary(
+          team: testTeam,
+          tournament: testTournament,
+        );
+
+        final matchWin = ChampionshipMatch(
+          id: 'm-win',
+          tournamentId: 'tour-1',
+          roundNumber: 2,
+          roundName: 'Jornada 2',
+          homeTeamId: 'team-1',
+          awayTeamId: 'team-2',
+          status: MatchStatus.completed,
+          scheduledStartTime: DateTime(2026, 3, 10, 14, 0),
+          homeScore: 3,
+          awayScore: 1,
+          pitchName: 'Cancha 2',
+        );
+
+        final matchDraw = ChampionshipMatch(
+          id: 'm-draw',
+          tournamentId: 'tour-1',
+          roundNumber: 1,
+          roundName: 'Jornada 1',
+          homeTeamId: 'team-2',
+          awayTeamId: 'team-1',
+          status: MatchStatus.completed,
+          scheduledStartTime: DateTime(2026, 3, 3, 10, 0),
+          homeScore: 1,
+          awayScore: 1,
+          pitchName: 'Cancha 1',
+        );
+
+        final schedule = TeamMatchesSchedule(
+          teamId: 'team-1',
+          upcomingMatches: const [],
+          completedMatches: [
+            TeamScheduledMatchItem(
+              match: matchWin,
+              homeTeam: testTeam,
+              awayTeam: opponentTeam,
+              isHome: true,
+              outcome: TeamMatchOutcome.win,
+            ),
+            TeamScheduledMatchItem(
+              match: matchDraw,
+              homeTeam: opponentTeam,
+              awayTeam: testTeam,
+              isHome: false,
+              outcome: TeamMatchOutcome.draw,
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(
+          createTestWidget(
+            teamId: 'team-1',
+            summary: summary,
+            schedule: schedule,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Switch to Partidos tab
+        await tester.tap(find.byKey(const Key('team_detail_tab_matches')));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('team_completed_matches_header')),
+          findsOneWidget,
+        );
+        expect(find.text('Resultados Anteriores'), findsOneWidget);
+        expect(
+          find.byKey(const Key('team_completed_match_item_m-win')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('team_completed_match_item_m-draw')),
+          findsOneWidget,
+        );
+
+        expect(
+          find.byKey(const Key('team_match_outcome_badge_m-win')),
+          findsOneWidget,
+        );
+        expect(find.text('Victoria'), findsOneWidget);
+        expect(
+          find.byKey(const Key('team_match_outcome_badge_m-draw')),
+          findsOneWidget,
+        );
+        expect(find.text('Empate'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'opens match detail modal when tapping match card in Partidos tab (US3)',
+      (tester) async {
+        final summary = TeamMatchSummary(
+          team: testTeam,
+          tournament: testTournament,
+        );
+
+        final match = ChampionshipMatch(
+          id: 'm-detail',
+          tournamentId: 'tour-1',
+          roundNumber: 1,
+          roundName: 'Jornada 1',
+          homeTeamId: 'team-1',
+          awayTeamId: 'team-2',
+          status: MatchStatus.completed,
+          scheduledStartTime: DateTime(2026, 3, 5, 15, 30),
+          homeScore: 2,
+          awayScore: 0,
+          pitchName: 'Estadio Metropolitano',
+          refereeName: 'Carlos Gómez',
+        );
+
+        final schedule = TeamMatchesSchedule(
+          teamId: 'team-1',
+          upcomingMatches: const [],
+          completedMatches: [
+            TeamScheduledMatchItem(
+              match: match,
+              homeTeam: testTeam,
+              awayTeam: opponentTeam,
+              isHome: true,
+              outcome: TeamMatchOutcome.win,
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(
+          createTestWidget(
+            teamId: 'team-1',
+            summary: summary,
+            schedule: schedule,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Switch to Partidos tab
+        await tester.tap(find.byKey(const Key('team_detail_tab_matches')));
+        await tester.pumpAndSettle();
+
+        // Tap on the match card (center content hub)
+        await tester.tap(find.text('2 - 0'));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('team_match_detail_modal')),
+          findsOneWidget,
+        );
+        expect(find.text('Atlético Norte FC vs Deportivo Sur'), findsOneWidget);
+        expect(find.text('Estadio Metropolitano'), findsWidgets);
+        expect(find.text('Árbitro designado: Carlos Gómez'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'renders partial empty state when only upcoming matches exist (US3)',
+      (tester) async {
+        final summary = TeamMatchSummary(
+          team: testTeam,
+          tournament: testTournament,
+        );
+
+        final upcomingMatch = ChampionshipMatch(
+          id: 'm-up',
+          tournamentId: 'tour-1',
+          roundNumber: 1,
+          roundName: 'Jornada 1',
+          homeTeamId: 'team-1',
+          awayTeamId: 'team-2',
+          status: MatchStatus.scheduled,
+        );
+
+        final schedule = TeamMatchesSchedule(
+          teamId: 'team-1',
+          upcomingMatches: [
+            TeamScheduledMatchItem(
+              match: upcomingMatch,
+              homeTeam: testTeam,
+              awayTeam: opponentTeam,
+              isHome: true,
+              outcome: null,
+            ),
+          ],
+          completedMatches: const [],
+        );
+
+        await tester.pumpWidget(
+          createTestWidget(
+            teamId: 'team-1',
+            summary: summary,
+            schedule: schedule,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byKey(const Key('team_detail_tab_matches')));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('team_upcoming_match_item_m-up')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('team_completed_matches_empty_state')),
+          findsOneWidget,
+        );
+        expect(
+          find.text('Sin partidos finalizados registrados'),
+          findsOneWidget,
+        );
       },
     );
 

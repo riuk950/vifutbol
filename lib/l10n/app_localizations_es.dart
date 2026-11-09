@@ -2507,4 +2507,45 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get teamDetailSquadTabPlaceholderMessage =>
       'La nómina completa de jugadores con sus dorsales y posiciones tácticas estará disponible en esta sección.';
+
+  @override
+  String get teamMatchesUpcomingSectionTitle => 'Próximos Partidos';
+
+  @override
+  String get teamMatchesCompletedSectionTitle => 'Resultados Anteriores';
+
+  @override
+  String get teamMatchesEmptyGlobalTitle => 'Sin partidos en el calendario';
+
+  @override
+  String get teamMatchesEmptyGlobalMessage =>
+      'Este equipo aún no tiene encuentros programados ni resultados registrados en la competición.';
+
+  @override
+  String get teamMatchesUpcomingEmpty => 'Sin próximos partidos agendados';
+
+  @override
+  String get teamMatchesCompletedEmpty =>
+      'Sin partidos finalizados registrados';
+
+  @override
+  String get teamMatchOutcomeWin => 'Victoria';
+
+  @override
+  String get teamMatchOutcomeDraw => 'Empate';
+
+  @override
+  String get teamMatchOutcomeLoss => 'Derrota';
+
+  @override
+  String get teamMatchDetailModalRefereeLabel => 'Árbitro designado';
+
+  @override
+  String get teamMatchDetailModalUnassignedReferee => 'Árbitro sin asignar';
+
+  @override
+  String get teamMatchDetailModalUnassignedVenue => 'Cancha por asignar';
+
+  @override
+  String get teamMatchDetailModalPendingSchedule => 'Horario pendiente';
 }

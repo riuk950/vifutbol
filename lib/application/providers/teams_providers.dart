@@ -8,6 +8,7 @@ import 'package:vifutbol/domain/entities/teams_catalog_state.dart';
 import 'package:vifutbol/domain/repositories/teams_repository.dart';
 import 'package:vifutbol/infrastructure/repositories/local_teams_repository.dart';
 import 'package:vifutbol/presentation/teams/models/team_match_summary.dart';
+import 'package:vifutbol/presentation/teams/models/team_matches_schedule.dart';
 
 /// Provider exposing the concrete [TeamsRepository] implementation.
 final teamsRepositoryProvider = Provider<TeamsRepository>((ref) {
@@ -52,3 +53,16 @@ final teamMatchSummaryProvider = Provider.family<TeamMatchSummary, String>((
     matches: matchesState.matches,
   );
 });
+
+/// Family provider that reactively computes the [TeamMatchesSchedule] for a given [teamId].
+final teamMatchesScheduleProvider =
+    Provider.family<TeamMatchesSchedule, String>((ref, teamId) {
+      final teamsState = ref.watch(teamsControllerProvider);
+      final matchesState = ref.watch(matchesCatalogControllerProvider);
+
+      return TeamMatchesSchedule.fromCatalog(
+        teamId: teamId,
+        teams: teamsState.teams,
+        matches: matchesState.matches,
+      );
+    });

@@ -4413,6 +4413,84 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'La nómina completa de jugadores con sus dorsales y posiciones tácticas estará disponible en esta sección.'**
   String get teamDetailSquadTabPlaceholderMessage;
+
+  /// Título de la sección de próximos encuentros en la pestaña de partidos del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Próximos Partidos'**
+  String get teamMatchesUpcomingSectionTitle;
+
+  /// Título de la sección de historial de resultados finalizados en la pestaña de partidos del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Resultados Anteriores'**
+  String get teamMatchesCompletedSectionTitle;
+
+  /// Título del estado vacío cuando el equipo no registra partidos próximos ni finalizados
+  ///
+  /// In es, this message translates to:
+  /// **'Sin partidos en el calendario'**
+  String get teamMatchesEmptyGlobalTitle;
+
+  /// Mensaje descriptivo del estado vacío global de partidos del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Este equipo aún no tiene encuentros programados ni resultados registrados en la competición.'**
+  String get teamMatchesEmptyGlobalMessage;
+
+  /// Mensaje cuando no hay partidos próximos agendados para el equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Sin próximos partidos agendados'**
+  String get teamMatchesUpcomingEmpty;
+
+  /// Mensaje cuando no hay partidos finalizados previos para el equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Sin partidos finalizados registrados'**
+  String get teamMatchesCompletedEmpty;
+
+  /// Etiqueta para el badge semántico de partido ganado por el equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Victoria'**
+  String get teamMatchOutcomeWin;
+
+  /// Etiqueta para el badge semántico de partido empatado
+  ///
+  /// In es, this message translates to:
+  /// **'Empate'**
+  String get teamMatchOutcomeDraw;
+
+  /// Etiqueta para el badge semántico de partido perdido por el equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Derrota'**
+  String get teamMatchOutcomeLoss;
+
+  /// Etiqueta de árbitro en el modal de detalle del partido
+  ///
+  /// In es, this message translates to:
+  /// **'Árbitro designado'**
+  String get teamMatchDetailModalRefereeLabel;
+
+  /// Texto cuando el árbitro no ha sido asignado al partido
+  ///
+  /// In es, this message translates to:
+  /// **'Árbitro sin asignar'**
+  String get teamMatchDetailModalUnassignedReferee;
+
+  /// Texto cuando la cancha no ha sido asignada al partido
+  ///
+  /// In es, this message translates to:
+  /// **'Cancha por asignar'**
+  String get teamMatchDetailModalUnassignedVenue;
+
+  /// Texto cuando la fecha y hora del partido están pendientes de programación
+  ///
+  /// In es, this message translates to:
+  /// **'Horario pendiente'**
+  String get teamMatchDetailModalPendingSchedule;
 }
 
 class _AppLocalizationsDelegate

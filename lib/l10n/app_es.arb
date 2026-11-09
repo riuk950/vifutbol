@@ -3234,5 +3234,57 @@
   "teamDetailSquadTabPlaceholderMessage": "La nómina completa de jugadores con sus dorsales y posiciones tácticas estará disponible en esta sección.",
   "@teamDetailSquadTabPlaceholderMessage": {
     "description": "Mensaje informativo para la pestaña de plantilla en preparación"
+  },
+  "teamMatchesUpcomingSectionTitle": "Próximos Partidos",
+  "@teamMatchesUpcomingSectionTitle": {
+    "description": "Título de la sección de próximos encuentros en la pestaña de partidos del equipo"
+  },
+  "teamMatchesCompletedSectionTitle": "Resultados Anteriores",
+  "@teamMatchesCompletedSectionTitle": {
+    "description": "Título de la sección de historial de resultados finalizados en la pestaña de partidos del equipo"
+  },
+  "teamMatchesEmptyGlobalTitle": "Sin partidos en el calendario",
+  "@teamMatchesEmptyGlobalTitle": {
+    "description": "Título del estado vacío cuando el equipo no registra partidos próximos ni finalizados"
+  },
+  "teamMatchesEmptyGlobalMessage": "Este equipo aún no tiene encuentros programados ni resultados registrados en la competición.",
+  "@teamMatchesEmptyGlobalMessage": {
+    "description": "Mensaje descriptivo del estado vacío global de partidos del equipo"
+  },
+  "teamMatchesUpcomingEmpty": "Sin próximos partidos agendados",
+  "@teamMatchesUpcomingEmpty": {
+    "description": "Mensaje cuando no hay partidos próximos agendados para el equipo"
+  },
+  "teamMatchesCompletedEmpty": "Sin partidos finalizados registrados",
+  "@teamMatchesCompletedEmpty": {
+    "description": "Mensaje cuando no hay partidos finalizados previos para el equipo"
+  },
+  "teamMatchOutcomeWin": "Victoria",
+  "@teamMatchOutcomeWin": {
+    "description": "Etiqueta para el badge semántico de partido ganado por el equipo"
+  },
+  "teamMatchOutcomeDraw": "Empate",
+  "@teamMatchOutcomeDraw": {
+    "description": "Etiqueta para el badge semántico de partido empatado"
+  },
+  "teamMatchOutcomeLoss": "Derrota",
+  "@teamMatchOutcomeLoss": {
+    "description": "Etiqueta para el badge semántico de partido perdido por el equipo"
+  },
+  "teamMatchDetailModalRefereeLabel": "Árbitro designado",
+  "@teamMatchDetailModalRefereeLabel": {
+    "description": "Etiqueta de árbitro en el modal de detalle del partido"
+  },
+  "teamMatchDetailModalUnassignedReferee": "Árbitro sin asignar",
+  "@teamMatchDetailModalUnassignedReferee": {
+    "description": "Texto cuando el árbitro no ha sido asignado al partido"
+  },
+  "teamMatchDetailModalUnassignedVenue": "Cancha por asignar",
+  "@teamMatchDetailModalUnassignedVenue": {
+    "description": "Texto cuando la cancha no ha sido asignada al partido"
+  },
+  "teamMatchDetailModalPendingSchedule": "Horario pendiente",
+  "@teamMatchDetailModalPendingSchedule": {
+    "description": "Texto cuando la fecha y hora del partido están pendientes de programación"
   }
 }

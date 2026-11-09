@@ -11,6 +11,7 @@ import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_state_vie
 import 'package:vifutbol/domain/entities/ui_view_state.dart';
 import 'package:vifutbol/presentation/teams/widgets/kick_pulse_team_crest.dart';
 import 'package:vifutbol/presentation/teams/widgets/team_info_tab_view.dart';
+import 'package:vifutbol/presentation/teams/widgets/team_matches_tab_view.dart';
 
 /// Dedicated Team Detail screen (`/teams/:id`) with 3 horizontal fixed tabs:
 /// "Información", "Partidos", and "Plantilla".
@@ -204,16 +205,10 @@ class TeamDetailScreen extends ConsumerWidget {
               key: const PageStorageKey('team_info_tab_view'),
               teamId: teamId,
             ),
-            // Pestaña 2: Partidos (placeholder HU 14.2)
-            Padding(
-              padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceLg),
-              child: KickPulseStateView<void>(
-                key: const Key('team_matches_tab_placeholder'),
-                state: UiEmptyState<void>(
-                  message: l10n.teamDetailMatchesTabPlaceholderTitle,
-                  description: l10n.teamDetailMatchesTabPlaceholderMessage,
-                ),
-              ),
+            // Pestaña 2: Partidos (HU 14.2)
+            TeamMatchesTabView(
+              key: const PageStorageKey('team_matches_tab_view'),
+              teamId: teamId,
             ),
             // Pestaña 3: Plantilla (placeholder HU 14.3)
             Padding(

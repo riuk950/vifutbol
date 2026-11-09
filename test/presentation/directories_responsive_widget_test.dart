@@ -8,9 +8,11 @@ import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
+import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/connectivity_status.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
+import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_draft.dart';
@@ -29,6 +31,7 @@ import 'package:vifutbol/presentation/directories/teams_directory_screen.dart';
 import 'package:vifutbol/presentation/panel/panel_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
 import 'package:vifutbol/presentation/shell/widgets/app_navigation_drawer.dart';
+import 'package:vifutbol/presentation/teams/models/team_matches_schedule.dart';
 import 'package:vifutbol/presentation/teams/team_detail_screen.dart';
 import 'package:vifutbol/presentation/tournaments/competition_detail_screen.dart';
 
@@ -122,6 +125,7 @@ Widget createResponsiveApp({
   required List<TournamentTeam> teams,
   UserRole role = UserRole.organizer,
   double textScaleFactor = 1.3,
+  List<Override> extraOverrides = const [],
 }) {
   return ProviderScope(
     key: UniqueKey(),
@@ -143,6 +147,7 @@ Widget createResponsiveApp({
         );
       }),
       teamsRepositoryProvider.overrideWithValue(FakeTeamsRepository(teams)),
+      ...extraOverrides,
     ],
     child: MaterialApp(
       theme: KickPulseTheme.darkTheme,
@@ -413,12 +418,74 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
 
+        final team2 = TournamentTeam(
+          id: 'team-2',
+          tournamentId: 'tour-1',
+          name: 'Deportivo Sur FC',
+          shortCode: 'DPS',
+          crestShape: TeamCrestShape.circle,
+          primaryColorHex: 0xFF38BDF8,
+          secondaryColorHex: 0xFF0A0E17,
+          eligibilityStatus: TeamEligibilityStatus.eligible,
+        );
+
+        final upcomingMatch = ChampionshipMatch(
+          id: 'm-resp-up',
+          tournamentId: 'tour-1',
+          roundNumber: 2,
+          roundName: 'Jornada 2',
+          homeTeamId: 'team-1',
+          awayTeamId: 'team-2',
+          status: MatchStatus.scheduled,
+          scheduledStartTime: DateTime(2026, 3, 20, 15, 30),
+          pitchName: 'Cancha 1 - Principal Norte',
+        );
+
+        final completedMatch = ChampionshipMatch(
+          id: 'm-resp-comp',
+          tournamentId: 'tour-1',
+          roundNumber: 1,
+          roundName: 'Jornada 1',
+          homeTeamId: 'team-2',
+          awayTeamId: 'team-1',
+          status: MatchStatus.completed,
+          scheduledStartTime: DateTime(2026, 3, 10, 10, 0),
+          homeScore: 1,
+          awayScore: 2,
+          pitchName: 'Cancha 2 - Campo Sintético Sur',
+        );
+
+        final schedule = TeamMatchesSchedule(
+          teamId: 'team-1',
+          upcomingMatches: [
+            TeamScheduledMatchItem(
+              match: upcomingMatch,
+              homeTeam: team,
+              awayTeam: team2,
+              isHome: true,
+              outcome: null,
+            ),
+          ],
+          completedMatches: [
+            TeamScheduledMatchItem(
+              match: completedMatch,
+              homeTeam: team2,
+              awayTeam: team,
+              isHome: false,
+              outcome: TeamMatchOutcome.win,
+            ),
+          ],
+        );
+
         await tester.pumpWidget(
           createResponsiveApp(
             child: const TeamDetailScreen(teamId: 'team-1'),
             tournaments: [tournament],
-            teams: [team],
+            teams: [team, team2],
             role: UserRole.organizer,
+            extraOverrides: [
+              teamMatchesScheduleProvider('team-1').overrideWithValue(schedule),
+            ],
           ),
         );
         await tester.pumpAndSettle();
@@ -436,7 +503,23 @@ void main() {
 
         expect(tester.takeException(), isNull);
         expect(
-          find.byKey(const Key('team_matches_tab_placeholder')),
+          find.byKey(const PageStorageKey('team_matches_tab_view')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('team_upcoming_matches_header')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('team_upcoming_match_item_m-resp-up')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('team_completed_matches_header')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('team_completed_match_item_m-resp-comp')),
           findsOneWidget,
         );
 

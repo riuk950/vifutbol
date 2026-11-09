@@ -3,7 +3,7 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 
-enum KickPulseBadgeVariant { live, warning, dev, info, neutral }
+enum KickPulseBadgeVariant { live, warning, dev, info, neutral, success }
 
 /// Pill badge for semantic status indicators (9999px radius).
 class KickPulseBadge extends StatelessWidget {
@@ -45,6 +45,11 @@ class KickPulseBadge extends StatelessWidget {
         KickPulseColors.surfaceSubtle,
         KickPulseColors.textSecondary,
         KickPulseColors.borderSubtle,
+      ),
+      KickPulseBadgeVariant.success => (
+        KickPulseColors.accentPrimary.withAlpha(40),
+        KickPulseColors.accentPrimary,
+        KickPulseColors.accentPrimary.withAlpha(100),
       ),
     };
 
