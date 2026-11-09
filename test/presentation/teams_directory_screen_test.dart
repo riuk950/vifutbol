@@ -23,7 +23,6 @@ import 'package:vifutbol/domain/repositories/tournaments_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_theme.dart';
 import 'package:vifutbol/presentation/directories/teams_directory_screen.dart';
-import 'package:vifutbol/presentation/teams/team_roster_detail_screen.dart';
 
 class FakeLocalStorageRepository implements LocalStorageRepository {
   final Map<String, String> _store = {};
@@ -323,7 +322,7 @@ void main() {
       );
     });
 
-    testWidgets('tapping team opens TeamRosterDetailScreen', (tester) async {
+    testWidgets('tapping team opens TeamDetailScreen', (tester) async {
       await tester.pumpWidget(
         createTeamsTestApp(
           tournaments: [tournament1],
@@ -336,7 +335,7 @@ void main() {
       await tester.tap(find.byKey(const Key('team_item_team-1')));
       await tester.pumpAndSettle();
 
-      expect(find.byType(TeamRosterDetailScreen), findsOneWidget);
+      expect(find.byKey(const Key('team_detail_screen')), findsOneWidget);
     });
 
     testWidgets(

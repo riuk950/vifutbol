@@ -13,7 +13,7 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_search_bar.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_state_view.dart';
-import 'package:vifutbol/presentation/teams/team_roster_detail_screen.dart';
+import 'package:vifutbol/presentation/teams/team_detail_screen.dart';
 import 'package:vifutbol/presentation/teams/widgets/kick_pulse_team_crest.dart';
 
 /// Teams Directory screen with top persistent search bar, horizontal tournament
@@ -43,9 +43,12 @@ class _TeamsDirectoryScreenState extends ConsumerState<TeamsDirectoryScreen> {
 
   void _onTeamTapped(BuildContext context, TournamentTeam team) {
     ref.read(teamsControllerProvider.notifier).selectTeam(team.id);
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const TeamRosterDetailScreen()));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => TeamDetailScreen(teamId: team.id),
+        settings: RouteSettings(name: '/teams/${team.id}'),
+      ),
+    );
   }
 
   void _openCreateTeamDialog(BuildContext context) {

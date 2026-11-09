@@ -15,6 +15,7 @@ import 'package:vifutbol/presentation/panel/panel_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/venues_tab_view.dart';
 import 'package:vifutbol/presentation/teams/coach_lineup_tracking_screen.dart';
+import 'package:vifutbol/presentation/teams/team_detail_screen.dart';
 import 'package:vifutbol/presentation/teams/team_roster_detail_screen.dart';
 import 'package:vifutbol/presentation/tournaments/tournament_form_screen.dart';
 import 'package:vifutbol/presentation/venues/venue_form_screen.dart';
@@ -89,6 +90,13 @@ class AppRouter {
     final teamsHandler = Handler(
       handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
         return const TeamsDirectoryScreen();
+      },
+    );
+
+    final teamDetailHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        final id = params['id']?.first ?? '';
+        return TeamDetailScreen(teamId: id);
       },
     );
 
@@ -210,6 +218,11 @@ class AppRouter {
     router.define(
       '/teams',
       handler: teamsHandler,
+      transitionType: TransitionType.native,
+    );
+    router.define(
+      '/teams/:id',
+      handler: teamDetailHandler,
       transitionType: TransitionType.native,
     );
     router.define(

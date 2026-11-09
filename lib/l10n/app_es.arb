@@ -3134,5 +3134,105 @@
   "competitionInfoNotFoundDescription": "No se pudo cargar la información reglamentaria del campeonato solicitado.",
   "@competitionInfoNotFoundDescription": {
     "description": "Descripción cuando la competición no existe en el catálogo"
+  },
+  "teamDetailTabInfo": "Información",
+  "@teamDetailTabInfo": {
+    "description": "Pestaña de Información en el detalle de equipo"
+  },
+  "teamDetailTabMatches": "Partidos",
+  "@teamDetailTabMatches": {
+    "description": "Pestaña de Partidos en el detalle de equipo"
+  },
+  "teamDetailTabSquad": "Plantilla",
+  "@teamDetailTabSquad": {
+    "description": "Pestaña de Plantilla en el detalle de equipo"
+  },
+  "teamDetailNotFoundTitle": "Equipo no encontrado",
+  "@teamDetailNotFoundTitle": {
+    "description": "Título de estado de equipo no encontrado"
+  },
+  "teamDetailNotFoundMessage": "No se encontró la información del equipo solicitado en el catálogo local.",
+  "@teamDetailNotFoundMessage": {
+    "description": "Mensaje de estado de equipo no encontrado"
+  },
+  "teamDetailClubProfileTitle": "Ficha del Club",
+  "@teamDetailClubProfileTitle": {
+    "description": "Título de la tarjeta de ficha institucional del club"
+  },
+  "teamDetailOfficialNameLabel": "Nombre oficial",
+  "@teamDetailOfficialNameLabel": {
+    "description": "Etiqueta del nombre oficial del club"
+  },
+  "teamDetailShortCodeLabel": "Código oficial",
+  "@teamDetailShortCodeLabel": {
+    "description": "Etiqueta del código corto de 3 letras"
+  },
+  "teamDetailCompetitionLabel": "Competición",
+  "@teamDetailCompetitionLabel": {
+    "description": "Etiqueta de la competición a la que pertenece el club"
+  },
+  "teamDetailClubColorsLabel": "Colores distintivos",
+  "@teamDetailClubColorsLabel": {
+    "description": "Etiqueta para la sección de colores distintivos"
+  },
+  "teamDetailPrimaryColorLabel": "Primario",
+  "@teamDetailPrimaryColorLabel": {
+    "description": "Etiqueta del color primario"
+  },
+  "teamDetailSecondaryColorLabel": "Secundario",
+  "@teamDetailSecondaryColorLabel": {
+    "description": "Etiqueta del color secundario"
+  },
+  "teamDetailLastMatchTitle": "Último Partido",
+  "@teamDetailLastMatchTitle": {
+    "description": "Título de la tarjeta de último partido jugado"
+  },
+  "teamDetailLastMatchEmpty": "Sin partidos previos disputados",
+  "@teamDetailLastMatchEmpty": {
+    "description": "Mensaje cuando el equipo no registra partidos finalizados previos"
+  },
+  "teamDetailNextMatchTitle": "Próximo Partido",
+  "@teamDetailNextMatchTitle": {
+    "description": "Título de la tarjeta de próximo partido en agenda"
+  },
+  "teamDetailNextMatchEmpty": "Sin próximos partidos agendados",
+  "@teamDetailNextMatchEmpty": {
+    "description": "Mensaje cuando el equipo no tiene próximos partidos agendados"
+  },
+  "teamDetailOpponentLabel": "Rival",
+  "@teamDetailOpponentLabel": {
+    "description": "Etiqueta de rival en tarjeta de partido"
+  },
+  "teamDetailVenueLabel": "Sede / Cancha",
+  "@teamDetailVenueLabel": {
+    "description": "Etiqueta de sede o cancha en tarjeta de partido"
+  },
+  "teamDetailDateLabel": "Fecha y hora",
+  "@teamDetailDateLabel": {
+    "description": "Etiqueta de fecha y hora en tarjeta de partido"
+  },
+  "teamDetailHomeConditionBadge": "Local",
+  "@teamDetailHomeConditionBadge": {
+    "description": "Distintivo de condición de local para el equipo"
+  },
+  "teamDetailAwayConditionBadge": "Visitante",
+  "@teamDetailAwayConditionBadge": {
+    "description": "Distintivo de condición de visitante para el equipo"
+  },
+  "teamDetailMatchesTabPlaceholderTitle": "Calendario del Equipo",
+  "@teamDetailMatchesTabPlaceholderTitle": {
+    "description": "Título informativo para la pestaña de partidos en preparación"
+  },
+  "teamDetailMatchesTabPlaceholderMessage": "El historial completo y calendario de próximos partidos del equipo estará disponible en esta sección.",
+  "@teamDetailMatchesTabPlaceholderMessage": {
+    "description": "Mensaje informativo para la pestaña de partidos en preparación"
+  },
+  "teamDetailSquadTabPlaceholderTitle": "Plantilla Oficial",
+  "@teamDetailSquadTabPlaceholderTitle": {
+    "description": "Título informativo para la pestaña de plantilla en preparación"
+  },
+  "teamDetailSquadTabPlaceholderMessage": "La nómina completa de jugadores con sus dorsales y posiciones tácticas estará disponible en esta sección.",
+  "@teamDetailSquadTabPlaceholderMessage": {
+    "description": "Mensaje informativo para la pestaña de plantilla en preparación"
   }
 }

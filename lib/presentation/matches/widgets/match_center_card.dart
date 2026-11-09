@@ -8,6 +8,7 @@ import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
+import 'package:vifutbol/presentation/teams/team_detail_screen.dart';
 import 'package:vifutbol/presentation/teams/widgets/kick_pulse_team_crest.dart';
 
 /// Tarjeta de partido con disposición simétrica estilo Match Center (Stitch).
@@ -16,6 +17,7 @@ class MatchCenterCard extends StatelessWidget {
   final TournamentTeam? homeTeam;
   final TournamentTeam? awayTeam;
   final VoidCallback? onTap;
+  final bool enableTeamNavigation;
 
   const MatchCenterCard({
     super.key,
@@ -23,7 +25,21 @@ class MatchCenterCard extends StatelessWidget {
     this.homeTeam,
     this.awayTeam,
     this.onTap,
+    this.enableTeamNavigation = true,
   });
+
+  void _navigateToTeam(BuildContext context, String teamId) {
+    if (!enableTeamNavigation) return;
+    final currentRouteName = ModalRoute.of(context)?.settings.name;
+    if (currentRouteName == '/teams/$teamId') return;
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => TeamDetailScreen(teamId: teamId),
+        settings: RouteSettings(name: '/teams/$teamId'),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,38 +70,49 @@ class MatchCenterCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                // Columna 1: Equipo Local (Flex, alineado a la derecha)
+                // Columna 1: Equipo Local (Flex, alineado a la derecha con zona táctil independiente)
                 Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          homeName,
-                          style: KickPulseTypography.bodyPrimary.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: KickPulseColors.textPrimary,
+                  child: InkWell(
+                    key: Key('match_card_home_team_${match.id}'),
+                    borderRadius: BorderRadius.circular(8.0),
+                    onTap: () => _navigateToTeam(context, match.homeTeamId),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 4.0,
+                        horizontal: 2.0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              homeName,
+                              style: KickPulseTypography.bodyPrimary.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: KickPulseColors.textPrimary,
+                              ),
+                              textAlign: TextAlign.end,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                          textAlign: TextAlign.end,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                          const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
+                          KickPulseTeamCrest(
+                            shortCode:
+                                homeTeam?.shortCode ??
+                                (homeName.length >= 3
+                                    ? homeName.substring(0, 3)
+                                    : homeName),
+                            crestShape:
+                                homeTeam?.crestShape ?? TeamCrestShape.shield,
+                            primaryColorHex:
+                                homeTeam?.primaryColorHex ?? 0xFF00E676,
+                            secondaryColorHex:
+                                homeTeam?.secondaryColorHex ?? 0xFF0A0E17,
+                            size: 32,
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
-                      KickPulseTeamCrest(
-                        shortCode:
-                            homeTeam?.shortCode ??
-                            (homeName.length >= 3
-                                ? homeName.substring(0, 3)
-                                : homeName),
-                        crestShape:
-                            homeTeam?.crestShape ?? TeamCrestShape.shield,
-                        primaryColorHex:
-                            homeTeam?.primaryColorHex ?? 0xFF00E676,
-                        secondaryColorHex:
-                            homeTeam?.secondaryColorHex ?? 0xFF0A0E17,
-                        size: 32,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
 
@@ -115,38 +142,49 @@ class MatchCenterCard extends StatelessWidget {
 
                 const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
 
-                // Columna 3: Equipo Visitante (Flex, alineado a la izquierda)
+                // Columna 3: Equipo Visitante (Flex, alineado a la izquierda con zona táctil independiente)
                 Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      KickPulseTeamCrest(
-                        shortCode:
-                            awayTeam?.shortCode ??
-                            (awayName.length >= 3
-                                ? awayName.substring(0, 3)
-                                : awayName),
-                        crestShape:
-                            awayTeam?.crestShape ?? TeamCrestShape.shield,
-                        primaryColorHex:
-                            awayTeam?.primaryColorHex ?? 0xFF38BDF8,
-                        secondaryColorHex:
-                            awayTeam?.secondaryColorHex ?? 0xFF0A0E17,
-                        size: 32,
+                  child: InkWell(
+                    key: Key('match_card_away_team_${match.id}'),
+                    borderRadius: BorderRadius.circular(8.0),
+                    onTap: () => _navigateToTeam(context, match.awayTeamId),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 4.0,
+                        horizontal: 2.0,
                       ),
-                      const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
-                      Flexible(
-                        child: Text(
-                          awayName,
-                          style: KickPulseTypography.bodyPrimary.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: KickPulseColors.textPrimary,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          KickPulseTeamCrest(
+                            shortCode:
+                                awayTeam?.shortCode ??
+                                (awayName.length >= 3
+                                    ? awayName.substring(0, 3)
+                                    : awayName),
+                            crestShape:
+                                awayTeam?.crestShape ?? TeamCrestShape.shield,
+                            primaryColorHex:
+                                awayTeam?.primaryColorHex ?? 0xFF38BDF8,
+                            secondaryColorHex:
+                                awayTeam?.secondaryColorHex ?? 0xFF0A0E17,
+                            size: 32,
                           ),
-                          textAlign: TextAlign.start,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                          const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
+                          Flexible(
+                            child: Text(
+                              awayName,
+                              style: KickPulseTypography.bodyPrimary.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: KickPulseColors.textPrimary,
+                              ),
+                              textAlign: TextAlign.start,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ],

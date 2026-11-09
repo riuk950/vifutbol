@@ -4263,6 +4263,156 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No se pudo cargar la información reglamentaria del campeonato solicitado.'**
   String get competitionInfoNotFoundDescription;
+
+  /// Pestaña de Información en el detalle de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Información'**
+  String get teamDetailTabInfo;
+
+  /// Pestaña de Partidos en el detalle de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Partidos'**
+  String get teamDetailTabMatches;
+
+  /// Pestaña de Plantilla en el detalle de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Plantilla'**
+  String get teamDetailTabSquad;
+
+  /// Título de estado de equipo no encontrado
+  ///
+  /// In es, this message translates to:
+  /// **'Equipo no encontrado'**
+  String get teamDetailNotFoundTitle;
+
+  /// Mensaje de estado de equipo no encontrado
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontró la información del equipo solicitado en el catálogo local.'**
+  String get teamDetailNotFoundMessage;
+
+  /// Título de la tarjeta de ficha institucional del club
+  ///
+  /// In es, this message translates to:
+  /// **'Ficha del Club'**
+  String get teamDetailClubProfileTitle;
+
+  /// Etiqueta del nombre oficial del club
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre oficial'**
+  String get teamDetailOfficialNameLabel;
+
+  /// Etiqueta del código corto de 3 letras
+  ///
+  /// In es, this message translates to:
+  /// **'Código oficial'**
+  String get teamDetailShortCodeLabel;
+
+  /// Etiqueta de la competición a la que pertenece el club
+  ///
+  /// In es, this message translates to:
+  /// **'Competición'**
+  String get teamDetailCompetitionLabel;
+
+  /// Etiqueta para la sección de colores distintivos
+  ///
+  /// In es, this message translates to:
+  /// **'Colores distintivos'**
+  String get teamDetailClubColorsLabel;
+
+  /// Etiqueta del color primario
+  ///
+  /// In es, this message translates to:
+  /// **'Primario'**
+  String get teamDetailPrimaryColorLabel;
+
+  /// Etiqueta del color secundario
+  ///
+  /// In es, this message translates to:
+  /// **'Secundario'**
+  String get teamDetailSecondaryColorLabel;
+
+  /// Título de la tarjeta de último partido jugado
+  ///
+  /// In es, this message translates to:
+  /// **'Último Partido'**
+  String get teamDetailLastMatchTitle;
+
+  /// Mensaje cuando el equipo no registra partidos finalizados previos
+  ///
+  /// In es, this message translates to:
+  /// **'Sin partidos previos disputados'**
+  String get teamDetailLastMatchEmpty;
+
+  /// Título de la tarjeta de próximo partido en agenda
+  ///
+  /// In es, this message translates to:
+  /// **'Próximo Partido'**
+  String get teamDetailNextMatchTitle;
+
+  /// Mensaje cuando el equipo no tiene próximos partidos agendados
+  ///
+  /// In es, this message translates to:
+  /// **'Sin próximos partidos agendados'**
+  String get teamDetailNextMatchEmpty;
+
+  /// Etiqueta de rival en tarjeta de partido
+  ///
+  /// In es, this message translates to:
+  /// **'Rival'**
+  String get teamDetailOpponentLabel;
+
+  /// Etiqueta de sede o cancha en tarjeta de partido
+  ///
+  /// In es, this message translates to:
+  /// **'Sede / Cancha'**
+  String get teamDetailVenueLabel;
+
+  /// Etiqueta de fecha y hora en tarjeta de partido
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha y hora'**
+  String get teamDetailDateLabel;
+
+  /// Distintivo de condición de local para el equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Local'**
+  String get teamDetailHomeConditionBadge;
+
+  /// Distintivo de condición de visitante para el equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Visitante'**
+  String get teamDetailAwayConditionBadge;
+
+  /// Título informativo para la pestaña de partidos en preparación
+  ///
+  /// In es, this message translates to:
+  /// **'Calendario del Equipo'**
+  String get teamDetailMatchesTabPlaceholderTitle;
+
+  /// Mensaje informativo para la pestaña de partidos en preparación
+  ///
+  /// In es, this message translates to:
+  /// **'El historial completo y calendario de próximos partidos del equipo estará disponible en esta sección.'**
+  String get teamDetailMatchesTabPlaceholderMessage;
+
+  /// Título informativo para la pestaña de plantilla en preparación
+  ///
+  /// In es, this message translates to:
+  /// **'Plantilla Oficial'**
+  String get teamDetailSquadTabPlaceholderTitle;
+
+  /// Mensaje informativo para la pestaña de plantilla en preparación
+  ///
+  /// In es, this message translates to:
+  /// **'La nómina completa de jugadores con sus dorsales y posiciones tácticas estará disponible en esta sección.'**
+  String get teamDetailSquadTabPlaceholderMessage;
 }
 
 class _AppLocalizationsDelegate

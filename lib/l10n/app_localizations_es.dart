@@ -2429,4 +2429,82 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get competitionInfoNotFoundDescription =>
       'No se pudo cargar la información reglamentaria del campeonato solicitado.';
+
+  @override
+  String get teamDetailTabInfo => 'Información';
+
+  @override
+  String get teamDetailTabMatches => 'Partidos';
+
+  @override
+  String get teamDetailTabSquad => 'Plantilla';
+
+  @override
+  String get teamDetailNotFoundTitle => 'Equipo no encontrado';
+
+  @override
+  String get teamDetailNotFoundMessage =>
+      'No se encontró la información del equipo solicitado en el catálogo local.';
+
+  @override
+  String get teamDetailClubProfileTitle => 'Ficha del Club';
+
+  @override
+  String get teamDetailOfficialNameLabel => 'Nombre oficial';
+
+  @override
+  String get teamDetailShortCodeLabel => 'Código oficial';
+
+  @override
+  String get teamDetailCompetitionLabel => 'Competición';
+
+  @override
+  String get teamDetailClubColorsLabel => 'Colores distintivos';
+
+  @override
+  String get teamDetailPrimaryColorLabel => 'Primario';
+
+  @override
+  String get teamDetailSecondaryColorLabel => 'Secundario';
+
+  @override
+  String get teamDetailLastMatchTitle => 'Último Partido';
+
+  @override
+  String get teamDetailLastMatchEmpty => 'Sin partidos previos disputados';
+
+  @override
+  String get teamDetailNextMatchTitle => 'Próximo Partido';
+
+  @override
+  String get teamDetailNextMatchEmpty => 'Sin próximos partidos agendados';
+
+  @override
+  String get teamDetailOpponentLabel => 'Rival';
+
+  @override
+  String get teamDetailVenueLabel => 'Sede / Cancha';
+
+  @override
+  String get teamDetailDateLabel => 'Fecha y hora';
+
+  @override
+  String get teamDetailHomeConditionBadge => 'Local';
+
+  @override
+  String get teamDetailAwayConditionBadge => 'Visitante';
+
+  @override
+  String get teamDetailMatchesTabPlaceholderTitle => 'Calendario del Equipo';
+
+  @override
+  String get teamDetailMatchesTabPlaceholderMessage =>
+      'El historial completo y calendario de próximos partidos del equipo estará disponible en esta sección.';
+
+  @override
+  String get teamDetailSquadTabPlaceholderTitle => 'Plantilla Oficial';
+
+  @override
+  String get teamDetailSquadTabPlaceholderMessage =>
+      'La nómina completa de jugadores con sus dorsales y posiciones tácticas estará disponible en esta sección.';
 }

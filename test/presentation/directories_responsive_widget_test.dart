@@ -29,6 +29,7 @@ import 'package:vifutbol/presentation/directories/teams_directory_screen.dart';
 import 'package:vifutbol/presentation/panel/panel_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
 import 'package:vifutbol/presentation/shell/widgets/app_navigation_drawer.dart';
+import 'package:vifutbol/presentation/teams/team_detail_screen.dart';
 import 'package:vifutbol/presentation/tournaments/competition_detail_screen.dart';
 
 class FakeLocalStorageRepository implements LocalStorageRepository {
@@ -399,6 +400,53 @@ void main() {
         );
         expect(
           find.byKey(const Key('competition_tournament_rules_card')),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'TeamDetailScreen renders without RenderFlex overflow at 320x640 with 130% text scaling',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        await tester.pumpWidget(
+          createResponsiveApp(
+            child: const TeamDetailScreen(teamId: 'team-1'),
+            tournaments: [tournament],
+            teams: [team],
+            role: UserRole.organizer,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(find.byKey(const Key('team_detail_screen')), findsOneWidget);
+        expect(find.byKey(const Key('team_detail_tab_bar')), findsOneWidget);
+        expect(find.byKey(const Key('team_club_profile_card')), findsOneWidget);
+        expect(find.byKey(const Key('team_last_match_card')), findsOneWidget);
+        expect(find.byKey(const Key('team_next_match_card')), findsOneWidget);
+
+        // Switch to "Partidos" tab
+        await tester.tap(find.byKey(const Key('team_detail_tab_matches')));
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(
+          find.byKey(const Key('team_matches_tab_placeholder')),
+          findsOneWidget,
+        );
+
+        // Switch to "Plantilla" tab
+        await tester.tap(find.byKey(const Key('team_detail_tab_squad')));
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(
+          find.byKey(const Key('team_squad_tab_placeholder')),
           findsOneWidget,
         );
       },
