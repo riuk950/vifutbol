@@ -2589,4 +2589,64 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get teamSquadEmptyPositionMessage =>
       'Sin jugadores registrados en esta posición';
+
+  @override
+  String get organizerActionPublishNews => 'Publicar Noticia';
+
+  @override
+  String get organizerNoEditableTournamentsForNews =>
+      'No hay competiciones activas disponibles para publicar comunicados';
+
+  @override
+  String get newsTournamentField => 'Competición';
+
+  @override
+  String get newsFilterMenuTooltip => 'Filtrar noticias';
+
+  @override
+  String get newsFilterSheetTitle => 'Filtrar Noticias';
+
+  @override
+  String get newsFilterTournamentSectionTitle => 'Competición';
+
+  @override
+  String get newsFilterCategorySectionTitle => 'Categoría de Comunicado';
+
+  @override
+  String get newsFilterResetButton => 'Restablecer';
+
+  @override
+  String get newsActiveFilterClearSemantics => 'Quitar filtro de categoría';
+
+  @override
+  String get newsFeedEmptyCategoryFilter =>
+      'No hay comunicados publicados en esta categoría para el torneo seleccionado.';
+
+  @override
+  String get competitionFabMenuTooltip => 'Acciones de competición';
+
+  @override
+  String get competitionFabGenerateFixtureLabel => 'Generar Fixture';
+
+  @override
+  String get selectTournamentForFixtureTitle => 'Generar Fixture';
+
+  @override
+  String get selectTournamentForFixtureSubtitle =>
+      'Selecciona la competición activa para sortear sus jornadas y partidos.';
+
+  @override
+  String selectTournamentEligibleTeamsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count equipos habilitados',
+      one: '1 equipo habilitado',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get organizerNoEditableTournamentsForFixture =>
+      'No hay competiciones activas disponibles para generar fixture';
 }

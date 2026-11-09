@@ -174,4 +174,55 @@ void main() {
     expect(find.text('Copa Ciudad 2026'), findsOneWidget);
     expect(find.byKey(const Key('tournament_group_t-1')), findsOneWidget);
   });
+
+  testWidgets(
+    'does not render organizer_pending_matches_banner or fixture buttons even for organizer with pending alerts (US1)',
+    (tester) async {
+      final alertState = DailyMatchesFeedState(
+        dateState: DailyMatchesDateState.today(),
+        tournamentGroups: const [],
+        pendingScheduleMatchesCount: 5,
+        unseededTournamentsCount: 2,
+        isLoading: false,
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            environmentConfigProvider.overrideWithValue(
+              EnvironmentConfig.development(),
+            ),
+            localStorageRepositoryProvider.overrideWithValue(
+              _FakeLocalStorageRepository(),
+            ),
+            connectivityRepositoryProvider.overrideWithValue(
+              _FakeConnectivityRepository(),
+            ),
+            activeUserRoleProvider.overrideWith((ref) => UserRole.organizer),
+            dailyMatchesFeedControllerProvider.overrideWith(
+              (ref) => _FakeDailyMatchesFeedController(ref, alertState),
+            ),
+          ],
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: Locale('es'),
+            home: MatchdayTabView(),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const Key('organizer_pending_matches_banner')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('organizer_generate_fixture_button')),
+        findsNothing,
+      );
+      expect(find.byKey(const Key('generate_fixture_button')), findsNothing);
+    },
+  );
 }

@@ -3,10 +3,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vifutbol/application/controllers/matches_catalog_controller.dart';
+import 'package:vifutbol/application/controllers/teams_controller.dart';
 import 'package:vifutbol/application/controllers/tournaments_controller.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
+import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
@@ -15,6 +17,8 @@ import 'package:vifutbol/domain/entities/connectivity_status.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/matches_catalog_state.dart';
+import 'package:vifutbol/domain/entities/team_enums.dart';
+import 'package:vifutbol/domain/entities/teams_catalog_state.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/entities/tournaments_catalog_state.dart';
@@ -24,9 +28,12 @@ import 'package:vifutbol/domain/repositories/connectivity_repository.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_theme.dart';
+import 'package:vifutbol/presentation/matches/dialogs/generate_fixture_confirmation_dialog.dart';
 import 'package:vifutbol/presentation/matches/widgets/schedule_match_dialog.dart';
+import 'package:vifutbol/presentation/news/widgets/create_news_dialog.dart';
 import 'package:vifutbol/presentation/panel/panel_screen.dart';
 import 'package:vifutbol/presentation/panel/widgets/organizer_panel_content.dart';
+import 'package:vifutbol/presentation/panel/widgets/select_tournament_for_fixture_sheet.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/tournament_backup_sheet.dart';
 
 class _FakeLocalStorageRepository implements LocalStorageRepository {
@@ -67,6 +74,15 @@ class FakeTournamentsController extends StateNotifier<TournamentsCatalogState>
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
+class FakeTeamsController extends StateNotifier<TeamsCatalogState>
+    implements TeamsController {
+  FakeTeamsController({List<TournamentTeam> teams = const []})
+    : super(TeamsCatalogState(teams: teams));
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 class FakeMatchesCatalogController extends StateNotifier<MatchesCatalogState>
     implements MatchesCatalogController {
   FakeMatchesCatalogController({List<ChampionshipMatch> matches = const []})
@@ -78,6 +94,20 @@ class FakeMatchesCatalogController extends StateNotifier<MatchesCatalogState>
     required List<TournamentTeam> teams,
     required UserRole userRole,
   }) async {
+    state = state.copyWith(
+      matches: [
+        ...state.matches,
+        ChampionshipMatch(
+          id: 'gen-match-1',
+          tournamentId: tournament.id,
+          roundNumber: 1,
+          roundName: 'Jornada 1',
+          homeTeamId: 'team-1',
+          awayTeamId: 'team-2',
+          status: MatchStatus.pendingSchedule,
+        ),
+      ],
+    );
     return true;
   }
 
@@ -88,6 +118,7 @@ class FakeMatchesCatalogController extends StateNotifier<MatchesCatalogState>
 Widget createOrganizerPanelApp({
   List<ChampionshipTournament>? tournaments,
   List<ChampionshipMatch>? matches,
+  List<TournamentTeam>? teams,
 }) {
   final tourList =
       tournaments ??
@@ -129,6 +160,25 @@ Widget createOrganizerPanelApp({
         ),
       ];
 
+  final teamList =
+      teams ??
+      [
+        TournamentTeam(
+          id: 'team-a',
+          name: 'Equipo Alfa',
+          shortCode: 'ALF',
+          tournamentId: 't-active-1',
+          eligibilityStatus: TeamEligibilityStatus.eligible,
+        ),
+        TournamentTeam(
+          id: 'team-b',
+          name: 'Equipo Beta',
+          shortCode: 'BET',
+          tournamentId: 't-active-1',
+          eligibilityStatus: TeamEligibilityStatus.eligible,
+        ),
+      ];
+
   return ProviderScope(
     overrides: [
       environmentConfigProvider.overrideWithValue(
@@ -144,6 +194,9 @@ Widget createOrganizerPanelApp({
       tournamentsControllerProvider.overrideWith(
         (ref) => FakeTournamentsController(tournaments: tourList),
       ),
+      teamsControllerProvider.overrideWith(
+        (ref) => FakeTeamsController(teams: teamList),
+      ),
       matchesCatalogControllerProvider.overrideWith(
         (ref) => FakeMatchesCatalogController(matches: matchList),
       ),
@@ -157,6 +210,18 @@ Widget createOrganizerPanelApp({
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [Locale('es')],
+      onGenerateRoute: (settings) {
+        if (settings.name != null &&
+            settings.name!.startsWith('/competitions/')) {
+          return MaterialPageRoute(
+            settings: settings,
+            builder: (_) => Scaffold(
+              body: Text('Competition Detail Screen: ${settings.name}'),
+            ),
+          );
+        }
+        return null;
+      },
       home: const PanelScreen(),
     ),
   );
@@ -201,6 +266,10 @@ void main() {
         find.byKey(const Key('organizer_action_schedule_matches')),
         findsOneWidget,
       );
+      expect(
+        find.byKey(const Key('organizer_action_publish_news')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('organizer_action_backup')), findsOneWidget);
     });
 
@@ -234,7 +303,7 @@ void main() {
     });
 
     testWidgets(
-      'Generate fixture action triggers generation and shows snackbar',
+      'Generate fixture action opens SelectTournamentForFixtureSheet, selects tournament, confirms, shows success snackbar and navigates to competition detail',
       (tester) async {
         await tester.pumpWidget(createOrganizerPanelApp());
         await tester.pumpAndSettle();
@@ -243,11 +312,223 @@ void main() {
         await tester.tap(
           find.byKey(const Key('organizer_action_generate_fixture')),
         );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        // Verify SelectTournamentForFixtureSheet is opened
+        expect(find.byType(SelectTournamentForFixtureSheet), findsOneWidget);
+        expect(
+          find.byKey(const Key('select_tournament_fixture_item_t-active-1')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('select_tournament_fixture_item_t-unseeded-2')),
+          findsOneWidget,
+        );
+
+        // Tap tournament item
+        await tester.tap(
+          find.byKey(const Key('select_tournament_fixture_item_t-active-1')),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        // Confirmation dialog is shown
+        expect(find.byType(GenerateFixtureConfirmationDialog), findsOneWidget);
+
+        // Tap confirm
+        await tester.tap(
+          find.byKey(const Key('confirm_generate_fixture_button')),
+        );
         await tester.pumpAndSettle();
 
-        // Verify feedback snackbar is displayed
+        // Verify success snackbar
         expect(
-          find.textContaining('Generar Fixture: Copa Regional 2026'),
+          find.textContaining('Fixture generado exitosamente'),
+          findsOneWidget,
+        );
+
+        // Verify automatic navigation to /competitions/:id
+        expect(
+          find.text('Competition Detail Screen: /competitions/t-active-1'),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'Generate fixture action displays info snackbar when no editable tournaments exist and does not open sheet',
+      (tester) async {
+        final finishedTournaments = [
+          ChampionshipTournament(
+            id: 't-finished-1',
+            name: 'Torneo Cerrado 2025',
+            category: 'Libre',
+            format: TournamentFormat.league,
+            status: TournamentStatus.finished,
+            startDate: DateTime(2025, 1, 1),
+            endDate: DateTime(2025, 5, 30),
+            updatedAt: DateTime(2025, 5, 30),
+          ),
+        ];
+
+        await tester.pumpWidget(
+          createOrganizerPanelApp(tournaments: finishedTournaments),
+        );
+        await tester.pumpAndSettle();
+
+        // Tap "Generar Fixture"
+        await tester.tap(
+          find.byKey(const Key('organizer_action_generate_fixture')),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        // Verify sheet does not open and info snackbar is shown
+        expect(find.byType(SelectTournamentForFixtureSheet), findsNothing);
+        expect(
+          find.text(
+            'No hay competiciones activas disponibles para generar fixture',
+          ),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'SelectTournamentForFixtureSheet renders without RenderFlex overflow on compact screen (320x640 at 130% text scale)',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        await tester.pumpWidget(
+          MediaQuery(
+            data: const MediaQueryData(
+              size: Size(320, 640),
+              textScaler: TextScaler.linear(1.3),
+            ),
+            child: createOrganizerPanelApp(),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Tap "Generar Fixture"
+        await tester.tap(
+          find.byKey(const Key('organizer_action_generate_fixture')),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        // Verify modal bottom sheet is displayed cleanly with zero overflow
+        expect(find.byType(SelectTournamentForFixtureSheet), findsOneWidget);
+        expect(
+          find.byKey(const Key('select_tournament_fixture_item_t-active-1')),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'Publish news action opens CreateNewsDialog with editable tournaments and publishes announcement',
+      (tester) async {
+        final tournaments = [
+          ChampionshipTournament(
+            id: 't-active-1',
+            name: 'Torneo Apertura 2026',
+            category: 'Libre A',
+            format: TournamentFormat.league,
+            status: TournamentStatus.inProgress,
+            startDate: DateTime(2026, 3, 1),
+            endDate: DateTime(2026, 6, 30),
+            updatedAt: DateTime(2026, 3, 1),
+          ),
+          ChampionshipTournament(
+            id: 't-finished-3',
+            name: 'Torneo Histórico Clausura',
+            category: 'Veteranos',
+            format: TournamentFormat.league,
+            status: TournamentStatus.finished,
+            startDate: DateTime(2025, 3, 1),
+            endDate: DateTime(2025, 6, 30),
+            updatedAt: DateTime(2025, 3, 1),
+          ),
+        ];
+
+        await tester.pumpWidget(
+          createOrganizerPanelApp(tournaments: tournaments),
+        );
+        await tester.pumpAndSettle();
+
+        // Tap "Publicar Noticia"
+        await tester.tap(
+          find.byKey(const Key('organizer_action_publish_news')),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        // Verify CreateNewsDialog opened with tournament dropdown
+        expect(find.byType(CreateNewsDialog), findsOneWidget);
+        expect(
+          find.byKey(const Key('create_news_tournament_dropdown')),
+          findsOneWidget,
+        );
+
+        // Fill form fields
+        await tester.enterText(
+          find.byKey(const Key('create_news_title_field')),
+          'Comunicado Urgente',
+        );
+        await tester.enterText(
+          find.byKey(const Key('create_news_body_field')),
+          'Se suspenden los partidos por clima.',
+        );
+
+        // Submit form
+        await tester.tap(find.byKey(const Key('create_news_submit_button')));
+        await tester.pumpAndSettle();
+
+        // Verify success snackbar
+        expect(find.text('Comunicado publicado con éxito'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Publish news action shows snackbar when no editable tournaments exist',
+      (tester) async {
+        final finishedTournaments = [
+          ChampionshipTournament(
+            id: 't-finished-1',
+            name: 'Torneo Cerrado 2025',
+            category: 'Libre',
+            format: TournamentFormat.league,
+            status: TournamentStatus.finished,
+            startDate: DateTime(2025, 1, 1),
+            endDate: DateTime(2025, 5, 30),
+            updatedAt: DateTime(2025, 5, 30),
+          ),
+        ];
+
+        await tester.pumpWidget(
+          createOrganizerPanelApp(tournaments: finishedTournaments),
+        );
+        await tester.pumpAndSettle();
+
+        // Tap "Publicar Noticia"
+        await tester.tap(
+          find.byKey(const Key('organizer_action_publish_news')),
+        );
+        await tester.pumpAndSettle();
+
+        // Verify info snackbar is shown and dialog is not opened
+        expect(find.byType(CreateNewsDialog), findsNothing);
+        expect(
+          find.text(
+            'No hay competiciones activas disponibles para publicar comunicados',
+          ),
           findsOneWidget,
         );
       },

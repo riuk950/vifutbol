@@ -160,7 +160,7 @@ void main() {
     });
 
     testWidgets(
-      'Scenario 1: Organizer triggers fixture generation and navigates rounds',
+      'Scenario 1: MatchdayTabView does not render fixture generation button for Organizer (HU 15.2)',
       (tester) async {
         await tester.binding.setSurfaceSize(const Size(430, 932));
         addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -223,30 +223,16 @@ void main() {
 
         await tester.pumpAndSettle();
 
-        // 1. Verify "Generar Fixture" button is present for Organizer
-        final generateBtn = find.byKey(const Key('generate_fixture_button'));
-        expect(generateBtn, findsOneWidget);
-
-        // 2. Tap "Generar Fixture"
-        await tester.tap(generateBtn);
-        await tester.pumpAndSettle();
-
-        // 3. Confirm in confirmation dialog
-        final confirmBtn = find.byKey(
-          const Key('confirm_generate_fixture_button'),
-        );
-        expect(confirmBtn, findsOneWidget);
-        await tester.tap(confirmBtn);
-        await tester.pumpAndSettle();
-
-        // 4. Verify round chips list is present and matches are displayed
+        // Verify "Generar Fixture" button and banner are NOT present for Organizer in MatchdayTabView
+        expect(find.byKey(const Key('generate_fixture_button')), findsNothing);
         expect(
-          find.byKey(const Key('matchday_round_chips_list')),
-          findsOneWidget,
+          find.byKey(const Key('organizer_generate_fixture_button')),
+          findsNothing,
         );
-        expect(find.text('Atlético Norte FC'), findsAtLeastNWidgets(1));
-        expect(find.text('Real Sabana Club'), findsAtLeastNWidgets(1));
-        expect(find.text('Pendiente de Programación'), findsAtLeastNWidgets(1));
+        expect(
+          find.byKey(const Key('organizer_pending_matches_banner')),
+          findsNothing,
+        );
       },
     );
 
@@ -526,15 +512,20 @@ void main() {
 
         await tester.pumpAndSettle();
 
-        // Verify segment button is completely removed
+        // Verify DailyMatchesTabBar is present and segment button was removed
+        expect(find.byKey(const Key('daily_matches_tab_bar')), findsOneWidget);
         expect(
           find.byKey(const Key('matchday_segmented_button')),
           findsNothing,
         );
 
-        // Verify Fan does NOT see "Por programar (N)"
+        // Verify Fan does NOT see "Por programar (N)" or organizer banner
         expect(
           find.byKey(const Key('unscheduled_matches_section')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('organizer_pending_matches_banner')),
           findsNothing,
         );
 
@@ -571,18 +562,15 @@ void main() {
 
         await tester.pumpAndSettle();
 
-        // Verify Organizer sees "Por programar (2)"
+        // In HU 15.2, MatchdayTabView has no organizer banner or fixture buttons
         expect(
-          find.byKey(const Key('unscheduled_matches_section')),
-          findsOneWidget,
+          find.byKey(const Key('organizer_pending_matches_banner')),
+          findsNothing,
         );
-        expect(find.text('Por programar (2)'), findsOneWidget);
+        expect(find.byKey(const Key('generate_fixture_button')), findsNothing);
 
-        // Verify calendar date chips strip exists
-        expect(
-          find.byKey(const Key('matchday_date_chips_list')),
-          findsOneWidget,
-        );
+        // Verify daily matches tab bar exists for temporal navigation
+        expect(find.byKey(const Key('daily_matches_tab_bar')), findsOneWidget);
       },
     );
   });

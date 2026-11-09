@@ -160,6 +160,11 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
         tournament.id,
       );
 
+      final otherTournamentMatches = state.matches
+          .where((m) => m.tournamentId != tournament.id)
+          .toList();
+      final allMatches = [...otherTournamentMatches, ...updatedMatches];
+
       int selectedRound = 1;
       if (updatedMatches.isNotEmpty) {
         final available =
@@ -168,7 +173,7 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
       }
 
       state = state.copyWith(
-        matches: updatedMatches,
+        matches: allMatches,
         selectedRound: selectedRound,
         isSaving: false,
       );

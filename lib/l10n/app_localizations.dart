@@ -4569,6 +4569,102 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Sin jugadores registrados en esta posición'**
   String get teamSquadEmptyPositionMessage;
+
+  /// Botón de acción rápida en el panel del organizador para publicar comunicados
+  ///
+  /// In es, this message translates to:
+  /// **'Publicar Noticia'**
+  String get organizerActionPublishNews;
+
+  /// Mensaje informativo cuando no existen torneos editables para publicar noticias
+  ///
+  /// In es, this message translates to:
+  /// **'No hay competiciones activas disponibles para publicar comunicados'**
+  String get organizerNoEditableTournamentsForNews;
+
+  /// Etiqueta para el selector desplegable de torneo en el diálogo de noticias
+  ///
+  /// In es, this message translates to:
+  /// **'Competición'**
+  String get newsTournamentField;
+
+  /// Tooltip del botón de tres puntos en el AppBar de la sección de noticias
+  ///
+  /// In es, this message translates to:
+  /// **'Filtrar noticias'**
+  String get newsFilterMenuTooltip;
+
+  /// Título de la hoja modal inferior para configuración de filtros de noticias
+  ///
+  /// In es, this message translates to:
+  /// **'Filtrar Noticias'**
+  String get newsFilterSheetTitle;
+
+  /// Título de la sección de torneos en la hoja modal de filtros
+  ///
+  /// In es, this message translates to:
+  /// **'Competición'**
+  String get newsFilterTournamentSectionTitle;
+
+  /// Título de la sección de categorías en la hoja modal de filtros
+  ///
+  /// In es, this message translates to:
+  /// **'Categoría de Comunicado'**
+  String get newsFilterCategorySectionTitle;
+
+  /// Botón para restablecer los filtros de noticias a su estado predeterminado
+  ///
+  /// In es, this message translates to:
+  /// **'Restablecer'**
+  String get newsFilterResetButton;
+
+  /// Etiqueta semántica y tooltip para limpiar el chip de filtro activo
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar filtro de categoría'**
+  String get newsActiveFilterClearSemantics;
+
+  /// Mensaje de estado vacío cuando el filtro de categoría no arroja noticias
+  ///
+  /// In es, this message translates to:
+  /// **'No hay comunicados publicados en esta categoría para el torneo seleccionado.'**
+  String get newsFeedEmptyCategoryFilter;
+
+  /// Tooltip para el botón flotante de acciones en el detalle de competición
+  ///
+  /// In es, this message translates to:
+  /// **'Acciones de competición'**
+  String get competitionFabMenuTooltip;
+
+  /// Etiqueta del botón flotante para generar fixture de la competición
+  ///
+  /// In es, this message translates to:
+  /// **'Generar Fixture'**
+  String get competitionFabGenerateFixtureLabel;
+
+  /// Título de la hoja modal para seleccionar torneo a generar fixture
+  ///
+  /// In es, this message translates to:
+  /// **'Generar Fixture'**
+  String get selectTournamentForFixtureTitle;
+
+  /// Subtítulo explicativo en el selector de torneo para fixture
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona la competición activa para sortear sus jornadas y partidos.'**
+  String get selectTournamentForFixtureSubtitle;
+
+  /// Cantidad de equipos elegibles en el torneo para generación de fixture
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 equipo habilitado} other{{count} equipos habilitados}}'**
+  String selectTournamentEligibleTeamsCount(int count);
+
+  /// Aviso cuando no hay torneos en estado editable para generar fixture
+  ///
+  /// In es, this message translates to:
+  /// **'No hay competiciones activas disponibles para generar fixture'**
+  String get organizerNoEditableTournamentsForFixture;
 }
 
 class _AppLocalizationsDelegate

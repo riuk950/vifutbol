@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
+import 'package:vifutbol/application/providers/tournament_news_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
@@ -13,7 +14,10 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dar
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_button.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
+import 'package:vifutbol/presentation/matches/dialogs/generate_fixture_confirmation_dialog.dart';
 import 'package:vifutbol/presentation/matches/widgets/schedule_match_dialog.dart';
+import 'package:vifutbol/presentation/news/widgets/create_news_dialog.dart';
+import 'package:vifutbol/presentation/panel/widgets/select_tournament_for_fixture_sheet.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/tournament_backup_sheet.dart';
 
 /// Dynamic panel content for [UserRole.organizer].
@@ -31,49 +35,76 @@ class _OrganizerPanelContentState extends ConsumerState<OrganizerPanelContent> {
   Future<void> _onGenerateFixture(
     BuildContext context,
     List<ChampionshipTournament> tournaments,
-    List<ChampionshipMatch> matches,
     AppLocalizations l10n,
   ) async {
     if (_isGeneratingFixture) return;
+
+    final editableTournaments = tournaments
+        .where(
+          (t) =>
+              t.status == TournamentStatus.openRegistration ||
+              t.status == TournamentStatus.inProgress,
+        )
+        .toList();
+
+    if (editableTournaments.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.organizerNoEditableTournamentsForFixture),
+          backgroundColor: KickPulseColors.surfaceElevated,
+        ),
+      );
+      return;
+    }
+
+    final selectedTournament = await SelectTournamentForFixtureSheet.show(
+      context: context,
+      tournaments: editableTournaments,
+    );
+
+    if (selectedTournament == null || !context.mounted) return;
+
+    final confirmed = await GenerateFixtureConfirmationDialog.show(context);
+    if (confirmed != true || !context.mounted) return;
+
     setState(() => _isGeneratingFixture = true);
 
     try {
-      final unseeded = tournaments.cast<ChampionshipTournament?>().firstWhere(
-        (t) =>
-            t != null &&
-            (t.status == TournamentStatus.openRegistration ||
-                t.status == TournamentStatus.inProgress) &&
-            !matches.any((m) => m.tournamentId == t.id),
-        orElse: () => null,
-      );
-
-      if (unseeded != null) {
-        final teams = ref.read(teamsControllerProvider).teams;
-        final userRole = ref.read(activeUserRoleProvider);
-        await ref
-            .read(matchesCatalogControllerProvider.notifier)
-            .generateFixture(
-              tournament: unseeded,
-              teams: teams,
-              userRole: userRole,
-            );
-
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${l10n.organizerActionGenerateFixture}: ${unseeded.name}',
-              ),
-              backgroundColor: KickPulseColors.accentPrimary,
-            ),
+      final teams = ref.read(teamsControllerProvider).teams;
+      final userRole = ref.read(activeUserRoleProvider);
+      final success = await ref
+          .read(matchesCatalogControllerProvider.notifier)
+          .generateFixture(
+            tournament: selectedTournament,
+            teams: teams,
+            userRole: userRole,
           );
-        }
-      } else {
-        if (context.mounted) {
+
+      if (success && context.mounted) {
+        final matches = ref
+            .read(matchesCatalogControllerProvider)
+            .matches
+            .where((m) => m.tournamentId == selectedTournament.id)
+            .toList();
+        ref.read(dailyMatchesFeedControllerProvider.notifier).refresh();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.matchdayFixtureGeneratedSuccess(matches.length)),
+            backgroundColor: KickPulseColors.accentPrimary,
+          ),
+        );
+
+        Navigator.of(
+          context,
+        ).pushNamed('/competitions/${selectedTournament.id}');
+      } else if (!success && context.mounted) {
+        final catalogState = ref.read(matchesCatalogControllerProvider);
+        if (catalogState.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${l10n.organizerMetricUnseededTournaments}: 0'),
-              backgroundColor: KickPulseColors.surfaceElevated,
+              content: Text(catalogState.errorMessage!),
+              backgroundColor: KickPulseColors.accentWarning,
             ),
           );
         }
@@ -177,6 +208,54 @@ class _OrganizerPanelContentState extends ConsumerState<OrganizerPanelContent> {
     );
   }
 
+  Future<void> _onPublishNews(
+    BuildContext context,
+    List<ChampionshipTournament> tournaments,
+    AppLocalizations l10n,
+  ) async {
+    final editableTournaments = tournaments
+        .where((t) => t.status != TournamentStatus.finished)
+        .toList();
+
+    if (editableTournaments.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.organizerNoEditableTournamentsForNews),
+          backgroundColor: KickPulseColors.surfaceElevated,
+        ),
+      );
+      return;
+    }
+
+    final initialTournamentId =
+        ref.read(tournamentsControllerProvider).selectedTournamentId ??
+        editableTournaments.first.id;
+
+    final newItem = await CreateNewsDialog.show(
+      context: context,
+      tournamentId: initialTournamentId,
+      authorUserId: 'organizer-current',
+      authorName: 'Organizador Oficial',
+      availableTournaments: editableTournaments,
+    );
+
+    if (newItem != null && context.mounted) {
+      final userRole = ref.read(activeUserRoleProvider);
+      final success = await ref
+          .read(tournamentNewsControllerProvider.notifier)
+          .publishNews(item: newItem, userRole: userRole);
+
+      if (success && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.newsPublishedSuccess),
+            backgroundColor: KickPulseColors.accentPrimary,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -265,12 +344,7 @@ class _OrganizerPanelContentState extends ConsumerState<OrganizerPanelContent> {
                   variant: KickPulseButtonVariant.primary,
                   isLoading: _isGeneratingFixture,
                   onPressed: () async {
-                    await _onGenerateFixture(
-                      context,
-                      tournaments,
-                      matches,
-                      l10n,
-                    );
+                    await _onGenerateFixture(context, tournaments, l10n);
                   },
                 ),
                 const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
@@ -281,6 +355,16 @@ class _OrganizerPanelContentState extends ConsumerState<OrganizerPanelContent> {
                   variant: KickPulseButtonVariant.secondary,
                   onPressed: () async {
                     _onScheduleMatches(context, tournaments, matches, l10n);
+                  },
+                ),
+                const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+                KickPulseButton(
+                  key: const Key('organizer_action_publish_news'),
+                  label: l10n.organizerActionPublishNews,
+                  icon: const Icon(Icons.campaign_outlined, size: 20),
+                  variant: KickPulseButtonVariant.secondary,
+                  onPressed: () async {
+                    await _onPublishNews(context, tournaments, l10n);
                   },
                 ),
                 const SizedBox(height: KickPulseRadiiSpacing.spaceSm),

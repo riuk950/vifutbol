@@ -166,6 +166,43 @@ void main() {
       );
     });
 
+    test(
+      'isolates teams by tournamentId and ignores teams from other tournaments',
+      () async {
+        final mixedTeams = [
+          ...testTeams,
+          TournamentTeam(
+            id: 'team-other-1',
+            tournamentId: 'other-tournament-id',
+            name: 'Equipo Foráneo 1',
+            shortCode: 'EF1',
+            eligibilityStatus: TeamEligibilityStatus.eligible,
+          ),
+          TournamentTeam(
+            id: 'team-other-2',
+            tournamentId: 'other-tournament-id',
+            name: 'Equipo Foráneo 2',
+            shortCode: 'EF2',
+            eligibilityStatus: TeamEligibilityStatus.eligible,
+          ),
+        ];
+
+        final matches = await useCase.generateRoundRobinFixture(
+          tournament: testTournament,
+          teams: mixedTeams,
+          userRole: UserRole.organizer,
+        );
+
+        // testTeams has 4 teams -> 4*3/2 = 6 matches
+        expect(matches.length, 6);
+        for (final m in matches) {
+          expect(m.tournamentId, testTournament.id);
+          expect(m.homeTeamId, isNot(contains('team-other')));
+          expect(m.awayTeamId, isNot(contains('team-other')));
+        }
+      },
+    );
+
     test('fails if fewer than 2 teams are eligible', () async {
       final ineligibleTeams = [
         testTeams.first,

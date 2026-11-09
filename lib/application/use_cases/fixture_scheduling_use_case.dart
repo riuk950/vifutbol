@@ -43,8 +43,10 @@ class FixtureSchedulingUseCase {
       );
     }
 
-    // 3. Filter eligible teams
-    final eligibleTeams = teams.where((t) => t.isEligible).toList();
+    // 3. Filter eligible teams strictly belonging to this tournament
+    final eligibleTeams = teams
+        .where((t) => t.tournamentId == tournament.id && t.isEligible)
+        .toList();
     if (eligibleTeams.length < 2) {
       throw const FixtureScheduleValidationFailure(
         FixtureScheduleErrorCode.insufficientTeams,
@@ -86,8 +88,11 @@ class FixtureSchedulingUseCase {
       );
     }
 
-    // 6. Persist matches
-    await matchesRepository.saveMatchesBatch(generatedMatches);
+    // 6. Replace and persist matches specifically for this tournament
+    await matchesRepository.replaceMatchesForTournament(
+      tournament.id,
+      generatedMatches,
+    );
     return generatedMatches;
   }
 

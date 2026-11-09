@@ -3338,5 +3338,74 @@
   "teamSquadEmptyPositionMessage": "Sin jugadores registrados en esta posición",
   "@teamSquadEmptyPositionMessage": {
     "description": "Mensaje contextual cuando no hay jugadores en una posición táctica específica"
+  },
+  "organizerActionPublishNews": "Publicar Noticia",
+  "@organizerActionPublishNews": {
+    "description": "Botón de acción rápida en el panel del organizador para publicar comunicados"
+  },
+  "organizerNoEditableTournamentsForNews": "No hay competiciones activas disponibles para publicar comunicados",
+  "@organizerNoEditableTournamentsForNews": {
+    "description": "Mensaje informativo cuando no existen torneos editables para publicar noticias"
+  },
+  "newsTournamentField": "Competición",
+  "@newsTournamentField": {
+    "description": "Etiqueta para el selector desplegable de torneo en el diálogo de noticias"
+  },
+  "newsFilterMenuTooltip": "Filtrar noticias",
+  "@newsFilterMenuTooltip": {
+    "description": "Tooltip del botón de tres puntos en el AppBar de la sección de noticias"
+  },
+  "newsFilterSheetTitle": "Filtrar Noticias",
+  "@newsFilterSheetTitle": {
+    "description": "Título de la hoja modal inferior para configuración de filtros de noticias"
+  },
+  "newsFilterTournamentSectionTitle": "Competición",
+  "@newsFilterTournamentSectionTitle": {
+    "description": "Título de la sección de torneos en la hoja modal de filtros"
+  },
+  "newsFilterCategorySectionTitle": "Categoría de Comunicado",
+  "@newsFilterCategorySectionTitle": {
+    "description": "Título de la sección de categorías en la hoja modal de filtros"
+  },
+  "newsFilterResetButton": "Restablecer",
+  "@newsFilterResetButton": {
+    "description": "Botón para restablecer los filtros de noticias a su estado predeterminado"
+  },
+  "newsActiveFilterClearSemantics": "Quitar filtro de categoría",
+  "@newsActiveFilterClearSemantics": {
+    "description": "Etiqueta semántica y tooltip para limpiar el chip de filtro activo"
+  },
+  "newsFeedEmptyCategoryFilter": "No hay comunicados publicados en esta categoría para el torneo seleccionado.",
+  "@newsFeedEmptyCategoryFilter": {
+    "description": "Mensaje de estado vacío cuando el filtro de categoría no arroja noticias"
+  },
+  "competitionFabMenuTooltip": "Acciones de competición",
+  "@competitionFabMenuTooltip": {
+    "description": "Tooltip para el botón flotante de acciones en el detalle de competición"
+  },
+  "competitionFabGenerateFixtureLabel": "Generar Fixture",
+  "@competitionFabGenerateFixtureLabel": {
+    "description": "Etiqueta del botón flotante para generar fixture de la competición"
+  },
+  "selectTournamentForFixtureTitle": "Generar Fixture",
+  "@selectTournamentForFixtureTitle": {
+    "description": "Título de la hoja modal para seleccionar torneo a generar fixture"
+  },
+  "selectTournamentForFixtureSubtitle": "Selecciona la competición activa para sortear sus jornadas y partidos.",
+  "@selectTournamentForFixtureSubtitle": {
+    "description": "Subtítulo explicativo en el selector de torneo para fixture"
+  },
+  "selectTournamentEligibleTeamsCount": "{count, plural, =1{1 equipo habilitado} other{{count} equipos habilitados}}",
+  "@selectTournamentEligibleTeamsCount": {
+    "description": "Cantidad de equipos elegibles en el torneo para generación de fixture",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "organizerNoEditableTournamentsForFixture": "No hay competiciones activas disponibles para generar fixture",
+  "@organizerNoEditableTournamentsForFixture": {
+    "description": "Aviso cuando no hay torneos en estado editable para generar fixture"
   }
 }
