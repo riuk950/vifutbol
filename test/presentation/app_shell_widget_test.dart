@@ -271,5 +271,63 @@ void main() {
         expect(pressCount, 1);
       },
     );
+
+    testWidgets(
+      'app_bar_news_filter_action is visible only on Noticias tab and opens NewsFilterBottomSheet',
+      (tester) async {
+        await tester.pumpWidget(createTestApp());
+        await tester.pumpAndSettle();
+
+        // Initially on Partidos: news filter action must NOT be present
+        expect(
+          find.byKey(const Key('app_bar_news_filter_action')),
+          findsNothing,
+        );
+
+        // Switch to Noticias tab
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Noticias'),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Now on Noticias: news filter action must be present
+        expect(
+          find.byKey(const Key('app_bar_news_filter_action')),
+          findsOneWidget,
+        );
+
+        // Tap the news filter action to open bottom sheet
+        await tester.tap(find.byKey(const Key('app_bar_news_filter_action')));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('news_filter_bottom_sheet')),
+          findsOneWidget,
+        );
+
+        // Close bottom sheet
+        await tester.tap(find.byKey(const Key('news_filter_close_button')));
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(const Key('news_filter_bottom_sheet')), findsNothing);
+
+        // Switch to Perfil tab: news filter action must disappear
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Perfil'),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('app_bar_news_filter_action')),
+          findsNothing,
+        );
+      },
+    );
   });
 }

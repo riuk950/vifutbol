@@ -9,6 +9,7 @@ import 'package:vifutbol/presentation/alerts/widgets/fan_alerts_bell_action.dart
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
+import 'package:vifutbol/presentation/news/widgets/news_filter_bottom_sheet.dart';
 import 'package:vifutbol/presentation/shell/tabs/matchday_tab_view.dart';
 import 'package:vifutbol/presentation/shell/tabs/news_tab_view.dart';
 import 'package:vifutbol/presentation/shell/tabs/profile_tab_view.dart';
@@ -140,6 +141,13 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
               icon: const Icon(Icons.calendar_month_outlined),
               tooltip: l10n.calendarPickerTooltip,
               onPressed: () => _onPickCalendarDate(context),
+            ),
+          if (shellState.activeSection == AppShellSection.news)
+            IconButton(
+              key: const Key('app_bar_news_filter_action'),
+              icon: const Icon(Icons.more_vert),
+              tooltip: l10n.newsFilterMenuTooltip,
+              onPressed: () => NewsFilterBottomSheet.show(context),
             ),
           const FanAlertsBellAction(userId: 'user-active-current'),
         ],

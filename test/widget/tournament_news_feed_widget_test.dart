@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vifutbol/application/controllers/tournament_news_controller.dart';
 import 'package:vifutbol/application/controllers/tournaments_controller.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
+import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/application/providers/tournament_news_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/application/use_cases/manage_tournament_news_use_cases.dart';
@@ -18,10 +19,13 @@ import 'package:vifutbol/domain/entities/tournament_news_item.dart';
 import 'package:vifutbol/domain/entities/tournament_rules_config.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
+import 'package:vifutbol/domain/repositories/tournaments_repository.dart';
 import 'package:vifutbol/infrastructure/repositories/local_tournament_news_repository.dart';
 import 'package:vifutbol/infrastructure/repositories/local_tournaments_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
+import 'package:vifutbol/presentation/design_system/kick_pulse_theme.dart';
 import 'package:vifutbol/presentation/news/tournament_news_feed_view.dart';
+import 'package:vifutbol/presentation/news/widgets/news_filter_bottom_sheet.dart';
 import 'package:vifutbol/presentation/news/widgets/tournament_news_card.dart';
 import 'package:vifutbol/presentation/shell/tabs/news_tab_view.dart';
 
@@ -47,8 +51,28 @@ class _MockNewsStorage implements LocalStorageRepository {
   bool get isUsingFallbackMemory => true;
 }
 
+List<Override> _createTestOverrides({
+  required LocalStorageRepository storage,
+  required EnvironmentConfig config,
+  required UserRole role,
+  required TournamentsRepository tournamentsRepo,
+  required TournamentsController tournamentsController,
+  required LocalTournamentNewsRepository newsRepo,
+  required TournamentNewsController newsController,
+}) {
+  return [
+    localStorageRepositoryProvider.overrideWithValue(storage),
+    environmentConfigProvider.overrideWithValue(config),
+    activeUserRoleProvider.overrideWith((ref) => role),
+    tournamentsRepositoryProvider.overrideWithValue(tournamentsRepo),
+    tournamentsControllerProvider.overrideWith((ref) => tournamentsController),
+    tournamentNewsRepositoryProvider.overrideWithValue(newsRepo),
+    tournamentNewsControllerProvider.overrideWith((ref) => newsController),
+  ];
+}
+
 void main() {
-  testWidgets('News feed renders items, category filters, and adapts by role', (
+  testWidgets('News feed renders items and adapts by role (US1)', (
     tester,
   ) async {
     final storage = _MockNewsStorage();
@@ -56,6 +80,15 @@ void main() {
     final repo = LocalTournamentNewsRepository(
       storage: storage,
       config: config,
+    );
+    final tournamentsRepo = LocalTournamentsRepository(
+      storage: storage,
+      config: config,
+    );
+    final tournamentsUseCase = ManageTournamentsUseCase(tournamentsRepo);
+    final tournamentsController = TournamentsController(
+      tournamentsRepository: tournamentsRepo,
+      manageTournamentsUseCase: tournamentsUseCase,
     );
 
     final item1 = TournamentNewsItem(
@@ -85,21 +118,24 @@ void main() {
 
     final publishUseCase = PublishTournamentNewsUseCase(newsRepository: repo);
     final deleteUseCase = DeleteTournamentNewsUseCase(newsRepository: repo);
+    final newsController = TournamentNewsController(
+      newsRepository: repo,
+      publishUseCase: publishUseCase,
+      deleteUseCase: deleteUseCase,
+    );
 
-    // 1. Test as Fan: no create button, no delete button
+    // Test as Fan: no create button, no delete button
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          activeUserRoleProvider.overrideWith((ref) => UserRole.fan),
-          tournamentNewsRepositoryProvider.overrideWithValue(repo),
-          tournamentNewsControllerProvider.overrideWith(
-            (ref) => TournamentNewsController(
-              newsRepository: repo,
-              publishUseCase: publishUseCase,
-              deleteUseCase: deleteUseCase,
-            ),
-          ),
-        ],
+        overrides: _createTestOverrides(
+          storage: storage,
+          config: config,
+          role: UserRole.fan,
+          tournamentsRepo: tournamentsRepo,
+          tournamentsController: tournamentsController,
+          newsRepo: repo,
+          newsController: newsController,
+        ),
         child: const MaterialApp(
           localizationsDelegates: [
             AppLocalizations.delegate,
@@ -129,10 +165,8 @@ void main() {
     expect(find.byKey(const Key('create_news_button')), findsNothing);
     expect(find.byIcon(Icons.delete_outline), findsNothing);
 
-    // Filter by Disciplinary
-    await tester.tap(
-      find.widgetWithText(ChoiceChip, 'Boletines Disciplinarios'),
-    );
+    // Filter by Disciplinary programmatically via controller
+    newsController.setCategoryFilter(TournamentNewsCategory.disciplinary);
     await tester.pumpAndSettle();
 
     expect(find.byType(TournamentNewsCard), findsOneWidget);
@@ -140,71 +174,85 @@ void main() {
     expect(find.text('Aviso de Reprogramación Cancha 1'), findsNothing);
   });
 
-  testWidgets('News feed shows create button and delete option for organizer', (
-    tester,
-  ) async {
-    final storage = _MockNewsStorage();
-    final config = EnvironmentConfig.production();
-    final repo = LocalTournamentNewsRepository(
-      storage: storage,
-      config: config,
-    );
+  testWidgets(
+    'News feed hides create button even for organizer but preserves delete option (US1)',
+    (tester) async {
+      final storage = _MockNewsStorage();
+      final config = EnvironmentConfig.production();
+      final repo = LocalTournamentNewsRepository(
+        storage: storage,
+        config: config,
+      );
+      final tournamentsRepo = LocalTournamentsRepository(
+        storage: storage,
+        config: config,
+      );
+      final tournamentsUseCase = ManageTournamentsUseCase(tournamentsRepo);
+      final tournamentsController = TournamentsController(
+        tournamentsRepository: tournamentsRepo,
+        manageTournamentsUseCase: tournamentsUseCase,
+      );
 
-    final item = TournamentNewsItem(
-      id: 'news-3',
-      tournamentId: 'tourn-news-2',
-      title: 'Aviso General para Delegados',
-      body: 'Reunión informativa el próximo viernes a las 19:00.',
-      category: TournamentNewsCategory.general,
-      publishedAt: DateTime(2026, 11, 5, 8, 0),
-      authorUserId: 'org-1',
-      authorName: 'Organizador Oficial',
-    );
-    await repo.saveNewsItem(item);
+      final item = TournamentNewsItem(
+        id: 'news-3',
+        tournamentId: 'tourn-news-2',
+        title: 'Aviso General para Delegados',
+        body: 'Reunión informativa el próximo viernes a las 19:00.',
+        category: TournamentNewsCategory.general,
+        publishedAt: DateTime(2026, 11, 5, 8, 0),
+        authorUserId: 'org-1',
+        authorName: 'Organizador Oficial',
+      );
+      await repo.saveNewsItem(item);
 
-    final publishUseCase = PublishTournamentNewsUseCase(newsRepository: repo);
-    final deleteUseCase = DeleteTournamentNewsUseCase(newsRepository: repo);
+      final publishUseCase = PublishTournamentNewsUseCase(newsRepository: repo);
+      final deleteUseCase = DeleteTournamentNewsUseCase(newsRepository: repo);
+      final newsController = TournamentNewsController(
+        newsRepository: repo,
+        publishUseCase: publishUseCase,
+        deleteUseCase: deleteUseCase,
+      );
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          activeUserRoleProvider.overrideWith((ref) => UserRole.organizer),
-          tournamentNewsRepositoryProvider.overrideWithValue(repo),
-          tournamentNewsControllerProvider.overrideWith(
-            (ref) => TournamentNewsController(
-              newsRepository: repo,
-              publishUseCase: publishUseCase,
-              deleteUseCase: deleteUseCase,
-            ),
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: _createTestOverrides(
+            storage: storage,
+            config: config,
+            role: UserRole.organizer,
+            tournamentsRepo: tournamentsRepo,
+            tournamentsController: tournamentsController,
+            newsRepo: repo,
+            newsController: newsController,
           ),
-        ],
-        child: const MaterialApp(
-          localizationsDelegates: [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale('es'),
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: TournamentNewsFeedView(tournamentId: 'tourn-news-2'),
+          child: const MaterialApp(
+            localizationsDelegates: [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: Locale('es'),
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: TournamentNewsFeedView(tournamentId: 'tourn-news-2'),
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
 
-    await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
 
-    // Verify create button and delete icon are visible for Organizer
-    expect(find.byKey(const Key('create_news_button')), findsOneWidget);
-    expect(find.byIcon(Icons.delete_outline), findsOneWidget);
-  });
+      // Verify create_news_button is completely absent in feed
+      expect(find.byKey(const Key('create_news_button')), findsNothing);
+      // Organizer can still delete existing announcement
+      expect(find.byIcon(Icons.delete_outline), findsOneWidget);
+    },
+  );
 
   testWidgets(
-    'NewsTabView renders header, synchronized tournament selector, and feed',
+    'NewsTabView renders header, active tournament subtitle, and cleans up horizontal selector (US3)',
     (tester) async {
       final storage = _MockNewsStorage();
       final config = EnvironmentConfig.production();
@@ -264,17 +312,230 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            activeUserRoleProvider.overrideWith((ref) => UserRole.organizer),
-            tournamentsRepositoryProvider.overrideWithValue(tournamentsRepo),
-            tournamentsControllerProvider.overrideWith(
-              (ref) => tournamentsController,
-            ),
-            tournamentNewsRepositoryProvider.overrideWithValue(newsRepo),
-            tournamentNewsControllerProvider.overrideWith(
-              (ref) => newsController,
-            ),
-          ],
+          overrides: _createTestOverrides(
+            storage: storage,
+            config: config,
+            role: UserRole.organizer,
+            tournamentsRepo: tournamentsRepo,
+            tournamentsController: tournamentsController,
+            newsRepo: newsRepo,
+            newsController: newsController,
+          ),
+          child: const MaterialApp(
+            localizationsDelegates: [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: Locale('es'),
+            home: Scaffold(body: NewsTabView()),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      await tournamentsController.loadCatalog();
+      tournamentsController.selectTournament('tourn-1');
+      await tester.pump();
+
+      // Verify header is rendered
+      expect(find.byKey(const Key('news_tab_header')), findsOneWidget);
+
+      // Verify horizontal tournament selector was removed
+      expect(find.byKey(const Key('news_tournament_selector')), findsNothing);
+
+      // Verify active tournament subtitle is displayed
+      expect(
+        find.byKey(const Key('news_active_tournament_subtitle')),
+        findsOneWidget,
+      );
+      expect(find.text('Torneo Apertura 2026'), findsWidgets);
+    },
+  );
+
+  testWidgets(
+    'NewsFilterBottomSheet updates tournament and category filters reactively in real time (US2)',
+    (tester) async {
+      final storage = _MockNewsStorage();
+      final config = EnvironmentConfig.production();
+      final newsRepo = LocalTournamentNewsRepository(
+        storage: storage,
+        config: config,
+      );
+      final tournamentsRepo = LocalTournamentsRepository(
+        storage: storage,
+        config: config,
+      );
+
+      final t1 = ChampionshipTournament(
+        id: 't-1',
+        name: 'Liga Premier',
+        category: 'Libre',
+        startDate: DateTime(2026, 1, 1),
+        endDate: DateTime(2026, 6, 1),
+        format: TournamentFormat.league,
+        status: TournamentStatus.inProgress,
+        updatedAt: DateTime.now(),
+      );
+      final t2 = ChampionshipTournament(
+        id: 't-2',
+        name: 'Copa de Oro',
+        category: 'Libre',
+        startDate: DateTime(2026, 2, 1),
+        endDate: DateTime(2026, 7, 1),
+        format: TournamentFormat.knockoutCup,
+        status: TournamentStatus.inProgress,
+        updatedAt: DateTime.now(),
+      );
+
+      await tournamentsRepo.saveTournament(t1);
+      await tournamentsRepo.saveTournament(t2);
+
+      final tournamentsUseCase = ManageTournamentsUseCase(tournamentsRepo);
+      final tournamentsController = TournamentsController(
+        tournamentsRepository: tournamentsRepo,
+        manageTournamentsUseCase: tournamentsUseCase,
+      );
+
+      final publishUseCase = PublishTournamentNewsUseCase(
+        newsRepository: newsRepo,
+      );
+      final deleteUseCase = DeleteTournamentNewsUseCase(
+        newsRepository: newsRepo,
+      );
+      final newsController = TournamentNewsController(
+        newsRepository: newsRepo,
+        publishUseCase: publishUseCase,
+        deleteUseCase: deleteUseCase,
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: _createTestOverrides(
+            storage: storage,
+            config: config,
+            role: UserRole.organizer,
+            tournamentsRepo: tournamentsRepo,
+            tournamentsController: tournamentsController,
+            newsRepo: newsRepo,
+            newsController: newsController,
+          ),
+          child: const MaterialApp(
+            localizationsDelegates: [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: Locale('es'),
+            home: Scaffold(body: NewsFilterBottomSheet()),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      await tournamentsController.loadCatalog();
+      await tester.pump();
+
+      // Verify bottom sheet title and reset button
+      expect(find.byKey(const Key('news_filter_bottom_sheet')), findsOneWidget);
+      expect(find.byKey(const Key('news_filter_reset_button')), findsOneWidget);
+
+      // Verify tournament chips
+      expect(
+        find.byKey(const Key('news_filter_tournament_chip_t-1')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('news_filter_tournament_chip_t-2')),
+        findsOneWidget,
+      );
+
+      // Tap tournament 2
+      await tester.tap(
+        find.byKey(const Key('news_filter_tournament_chip_t-2')),
+      );
+      await tester.pump();
+
+      expect(tournamentsController.state.selectedTournamentId, 't-2');
+
+      // Tap category chip
+      await tester.tap(
+        find.byKey(const Key('news_filter_category_chip_disciplinary')),
+      );
+      await tester.pump();
+
+      expect(
+        newsController.state.categoryFilter,
+        TournamentNewsCategory.disciplinary,
+      );
+
+      // Tap reset button
+      await tester.tap(find.byKey(const Key('news_filter_reset_button')));
+      await tester.pump();
+
+      expect(newsController.state.categoryFilter, isNull);
+    },
+  );
+
+  testWidgets(
+    'news_active_filter_chip displays active category and clears filter on tap (US3)',
+    (tester) async {
+      final storage = _MockNewsStorage();
+      final config = EnvironmentConfig.production();
+      final newsRepo = LocalTournamentNewsRepository(
+        storage: storage,
+        config: config,
+      );
+      final tournamentsRepo = LocalTournamentsRepository(
+        storage: storage,
+        config: config,
+      );
+
+      final t1 = ChampionshipTournament(
+        id: 't-single',
+        name: 'Liga de Prueba',
+        category: 'Libre',
+        startDate: DateTime(2026, 1, 1),
+        endDate: DateTime(2026, 6, 1),
+        format: TournamentFormat.league,
+        status: TournamentStatus.inProgress,
+        updatedAt: DateTime.now(),
+      );
+      await tournamentsRepo.saveTournament(t1);
+
+      final tournamentsUseCase = ManageTournamentsUseCase(tournamentsRepo);
+      final tournamentsController = TournamentsController(
+        tournamentsRepository: tournamentsRepo,
+        manageTournamentsUseCase: tournamentsUseCase,
+      );
+
+      final publishUseCase = PublishTournamentNewsUseCase(
+        newsRepository: newsRepo,
+      );
+      final deleteUseCase = DeleteTournamentNewsUseCase(
+        newsRepository: newsRepo,
+      );
+      final newsController = TournamentNewsController(
+        newsRepository: newsRepo,
+        publishUseCase: publishUseCase,
+        deleteUseCase: deleteUseCase,
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: _createTestOverrides(
+            storage: storage,
+            config: config,
+            role: UserRole.organizer,
+            tournamentsRepo: tournamentsRepo,
+            tournamentsController: tournamentsController,
+            newsRepo: newsRepo,
+            newsController: newsController,
+          ),
           child: const MaterialApp(
             localizationsDelegates: [
               AppLocalizations.delegate,
@@ -293,17 +554,158 @@ void main() {
       await tournamentsController.loadCatalog();
       await tester.pump();
 
-      // Verify header and selector
-      expect(find.byKey(const Key('news_tab_header')), findsOneWidget);
-      expect(find.byKey(const Key('news_tournament_selector')), findsOneWidget);
-      expect(find.text('Torneo Apertura 2026'), findsWidgets);
+      // Initially no active filter chip
+      expect(find.byKey(const Key('news_active_filter_chip')), findsNothing);
 
-      // Switch tournament to finished tournament (t2)
-      await tester.tap(find.byKey(const Key('news_tournament_chip_tourn-2')));
+      // Set category filter to rescheduling
+      newsController.setCategoryFilter(TournamentNewsCategory.rescheduling);
       await tester.pump();
 
-      // Read-only badge should appear for finished tournament
-      expect(find.byKey(const Key('news_readonly_badge')), findsOneWidget);
+      // Active filter chip appears with delete icon
+      expect(find.byKey(const Key('news_active_filter_chip')), findsOneWidget);
+      expect(find.text('Reprogramaciones'), findsOneWidget);
+      expect(
+        find.byKey(const Key('news_active_filter_clear_button')),
+        findsOneWidget,
+      );
+
+      // Tap clear button on chip
+      await tester.tap(
+        find.byKey(const Key('news_active_filter_clear_button')),
+      );
+      await tester.pump();
+
+      // Filter cleared and chip disappears
+      expect(newsController.state.categoryFilter, isNull);
+      expect(find.byKey(const Key('news_active_filter_chip')), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'NewsTabView and NewsFilterBottomSheet render without RenderFlex overflow at 320x640 with 130% text scaling (T012)',
+    (tester) async {
+      tester.view.physicalSize = const Size(320 * 2.0, 640 * 2.0);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final storage = _MockNewsStorage();
+      final config = EnvironmentConfig.production();
+      final newsRepo = LocalTournamentNewsRepository(
+        storage: storage,
+        config: config,
+      );
+      final tournamentsRepo = LocalTournamentsRepository(
+        storage: storage,
+        config: config,
+      );
+
+      final t1 = ChampionshipTournament(
+        id: 'tourn-responsive',
+        name: 'Torneo Apertura 2026 Metropolitano',
+        category: 'Libre Primera A',
+        startDate: DateTime(2026, 1, 1),
+        endDate: DateTime(2026, 6, 1),
+        format: TournamentFormat.league,
+        status: TournamentStatus.inProgress,
+        updatedAt: DateTime.now(),
+      );
+      await tournamentsRepo.saveTournament(t1);
+
+      final tournamentsUseCase = ManageTournamentsUseCase(tournamentsRepo);
+      final tournamentsController = TournamentsController(
+        tournamentsRepository: tournamentsRepo,
+        manageTournamentsUseCase: tournamentsUseCase,
+      );
+
+      final publishUseCase = PublishTournamentNewsUseCase(
+        newsRepository: newsRepo,
+      );
+      final deleteUseCase = DeleteTournamentNewsUseCase(
+        newsRepository: newsRepo,
+      );
+      final newsController = TournamentNewsController(
+        newsRepository: newsRepo,
+        publishUseCase: publishUseCase,
+        deleteUseCase: deleteUseCase,
+      );
+      newsController.setCategoryFilter(TournamentNewsCategory.disciplinary);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: _createTestOverrides(
+            storage: storage,
+            config: config,
+            role: UserRole.organizer,
+            tournamentsRepo: tournamentsRepo,
+            tournamentsController: tournamentsController,
+            newsRepo: newsRepo,
+            newsController: newsController,
+          ),
+          child: MaterialApp(
+            theme: KickPulseTheme.darkTheme,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: const Locale('es'),
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: const TextScaler.linear(1.3)),
+              child: child!,
+            ),
+            home: const Scaffold(body: NewsTabView()),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      await tournamentsController.loadCatalog();
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(const Key('news_active_filter_chip')), findsOneWidget);
+
+      // Also test NewsFilterBottomSheet at 320x640 with 130% text scaling
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: _createTestOverrides(
+            storage: storage,
+            config: config,
+            role: UserRole.organizer,
+            tournamentsRepo: tournamentsRepo,
+            tournamentsController: tournamentsController,
+            newsRepo: newsRepo,
+            newsController: newsController,
+          ),
+          child: MaterialApp(
+            theme: KickPulseTheme.darkTheme,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: const Locale('es'),
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: const TextScaler.linear(1.3)),
+              child: child!,
+            ),
+            home: const Scaffold(body: NewsFilterBottomSheet()),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(const Key('news_filter_bottom_sheet')), findsOneWidget);
     },
   );
 }

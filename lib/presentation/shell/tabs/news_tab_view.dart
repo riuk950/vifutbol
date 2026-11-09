@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vifutbol/application/providers/tournament_news_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
+import 'package:vifutbol/domain/entities/tournament_news_category.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
@@ -20,6 +22,7 @@ class NewsTabView extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final tournamentsState = ref.watch(tournamentsControllerProvider);
     final tournaments = tournamentsState.tournaments;
+    final newsState = ref.watch(tournamentNewsControllerProvider);
 
     ChampionshipTournament? currentTournament;
     for (final t in tournaments) {
@@ -29,6 +32,8 @@ class NewsTabView extends ConsumerWidget {
       }
     }
     currentTournament ??= tournaments.isNotEmpty ? tournaments.first : null;
+
+    final activeCategory = newsState.categoryFilter;
 
     return SingleChildScrollView(
       key: const Key('news_tab_view_scroll'),
@@ -57,52 +62,69 @@ class NewsTabView extends ConsumerWidget {
           ),
           const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
 
-          // Tournament Selector if multiple tournaments exist
-          if (tournaments.length > 1) ...[
-            SingleChildScrollView(
-              key: const Key('news_tournament_selector'),
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: tournaments.map((tournament) {
-                  final isSelected = tournament.id == currentTournament?.id;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: ChoiceChip(
-                      key: Key('news_tournament_chip_${tournament.id}'),
-                      label: Text(
-                        tournament.name,
-                        style: KickPulseTypography.captionMeta.copyWith(
-                          color: isSelected
-                              ? KickPulseColors.surfaceBase
-                              : KickPulseColors.textSecondary,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                        ),
-                      ),
-                      selected: isSelected,
-                      selectedColor: KickPulseColors.accentPrimary,
-                      backgroundColor: KickPulseColors.surfaceElevated,
-                      onSelected: (_) {
-                        ref
-                            .read(tournamentsControllerProvider.notifier)
-                            .selectTournament(tournament.id);
-                      },
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
-          ] else if (currentTournament != null) ...[
+          // Active tournament subtitle (always visible if tournament exists)
+          if (currentTournament != null) ...[
             Text(
               currentTournament.name,
+              key: const Key('news_active_tournament_subtitle'),
               style: KickPulseTypography.cardTitle.copyWith(
                 color: KickPulseColors.accentPrimary,
               ),
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+            const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+          ],
+
+          // Removable active filter chip if a category is filtered
+          if (activeCategory != null) ...[
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                InputChip(
+                  key: const Key('news_active_filter_chip'),
+                  avatar: const Icon(
+                    Icons.filter_list,
+                    size: 16,
+                    color: KickPulseColors.accentPrimary,
+                  ),
+                  label: Text(
+                    switch (activeCategory) {
+                      TournamentNewsCategory.general =>
+                        l10n.newsCategoryGeneral,
+                      TournamentNewsCategory.disciplinary =>
+                        l10n.newsCategoryDisciplinary,
+                      TournamentNewsCategory.rescheduling =>
+                        l10n.newsCategoryRescheduling,
+                    },
+                    style: KickPulseTypography.captionMeta.copyWith(
+                      color: KickPulseColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  deleteIcon: const Icon(
+                    Icons.close,
+                    key: Key('news_active_filter_clear_button'),
+                    size: 16,
+                    color: KickPulseColors.textSecondary,
+                  ),
+                  deleteButtonTooltipMessage:
+                      l10n.newsActiveFilterClearSemantics,
+                  onDeleted: () {
+                    ref
+                        .read(tournamentNewsControllerProvider.notifier)
+                        .setCategoryFilter(null);
+                  },
+                  backgroundColor: KickPulseColors.surfaceElevated,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      KickPulseRadiiSpacing.badgeRadius,
+                    ),
+                    side: const BorderSide(color: KickPulseColors.borderSubtle),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
           ],
 
           if (currentTournament != null) ...[

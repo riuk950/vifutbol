@@ -9,9 +9,7 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
-import 'package:vifutbol/presentation/news/widgets/create_news_dialog.dart';
 import 'package:vifutbol/presentation/news/widgets/tournament_news_card.dart';
-import 'package:vifutbol/presentation/news/widgets/tournament_news_filter_bar.dart';
 
 class TournamentNewsFeedView extends ConsumerStatefulWidget {
   const TournamentNewsFeedView({
@@ -47,31 +45,6 @@ class _TournamentNewsFeedViewState
       ref
           .read(tournamentNewsControllerProvider.notifier)
           .loadNews(widget.tournamentId);
-    }
-  }
-
-  Future<void> _onCreateNews(UserRole role) async {
-    final newItem = await CreateNewsDialog.show(
-      context: context,
-      tournamentId: widget.tournamentId,
-      authorUserId: 'organizer-current',
-      authorName: 'Organizador Oficial',
-    );
-
-    if (newItem != null && mounted) {
-      final success = await ref
-          .read(tournamentNewsControllerProvider.notifier)
-          .publishNews(item: newItem, userRole: role);
-
-      if (success && mounted) {
-        final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.newsPublishedSuccess),
-            backgroundColor: KickPulseColors.accentPrimary,
-          ),
-        );
-      }
     }
   }
 
@@ -177,45 +150,6 @@ class _TournamentNewsFeedViewState
             ),
           ),
         ],
-        // Filter bar & Header
-        Row(
-          children: [
-            Expanded(
-              child: TournamentNewsFilterBar(
-                selectedCategory: newsState.categoryFilter,
-                onCategorySelected: (cat) {
-                  ref
-                      .read(tournamentNewsControllerProvider.notifier)
-                      .setCategoryFilter(cat);
-                },
-              ),
-            ),
-            if (isOrganizer && !isFinished) ...[
-              const SizedBox(width: 8),
-              ElevatedButton.icon(
-                key: const Key('create_news_button'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: KickPulseColors.accentPrimary,
-                  foregroundColor: KickPulseColors.surfaceBase,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: KickPulseRadiiSpacing.spaceSm,
-                    vertical: 8,
-                  ),
-                ),
-                onPressed: () => _onCreateNews(userRole),
-                icon: const Icon(Icons.add, size: 16),
-                label: Text(
-                  l10n.newsCreateButton,
-                  style: KickPulseTypography.captionMeta.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-        const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
-
         // News List
         if (newsState.isLoading) ...[
           const Center(
@@ -225,28 +159,68 @@ class _TournamentNewsFeedViewState
             ),
           ),
         ] else if (filteredNews.isEmpty) ...[
-          KickPulseCard(
-            padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceLg),
-            child: Center(
-              child: Column(
-                children: [
-                  const Icon(
-                    Icons.newspaper_outlined,
-                    size: 48,
-                    color: KickPulseColors.textSecondary,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    l10n.newsFeedEmpty,
-                    textAlign: TextAlign.center,
-                    style: KickPulseTypography.bodyPrimary.copyWith(
+          if (newsState.categoryFilter != null)
+            KickPulseCard(
+              key: const Key('news_feed_empty_filter'),
+              padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceLg),
+              child: Center(
+                child: Column(
+                  children: [
+                    const Icon(
+                      Icons.filter_list_off_outlined,
+                      size: 48,
                       color: KickPulseColors.textSecondary,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    Text(
+                      l10n.newsFeedEmptyCategoryFilter,
+                      textAlign: TextAlign.center,
+                      style: KickPulseTypography.bodyPrimary.copyWith(
+                        color: KickPulseColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+                    TextButton(
+                      onPressed: () {
+                        ref
+                            .read(tournamentNewsControllerProvider.notifier)
+                            .setCategoryFilter(null);
+                      },
+                      child: Text(
+                        l10n.newsFilterResetButton,
+                        style: KickPulseTypography.captionMeta.copyWith(
+                          color: KickPulseColors.accentPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            KickPulseCard(
+              padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceLg),
+              child: Center(
+                child: Column(
+                  children: [
+                    const Icon(
+                      Icons.newspaper_outlined,
+                      size: 48,
+                      color: KickPulseColors.textSecondary,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      l10n.newsFeedEmpty,
+                      textAlign: TextAlign.center,
+                      style: KickPulseTypography.bodyPrimary.copyWith(
+                        color: KickPulseColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
         ] else ...[
           ListView.separated(
             shrinkWrap: true,

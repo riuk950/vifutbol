@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/tournament_news_category.dart';
 import 'package:vifutbol/domain/entities/tournament_news_item.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
@@ -12,17 +13,20 @@ class CreateNewsDialog extends StatefulWidget {
     required this.tournamentId,
     required this.authorUserId,
     required this.authorName,
+    this.availableTournaments,
   });
 
   final String tournamentId;
   final String authorUserId;
   final String authorName;
+  final List<ChampionshipTournament>? availableTournaments;
 
   static Future<TournamentNewsItem?> show({
     required BuildContext context,
     required String tournamentId,
     required String authorUserId,
     required String authorName,
+    List<ChampionshipTournament>? availableTournaments,
   }) {
     return showDialog<TournamentNewsItem>(
       context: context,
@@ -30,6 +34,7 @@ class CreateNewsDialog extends StatefulWidget {
         tournamentId: tournamentId,
         authorUserId: authorUserId,
         authorName: authorName,
+        availableTournaments: availableTournaments,
       ),
     );
   }
@@ -42,8 +47,21 @@ class _CreateNewsDialogState extends State<CreateNewsDialog> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _bodyController = TextEditingController();
+  late String _selectedTournamentId;
   TournamentNewsCategory _category = TournamentNewsCategory.general;
   bool _isPinned = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final available = widget.availableTournaments;
+    if (available != null && available.isNotEmpty) {
+      final exists = available.any((t) => t.id == widget.tournamentId);
+      _selectedTournamentId = exists ? widget.tournamentId : available.first.id;
+    } else {
+      _selectedTournamentId = widget.tournamentId;
+    }
+  }
 
   @override
   void dispose() {
@@ -57,7 +75,7 @@ class _CreateNewsDialogState extends State<CreateNewsDialog> {
 
     final item = TournamentNewsItem(
       id: 'news-${DateTime.now().millisecondsSinceEpoch}',
-      tournamentId: widget.tournamentId,
+      tournamentId: _selectedTournamentId,
       title: _titleController.text.trim(),
       body: _bodyController.text.trim(),
       category: _category,
@@ -73,6 +91,9 @@ class _CreateNewsDialogState extends State<CreateNewsDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final hasTournaments =
+        widget.availableTournaments != null &&
+        widget.availableTournaments!.isNotEmpty;
 
     return AlertDialog(
       backgroundColor: KickPulseColors.surfaceElevated,
@@ -87,6 +108,37 @@ class _CreateNewsDialogState extends State<CreateNewsDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Tournament Selector if availableTournaments provided
+              if (hasTournaments) ...[
+                DropdownButtonFormField<String>(
+                  key: const Key('create_news_tournament_dropdown'),
+                  initialValue: _selectedTournamentId.isNotEmpty
+                      ? _selectedTournamentId
+                      : widget.availableTournaments!.first.id,
+                  decoration: InputDecoration(
+                    labelText: l10n.newsTournamentField,
+                    labelStyle: KickPulseTypography.captionMeta,
+                    border: const OutlineInputBorder(),
+                  ),
+                  items: widget.availableTournaments!.map((t) {
+                    return DropdownMenuItem<String>(
+                      value: t.id,
+                      child: Text(
+                        t.name,
+                        style: KickPulseTypography.bodyPrimary,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (val) {
+                    if (val != null) {
+                      setState(() => _selectedTournamentId = val);
+                    }
+                  },
+                ),
+                const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+              ],
+
               // Title Field
               TextFormField(
                 key: const Key('create_news_title_field'),
@@ -113,6 +165,7 @@ class _CreateNewsDialogState extends State<CreateNewsDialog> {
                 initialValue: _category,
                 decoration: InputDecoration(
                   labelText: l10n.newsCategoryField,
+                  labelStyle: KickPulseTypography.captionMeta,
                   border: const OutlineInputBorder(),
                 ),
                 items: [
