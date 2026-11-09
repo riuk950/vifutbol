@@ -18,6 +18,7 @@ class MatchCenterCard extends StatelessWidget {
   final TournamentTeam? awayTeam;
   final VoidCallback? onTap;
   final bool enableTeamNavigation;
+  final Widget? footer;
 
   const MatchCenterCard({
     super.key,
@@ -26,6 +27,7 @@ class MatchCenterCard extends StatelessWidget {
     this.awayTeam,
     this.onTap,
     this.enableTeamNavigation = true,
+    this.footer,
   });
 
   void _navigateToTeam(BuildContext context, String teamId) {
@@ -68,125 +70,151 @@ class MatchCenterCard extends StatelessWidget {
               ),
               border: Border.all(color: KickPulseColors.borderSubtle),
             ),
-            child: Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Columna 1: Equipo Local (Flex, alineado a la derecha con zona táctil independiente)
-                Expanded(
-                  child: InkWell(
-                    key: Key('match_card_home_team_${match.id}'),
-                    borderRadius: BorderRadius.circular(8.0),
-                    onTap: () => _navigateToTeam(context, match.homeTeamId),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 4.0,
-                        horizontal: 2.0,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              homeName,
-                              style: KickPulseTypography.bodyPrimary.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: KickPulseColors.textPrimary,
+                Row(
+                  children: [
+                    // Columna 1: Equipo Local (Flex, alineado a la derecha con zona táctil independiente)
+                    Expanded(
+                      child: InkWell(
+                        key: Key('match_card_home_team_${match.id}'),
+                        borderRadius: BorderRadius.circular(8.0),
+                        onTap: () => _navigateToTeam(context, match.homeTeamId),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 4.0,
+                            horizontal: 2.0,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  homeName,
+                                  style: KickPulseTypography.bodyPrimary
+                                      .copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: KickPulseColors.textPrimary,
+                                      ),
+                                  textAlign: TextAlign.end,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              textAlign: TextAlign.end,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
-                          KickPulseTeamCrest(
-                            shortCode:
-                                homeTeam?.shortCode ??
-                                (homeName.length >= 3
-                                    ? homeName.substring(0, 3)
-                                    : homeName),
-                            crestShape:
-                                homeTeam?.crestShape ?? TeamCrestShape.shield,
-                            primaryColorHex:
-                                homeTeam?.primaryColorHex ?? 0xFF00E676,
-                            secondaryColorHex:
-                                homeTeam?.secondaryColorHex ?? 0xFF0A0E17,
-                            size: 32,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
-
-                // Columna 2: Bloque Central Hub (Ancho simétrico para marcadores y badges)
-                Container(
-                  width: 94,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 6.0,
-                    horizontal: 4.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: KickPulseColors.surfaceElevated,
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(
-                      color: match.status == MatchStatus.inProgress
-                          ? KickPulseColors.accentLive.withValues(alpha: 0.5)
-                          : KickPulseColors.borderSubtle,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [_buildCenterContent(context, l10n)],
-                  ),
-                ),
-
-                const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
-
-                // Columna 3: Equipo Visitante (Flex, alineado a la izquierda con zona táctil independiente)
-                Expanded(
-                  child: InkWell(
-                    key: Key('match_card_away_team_${match.id}'),
-                    borderRadius: BorderRadius.circular(8.0),
-                    onTap: () => _navigateToTeam(context, match.awayTeamId),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 4.0,
-                        horizontal: 2.0,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          KickPulseTeamCrest(
-                            shortCode:
-                                awayTeam?.shortCode ??
-                                (awayName.length >= 3
-                                    ? awayName.substring(0, 3)
-                                    : awayName),
-                            crestShape:
-                                awayTeam?.crestShape ?? TeamCrestShape.shield,
-                            primaryColorHex:
-                                awayTeam?.primaryColorHex ?? 0xFF38BDF8,
-                            secondaryColorHex:
-                                awayTeam?.secondaryColorHex ?? 0xFF0A0E17,
-                            size: 32,
-                          ),
-                          const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
-                          Flexible(
-                            child: Text(
-                              awayName,
-                              style: KickPulseTypography.bodyPrimary.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: KickPulseColors.textPrimary,
+                              const SizedBox(
+                                width: KickPulseRadiiSpacing.spaceSm,
                               ),
-                              textAlign: TextAlign.start,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                              KickPulseTeamCrest(
+                                shortCode:
+                                    homeTeam?.shortCode ??
+                                    (homeName.length >= 3
+                                        ? homeName.substring(0, 3)
+                                        : homeName),
+                                crestShape:
+                                    homeTeam?.crestShape ??
+                                    TeamCrestShape.shield,
+                                primaryColorHex:
+                                    homeTeam?.primaryColorHex ?? 0xFF00E676,
+                                secondaryColorHex:
+                                    homeTeam?.secondaryColorHex ?? 0xFF0A0E17,
+                                size: 32,
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
+
+                    const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
+
+                    // Columna 2: Bloque Central Hub (Ancho simétrico para marcadores y badges)
+                    Container(
+                      width: 94,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 6.0,
+                        horizontal: 4.0,
+                      ),
+                      decoration: BoxDecoration(
+                        color: KickPulseColors.surfaceElevated,
+                        borderRadius: BorderRadius.circular(8.0),
+                        border: Border.all(
+                          color: match.status == MatchStatus.inProgress
+                              ? KickPulseColors.accentLive.withValues(
+                                  alpha: 0.5,
+                                )
+                              : KickPulseColors.borderSubtle,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [_buildCenterContent(context, l10n)],
+                      ),
+                    ),
+
+                    const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
+
+                    // Columna 3: Equipo Visitante (Flex, alineado a la izquierda con zona táctil independiente)
+                    Expanded(
+                      child: InkWell(
+                        key: Key('match_card_away_team_${match.id}'),
+                        borderRadius: BorderRadius.circular(8.0),
+                        onTap: () => _navigateToTeam(context, match.awayTeamId),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 4.0,
+                            horizontal: 2.0,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              KickPulseTeamCrest(
+                                shortCode:
+                                    awayTeam?.shortCode ??
+                                    (awayName.length >= 3
+                                        ? awayName.substring(0, 3)
+                                        : awayName),
+                                crestShape:
+                                    awayTeam?.crestShape ??
+                                    TeamCrestShape.shield,
+                                primaryColorHex:
+                                    awayTeam?.primaryColorHex ?? 0xFF38BDF8,
+                                secondaryColorHex:
+                                    awayTeam?.secondaryColorHex ?? 0xFF0A0E17,
+                                size: 32,
+                              ),
+                              const SizedBox(
+                                width: KickPulseRadiiSpacing.spaceSm,
+                              ),
+                              Flexible(
+                                child: Text(
+                                  awayName,
+                                  style: KickPulseTypography.bodyPrimary
+                                      .copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: KickPulseColors.textPrimary,
+                                      ),
+                                  textAlign: TextAlign.start,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+                if (footer != null) ...[
+                  const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+                  const Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: KickPulseColors.borderSubtle,
+                  ),
+                  const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
+                  footer!,
+                ],
               ],
             ),
           ),

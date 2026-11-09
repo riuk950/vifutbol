@@ -383,5 +383,157 @@ void main() {
         );
       },
     );
+
+    test('formats pitchName including venue name and persists it', () async {
+      final matches = await useCase.generateRoundRobinFixture(
+        tournament: testTournament,
+        teams: testTeams,
+        userRole: UserRole.organizer,
+      );
+
+      final scheduled = await useCase.scheduleMatch(
+        matchId: matches[0].id,
+        tournament: testTournament,
+        scheduledStartTime: DateTime(2026, 6, 6, 14, 0),
+        venue: testVenue,
+        pitch: testPitch1,
+        referee: testReferee1,
+        userRole: UserRole.organizer,
+      );
+
+      expect(scheduled.pitchName, '${testVenue.name} - ${testPitch1.name}');
+    });
+
+    test('rescheduling an existing match does not collide with itself', () async {
+      final matches = await useCase.generateRoundRobinFixture(
+        tournament: testTournament,
+        teams: testTeams,
+        userRole: UserRole.organizer,
+      );
+
+      // Initial schedule
+      final initial = await useCase.scheduleMatch(
+        matchId: matches[0].id,
+        tournament: testTournament,
+        scheduledStartTime: DateTime(2026, 6, 6, 14, 0),
+        venue: testVenue,
+        pitch: testPitch1,
+        referee: testReferee1,
+        userRole: UserRole.organizer,
+      );
+      expect(initial.status, MatchStatus.scheduled);
+
+      // Reschedule same match at same time and same pitch/referee (e.g. updating venue details)
+      final rescheduled = await useCase.scheduleMatch(
+        matchId: matches[0].id,
+        tournament: testTournament,
+        scheduledStartTime: DateTime(2026, 6, 6, 14, 0),
+        venue: testVenue,
+        pitch: testPitch1,
+        referee: testReferee1,
+        userRole: UserRole.organizer,
+      );
+
+      expect(rescheduled.id, matches[0].id);
+      expect(rescheduled.status, MatchStatus.scheduled);
+    });
+
+    test('detects cross-tournament pitch and referee collisions', () async {
+      // Tournament A
+      final matchesA = await useCase.generateRoundRobinFixture(
+        tournament: testTournament,
+        teams: testTeams,
+        userRole: UserRole.organizer,
+      );
+
+      // Schedule Match A in Tournament A on Pitch 1 with Referee 1
+      await useCase.scheduleMatch(
+        matchId: matchesA[0].id,
+        tournament: testTournament,
+        scheduledStartTime: DateTime(2026, 6, 6, 14, 0),
+        venue: testVenue,
+        pitch: testPitch1,
+        referee: testReferee1,
+        userRole: UserRole.organizer,
+      );
+
+      // Tournament B
+      final tournamentB = ChampionshipTournament(
+        id: 'tourn-cross-2',
+        name: 'Torneo Clausura 2026',
+        category: 'Veteranos',
+        startDate: DateTime(2026, 6, 1),
+        endDate: DateTime(2026, 8, 30),
+        format: TournamentFormat.league,
+        rules: const TournamentRulesConfig(
+          halfDurationMinutes: 45,
+          leagueRounds: 1,
+        ),
+        updatedAt: DateTime(2026, 5, 1),
+      );
+
+      final teamsB = [
+        TournamentTeam(
+          id: 'team-b1',
+          tournamentId: tournamentB.id,
+          name: 'Equipo Delta',
+          shortCode: 'DEL',
+          eligibilityStatus: TeamEligibilityStatus.eligible,
+        ),
+        TournamentTeam(
+          id: 'team-b2',
+          tournamentId: tournamentB.id,
+          name: 'Equipo Epsilon',
+          shortCode: 'EPS',
+          eligibilityStatus: TeamEligibilityStatus.eligible,
+        ),
+      ];
+
+      final matchesB = await useCase.generateRoundRobinFixture(
+        tournament: tournamentB,
+        teams: teamsB,
+        userRole: UserRole.organizer,
+      );
+
+      // Attempt 1: Schedule match in Tournament B on same Pitch 1 during overlapping time
+      expect(
+        () => useCase.scheduleMatch(
+          matchId: matchesB[0].id,
+          tournament: tournamentB,
+          scheduledStartTime: DateTime(2026, 6, 6, 15, 0),
+          venue: testVenue,
+          pitch: testPitch1,
+          referee: testReferee2,
+          userRole: UserRole.organizer,
+        ),
+        throwsA(
+          isA<FixtureScheduleValidationFailure>().having(
+            (f) => f.code,
+            'code',
+            FixtureScheduleErrorCode.pitchScheduleCollision,
+          ),
+        ),
+      );
+
+      // Attempt 2: Schedule match in Tournament B on different Pitch 2 but same Referee 1
+      expect(
+        () => useCase.scheduleMatch(
+          matchId: matchesB[0].id,
+          tournament: tournamentB,
+          scheduledStartTime: DateTime(2026, 6, 6, 15, 0),
+          venue: testVenue,
+          pitch: testPitch2,
+          referee: testReferee1,
+          userRole: UserRole.organizer,
+        ),
+        throwsA(
+          isA<FixtureScheduleValidationFailure>().having(
+            (f) => f.code,
+            'code',
+            FixtureScheduleErrorCode.refereeScheduleCollision,
+          ),
+        ),
+      );
+    });
   });
 }

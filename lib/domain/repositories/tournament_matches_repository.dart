@@ -28,4 +28,7 @@ abstract class TournamentMatchesRepository {
     String tournamentId,
     List<ChampionshipMatch> matches,
   );
+
+  /// Loads all persisted matches across all tournaments in the catalog.
+  Future<List<ChampionshipMatch>> loadAllMatches();
 }

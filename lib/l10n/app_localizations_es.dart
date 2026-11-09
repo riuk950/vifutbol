@@ -2649,4 +2649,11 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get organizerNoEditableTournamentsForFixture =>
       'No hay competiciones activas disponibles para generar fixture';
+
+  @override
+  String get fixtureMatchPendingLogistics => 'Por programar';
+
+  @override
+  String get matchdayScheduleSavedSuccess =>
+      'Programación del partido guardada exitosamente.';
 }

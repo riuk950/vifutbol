@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
+import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
+import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/match_enums.dart';
+import 'package:vifutbol/domain/entities/role_permission_matrix.dart';
+import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/entities/ui_view_state.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
@@ -12,17 +19,20 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_state_view.dart';
 import 'package:vifutbol/presentation/matches/widgets/match_center_card.dart';
+import 'package:vifutbol/presentation/matches/widgets/schedule_match_dialog.dart';
 import 'package:vifutbol/presentation/tournaments/models/matchday_fixture_group.dart';
 
 /// Tab view presenting the full tournament fixture organized chronologically by matchdays/rounds.
 class CompetitionFixtureTabView extends ConsumerWidget {
   final String tournamentId;
   final List<ChampionshipMatch>? customMatches;
+  final ChampionshipTournament? tournament;
 
   const CompetitionFixtureTabView({
     super.key,
     required this.tournamentId,
     this.customMatches,
+    this.tournament,
   });
 
   void _openMatchDetailModal(
@@ -158,11 +168,105 @@ class CompetitionFixtureTabView extends ConsumerWidget {
     );
   }
 
+  Widget _buildLogisticsFooter({
+    required ChampionshipMatch match,
+    required AppLocalizations l10n,
+  }) {
+    final isPending = match.status == MatchStatus.pendingSchedule;
+
+    if (isPending) {
+      return Padding(
+        key: Key('fixture_match_logistics_${match.id}'),
+        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.schedule_outlined,
+              size: 14,
+              color: KickPulseColors.accentElectric,
+            ),
+            const SizedBox(width: KickPulseRadiiSpacing.spaceXs),
+            Expanded(
+              child: Text(
+                l10n.fixtureMatchPendingLogistics,
+                style: KickPulseTypography.captionMeta.copyWith(
+                  color: KickPulseColors.accentElectric,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final dateStr = match.scheduledStartTime != null
+        ? DateFormat('dd/MM/yyyy • HH:mm').format(match.scheduledStartTime!)
+        : null;
+    final pitchStr = match.pitchName;
+    final refereeStr = match.refereeName;
+
+    final segments = <String>[];
+    if (dateStr != null) segments.add(dateStr);
+    if (pitchStr != null && pitchStr.isNotEmpty) segments.add(pitchStr);
+    if (refereeStr != null && refereeStr.isNotEmpty) segments.add(refereeStr);
+
+    final summaryText = segments.isNotEmpty
+        ? segments.join(' • ')
+        : l10n.fixtureMatchPendingLogistics;
+
+    return Padding(
+      key: Key('fixture_match_logistics_${match.id}'),
+      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.stadium_outlined,
+            size: 14,
+            color: KickPulseColors.textSecondary,
+          ),
+          const SizedBox(width: KickPulseRadiiSpacing.spaceXs),
+          Expanded(
+            child: Text(
+              summaryText,
+              style: KickPulseTypography.captionMeta.copyWith(
+                color: KickPulseColors.textSecondary,
+                fontSize: 11,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final teamsState = ref.watch(teamsControllerProvider);
     final teamsMap = {for (final t in teamsState.teams) t.id: t};
+
+    final tournamentsCatalog = ref.watch(tournamentsControllerProvider);
+    final activeTournament =
+        tournament ??
+        tournamentsCatalog.tournaments
+            .where((t) => t.id == tournamentId)
+            .firstOrNull;
+
+    final userRole = ref.watch(activeUserRoleProvider);
+    final isOrganizer = RolePermissionMatrix.hasCapability(
+      userRole,
+      RoleCapability.manageTournaments,
+    );
+    final isEditable =
+        activeTournament != null &&
+        (activeTournament.status == TournamentStatus.openRegistration ||
+            activeTournament.status == TournamentStatus.inProgress);
 
     final List<ChampionshipMatch> matches;
     if (customMatches != null) {
@@ -250,6 +354,12 @@ class CompetitionFixtureTabView extends ConsumerWidget {
                 final homeTeam = teamsMap[match.homeTeamId];
                 final awayTeam = teamsMap[match.awayTeamId];
 
+                final canSchedule =
+                    isOrganizer &&
+                    isEditable &&
+                    (match.status == MatchStatus.pendingSchedule ||
+                        match.status == MatchStatus.scheduled);
+
                 return Padding(
                   key: Key('fixture_match_item_${match.id}'),
                   padding: const EdgeInsets.only(
@@ -259,13 +369,31 @@ class CompetitionFixtureTabView extends ConsumerWidget {
                     match: match,
                     homeTeam: homeTeam,
                     awayTeam: awayTeam,
-                    onTap: () => _openMatchDetailModal(
-                      context,
-                      match,
-                      homeTeam,
-                      awayTeam,
-                      l10n,
-                    ),
+                    footer: _buildLogisticsFooter(match: match, l10n: l10n),
+                    onTap: () async {
+                      if (canSchedule) {
+                        final saved = await ScheduleMatchDialog.show(
+                          context: context,
+                          match: match,
+                          tournament: activeTournament,
+                        );
+                        if (saved == true && context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(l10n.matchdayScheduleSavedSuccess),
+                            ),
+                          );
+                        }
+                      } else {
+                        _openMatchDetailModal(
+                          context,
+                          match,
+                          homeTeam,
+                          awayTeam,
+                          l10n,
+                        );
+                      }
+                    },
                   ),
                 );
               }),

@@ -3407,5 +3407,13 @@
   "organizerNoEditableTournamentsForFixture": "No hay competiciones activas disponibles para generar fixture",
   "@organizerNoEditableTournamentsForFixture": {
     "description": "Aviso cuando no hay torneos en estado editable para generar fixture"
+  },
+  "fixtureMatchPendingLogistics": "Por programar",
+  "@fixtureMatchPendingLogistics": {
+    "description": "Etiqueta en el pie de la tarjeta de partido en la jornada cuando el partido no tiene fecha ni sede asignada"
+  },
+  "matchdayScheduleSavedSuccess": "Programación del partido guardada exitosamente.",
+  "@matchdayScheduleSavedSuccess": {
+    "description": "Mensaje de confirmación al guardar la programación de un partido"
   }
 }

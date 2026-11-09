@@ -56,9 +56,17 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
   @override
   void initState() {
     super.initState();
-    final initial =
+    final initialRaw =
         widget.match.scheduledStartTime ??
         DateTime.now().add(const Duration(days: 1));
+    DateTime initial = initialRaw;
+    if (widget.match.scheduledStartTime == null) {
+      if (initial.isBefore(widget.tournament.startDate)) {
+        initial = widget.tournament.startDate;
+      } else if (initial.isAfter(widget.tournament.endDate)) {
+        initial = widget.tournament.endDate;
+      }
+    }
     _selectedDate = DateTime(initial.year, initial.month, initial.day);
     _selectedTime = TimeOfDay(hour: initial.hour, minute: initial.minute);
     _loadInitialData();
@@ -105,11 +113,20 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
   }
 
   Future<void> _pickDate() async {
+    DateTime firstDate = _selectedDate.isBefore(widget.tournament.startDate)
+        ? _selectedDate
+        : widget.tournament.startDate;
+    DateTime lastDate = _selectedDate.isAfter(widget.tournament.endDate)
+        ? _selectedDate
+        : widget.tournament.endDate;
+    if (lastDate.isBefore(firstDate)) {
+      lastDate = firstDate;
+    }
     final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      firstDate: DateTime.now().subtract(const Duration(days: 30)),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
+      firstDate: firstDate,
+      lastDate: lastDate,
     );
     if (picked != null && mounted) {
       setState(() => _selectedDate = picked);
@@ -159,6 +176,7 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
     );
 
     if (success && mounted) {
+      ref.read(dailyMatchesFeedControllerProvider.notifier).refresh();
       Navigator.of(context).pop(true);
     } else if (mounted) {
       final catalogState = ref.read(matchesCatalogControllerProvider);
@@ -193,13 +211,18 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
         borderRadius: BorderRadius.circular(KickPulseRadiiSpacing.cardRadius),
         side: const BorderSide(color: KickPulseColors.borderSubtle),
       ),
+      insetPadding: const EdgeInsets.symmetric(
+        horizontal: KickPulseRadiiSpacing.spaceMd,
+        vertical: 24.0,
+      ),
+      actionsOverflowButtonSpacing: 8,
       title: Text(
         l10n.scheduleMatchDialogTitle,
         style: KickPulseTypography.cardTitle,
       ),
       content: SingleChildScrollView(
-        child: SizedBox(
-          width: 380,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 380),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,

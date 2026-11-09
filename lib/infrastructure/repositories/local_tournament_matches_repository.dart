@@ -31,6 +31,11 @@ class LocalTournamentMatchesRepository implements TournamentMatchesRepository {
   }
 
   @override
+  Future<List<ChampionshipMatch>> loadAllMatches() async {
+    return _loadAllMatches();
+  }
+
+  @override
   Stream<List<ChampionshipMatch>> watchMatchesForTournament(
     String tournamentId,
   ) async* {

@@ -144,7 +144,8 @@ class FixtureSchedulingUseCase {
       Duration(minutes: durationMinutes),
     );
 
-    // 4. Validate collisions
+    // 4. Validate collisions against all catalog matches (cross-tournament)
+    final allMatches = await matchesRepository.loadAllMatches();
     final collision = detectCollisions(
       candidateMatchId: matchId,
       tournamentId: tournament.id,
@@ -154,7 +155,7 @@ class FixtureSchedulingUseCase {
       refereeId: referee.id,
       homeTeamId: currentMatch.homeTeamId,
       awayTeamId: currentMatch.awayTeamId,
-      existingMatches: existingMatches,
+      existingMatches: allMatches,
     );
 
     if (collision.hasCollision) {
@@ -175,6 +176,10 @@ class FixtureSchedulingUseCase {
       );
     }
 
+    final formattedPitchName = pitch.name.contains(venue.name)
+        ? pitch.name
+        : '${venue.name} - ${pitch.name}';
+
     // 5. Update match
     final updatedMatch = currentMatch.copyWith(
       status: MatchStatus.scheduled,
@@ -182,7 +187,7 @@ class FixtureSchedulingUseCase {
       scheduledEndTime: scheduledEndTime,
       venueId: venue.id,
       pitchId: pitch.id,
-      pitchName: pitch.name,
+      pitchName: formattedPitchName,
       refereeId: referee.id,
       refereeName: referee.fullName,
     );

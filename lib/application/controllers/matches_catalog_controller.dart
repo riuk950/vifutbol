@@ -212,12 +212,17 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
         tournament.id,
       );
 
+      final otherTournamentMatches = state.matches
+          .where((m) => m.tournamentId != tournament.id)
+          .toList();
+      final allMatches = [...otherTournamentMatches, ...updatedMatches];
+
       final scheduledDate = MatchesCatalogState.normalizeDate(
         scheduledStartTime,
       );
 
       state = state.copyWith(
-        matches: updatedMatches,
+        matches: allMatches,
         selectedDate: scheduledDate,
         isSaving: false,
       );

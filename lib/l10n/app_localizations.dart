@@ -4665,6 +4665,18 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No hay competiciones activas disponibles para generar fixture'**
   String get organizerNoEditableTournamentsForFixture;
+
+  /// Etiqueta en el pie de la tarjeta de partido en la jornada cuando el partido no tiene fecha ni sede asignada
+  ///
+  /// In es, this message translates to:
+  /// **'Por programar'**
+  String get fixtureMatchPendingLogistics;
+
+  /// Mensaje de confirmación al guardar la programación de un partido
+  ///
+  /// In es, this message translates to:
+  /// **'Programación del partido guardada exitosamente.'**
+  String get matchdayScheduleSavedSuccess;
 }
 
 class _AppLocalizationsDelegate
