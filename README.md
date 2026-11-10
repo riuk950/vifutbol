@@ -59,21 +59,31 @@ flutter run
 
 La aplicacion tiene diferentes ambientes para desarrollo y produccion.
 
-*   **Development:** `flutter run --flavor dev --target lib/env/main.dev.dart --dart-define=SUPABASE_URL=https://supabase.artbusinesstechnology.com --dart-define=SUPABASE_ANON_KEY=<tu_anon_key>`
+*   **Development (Oracle Cloud):** `flutter run --flavor dev --target lib/env/main.dev.dart --dart-define-from-file=.env.dev`
+*   **Production (Supabase Cloud):** `flutter run --flavor prod --target lib/env/main.prod.dart --dart-define-from-file=.env.prod`
 *   **Modo Local / Offline (sin backend remoto):** `flutter run --flavor dev --target lib/env/main.dev.dart` (si se omiten las variables o el servidor no es alcanzable, la app conmuta automáticamente a almacenamiento local con Hive sin bloquear la experiencia de usuario).
-*   **Production:** `flutter run --flavor prod --target lib/env/main.prod.dart --dart-define=SUPABASE_URL=<prod_url> --dart-define=SUPABASE_ANON_KEY=<prod_anon_key>`
 
 ### ⚙️ Configuración de Variables de Entorno (Supabase)
-Copia la plantilla de variables de entorno `.env.example` a `.env` (ignorado en git):
-```bash
-cp .env.example .env
-```
-Y ejecuta inyectando los valores:
-```bash
-flutter run --flavor dev --target lib/env/main.dev.dart \
-  --dart-define=SUPABASE_URL=https://supabase.artbusinesstechnology.com \
-  --dart-define=SUPABASE_ANON_KEY=tu_dev_anon_key
-```
+
+El suministro de credenciales se gestiona de forma aislada por entorno utilizando archivos `.env.dev` y `.env.prod` (ignorados por git):
+
+1. **Desarrollo (Servidor Oracle Cloud Self-Hosted):**
+   ```bash
+   cp .env.dev.example .env.dev
+   ```
+   Configura las variables correspondientes al host de desarrollo (`https://supabase.artbusinesstechnology.com`) y ejecuta:
+   ```bash
+   flutter run --flavor dev --target lib/env/main.dev.dart --dart-define-from-file=.env.dev
+   ```
+
+2. **Producción (Servidor Oficial Supabase Cloud):**
+   ```bash
+   cp .env.prod.example .env.prod
+   ```
+   Configura las credenciales de tu proyecto de producción (`https://<project-ref>.supabase.co`) y ejecuta:
+   ```bash
+   flutter run --flavor prod --target lib/env/main.prod.dart --dart-define-from-file=.env.prod
+   ```
 
 ---
 

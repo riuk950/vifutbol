@@ -106,6 +106,19 @@ void main() {
       );
     });
 
+    test('production environment accepts valid Supabase Cloud URL', () {
+      final prodConfig = EnvironmentConfig.production(
+        supabase: const SupabaseConfig(
+          url: 'https://xyzproject.supabase.co',
+          anonKey: 'valid-prod-key',
+        ),
+      );
+
+      expect(prodConfig.supabase.isConfigured, isTrue);
+      expect(prodConfig.supabase.url, 'https://xyzproject.supabase.co');
+      expect(prodConfig.supabase.anonKey, 'valid-prod-key');
+    });
+
     test('rejects malformed Supabase URLs', () {
       expect(
         () => EnvironmentConfig.development(

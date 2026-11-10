@@ -7,33 +7,51 @@ Esta guía explica cómo ejecutar la aplicación KickPulse (`vifutbol`) conectad
 
 ---
 
-## 1. Configuración de Credenciales
+## 1. Configuración de Credenciales (.env.dev y .env.prod)
 
-Copia el archivo de plantilla `.env.example` para preparar tus variables locales:
+El aprovisionamiento de credenciales se maneja de forma aislada por entorno:
 
+### Desarrollo (Oracle Cloud Self-Hosted):
 ```bash
-cp .env.example .env
+cp .env.dev.example .env.dev
 ```
-
-Edita `.env` agregando tu clave anónima del servidor:
-
+Edita `.env.dev`:
 ```env
 SUPABASE_URL=https://supabase.artbusinesstechnology.com
-SUPABASE_ANON_KEY=tu_clave_anon_de_desarrollo_aqui
+SUPABASE_ANON_KEY=tu_clave_anon_de_oracle_aqui
 ```
 
-> ⚠️ **IMPORTANTE**: Nunca subas el archivo `.env` al repositorio Git. Ya está protegido en `.gitignore`.
+### Producción (Supabase Cloud Oficial):
+```bash
+cp .env.prod.example .env.prod
+```
+Edita `.env.prod`:
+```env
+SUPABASE_URL=https://tu-proyecto.supabase.co
+SUPABASE_ANON_KEY=tu_clave_anon_de_produccion_aqui
+```
+
+> ⚠️ **IMPORTANTE**: Nunca subas los archivos `.env.dev` ni `.env.prod` al repositorio Git. Ya están protegidos en `.gitignore`.
 
 ---
 
-## 2. Ejecutar la Aplicación con Supabase DEV
+## 2. Ejecutar la Aplicación
 
-Para ejecutar en modo desarrollo conectado a Oracle Cloud:
-
+### Modo Desarrollo (Oracle Cloud):
 ```bash
-flutter run \
+flutter run --flavor dev --target lib/env/main.dev.dart --dart-define-from-file=.env.dev
+```
+
+### Modo Producción (Supabase Cloud):
+```bash
+flutter run --flavor prod --target lib/env/main.prod.dart --dart-define-from-file=.env.prod
+```
+
+También es posible inyectar parámetros individuales directamente vía CLI si se prefiere:
+```bash
+flutter run --flavor dev --target lib/env/main.dev.dart \
   --dart-define=SUPABASE_URL=https://supabase.artbusinesstechnology.com \
-  --dart-define=SUPABASE_ANON_KEY=tu_clave_anon_de_desarrollo_aqui
+  --dart-define=SUPABASE_ANON_KEY=tu_clave_anon_de_oracle_aqui
 ```
 
 O si utilizas un archivo de configuración en tu entorno de desarrollo (VS Code / Android Studio):
