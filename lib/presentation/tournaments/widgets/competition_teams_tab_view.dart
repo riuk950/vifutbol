@@ -14,6 +14,7 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
+import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_button.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
 import 'package:vifutbol/presentation/teams/team_detail_screen.dart';
 import 'package:vifutbol/presentation/teams/widgets/kick_pulse_team_crest.dart';
@@ -407,13 +408,9 @@ class CompetitionTeamsTabView extends ConsumerWidget {
     AppLocalizations l10n,
   ) {
     final (statusLabel, badgeVariant) = switch (team.eligibilityStatus) {
-      TeamEligibilityStatus.pendingQuota => (
-        l10n.teamEligibilityPendingQuota,
+      TeamEligibilityStatus.pendingVerification => (
+        l10n.teamEligibilityPendingVerification,
         KickPulseBadgeVariant.warning,
-      ),
-      TeamEligibilityStatus.readyForApproval => (
-        l10n.teamEligibilityReadyForApproval,
-        KickPulseBadgeVariant.info,
       ),
       TeamEligibilityStatus.eligible => (
         l10n.teamEligibilityEligible,
@@ -421,94 +418,256 @@ class CompetitionTeamsTabView extends ConsumerWidget {
       ),
     };
 
+    final rosterCountText = team.players.length < 11
+        ? l10n.competitionTeamPlayersIncomplete(team.players.length)
+        : l10n.competitionTeamPlayersComplete(team.players.length);
+
     return KickPulseCard(
       key: Key('competition_team_card_${team.id}'),
       onTap: () => _onTeamTapped(context, ref, team),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          KickPulseTeamCrest(
-            shortCode: team.shortCode,
-            crestShape: team.crestShape,
-            primaryColorHex: team.primaryColorHex,
-            secondaryColorHex: team.secondaryColorHex,
-            size: 44.0,
-          ),
-          const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          Row(
+            children: [
+              KickPulseTeamCrest(
+                shortCode: team.shortCode,
+                crestShape: team.crestShape,
+                primaryColorHex: team.primaryColorHex,
+                secondaryColorHex: team.secondaryColorHex,
+                size: 44.0,
+              ),
+              const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Text(
-                        team.name,
-                        style: KickPulseTypography.bodyPrimary.copyWith(
-                          fontWeight: FontWeight.bold,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            team.name,
+                            style: KickPulseTypography.bodyPrimary.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                        const SizedBox(width: KickPulseRadiiSpacing.spaceXs),
+                        Text(
+                          team.shortCode,
+                          style: KickPulseTypography.captionMeta.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: KickPulseColors.textSecondary,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: KickPulseRadiiSpacing.spaceXs),
+                    const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
                     Text(
-                      team.shortCode,
+                      rosterCountText,
+                      key: Key('competition_team_players_count_${team.id}'),
                       style: KickPulseTypography.captionMeta.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: KickPulseColors.textSecondary,
+                        color: team.players.length < 11
+                            ? KickPulseColors.accentWarning
+                            : KickPulseColors.textSecondary,
                       ),
+                    ),
+                    const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
+                    Wrap(
+                      spacing: KickPulseRadiiSpacing.spaceXs,
+                      runSpacing: KickPulseRadiiSpacing.spaceXs,
+                      children: [
+                        KickPulseBadge(
+                          key: Key('competition_team_status_badge_${team.id}'),
+                          label: statusLabel,
+                          variant: badgeVariant,
+                        ),
+                        if (groupName != null)
+                          KickPulseBadge(
+                            key: Key('competition_team_group_badge_${team.id}'),
+                            label: groupName,
+                            variant: KickPulseBadgeVariant.neutral,
+                          ),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
-                Text(
-                  l10n.competitionTeamPlayersCount(team.players.length),
-                  style: KickPulseTypography.captionMeta,
-                ),
-                const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
-                Wrap(
-                  spacing: KickPulseRadiiSpacing.spaceXs,
-                  runSpacing: KickPulseRadiiSpacing.spaceXs,
-                  children: [
-                    KickPulseBadge(label: statusLabel, variant: badgeVariant),
-                    if (groupName != null)
-                      KickPulseBadge(
-                        key: Key('competition_team_group_badge_${team.id}'),
-                        label: groupName,
-                        variant: KickPulseBadgeVariant.neutral,
-                      ),
-                  ],
+              ),
+              if (canManage && tournament != null) ...[
+                if (groupName != null)
+                  IconButton(
+                    key: Key('competition_team_move_group_${team.id}'),
+                    tooltip: l10n.competitionTeamMoveGroupTooltip,
+                    icon: const Icon(
+                      Icons.swap_horiz,
+                      size: 20,
+                      color: KickPulseColors.accentPrimary,
+                    ),
+                    onPressed: () =>
+                        _showMoveGroupDialog(context, ref, team, tournament, l10n),
+                  ),
+                IconButton(
+                  key: Key('competition_team_remove_${team.id}'),
+                  tooltip: l10n.competitionTeamRemoveTooltip,
+                  icon: const Icon(
+                    Icons.delete_outline,
+                    size: 20,
+                    color: KickPulseColors.accentWarning,
+                  ),
+                  onPressed: () =>
+                      _showRemoveTeamDialog(context, ref, team, tournament, l10n),
                 ),
               ],
-            ),
+            ],
           ),
-          if (canManage && tournament != null) ...[
-            if (groupName != null)
-              IconButton(
-                key: Key('competition_team_move_group_${team.id}'),
-                tooltip: l10n.competitionTeamMoveGroupTooltip,
-                icon: const Icon(
-                  Icons.swap_horiz,
-                  size: 20,
-                  color: KickPulseColors.accentPrimary,
-                ),
-                onPressed: () =>
-                    _showMoveGroupDialog(context, ref, team, tournament, l10n),
+          if (canManage && tournament != null)
+            Padding(
+              padding: const EdgeInsets.only(top: KickPulseRadiiSpacing.spaceSm),
+              child: Wrap(
+                spacing: KickPulseRadiiSpacing.spaceXs,
+                runSpacing: KickPulseRadiiSpacing.spaceXs,
+                children: [
+                  if (!team.isEligible)
+                    KickPulseButton(
+                      key: Key('competition_team_action_approve_${team.id}'),
+                      label: l10n.teamEligibilityActionApprove,
+                      icon: const Icon(Icons.verified_outlined, size: 18),
+                      variant: KickPulseButtonVariant.outline,
+                      onPressed: () => _handleApproveTeam(
+                        context,
+                        ref,
+                        team,
+                        tournament,
+                        l10n,
+                      ),
+                    ),
+                  if (team.isEligible)
+                    KickPulseButton(
+                      key: Key('competition_team_action_revoke_${team.id}'),
+                      label: l10n.teamEligibilityActionRevoke,
+                      icon: const Icon(Icons.block, size: 18),
+                      variant: KickPulseButtonVariant.secondary,
+                      onPressed: () => _handleRevokeTeam(
+                        context,
+                        ref,
+                        team,
+                        tournament,
+                        l10n,
+                      ),
+                    ),
+                ],
               ),
-            IconButton(
-              key: Key('competition_team_remove_${team.id}'),
-              tooltip: l10n.competitionTeamRemoveTooltip,
-              icon: const Icon(
-                Icons.delete_outline,
-                size: 20,
-                color: KickPulseColors.accentWarning,
-              ),
-              onPressed: () =>
-                  _showRemoveTeamDialog(context, ref, team, tournament, l10n),
             ),
-          ],
         ],
       ),
     );
+  }
+
+  Future<void> _handleApproveTeam(
+    BuildContext context,
+    WidgetRef ref,
+    TournamentTeam team,
+    ChampionshipTournament tournament,
+    AppLocalizations l10n,
+  ) async {
+    if (team.players.length < 11) {
+      showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          key: const Key('competition_team_insufficient_quota_dialog'),
+          backgroundColor: KickPulseColors.surfaceBase,
+          title: Text(
+            l10n.teamEligibilityQuotaInsufficientTitle,
+            style: KickPulseTypography.screenTitle.copyWith(fontSize: 18),
+          ),
+          content: Text(
+            l10n.teamEligibilityQuotaInsufficientMessage(team.players.length),
+            style: KickPulseTypography.bodyPrimary,
+          ),
+          actions: [
+            TextButton(
+              key: const Key('competition_team_dialog_confirm_button'),
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(
+                l10n.teamEligibilityActionUnderstood,
+                style: KickPulseTypography.bodyPrimary.copyWith(
+                  color: KickPulseColors.accentPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    final userRole = ref.read(activeUserRoleProvider);
+    final success = await ref
+        .read(teamsControllerProvider.notifier)
+        .approveTeamEligibility(
+          teamId: team.id,
+          tournament: tournament,
+          actorRole: userRole,
+        );
+
+    if (!context.mounted) return;
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.teamEligibilityApprovedSuccess),
+          backgroundColor: KickPulseColors.accentPrimary,
+        ),
+      );
+    } else {
+      final state = ref.read(teamsControllerProvider);
+      final msg = state.lastFailure?.message ?? 'Error al habilitar el equipo';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(msg),
+          backgroundColor: KickPulseColors.accentWarning,
+        ),
+      );
+    }
+  }
+
+  Future<void> _handleRevokeTeam(
+    BuildContext context,
+    WidgetRef ref,
+    TournamentTeam team,
+    ChampionshipTournament tournament,
+    AppLocalizations l10n,
+  ) async {
+    final userRole = ref.read(activeUserRoleProvider);
+    final success = await ref
+        .read(teamsControllerProvider.notifier)
+        .revokeTeamEligibility(
+          teamId: team.id,
+          tournament: tournament,
+          actorRole: userRole,
+        );
+
+    if (!context.mounted) return;
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.teamEligibilityRevokedSuccess),
+          backgroundColor: KickPulseColors.accentPrimary,
+        ),
+      );
+    } else {
+      final state = ref.read(teamsControllerProvider);
+      final msg = state.lastFailure?.message ?? 'Error al inhabilitar el equipo';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(msg),
+          backgroundColor: KickPulseColors.accentWarning,
+        ),
+      );
+    }
   }
 }

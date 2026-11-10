@@ -396,7 +396,7 @@ void main() {
               shortCode: 'NEW',
             ),
             tournament: finishedTournament,
-            actorRole: UserRole.organizer,
+            actorRole: UserRole.coach,
           ),
           throwsA(isA<TeamEligibilityValidationFailure>()),
         );

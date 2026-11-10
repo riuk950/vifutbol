@@ -4989,6 +4989,132 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Cancelar'**
   String get competitionDeleteCancelButton;
+
+  /// Título cuando el entrenador no tiene ningún equipo registrado
+  ///
+  /// In es, this message translates to:
+  /// **'Sin Equipo Registrado'**
+  String get coachNoTeamTitle;
+
+  /// Descripción cuando el entrenador no tiene ningún equipo registrado
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no tienes ningún equipo registrado bajo tu gestión como entrenador.'**
+  String get coachNoTeamDescription;
+
+  /// Botón de acción para registrar equipo desde el estado vacío del panel del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar mi Equipo'**
+  String get coachActionRegisterTeamEmpty;
+
+  /// Título del diálogo para registrar nuevo equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar Nuevo Equipo'**
+  String get createTeamDialogTitle;
+
+  /// Etiqueta para el campo de nombre del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre del Equipo'**
+  String get createTeamNameLabel;
+
+  /// Etiqueta para la sigla del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Sigla (2-4 letras)'**
+  String get createTeamShortCodeLabel;
+
+  /// Etiqueta del selector de competición en el registro de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Competición (Opcional)'**
+  String get createTeamTournamentLabel;
+
+  /// Opción en el selector cuando el equipo se crea sin torneo asignado
+  ///
+  /// In es, this message translates to:
+  /// **'Sin torneo asignado'**
+  String get createTeamNoTournamentOption;
+
+  /// Botón de confirmación para crear equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar Equipo'**
+  String get createTeamSubmitAction;
+
+  /// Mensaje de éxito tras registrar equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Equipo \"{name}\" registrado exitosamente'**
+  String createTeamSuccessMessage(String name);
+
+  /// Mensaje de error cuando un rol no autorizado intenta crear equipos o registrar jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'Solo los entrenadores pueden registrar equipos o futbolistas'**
+  String get unauthorizedTeamCreationMessage;
+
+  /// Estado cuando la plantilla no ha sido verificada o está incompleta
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente de verificación'**
+  String get teamEligibilityPendingVerification;
+
+  /// Título del diálogo cuando la plantilla tiene menos de 11 jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'Cuota reglamentaria insuficiente'**
+  String get teamEligibilityQuotaInsufficientTitle;
+
+  /// Mensaje exacto de advertencia reglamentaria por plantilla menor a 11
+  ///
+  /// In es, this message translates to:
+  /// **'El equipo no cumple la cuota reglamentaria mínima (mínimo 11 jugadores requeridos, actual: {actual})'**
+  String teamEligibilityQuotaInsufficientMessage(int actual);
+
+  /// Botón de acción para que el organizador habilite al equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Habilitar Equipo'**
+  String get teamEligibilityActionApprove;
+
+  /// Botón de acción para que el organizador inhabilite al equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Inhabilitar'**
+  String get teamEligibilityActionRevoke;
+
+  /// Botón de confirmación del diálogo de advertencia de cuota reglamentaria
+  ///
+  /// In es, this message translates to:
+  /// **'Entendido'**
+  String get teamEligibilityActionUnderstood;
+
+  /// Etiqueta cuando el equipo tiene menos de 11 jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'{count}/11 jugadores - Incompleto'**
+  String competitionTeamPlayersIncomplete(int count);
+
+  /// Etiqueta cuando el equipo tiene 11 o más jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'{count} jugadores - Nómina válida'**
+  String competitionTeamPlayersComplete(int count);
+
+  /// Mensaje de error cuando se intenta generar fixture con menos de 2 equipos habilitados
+  ///
+  /// In es, this message translates to:
+  /// **'Se requieren al menos dos equipos habilitados con nómina completa'**
+  String get competitionFixtureMinEligibleTeamsError;
+
+  /// Mensaje tras inhabilitar un equipo
+  ///
+  /// In es, this message translates to:
+  /// **'El equipo ha sido inhabilitado para el campeonato'**
+  String get teamEligibilityRevokedSuccess;
 }
 
 class _AppLocalizationsDelegate

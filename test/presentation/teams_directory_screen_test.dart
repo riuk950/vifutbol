@@ -347,52 +347,31 @@ void main() {
     });
 
     testWidgets(
-      'renders create team button for organizer and coach, hides for fan',
+      'renders create team button exclusively for coach, hides for organizer, referee, player and fan',
       (tester) async {
-        // Fan role
-        await tester.pumpWidget(
-          createTeamsTestApp(
-            tournaments: [tournament1],
-            teams: [team1],
-            role: UserRole.fan,
-          ),
-        );
-        await tester.pumpAndSettle();
+        for (final role in UserRole.values) {
+          await tester.pumpWidget(
+            createTeamsTestApp(
+              tournaments: [tournament1],
+              teams: [team1],
+              role: role,
+            ),
+          );
+          await tester.pumpAndSettle();
 
-        expect(
-          find.byKey(const Key('create_team_from_directory_button')),
-          findsNothing,
-        );
-
-        // Coach role
-        await tester.pumpWidget(
-          createTeamsTestApp(
-            tournaments: [tournament1],
-            teams: [team1],
-            role: UserRole.coach,
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        expect(
-          find.byKey(const Key('create_team_from_directory_button')),
-          findsOneWidget,
-        );
-
-        // Organizer role
-        await tester.pumpWidget(
-          createTeamsTestApp(
-            tournaments: [tournament1],
-            teams: [team1],
-            role: UserRole.organizer,
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        expect(
-          find.byKey(const Key('create_team_from_directory_button')),
-          findsOneWidget,
-        );
+          final finder = find.byKey(
+            const Key('create_team_from_directory_button'),
+          );
+          if (role == UserRole.coach) {
+            expect(finder, findsOneWidget, reason: 'Coach must see create team button');
+          } else {
+            expect(
+              finder,
+              findsNothing,
+              reason: '${role.name} must NOT see create team button',
+            );
+          }
+        }
       },
     );
   });

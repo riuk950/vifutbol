@@ -22,18 +22,20 @@ class ManageTeamsEligibilityUseCase {
   final TeamsRepository _repository;
   final TournamentMatchesRepository? _matchesRepository;
 
-  /// Registers or updates a [TournamentTeam] in a championship.
+  /// Registers or updates a [TournamentTeam] in a championship or as an autonomous club.
   ///
-  /// Throws [UnauthorizedRoleFailure] if [actorRole] lacks roster/tournament management permissions.
+  /// Throws [UnauthorizedRoleFailure] if [actorRole] lacks roster management permissions.
   /// Throws [TeamEligibilityValidationFailure] if tournament is not in open registration,
-  /// fields are invalid, or team name collides within the tournament.
+  /// fields are invalid, or team name collides.
   Future<TournamentTeam> registerOrUpdateTeam({
     required TournamentTeam team,
-    required ChampionshipTournament tournament,
+    ChampionshipTournament? tournament,
     required UserRole actorRole,
   }) async {
     _ensureRosterManagementPermission(actorRole);
-    _ensureOpenRegistration(tournament);
+    if (tournament != null) {
+      _ensureOpenRegistration(tournament);
+    }
 
     final trimmedName = team.name.trim();
     if (trimmedName.length < 3) {
@@ -51,23 +53,37 @@ class ManageTeamsEligibilityUseCase {
       );
     }
 
-    final tournamentTeams = await _repository.loadTeamsForTournament(
-      tournament.id,
-    );
-
-    final isDuplicateName = tournamentTeams.any(
-      (t) => t.id != team.id && t.normalizedName == team.normalizedName,
-    );
-    if (isDuplicateName) {
-      throw const TeamEligibilityValidationFailure(
-        TeamEligibilityErrorCode.duplicateTeamNameInTournament,
-        'Ya existe un equipo con este nombre en este campeonato',
+    if (tournament != null) {
+      final tournamentTeams = await _repository.loadTeamsForTournament(
+        tournament.id,
       );
+
+      final isDuplicateName = tournamentTeams.any(
+        (t) => t.id != team.id && t.normalizedName == team.normalizedName,
+      );
+      if (isDuplicateName) {
+        throw const TeamEligibilityValidationFailure(
+          TeamEligibilityErrorCode.duplicateTeamNameInTournament,
+          'Ya existe un equipo con este nombre en este campeonato',
+        );
+      }
+    } else {
+      final allTeams = await _repository.loadTeams();
+      final isDuplicateName = allTeams.any(
+        (t) => t.id != team.id && t.normalizedName == team.normalizedName,
+      );
+      if (isDuplicateName) {
+        throw const TeamEligibilityValidationFailure(
+          TeamEligibilityErrorCode.duplicateTeamNameInTournament,
+          'Ya existe un equipo con este nombre',
+        );
+      }
     }
 
     final sanitizedTeam = team.copyWith(
       name: trimmedName,
       shortCode: trimmedShortCode.toUpperCase(),
+      tournamentId: tournament?.id ?? team.tournamentId,
       updatedAt: DateTime.now(),
     );
 
@@ -306,9 +322,7 @@ class ManageTeamsEligibilityUseCase {
     // Re-evaluate eligibility status based on minimum quota
     TeamEligibilityStatus newStatus = targetTeam.eligibilityStatus;
     if (updatedPlayers.length < tournament.rules.minPlayersPerTeam) {
-      newStatus = TeamEligibilityStatus.pendingQuota;
-    } else if (newStatus == TeamEligibilityStatus.pendingQuota) {
-      newStatus = TeamEligibilityStatus.readyForApproval;
+      newStatus = TeamEligibilityStatus.pendingVerification;
     }
 
     final updatedTeam = targetTeam.copyWith(
@@ -350,8 +364,12 @@ class ManageTeamsEligibilityUseCase {
     TeamEligibilityStatus newStatus = targetTeam.eligibilityStatus;
     List<RegisteredPlayer> finalPlayers = updatedPlayers;
 
-    if (updatedPlayers.length < tournament.rules.minPlayersPerTeam) {
-      newStatus = TeamEligibilityStatus.pendingQuota;
+    final minRequired = tournament.rules.minPlayersPerTeam < 11
+        ? 11
+        : tournament.rules.minPlayersPerTeam;
+
+    if (updatedPlayers.length < minRequired) {
+      newStatus = TeamEligibilityStatus.pendingVerification;
       finalPlayers = updatedPlayers
           .map((p) => p.copyWith(isEligible: false))
           .toList();
@@ -406,12 +424,21 @@ class ManageTeamsEligibilityUseCase {
 
     final targetTeam = tournamentTeams[teamIndex];
     final playerCount = targetTeam.players.length;
+    final minRequired = tournament.rules.minPlayersPerTeam < 11
+        ? 11
+        : tournament.rules.minPlayersPerTeam;
 
-    if (playerCount < tournament.rules.minPlayersPerTeam ||
-        playerCount > tournament.rules.maxPlayersPerTeam) {
+    if (playerCount < minRequired) {
+      throw TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.insufficientPlayersForApproval,
+        'El equipo no cumple la cuota reglamentaria mínima (mínimo 11 jugadores requeridos, actual: $playerCount)',
+      );
+    }
+
+    if (playerCount > tournament.rules.maxPlayersPerTeam) {
       throw const TeamEligibilityValidationFailure(
         TeamEligibilityErrorCode.insufficientPlayersForApproval,
-        'El equipo aún no alcanza el mínimo reglamentario de jugadores requerido por el campeonato',
+        'El equipo excede el cupo máximo de jugadores permitido por el campeonato',
       );
     }
 
@@ -426,6 +453,57 @@ class ManageTeamsEligibilityUseCase {
     );
 
     return _repository.saveTeam(approvedTeam);
+  }
+
+  /// Officially revokes a team's eligibility, reverting it to [TeamEligibilityStatus.pendingVerification].
+  ///
+  /// Restricted to roles with [RoleCapability.approveRegistrations] (Organizer).
+  Future<TournamentTeam> revokeTeamEligibility({
+    required String teamId,
+    required ChampionshipTournament tournament,
+    required UserRole actorRole,
+  }) async {
+    final canApprove = RolePermissionMatrix.hasCapability(
+      actorRole,
+      RoleCapability.approveRegistrations,
+    );
+    if (!canApprove) {
+      throw const UnauthorizedRoleFailure(
+        'Solo el Organizador puede inhabilitar oficialmente a un equipo',
+      );
+    }
+
+    if (tournament.status == TournamentStatus.finished) {
+      throw const TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.tournamentRegistrationsClosed,
+        'El campeonato ha finalizado y se encuentra en modo de solo lectura histórica.',
+      );
+    }
+
+    final tournamentTeams = await _repository.loadTeamsForTournament(
+      tournament.id,
+    );
+
+    final teamIndex = tournamentTeams.indexWhere((t) => t.id == teamId);
+    if (teamIndex < 0) {
+      throw const TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.teamNotFound,
+        'Equipo no encontrado en el campeonato',
+      );
+    }
+
+    final targetTeam = tournamentTeams[teamIndex];
+    final unapprovedPlayers = targetTeam.players
+        .map((p) => p.copyWith(isEligible: false))
+        .toList();
+
+    final revokedTeam = targetTeam.copyWith(
+      eligibilityStatus: TeamEligibilityStatus.pendingVerification,
+      players: unapprovedPlayers,
+      updatedAt: DateTime.now(),
+    );
+
+    return _repository.saveTeam(revokedTeam);
   }
 
   void _ensureTournamentManagementPermission(UserRole role) {
@@ -449,23 +527,12 @@ class ManageTeamsEligibilityUseCase {
   }
 
   void _ensureRosterManagementPermission(UserRole role) {
-    final hasPermission =
-        RolePermissionMatrix.hasCapability(
-          role,
-          RoleCapability.manageTeamRoster,
-        ) ||
-        RolePermissionMatrix.hasCapability(
-          role,
-          RoleCapability.manageTournaments,
-        ) ||
-        RolePermissionMatrix.hasCapability(
-          role,
-          RoleCapability.approveRegistrations,
-        );
-
-    if (!hasPermission) {
+    if (!RolePermissionMatrix.hasCapability(
+      role,
+      RoleCapability.manageTeamRoster,
+    )) {
       throw const UnauthorizedRoleFailure(
-        'Tu rol no tiene permisos para gestionar equipos o plantillas',
+        'Solo los entrenadores pueden registrar equipos o futbolistas',
       );
     }
   }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
-import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
@@ -11,6 +10,7 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_button.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
+import 'package:vifutbol/presentation/teams/dialogs/create_team_dialog.dart';
 
 /// Dynamic panel content for [UserRole.coach].
 class CoachPanelContent extends ConsumerWidget {
@@ -102,23 +102,73 @@ class CoachPanelContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final teamsState = ref.watch(teamsControllerProvider);
+    final coachTeams = ref.watch(coachTeamsProvider);
     final matchesCatalogState = ref.watch(matchesCatalogControllerProvider);
 
-    final teams = teamsState.teams;
-    final team = teams.isNotEmpty ? teams.first : null;
+    if (coachTeams.isEmpty) {
+      return SingleChildScrollView(
+        key: const Key('coach_panel_content'),
+        padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            KickPulseCard(
+              key: const Key('coach_no_team_card'),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: KickPulseRadiiSpacing.spaceXl,
+                  horizontal: KickPulseRadiiSpacing.spaceLg,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.shield_outlined,
+                      size: 56,
+                      color: KickPulseColors.accentPrimary,
+                    ),
+                    const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+                    Text(
+                      l10n.coachNoTeamTitle,
+                      style: KickPulseTypography.cardTitle,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+                    Text(
+                      l10n.coachNoTeamDescription,
+                      style: KickPulseTypography.bodyPrimary.copyWith(
+                        color: KickPulseColors.textSecondary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
+                    KickPulseButton(
+                      key: const Key('coach_action_register_team_empty'),
+                      label: l10n.coachActionRegisterTeamEmpty,
+                      icon: const Icon(Icons.add, size: 20),
+                      variant: KickPulseButtonVariant.primary,
+                      onPressed: () => CreateTeamDialog.show(context),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
-    final players = team?.players ?? [];
+    final team = coachTeams.first;
+
+    final players = team.players;
     final totalPlayers = players.length;
     final eligiblePlayersCount = players.where((p) => p.isEligible).length;
     final suspendedPlayersCount = players.where((p) => !p.isEligible).length;
 
     // Next match for this team
-    final teamMatches = team != null
-        ? matchesCatalogState.matches
-              .where((m) => m.homeTeamId == team.id || m.awayTeamId == team.id)
-              .toList()
-        : <ChampionshipMatch>[];
+    final teamMatches = matchesCatalogState.matches
+        .where((m) => m.homeTeamId == team.id || m.awayTeamId == team.id)
+        .toList();
 
     final nextMatch = teamMatches.isNotEmpty ? teamMatches.first : null;
 
@@ -133,16 +183,15 @@ class CoachPanelContent extends ConsumerWidget {
             children: [
               Expanded(
                 child: Text(
-                  team?.name ?? l10n.coachSummaryTitle,
+                  team.name,
                   style: KickPulseTypography.sectionHeader,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              if (team != null)
-                KickPulseBadge(
-                  label: team.shortCode,
-                  variant: KickPulseBadgeVariant.info,
-                ),
+              KickPulseBadge(
+                label: team.shortCode,
+                variant: KickPulseBadgeVariant.info,
+              ),
             ],
           ),
           const SizedBox(height: KickPulseRadiiSpacing.spaceSm),

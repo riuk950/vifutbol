@@ -364,36 +364,29 @@ void main() {
     });
 
     testWidgets(
-      'renders Speed Dial FAB menu for Organizer on editable tournament (US2)',
+      'Organizer triggers direct fixture generation from FAB (US2)',
       (tester) async {
         await tester.pumpWidget(
           createDetailTestApp(
             tournamentId: 't-detail',
             userRole: UserRole.organizer,
+            matches: const [],
           ),
         );
         await tester.pumpAndSettle();
 
-        // FAB main button exists
-        final fabMenu = find.byKey(const Key('competition_detail_fab_menu'));
-        expect(fabMenu, findsOneWidget);
-
-        // Sub-action is initially hidden
-        expect(
-          find.byKey(const Key('competition_detail_fab_generate_fixture')),
-          findsNothing,
-        );
-
-        // Tap FAB to open Speed Dial
-        await tester.tap(fabMenu);
-        await tester.pumpAndSettle();
-
-        // Sub-action is now visible
+        // Direct Generate Fixture FAB is visible immediately
         final generateAction = find.byKey(
           const Key('competition_detail_fab_generate_fixture'),
         );
         expect(generateAction, findsOneWidget);
         expect(find.text('Generar Fixture'), findsOneWidget);
+
+        // Speed dial menu is absent
+        expect(
+          find.byKey(const Key('competition_detail_fab_menu')),
+          findsNothing,
+        );
 
         // Tap generate fixture action -> opens confirmation dialog
         await tester.tap(generateAction);
@@ -410,11 +403,7 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Dialog dismissed, speed dial collapsed, snackbar shown
-        expect(
-          find.byKey(const Key('competition_detail_fab_generate_fixture')),
-          findsNothing,
-        );
+        // Dialog dismissed, snackbar shown
         expect(find.textContaining('Fixture generado'), findsOneWidget);
       },
     );
@@ -429,7 +418,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(
-          find.byKey(const Key('competition_detail_fab_menu')),
+          find.byKey(const Key('competition_detail_fab_generate_fixture')),
           findsNothing,
         );
       },
@@ -459,13 +448,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.byKey(const Key('competition_detail_fab_menu')),
+        find.byKey(const Key('competition_detail_fab_generate_fixture')),
         findsNothing,
       );
     });
 
     testWidgets(
-      'CompetitionDetailScreen FAB menu renders and expands without RenderFlex overflow on compact screen (320x640 at 130% text scale)',
+      'CompetitionDetailScreen direct FAB renders without RenderFlex overflow on compact screen (320x640 at 130% text scale)',
       (tester) async {
         tester.view.physicalSize = const Size(320, 640);
         tester.view.devicePixelRatio = 1.0;
@@ -483,157 +472,43 @@ void main() {
             child: createDetailTestApp(
               tournamentId: 't-detail',
               userRole: UserRole.organizer,
+              matches: const [],
             ),
           ),
         );
         await tester.pumpAndSettle();
 
-        // Verify FAB menu is present
-        expect(
-          find.byKey(const Key('competition_detail_fab_menu')),
-          findsOneWidget,
-        );
-
-        // Tap FAB to expand Speed Dial
-        await tester.tap(find.byKey(const Key('competition_detail_fab_menu')));
-        await tester.pumpAndSettle();
-
-        // Verify expanded Speed Dial option is visible without overflow
         expect(
           find.byKey(const Key('competition_detail_fab_generate_fixture')),
           findsOneWidget,
         );
-        expect(
-          find.byKey(const Key('competition_detail_fab_add_team')),
-          findsOneWidget,
-        );
-      },
-    );
-
-    testWidgets(
-      'US1: Organizer opens "Agregar Equipo" from FAB, validates form, and enrolls new team',
-      (tester) async {
-        await tester.pumpWidget(
-          createDetailTestApp(
-            tournamentId: 't-detail',
-            userRole: UserRole.organizer,
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        // 1. Expand FAB Speed Dial
-        await tester.tap(find.byKey(const Key('competition_detail_fab_menu')));
-        await tester.pumpAndSettle();
-
-        // 2. Tap "Agregar Equipo"
-        final addTeamFab = find.byKey(
-          const Key('competition_detail_fab_add_team'),
-        );
-        expect(addTeamFab, findsOneWidget);
-        await tester.tap(addTeamFab);
-        await tester.pumpAndSettle();
-
-        // 3. Dialog is shown
-        expect(
-          find.byKey(const Key('competition_enroll_team_dialog')),
-          findsOneWidget,
-        );
-
-        // 4. Try submitting empty form
-        await tester.tap(find.byKey(const Key('enroll_team_submit_button')));
-        await tester.pumpAndSettle();
-
-        // Dialog should still be open due to validation
-        expect(
-          find.byKey(const Key('competition_enroll_team_dialog')),
-          findsOneWidget,
-        );
-
-        // 5. Fill valid team details
-        await tester.enterText(
-          find.byKey(const Key('enroll_team_name_field')),
-          'Águilas Doradas',
-        );
-        await tester.enterText(
-          find.byKey(const Key('enroll_team_short_code_field')),
-          'AGU',
-        );
-        await tester.pumpAndSettle();
-
-        // 6. Submit valid form
-        await tester.tap(find.byKey(const Key('enroll_team_submit_button')));
-        await tester.pumpAndSettle();
-
-        // 7. Dialog is dismissed and team enrolled
-        expect(
-          find.byKey(const Key('competition_enroll_team_dialog')),
-          findsNothing,
-        );
-      },
-    );
-
-    testWidgets(
-      'US1: Selects existing club from dropdown, pre-filling name and short code without assertion error',
-      (tester) async {
-        final existingClub = TournamentTeam(
-          id: 'team-seed-inter-san-juan',
-          tournamentId: 'other-tournament',
-          name: 'Inter San Juan',
-          shortCode: 'ISJ',
-        );
-
-        await tester.pumpWidget(
-          createDetailTestApp(
-            tournamentId: 't-detail',
-            userRole: UserRole.organizer,
-            teams: [existingClub],
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        // 1. Expand FAB Speed Dial
-        await tester.tap(find.byKey(const Key('competition_detail_fab_menu')));
-        await tester.pumpAndSettle();
-
-        // 2. Tap "Agregar Equipo"
-        await tester.tap(
-          find.byKey(const Key('competition_detail_fab_add_team')),
-        );
-        await tester.pumpAndSettle();
-
-        expect(
-          find.byKey(const Key('competition_enroll_team_dialog')),
-          findsOneWidget,
-        );
-
-        // 3. Dropdown is present with existing club
-        final dropdown = find.byKey(
-          const Key('enroll_team_existing_club_dropdown'),
-        );
-        expect(dropdown, findsOneWidget);
-
-        // 4. Tap dropdown and select "Inter San Juan"
-        await tester.tap(dropdown);
-        await tester.pumpAndSettle();
-
-        final item = find.text('Inter San Juan (ISJ)').last;
-        await tester.tap(item);
-        await tester.pumpAndSettle();
-
-        // 5. Verify fields are pre-filled
-        expect(find.text('Inter San Juan'), findsWidgets);
-        expect(find.text('ISJ'), findsWidgets);
-
-        // 6. Submit the form
-        await tester.tap(find.byKey(const Key('enroll_team_submit_button')));
-        await tester.pumpAndSettle();
-
-        // 7. Dialog closes cleanly without any DropdownButton assertion
         expect(tester.takeException(), isNull);
-        expect(
-          find.byKey(const Key('competition_enroll_team_dialog')),
-          findsNothing,
-        );
+      },
+    );
+
+    testWidgets(
+      'US2: speed dial menu and team enrollment FAB are completely removed for all roles',
+      (tester) async {
+        for (final role in UserRole.values) {
+          await tester.pumpWidget(
+            createDetailTestApp(
+              tournamentId: 't-detail',
+              userRole: role,
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(
+            find.byKey(const Key('competition_detail_fab_menu')),
+            findsNothing,
+            reason: '${role.name} must never see competition_detail_fab_menu',
+          );
+          expect(
+            find.byKey(const Key('competition_detail_fab_add_team')),
+            findsNothing,
+            reason: '${role.name} must never see competition_detail_fab_add_team',
+          );
+        }
       },
     );
   });

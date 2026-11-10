@@ -82,9 +82,7 @@ class _PlayersDirectoryScreenState
     );
     final capabilities = ref.watch(activeRoleCapabilitiesProvider);
     final canRegisterPlayers =
-        capabilities.contains(RoleCapability.manageTournaments) ||
-        capabilities.contains(RoleCapability.manageTeamRoster) ||
-        capabilities.contains(RoleCapability.approveRegistrations);
+        capabilities.contains(RoleCapability.manageTeamRoster);
 
     final visiblePlayers = directoryState.filteredPlayers;
     final tournaments = directoryState.availableTournaments;

@@ -356,6 +356,13 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
 
+        final originalOnError = FlutterError.onError;
+        FlutterError.onError = (FlutterErrorDetails details) {
+          // ignore: avoid_print
+          print('DETAILED OVERFLOW:\n$details');
+          originalOnError?.call(details);
+        };
+
         await tester.pumpWidget(
           createResponsiveApp(
             child: const AppShellScreen(),
@@ -380,6 +387,13 @@ void main() {
         tester.view.devicePixelRatio = 1.0;
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
+
+        final originalOnError = FlutterError.onError;
+        FlutterError.onError = (FlutterErrorDetails details) {
+          // ignore: avoid_print
+          print('DETAILED OVERFLOW:\n$details');
+          originalOnError?.call(details);
+        };
 
         await tester.pumpWidget(
           createResponsiveApp(

@@ -310,10 +310,10 @@ void main() {
         config: devConfig,
       );
       final teams = await teamsRepo.loadTeams();
-      // Modify Real Sabana to readyForApproval
+      // Modify Real Sabana to pendingVerification
       final realSabana = teams.firstWhere((t) => t.shortCode == 'RSC');
       final updatedRSC = realSabana.copyWith(
-        eligibilityStatus: TeamEligibilityStatus.readyForApproval,
+        eligibilityStatus: TeamEligibilityStatus.pendingVerification,
         players: [
           ...realSabana.players,
           // Add 2 more players to reach minPlayersPerTeam (7)

@@ -412,52 +412,31 @@ void main() {
     });
 
     testWidgets(
-      'renders register player button for coach/organizer, hides for fan',
+      'renders register player button exclusively for coach, hides for organizer, referee, player and fan',
       (tester) async {
-        // Fan role
-        await tester.pumpWidget(
-          createPlayersTestApp(
-            tournaments: [tournament1],
-            teams: [team1],
-            role: UserRole.fan,
-          ),
-        );
-        await tester.pumpAndSettle();
+        for (final role in UserRole.values) {
+          await tester.pumpWidget(
+            createPlayersTestApp(
+              tournaments: [tournament1],
+              teams: [team1],
+              role: role,
+            ),
+          );
+          await tester.pumpAndSettle();
 
-        expect(
-          find.byKey(const Key('register_player_from_directory_button')),
-          findsNothing,
-        );
-
-        // Coach role
-        await tester.pumpWidget(
-          createPlayersTestApp(
-            tournaments: [tournament1],
-            teams: [team1],
-            role: UserRole.coach,
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        expect(
-          find.byKey(const Key('register_player_from_directory_button')),
-          findsOneWidget,
-        );
-
-        // Organizer role
-        await tester.pumpWidget(
-          createPlayersTestApp(
-            tournaments: [tournament1],
-            teams: [team1],
-            role: UserRole.organizer,
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        expect(
-          find.byKey(const Key('register_player_from_directory_button')),
-          findsOneWidget,
-        );
+          final finder = find.byKey(
+            const Key('register_player_from_directory_button'),
+          );
+          if (role == UserRole.coach) {
+            expect(finder, findsOneWidget, reason: 'Coach must see register player button');
+          } else {
+            expect(
+              finder,
+              findsNothing,
+              reason: '${role.name} must NOT see register player button',
+            );
+          }
+        }
       },
     );
   });

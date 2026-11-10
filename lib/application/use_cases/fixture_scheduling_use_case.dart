@@ -50,7 +50,7 @@ class FixtureSchedulingUseCase {
     if (eligibleTeams.length < 2) {
       throw const FixtureScheduleValidationFailure(
         FixtureScheduleErrorCode.insufficientTeams,
-        'Se requieren al menos 2 equipos habilitados para generar el fixture.',
+        'Se requieren al menos dos equipos habilitados con nómina completa',
       );
     }
 

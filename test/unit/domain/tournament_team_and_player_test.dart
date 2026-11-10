@@ -128,7 +128,7 @@ void main() {
         crestShape: TeamCrestShape.hexagon,
         primaryColorHex: 0xFF1E88E5,
         secondaryColorHex: 0xFF0D47A1,
-        eligibilityStatus: TeamEligibilityStatus.readyForApproval,
+        eligibilityStatus: TeamEligibilityStatus.pendingVerification,
         players: [
           const RegisteredPlayer(
             id: 'p-1',
@@ -153,7 +153,7 @@ void main() {
       expect(restored.secondaryColorHex, equals(0xFF0D47A1));
       expect(
         restored.eligibilityStatus,
-        equals(TeamEligibilityStatus.readyForApproval),
+        equals(TeamEligibilityStatus.pendingVerification),
       );
       expect(restored.players.length, equals(1));
       expect(restored.players.first.fullName, equals('David Ospina'));

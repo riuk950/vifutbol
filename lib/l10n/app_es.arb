@@ -3676,5 +3676,109 @@
   "competitionDeleteCancelButton": "Cancelar",
   "@competitionDeleteCancelButton": {
     "description": "Botón de cancelar en diálogo de eliminación"
+  },
+  "coachNoTeamTitle": "Sin Equipo Registrado",
+  "@coachNoTeamTitle": {
+    "description": "Título cuando el entrenador no tiene ningún equipo registrado"
+  },
+  "coachNoTeamDescription": "Aún no tienes ningún equipo registrado bajo tu gestión como entrenador.",
+  "@coachNoTeamDescription": {
+    "description": "Descripción cuando el entrenador no tiene ningún equipo registrado"
+  },
+  "coachActionRegisterTeamEmpty": "Registrar mi Equipo",
+  "@coachActionRegisterTeamEmpty": {
+    "description": "Botón de acción para registrar equipo desde el estado vacío del panel del entrenador"
+  },
+  "createTeamDialogTitle": "Registrar Nuevo Equipo",
+  "@createTeamDialogTitle": {
+    "description": "Título del diálogo para registrar nuevo equipo"
+  },
+  "createTeamNameLabel": "Nombre del Equipo",
+  "@createTeamNameLabel": {
+    "description": "Etiqueta para el campo de nombre del equipo"
+  },
+  "createTeamShortCodeLabel": "Sigla (2-4 letras)",
+  "@createTeamShortCodeLabel": {
+    "description": "Etiqueta para la sigla del equipo"
+  },
+  "createTeamTournamentLabel": "Competición (Opcional)",
+  "@createTeamTournamentLabel": {
+    "description": "Etiqueta del selector de competición en el registro de equipo"
+  },
+  "createTeamNoTournamentOption": "Sin torneo asignado",
+  "@createTeamNoTournamentOption": {
+    "description": "Opción en el selector cuando el equipo se crea sin torneo asignado"
+  },
+  "createTeamSubmitAction": "Registrar Equipo",
+  "@createTeamSubmitAction": {
+    "description": "Botón de confirmación para crear equipo"
+  },
+  "createTeamSuccessMessage": "Equipo \"{name}\" registrado exitosamente",
+  "@createTeamSuccessMessage": {
+    "description": "Mensaje de éxito tras registrar equipo",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "unauthorizedTeamCreationMessage": "Solo los entrenadores pueden registrar equipos o futbolistas",
+  "@unauthorizedTeamCreationMessage": {
+    "description": "Mensaje de error cuando un rol no autorizado intenta crear equipos o registrar jugadores"
+  },
+  "teamEligibilityPendingVerification": "Pendiente de verificación",
+  "@teamEligibilityPendingVerification": {
+    "description": "Estado cuando la plantilla no ha sido verificada o está incompleta"
+  },
+  "teamEligibilityQuotaInsufficientTitle": "Cuota reglamentaria insuficiente",
+  "@teamEligibilityQuotaInsufficientTitle": {
+    "description": "Título del diálogo cuando la plantilla tiene menos de 11 jugadores"
+  },
+  "teamEligibilityQuotaInsufficientMessage": "El equipo no cumple la cuota reglamentaria mínima (mínimo 11 jugadores requeridos, actual: {actual})",
+  "@teamEligibilityQuotaInsufficientMessage": {
+    "description": "Mensaje exacto de advertencia reglamentaria por plantilla menor a 11",
+    "placeholders": {
+      "actual": {
+        "type": "int"
+      }
+    }
+  },
+  "teamEligibilityActionApprove": "Habilitar Equipo",
+  "@teamEligibilityActionApprove": {
+    "description": "Botón de acción para que el organizador habilite al equipo"
+  },
+  "teamEligibilityActionRevoke": "Inhabilitar",
+  "@teamEligibilityActionRevoke": {
+    "description": "Botón de acción para que el organizador inhabilite al equipo"
+  },
+  "teamEligibilityActionUnderstood": "Entendido",
+  "@teamEligibilityActionUnderstood": {
+    "description": "Botón de confirmación del diálogo de advertencia de cuota reglamentaria"
+  },
+  "competitionTeamPlayersIncomplete": "{count}/11 jugadores - Incompleto",
+  "@competitionTeamPlayersIncomplete": {
+    "description": "Etiqueta cuando el equipo tiene menos de 11 jugadores",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "competitionTeamPlayersComplete": "{count} jugadores - Nómina válida",
+  "@competitionTeamPlayersComplete": {
+    "description": "Etiqueta cuando el equipo tiene 11 o más jugadores",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "competitionFixtureMinEligibleTeamsError": "Se requieren al menos dos equipos habilitados con nómina completa",
+  "@competitionFixtureMinEligibleTeamsError": {
+    "description": "Mensaje de error cuando se intenta generar fixture con menos de 2 equipos habilitados"
+  },
+  "teamEligibilityRevokedSuccess": "El equipo ha sido inhabilitado para el campeonato",
+  "@teamEligibilityRevokedSuccess": {
+    "description": "Mensaje tras inhabilitar un equipo"
   }
 }

@@ -26,15 +26,10 @@ class TeamDetailScreen extends ConsumerWidget {
     AppLocalizations l10n,
   ) {
     switch (status) {
-      case TeamEligibilityStatus.pendingQuota:
+      case TeamEligibilityStatus.pendingVerification:
         return (
-          l10n.teamEligibilityPendingQuota,
+          l10n.teamEligibilityPendingVerification,
           KickPulseBadgeVariant.warning,
-        );
-      case TeamEligibilityStatus.readyForApproval:
-        return (
-          l10n.teamEligibilityReadyForApproval,
-          KickPulseBadgeVariant.info,
         );
       case TeamEligibilityStatus.eligible:
         return (l10n.teamEligibilityEligible, KickPulseBadgeVariant.dev);
@@ -165,10 +160,13 @@ class TeamDetailScreen extends ConsumerWidget {
                 right: KickPulseRadiiSpacing.spaceMd,
               ),
               child: Center(
-                child: KickPulseBadge(
-                  key: const Key('team_detail_eligibility_badge'),
-                  label: badgeLabel,
-                  variant: badgeVariant,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 120),
+                  child: KickPulseBadge(
+                    key: const Key('team_detail_eligibility_badge'),
+                    label: badgeLabel,
+                    variant: badgeVariant,
+                  ),
                 ),
               ),
             ),

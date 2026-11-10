@@ -92,7 +92,7 @@ void main() {
       final success = await controller.registerOrUpdateTeam(
         team: team,
         tournament: tournament,
-        actorRole: UserRole.organizer,
+        actorRole: UserRole.coach,
       );
 
       expect(success, isTrue);
@@ -112,7 +112,7 @@ void main() {
       final success = await controller.registerOrUpdateTeam(
         team: invalidTeam,
         tournament: tournament,
-        actorRole: UserRole.organizer,
+        actorRole: UserRole.coach,
       );
 
       expect(success, isFalse);
@@ -164,7 +164,7 @@ void main() {
       await controller.registerOrUpdateTeam(
         team: team,
         tournament: tournament,
-        actorRole: UserRole.organizer,
+        actorRole: UserRole.coach,
       );
 
       const player = RegisteredPlayer(
@@ -207,7 +207,7 @@ void main() {
       await controller.registerOrUpdateTeam(
         team: team,
         tournament: tournament,
-        actorRole: UserRole.organizer,
+        actorRole: UserRole.coach,
       );
 
       // minPlayersPerTeam is 2

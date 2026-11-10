@@ -93,13 +93,9 @@ class TeamRosterDetailScreen extends ConsumerWidget {
         team.eligibilityStatus == TeamEligibilityStatus.eligible;
 
     final (statusLabel, badgeVariant) = switch (team.eligibilityStatus) {
-      TeamEligibilityStatus.pendingQuota => (
-        l10n.teamEligibilityPendingQuota,
+      TeamEligibilityStatus.pendingVerification => (
+        l10n.teamEligibilityPendingVerification,
         KickPulseBadgeVariant.warning,
-      ),
-      TeamEligibilityStatus.readyForApproval => (
-        l10n.teamEligibilityReadyForApproval,
-        KickPulseBadgeVariant.info,
       ),
       TeamEligibilityStatus.eligible => (
         l10n.teamEligibilityEligible,

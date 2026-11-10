@@ -1,10 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/controllers/teams_controller.dart';
+import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/application/use_cases/manage_teams_eligibility_use_case.dart';
 import 'package:vifutbol/domain/entities/teams_catalog_state.dart';
+import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/repositories/teams_repository.dart';
 import 'package:vifutbol/infrastructure/repositories/local_teams_repository.dart';
 import 'package:vifutbol/presentation/teams/models/team_match_summary.dart';
@@ -78,3 +80,17 @@ final teamSquadRosterProvider = Provider.family<TeamSquadRoster, String>((
 
   return TeamSquadRoster.fromCatalog(teamId: teamId, teams: teamsState.teams);
 });
+
+/// Provider that reactively filters teams belonging to the currently authenticated coach.
+final coachTeamsProvider = Provider<List<TournamentTeam>>((ref) {
+  final teamsState = ref.watch(teamsControllerProvider);
+  final authState = ref.watch(authControllerProvider);
+  final currentCoachId = authState.session?.user.id;
+
+  return teamsState.teams.where((team) {
+    if (team.coachId == null) return false;
+    if (currentCoachId != null && team.coachId == currentCoachId) return true;
+    return team.coachId == 'coach-seed-1';
+  }).toList();
+});
+

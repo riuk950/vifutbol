@@ -36,18 +36,10 @@ class TournamentTeamsSection extends ConsumerWidget {
     final teams = state.teamsForTournament(tournament.id);
 
     final canRegisterTeams =
-        (RolePermissionMatrix.hasCapability(
-              actorRole,
-              RoleCapability.manageTeamRoster,
-            ) ||
-            RolePermissionMatrix.hasCapability(
-              actorRole,
-              RoleCapability.manageTournaments,
-            ) ||
-            RolePermissionMatrix.hasCapability(
-              actorRole,
-              RoleCapability.approveRegistrations,
-            )) &&
+        RolePermissionMatrix.hasCapability(
+          actorRole,
+          RoleCapability.manageTeamRoster,
+        ) &&
         tournament.status == TournamentStatus.openRegistration;
 
     final eligibleCount = teams
@@ -188,13 +180,9 @@ class _TeamCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (statusLabel, badgeVariant) = switch (team.eligibilityStatus) {
-      TeamEligibilityStatus.pendingQuota => (
-        l10n.teamEligibilityPendingQuota,
+      TeamEligibilityStatus.pendingVerification => (
+        l10n.teamEligibilityPendingVerification,
         KickPulseBadgeVariant.warning,
-      ),
-      TeamEligibilityStatus.readyForApproval => (
-        l10n.teamEligibilityReadyForApproval,
-        KickPulseBadgeVariant.info,
       ),
       TeamEligibilityStatus.eligible => (
         l10n.teamEligibilityEligible,

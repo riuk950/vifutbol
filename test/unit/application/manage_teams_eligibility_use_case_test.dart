@@ -109,7 +109,7 @@ void main() {
   });
 
   group('ManageTeamsEligibilityUseCase - Team Registration', () {
-    test('organizer and coach can register a valid team', () async {
+    test('coach can register a valid team', () async {
       final team1 = TournamentTeam(
         id: 'team-1',
         tournamentId: openTournament.id,
@@ -163,6 +163,15 @@ void main() {
           ),
           throwsA(isA<UnauthorizedRoleFailure>()),
         );
+
+        expect(
+          () => useCase.registerOrUpdateTeam(
+            team: team,
+            tournament: openTournament,
+            actorRole: UserRole.organizer,
+          ),
+          throwsA(isA<UnauthorizedRoleFailure>()),
+        );
       },
     );
 
@@ -180,7 +189,7 @@ void main() {
           () => useCase.registerOrUpdateTeam(
             team: team,
             tournament: closedTournament,
-            actorRole: UserRole.organizer,
+            actorRole: UserRole.coach,
           ),
           throwsA(
             isA<TeamEligibilityValidationFailure>().having(
@@ -205,7 +214,7 @@ void main() {
         () => useCase.registerOrUpdateTeam(
           team: shortNameTeam,
           tournament: openTournament,
-          actorRole: UserRole.organizer,
+          actorRole: UserRole.coach,
         ),
         throwsA(
           isA<TeamEligibilityValidationFailure>().having(
@@ -227,7 +236,7 @@ void main() {
         () => useCase.registerOrUpdateTeam(
           team: invalidCodeTeam,
           tournament: openTournament,
-          actorRole: UserRole.organizer,
+          actorRole: UserRole.coach,
         ),
         throwsA(
           isA<TeamEligibilityValidationFailure>().having(
@@ -252,7 +261,7 @@ void main() {
         await useCase.registerOrUpdateTeam(
           team: team1,
           tournament: openTournament,
-          actorRole: UserRole.organizer,
+          actorRole: UserRole.coach,
         );
 
         final duplicateTeam = TournamentTeam(
@@ -266,7 +275,7 @@ void main() {
           () => useCase.registerOrUpdateTeam(
             team: duplicateTeam,
             tournament: openTournament,
-            actorRole: UserRole.organizer,
+            actorRole: UserRole.coach,
           ),
           throwsA(
             isA<TeamEligibilityValidationFailure>().having(
@@ -289,7 +298,7 @@ void main() {
         final savedOther = await useCase.registerOrUpdateTeam(
           team: teamInOtherTournament,
           tournament: otherTournament,
-          actorRole: UserRole.organizer,
+          actorRole: UserRole.coach,
         );
 
         expect(savedOther.tournamentId, equals('tour-other'));
@@ -368,7 +377,7 @@ void main() {
           shortCode: 'DVF',
         ),
         tournament: openTournament,
-        actorRole: UserRole.organizer,
+        actorRole: UserRole.coach,
       );
     });
 
@@ -507,7 +516,7 @@ void main() {
             shortCode: 'ATN',
           ),
           tournament: openTournament,
-          actorRole: UserRole.organizer,
+          actorRole: UserRole.coach,
         );
 
         const playerTeamA = RegisteredPlayer(
@@ -584,7 +593,7 @@ void main() {
             shortCode: 'DV2',
           ),
           tournament: otherTournament,
-          actorRole: UserRole.organizer,
+          actorRole: UserRole.coach,
         );
 
         const playerInOtherTournament = RegisteredPlayer(
@@ -678,20 +687,20 @@ void main() {
             shortCode: 'RSC',
           ),
           tournament: openTournament,
-          actorRole: UserRole.organizer,
+          actorRole: UserRole.coach,
         );
       });
 
       test(
-        'transitions from pendingQuota to readyForApproval when reaching minPlayersPerTeam',
+        'keeps pendingVerification when enrolling players before organizer approval',
         () async {
           expect(
             smallTeam.eligibilityStatus,
-            equals(TeamEligibilityStatus.pendingQuota),
+            equals(TeamEligibilityStatus.pendingVerification),
           );
 
           TournamentTeam current = smallTeam;
-          for (int i = 1; i <= 6; i++) {
+          for (int i = 1; i <= 7; i++) {
             current = await useCase.enrollOrUpdatePlayer(
               teamId: current.id,
               player: RegisteredPlayer(
@@ -706,28 +715,9 @@ void main() {
             );
             expect(
               current.eligibilityStatus,
-              equals(TeamEligibilityStatus.pendingQuota),
+              equals(TeamEligibilityStatus.pendingVerification),
             );
           }
-
-          // 7th player satisfies minPlayersPerTeam (7)
-          current = await useCase.enrollOrUpdatePlayer(
-            teamId: current.id,
-            player: const RegisteredPlayer(
-              id: 'p-7',
-              fullName: 'Player 7',
-              documentId: '10000007',
-              shirtNumber: 7,
-              position: PlayerPosition.forward,
-            ),
-            tournament: openTournament,
-            actorRole: UserRole.coach,
-          );
-
-          expect(
-            current.eligibilityStatus,
-            equals(TeamEligibilityStatus.readyForApproval),
-          );
         },
       );
 
@@ -799,7 +789,7 @@ void main() {
       );
 
       test(
-        'removing player below minimum quota reverts team to pendingQuota and isEligible = false',
+        'removing player below minimum quota reverts team to pendingVerification and isEligible = false',
         () async {
           TournamentTeam current = smallTeam;
           for (int i = 1; i <= 7; i++) {
@@ -837,7 +827,7 @@ void main() {
           expect(reverted.players.length, equals(6));
           expect(
             reverted.eligibilityStatus,
-            equals(TeamEligibilityStatus.pendingQuota),
+            equals(TeamEligibilityStatus.pendingVerification),
           );
           expect(reverted.players.every((p) => !p.isEligible), isTrue);
         },

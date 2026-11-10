@@ -1,13 +1,26 @@
 /// Eligibility status of a team within a championship tournament.
 enum TeamEligibilityStatus {
-  /// The roster has fewer players than the tournament's minimum requirement.
-  pendingQuota,
+  /// The roster is pending verification, incomplete (< 11 players), or reverted by the organizer.
+  pendingVerification,
 
-  /// The roster meets or exceeds the minimum player quota and is ready for organizer approval.
-  readyForApproval,
+  /// Officially approved by the organizer with 11 or more players. Eligible for fixture generation and matches.
+  eligible;
 
-  /// Officially approved by the organizer. All players are marked eligible for match calls.
-  eligible,
+  /// Retrocompatible JSON deserialization supporting legacy status values.
+  static TeamEligibilityStatus fromJson(String value) {
+    return switch (value) {
+      'eligible' => TeamEligibilityStatus.eligible,
+      'pendingVerification' || 'pendingQuota' || 'readyForApproval' || _ =>
+        TeamEligibilityStatus.pendingVerification,
+    };
+  }
+
+  /// Backward-compatibility getters for legacy enum references.
+  @Deprecated('Use pendingVerification instead')
+  static TeamEligibilityStatus get pendingQuota => pendingVerification;
+
+  @Deprecated('Use pendingVerification instead')
+  static TeamEligibilityStatus get readyForApproval => pendingVerification;
 }
 
 /// Tactical player position on the pitch.

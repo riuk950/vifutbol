@@ -43,7 +43,7 @@ class TeamsController extends StateNotifier<TeamsCatalogState> {
   /// Registers a new team or updates an existing team with single-flight protection.
   Future<bool> registerOrUpdateTeam({
     required TournamentTeam team,
-    required ChampionshipTournament tournament,
+    ChampionshipTournament? tournament,
     required UserRole actorRole,
   }) async {
     if (state.isSaving) return false;
@@ -51,6 +51,51 @@ class TeamsController extends StateNotifier<TeamsCatalogState> {
     state = state.copyWith(isSaving: true, clearLastFailure: true);
 
     try {
+      final saved = await manageTeamsEligibilityUseCase.registerOrUpdateTeam(
+        team: team,
+        tournament: tournament,
+        actorRole: actorRole,
+      );
+
+      final updatedTeams = await teamsRepository.loadTeams();
+      state = state.copyWith(
+        teams: updatedTeams,
+        selectedTeamId: saved.id,
+        isSaving: false,
+      );
+      return true;
+    } catch (e) {
+      final failure = e is AppFailure
+          ? e
+          : const TeamEligibilityValidationFailure(
+              TeamEligibilityErrorCode.invalidTeamName,
+            );
+      state = state.copyWith(isSaving: false, lastFailure: failure);
+      return false;
+    }
+  }
+
+  /// Creates a new autonomous or tournament-enrolled team for a coach.
+  Future<bool> createTeam({
+    required String name,
+    required String shortCode,
+    ChampionshipTournament? tournament,
+    String coachId = 'coach-seed-1',
+    UserRole actorRole = UserRole.coach,
+  }) async {
+    if (state.isSaving) return false;
+
+    state = state.copyWith(isSaving: true, clearLastFailure: true);
+
+    try {
+      final team = TournamentTeam(
+        id: 'team-${DateTime.now().millisecondsSinceEpoch}',
+        tournamentId: tournament?.id ?? '',
+        name: name,
+        shortCode: shortCode,
+        coachId: coachId,
+      );
+
       final saved = await manageTeamsEligibilityUseCase.registerOrUpdateTeam(
         team: team,
         tournament: tournament,
@@ -266,6 +311,33 @@ class TeamsController extends StateNotifier<TeamsCatalogState> {
           : const TeamEligibilityValidationFailure(
               TeamEligibilityErrorCode.insufficientPlayersForApproval,
             );
+      state = state.copyWith(isSaving: false, lastFailure: failure);
+      return false;
+    }
+  }
+
+  /// Revokes the official eligibility of a team (Organizer only).
+  Future<bool> revokeTeamEligibility({
+    required String teamId,
+    required ChampionshipTournament tournament,
+    required UserRole actorRole,
+  }) async {
+    if (state.isSaving) return false;
+
+    state = state.copyWith(isSaving: true, clearLastFailure: true);
+
+    try {
+      await manageTeamsEligibilityUseCase.revokeTeamEligibility(
+        teamId: teamId,
+        tournament: tournament,
+        actorRole: actorRole,
+      );
+
+      final updatedTeams = await teamsRepository.loadTeams();
+      state = state.copyWith(teams: updatedTeams, isSaving: false);
+      return true;
+    } catch (e) {
+      final failure = e is AppFailure ? e : DataLoadFailure(e.toString());
       state = state.copyWith(isSaving: false, lastFailure: failure);
       return false;
     }

@@ -218,7 +218,7 @@ void main() {
           tournamentId: leagueTournament.id,
           name: 'Atlético Central',
           shortCode: 'ATC',
-          eligibilityStatus: TeamEligibilityStatus.pendingQuota,
+          eligibilityStatus: TeamEligibilityStatus.pendingVerification,
         );
 
         await tester.pumpWidget(

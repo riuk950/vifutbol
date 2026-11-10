@@ -2856,4 +2856,80 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get competitionDeleteCancelButton => 'Cancelar';
+
+  @override
+  String get coachNoTeamTitle => 'Sin Equipo Registrado';
+
+  @override
+  String get coachNoTeamDescription =>
+      'Aún no tienes ningún equipo registrado bajo tu gestión como entrenador.';
+
+  @override
+  String get coachActionRegisterTeamEmpty => 'Registrar mi Equipo';
+
+  @override
+  String get createTeamDialogTitle => 'Registrar Nuevo Equipo';
+
+  @override
+  String get createTeamNameLabel => 'Nombre del Equipo';
+
+  @override
+  String get createTeamShortCodeLabel => 'Sigla (2-4 letras)';
+
+  @override
+  String get createTeamTournamentLabel => 'Competición (Opcional)';
+
+  @override
+  String get createTeamNoTournamentOption => 'Sin torneo asignado';
+
+  @override
+  String get createTeamSubmitAction => 'Registrar Equipo';
+
+  @override
+  String createTeamSuccessMessage(String name) {
+    return 'Equipo \"$name\" registrado exitosamente';
+  }
+
+  @override
+  String get unauthorizedTeamCreationMessage =>
+      'Solo los entrenadores pueden registrar equipos o futbolistas';
+
+  @override
+  String get teamEligibilityPendingVerification => 'Pendiente de verificación';
+
+  @override
+  String get teamEligibilityQuotaInsufficientTitle =>
+      'Cuota reglamentaria insuficiente';
+
+  @override
+  String teamEligibilityQuotaInsufficientMessage(int actual) {
+    return 'El equipo no cumple la cuota reglamentaria mínima (mínimo 11 jugadores requeridos, actual: $actual)';
+  }
+
+  @override
+  String get teamEligibilityActionApprove => 'Habilitar Equipo';
+
+  @override
+  String get teamEligibilityActionRevoke => 'Inhabilitar';
+
+  @override
+  String get teamEligibilityActionUnderstood => 'Entendido';
+
+  @override
+  String competitionTeamPlayersIncomplete(int count) {
+    return '$count/11 jugadores - Incompleto';
+  }
+
+  @override
+  String competitionTeamPlayersComplete(int count) {
+    return '$count jugadores - Nómina válida';
+  }
+
+  @override
+  String get competitionFixtureMinEligibleTeamsError =>
+      'Se requieren al menos dos equipos habilitados con nómina completa';
+
+  @override
+  String get teamEligibilityRevokedSuccess =>
+      'El equipo ha sido inhabilitado para el campeonato';
 }

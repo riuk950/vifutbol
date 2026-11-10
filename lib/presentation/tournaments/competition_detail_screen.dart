@@ -13,7 +13,6 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dar
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
 import 'package:vifutbol/presentation/matches/dialogs/generate_fixture_confirmation_dialog.dart';
-import 'package:vifutbol/presentation/tournaments/widgets/competition_enroll_team_dialog.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/competition_fixture_tab_view.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/competition_info_tab_view.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/competition_standings_tab_view.dart';
@@ -33,8 +32,6 @@ class CompetitionDetailScreen extends ConsumerStatefulWidget {
 
 class _CompetitionDetailScreenState
     extends ConsumerState<CompetitionDetailScreen> {
-  bool _isSpeedDialOpen = false;
-
   (String, KickPulseBadgeVariant) _statusBadgeInfo(
     TournamentStatus status,
     AppLocalizations l10n,
@@ -52,14 +49,7 @@ class _CompetitionDetailScreenState
     }
   }
 
-  Future<void> _handleEnrollTeam(ChampionshipTournament tournament) async {
-    setState(() => _isSpeedDialOpen = false);
-    await CompetitionEnrollTeamDialog.show(context, tournament: tournament);
-  }
-
   Future<void> _handleGenerateFixture(ChampionshipTournament tournament) async {
-    setState(() => _isSpeedDialOpen = false);
-
     final confirmed = await GenerateFixtureConfirmationDialog.show(context);
     if (confirmed != true || !mounted) return;
 
@@ -118,58 +108,28 @@ class _CompetitionDetailScreenState
       return null;
     }
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        if (_isSpeedDialOpen) ...[
-          FloatingActionButton.extended(
-            key: const Key('competition_detail_fab_add_team'),
-            heroTag: 'fab_action_add_team',
-            backgroundColor: KickPulseColors.surfaceElevated,
-            foregroundColor: KickPulseColors.accentPrimary,
-            elevation: 4,
-            icon: const Icon(Icons.group_add, size: 20),
-            label: Text(
-              l10n.competitionFabAddTeamLabel,
-              style: KickPulseTypography.captionMeta.copyWith(
-                fontWeight: FontWeight.bold,
-                color: KickPulseColors.accentPrimary,
-              ),
-            ),
-            onPressed: () => _handleEnrollTeam(tournament),
-          ),
-          const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
-          FloatingActionButton.extended(
-            key: const Key('competition_detail_fab_generate_fixture'),
-            heroTag: 'fab_action_generate_fixture',
-            backgroundColor: KickPulseColors.surfaceElevated,
-            foregroundColor: KickPulseColors.accentPrimary,
-            elevation: 4,
-            icon: const Icon(Icons.alt_route, size: 20),
-            label: Text(
-              l10n.competitionFabGenerateFixtureLabel,
-              style: KickPulseTypography.captionMeta.copyWith(
-                fontWeight: FontWeight.bold,
-                color: KickPulseColors.accentPrimary,
-              ),
-            ),
-            onPressed: () => _handleGenerateFixture(tournament),
-          ),
-          const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
-        ],
-        FloatingActionButton(
-          key: const Key('competition_detail_fab_menu'),
-          heroTag: 'fab_main_speed_dial',
-          backgroundColor: KickPulseColors.accentPrimary,
-          foregroundColor: KickPulseColors.surfaceBase,
-          tooltip: l10n.competitionFabMenuTooltip,
-          onPressed: () {
-            setState(() => _isSpeedDialOpen = !_isSpeedDialOpen);
-          },
-          child: Icon(_isSpeedDialOpen ? Icons.close : Icons.add, size: 24),
+    final matchesState = ref.watch(matchesCatalogControllerProvider);
+    final hasFixture = matchesState.matches.any(
+      (m) => m.tournamentId == tournament.id,
+    );
+    if (hasFixture) {
+      return null;
+    }
+
+    return FloatingActionButton.extended(
+      key: const Key('competition_detail_fab_generate_fixture'),
+      heroTag: 'fab_action_generate_fixture',
+      backgroundColor: KickPulseColors.accentPrimary,
+      foregroundColor: KickPulseColors.surfaceBase,
+      icon: const Icon(Icons.alt_route, size: 20),
+      label: Text(
+        l10n.competitionFabGenerateFixtureLabel,
+        style: KickPulseTypography.captionMeta.copyWith(
+          fontWeight: FontWeight.bold,
+          color: KickPulseColors.surfaceBase,
         ),
-      ],
+      ),
+      onPressed: () => _handleGenerateFixture(tournament),
     );
   }
 

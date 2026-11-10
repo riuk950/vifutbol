@@ -13,6 +13,7 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_search_bar.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_state_view.dart';
+import 'package:vifutbol/presentation/teams/dialogs/create_team_dialog.dart';
 import 'package:vifutbol/presentation/teams/team_detail_screen.dart';
 import 'package:vifutbol/presentation/teams/widgets/kick_pulse_team_crest.dart';
 
@@ -52,12 +53,7 @@ class _TeamsDirectoryScreenState extends ConsumerState<TeamsDirectoryScreen> {
   }
 
   void _openCreateTeamDialog(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Formulario de registro de equipo disponible en torneo'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    CreateTeamDialog.show(context);
   }
 
   @override
@@ -69,9 +65,7 @@ class _TeamsDirectoryScreenState extends ConsumerState<TeamsDirectoryScreen> {
     );
     final capabilities = ref.watch(activeRoleCapabilitiesProvider);
     final canRegisterTeams =
-        capabilities.contains(RoleCapability.manageTournaments) ||
-        capabilities.contains(RoleCapability.manageTeamRoster) ||
-        capabilities.contains(RoleCapability.approveRegistrations);
+        capabilities.contains(RoleCapability.manageTeamRoster);
 
     final visibleTeams = directoryState.filteredTeams;
     final tournaments = directoryState.availableTournaments;

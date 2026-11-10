@@ -207,7 +207,7 @@ void main() {
       final ineligibleTeams = [
         testTeams.first,
         testTeams[1].copyWith(
-          eligibilityStatus: TeamEligibilityStatus.pendingQuota,
+          eligibilityStatus: TeamEligibilityStatus.pendingVerification,
         ),
       ];
 
