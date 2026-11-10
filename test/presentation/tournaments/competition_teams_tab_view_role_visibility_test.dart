@@ -52,12 +52,12 @@ class _FakeConnectivityRepository implements ConnectivityRepository {
 class _FakeTournamentsController extends StateNotifier<TournamentsCatalogState>
     implements TournamentsController {
   _FakeTournamentsController(ChampionshipTournament tournament)
-      : super(
-          TournamentsCatalogState(
-            viewState: UiSuccessState<List<ChampionshipTournament>>([tournament]),
-            tournaments: [tournament],
-          ),
-        );
+    : super(
+        TournamentsCatalogState(
+          viewState: UiSuccessState<List<ChampionshipTournament>>([tournament]),
+          tournaments: [tournament],
+        ),
+      );
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -66,7 +66,7 @@ class _FakeTournamentsController extends StateNotifier<TournamentsCatalogState>
 class _FakeTeamsController extends StateNotifier<TeamsCatalogState>
     implements TeamsController {
   _FakeTeamsController(List<TournamentTeam> teams)
-      : super(TeamsCatalogState(teams: teams));
+    : super(TeamsCatalogState(teams: teams));
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -79,13 +79,21 @@ Widget _buildRoleTestApp({
 }) {
   return ProviderScope(
     overrides: [
-      environmentConfigProvider.overrideWithValue(EnvironmentConfig.development()),
-      localStorageRepositoryProvider.overrideWithValue(_FakeLocalStorageRepository()),
-      connectivityRepositoryProvider.overrideWithValue(_FakeConnectivityRepository()),
+      environmentConfigProvider.overrideWithValue(
+        EnvironmentConfig.development(),
+      ),
+      localStorageRepositoryProvider.overrideWithValue(
+        _FakeLocalStorageRepository(),
+      ),
+      connectivityRepositoryProvider.overrideWithValue(
+        _FakeConnectivityRepository(),
+      ),
       tournamentsControllerProvider.overrideWith(
         (ref) => _FakeTournamentsController(tournament),
       ),
-      teamsControllerProvider.overrideWith((ref) => _FakeTeamsController(teams)),
+      teamsControllerProvider.overrideWith(
+        (ref) => _FakeTeamsController(teams),
+      ),
       activeUserRoleProvider.overrideWithValue(role),
     ],
     child: MaterialApp(
@@ -106,112 +114,128 @@ Widget _buildRoleTestApp({
 }
 
 void main() {
-  group('CompetitionTeamsTabView Role Visibility & Roster Count Tests (HU 16.3 / US2)', () {
-    testWidgets('renders correct roster count text for incomplete (<11) and complete (>=11) teams', (tester) async {
-      final tournament = createTestTournament(minPlayers: 11);
-      final team9 = createTestTeam(
-        id: 'team-9',
-        tournamentId: tournament.id,
-        name: 'Incomplete Team',
-        shortCode: 'INC',
-        playerCount: 9,
-      );
-      final team12 = createTestTeam(
-        id: 'team-12',
-        tournamentId: tournament.id,
-        name: 'Complete Team',
-        shortCode: 'COM',
-        playerCount: 12,
-        status: TeamEligibilityStatus.eligible,
+  group(
+    'CompetitionTeamsTabView Role Visibility & Roster Count Tests (HU 16.3 / US2)',
+    () {
+      testWidgets(
+        'renders correct roster count text for incomplete (<11) and complete (>=11) teams',
+        (tester) async {
+          final tournament = createTestTournament(minPlayers: 11);
+          final team9 = createTestTeam(
+            id: 'team-9',
+            tournamentId: tournament.id,
+            name: 'Incomplete Team',
+            shortCode: 'INC',
+            playerCount: 9,
+          );
+          final team12 = createTestTeam(
+            id: 'team-12',
+            tournamentId: tournament.id,
+            name: 'Complete Team',
+            shortCode: 'COM',
+            playerCount: 12,
+            status: TeamEligibilityStatus.eligible,
+          );
+
+          await tester.pumpWidget(
+            _buildRoleTestApp(
+              tournament: tournament,
+              teams: [team9, team12],
+              role: UserRole.organizer,
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(find.text('9/11 jugadores - Incompleto'), findsOneWidget);
+          expect(find.text('12 jugadores - Nómina válida'), findsOneWidget);
+        },
       );
 
-      await tester.pumpWidget(
-        _buildRoleTestApp(
-          tournament: tournament,
-          teams: [team9, team12],
-          role: UserRole.organizer,
-        ),
-      );
-      await tester.pumpAndSettle();
+      testWidgets('shows action buttons for organizer', (tester) async {
+        final tournament = createTestTournament(minPlayers: 11);
+        final team9 = createTestTeam(
+          id: 'team-9',
+          tournamentId: tournament.id,
+          playerCount: 9,
+          status: TeamEligibilityStatus.pendingVerification,
+        );
+        final team12 = createTestTeam(
+          id: 'team-12',
+          tournamentId: tournament.id,
+          playerCount: 12,
+          status: TeamEligibilityStatus.eligible,
+        );
 
-      expect(find.text('9/11 jugadores - Incompleto'), findsOneWidget);
-      expect(find.text('12 jugadores - Nómina válida'), findsOneWidget);
-    });
-
-    testWidgets('shows action buttons for organizer', (tester) async {
-      final tournament = createTestTournament(minPlayers: 11);
-      final team9 = createTestTeam(
-        id: 'team-9',
-        tournamentId: tournament.id,
-        playerCount: 9,
-        status: TeamEligibilityStatus.pendingVerification,
-      );
-      final team12 = createTestTeam(
-        id: 'team-12',
-        tournamentId: tournament.id,
-        playerCount: 12,
-        status: TeamEligibilityStatus.eligible,
-      );
-
-      await tester.pumpWidget(
-        _buildRoleTestApp(
-          tournament: tournament,
-          teams: [team9, team12],
-          role: UserRole.organizer,
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.byKey(Key('competition_team_action_approve_${team9.id}')), findsOneWidget);
-      expect(find.byKey(Key('competition_team_action_revoke_${team12.id}')), findsOneWidget);
-    });
-
-    testWidgets('hides approval and revocation action buttons for non-organizer roles', (tester) async {
-      final tournament = createTestTournament(minPlayers: 11);
-      final team9 = createTestTeam(
-        id: 'team-9',
-        tournamentId: tournament.id,
-        playerCount: 9,
-        status: TeamEligibilityStatus.pendingVerification,
-      );
-      final team12 = createTestTeam(
-        id: 'team-12',
-        tournamentId: tournament.id,
-        playerCount: 12,
-        status: TeamEligibilityStatus.eligible,
-      );
-
-      for (final nonOrganizerRole in [
-        UserRole.coach,
-        UserRole.referee,
-        UserRole.player,
-        UserRole.fan,
-      ]) {
         await tester.pumpWidget(
           _buildRoleTestApp(
             tournament: tournament,
             teams: [team9, team12],
-            role: nonOrganizerRole,
+            role: UserRole.organizer,
           ),
         );
         await tester.pumpAndSettle();
 
-        // Roster counts are visible in read-only mode for all roles
-        expect(find.text('9/11 jugadores - Incompleto'), findsOneWidget);
-        expect(find.text('12 jugadores - Nómina válida'), findsOneWidget);
-
-        // Action buttons are strictly hidden
         expect(
           find.byKey(Key('competition_team_action_approve_${team9.id}')),
-          findsNothing,
-          reason: 'Approve button must be hidden for role $nonOrganizerRole',
+          findsOneWidget,
         );
         expect(
           find.byKey(Key('competition_team_action_revoke_${team12.id}')),
-          findsNothing,
-          reason: 'Revoke button must be hidden for role $nonOrganizerRole',
+          findsOneWidget,
         );
-      }
-    });
-  });
+      });
+
+      testWidgets(
+        'hides approval and revocation action buttons for non-organizer roles',
+        (tester) async {
+          final tournament = createTestTournament(minPlayers: 11);
+          final team9 = createTestTeam(
+            id: 'team-9',
+            tournamentId: tournament.id,
+            playerCount: 9,
+            status: TeamEligibilityStatus.pendingVerification,
+          );
+          final team12 = createTestTeam(
+            id: 'team-12',
+            tournamentId: tournament.id,
+            playerCount: 12,
+            status: TeamEligibilityStatus.eligible,
+          );
+
+          for (final nonOrganizerRole in [
+            UserRole.coach,
+            UserRole.referee,
+            UserRole.player,
+            UserRole.fan,
+          ]) {
+            await tester.pumpWidget(
+              _buildRoleTestApp(
+                tournament: tournament,
+                teams: [team9, team12],
+                role: nonOrganizerRole,
+              ),
+            );
+            await tester.pumpAndSettle();
+
+            // Roster counts are visible in read-only mode for all roles
+            expect(find.text('9/11 jugadores - Incompleto'), findsOneWidget);
+            expect(find.text('12 jugadores - Nómina válida'), findsOneWidget);
+
+            // Action buttons are strictly hidden
+            expect(
+              find.byKey(Key('competition_team_action_approve_${team9.id}')),
+              findsNothing,
+              reason:
+                  'Approve button must be hidden for role $nonOrganizerRole',
+            );
+            expect(
+              find.byKey(Key('competition_team_action_revoke_${team12.id}')),
+              findsNothing,
+              reason: 'Revoke button must be hidden for role $nonOrganizerRole',
+            );
+          }
+        },
+      );
+    },
+  );
 }

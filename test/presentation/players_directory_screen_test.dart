@@ -428,7 +428,11 @@ void main() {
             const Key('register_player_from_directory_button'),
           );
           if (role == UserRole.coach) {
-            expect(finder, findsOneWidget, reason: 'Coach must see register player button');
+            expect(
+              finder,
+              findsOneWidget,
+              reason: 'Coach must see register player button',
+            );
           } else {
             expect(
               finder,

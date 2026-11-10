@@ -363,7 +363,11 @@ void main() {
             const Key('create_team_from_directory_button'),
           );
           if (role == UserRole.coach) {
-            expect(finder, findsOneWidget, reason: 'Coach must see create team button');
+            expect(
+              finder,
+              findsOneWidget,
+              reason: 'Coach must see create team button',
+            );
           } else {
             expect(
               finder,

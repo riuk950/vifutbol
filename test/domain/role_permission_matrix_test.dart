@@ -61,23 +61,30 @@ void main() {
       },
     );
 
-    test('manageTeamRoster capability is strictly exclusive to UserRole.coach', () {
-      for (final role in UserRole.values) {
-        final hasManageRoster = RolePermissionMatrix.hasCapability(
-          role,
-          RoleCapability.manageTeamRoster,
-        );
-        if (role == UserRole.coach) {
-          expect(hasManageRoster, isTrue, reason: 'Coach must have manageTeamRoster');
-        } else {
-          expect(
-            hasManageRoster,
-            isFalse,
-            reason: '${role.name} must NOT have manageTeamRoster',
+    test(
+      'manageTeamRoster capability is strictly exclusive to UserRole.coach',
+      () {
+        for (final role in UserRole.values) {
+          final hasManageRoster = RolePermissionMatrix.hasCapability(
+            role,
+            RoleCapability.manageTeamRoster,
           );
+          if (role == UserRole.coach) {
+            expect(
+              hasManageRoster,
+              isTrue,
+              reason: 'Coach must have manageTeamRoster',
+            );
+          } else {
+            expect(
+              hasManageRoster,
+              isFalse,
+              reason: '${role.name} must NOT have manageTeamRoster',
+            );
+          }
         }
-      }
-    });
+      },
+    );
 
     test('player has only personal stats and public browsing capabilities', () {
       final capabilities = RolePermissionMatrix.capabilitiesForRole(

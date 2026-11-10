@@ -52,13 +52,14 @@ class _FakeConnectivityRepository implements ConnectivityRepository {
 
 class _FakeTournamentsController extends StateNotifier<TournamentsCatalogState>
     implements TournamentsController {
-  _FakeTournamentsController({List<ChampionshipTournament> tournaments = const []})
-      : super(
-          TournamentsCatalogState(
-            viewState: UiSuccessState<List<ChampionshipTournament>>(tournaments),
-            tournaments: tournaments,
-          ),
-        );
+  _FakeTournamentsController({
+    List<ChampionshipTournament> tournaments = const [],
+  }) : super(
+         TournamentsCatalogState(
+           viewState: UiSuccessState<List<ChampionshipTournament>>(tournaments),
+           tournaments: tournaments,
+         ),
+       );
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -75,7 +76,7 @@ class _FakeTeamsController extends StateNotifier<TeamsCatalogState>
 class _FakeMatchesCatalogController extends StateNotifier<MatchesCatalogState>
     implements MatchesCatalogController {
   _FakeMatchesCatalogController({List<ChampionshipMatch> matches = const []})
-      : super(MatchesCatalogState(matches: matches));
+    : super(MatchesCatalogState(matches: matches));
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -195,10 +196,7 @@ void main() {
         );
 
         await tester.pumpWidget(
-          buildApp(
-            tournament: tournamentWithFixture,
-            matches: [existingMatch],
-          ),
+          buildApp(tournament: tournamentWithFixture, matches: [existingMatch]),
         );
         await tester.pumpAndSettle();
 
@@ -227,7 +225,9 @@ void main() {
         UserRole.player,
         UserRole.fan,
       ]) {
-        await tester.pumpWidget(buildApp(tournament: tournament, userRole: role));
+        await tester.pumpWidget(
+          buildApp(tournament: tournament, userRole: role),
+        );
         await tester.pumpAndSettle();
 
         expect(

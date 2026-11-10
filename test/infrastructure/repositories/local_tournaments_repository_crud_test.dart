@@ -39,13 +39,16 @@ void main() {
   });
 
   group('LocalTournamentsRepository CRUD & organizerId Tests', () {
-    test('loads dev seed tournaments with default organizerId org-seed-1', () async {
-      final tournaments = await repository.loadTournaments();
-      expect(tournaments.length, 3);
-      for (final t in tournaments) {
-        expect(t.organizerId, 'org-seed-1');
-      }
-    });
+    test(
+      'loads dev seed tournaments with default organizerId org-seed-1',
+      () async {
+        final tournaments = await repository.loadTournaments();
+        expect(tournaments.length, 3);
+        for (final t in tournaments) {
+          expect(t.organizerId, 'org-seed-1');
+        }
+      },
+    );
 
     test('deletes a tournament by ID from storage', () async {
       final initial = await repository.loadTournaments();
@@ -59,26 +62,29 @@ void main() {
       expect(remaining.any((t) => t.id == idToDelete), isFalse);
     });
 
-    test('saves and updates a tournament preserving custom organizerId', () async {
-      final newTournament = ChampionshipTournament(
-        id: 'tournament-custom-1',
-        name: 'Torneo Empresarial',
-        category: 'Libre',
-        startDate: DateTime(2026, 7, 1),
-        endDate: DateTime(2026, 8, 30),
-        format: TournamentFormat.league,
-        status: TournamentStatus.openRegistration,
-        rules: const TournamentRulesConfig(),
-        updatedAt: DateTime(2026, 7, 1),
-        organizerId: 'org-user-777',
-      );
+    test(
+      'saves and updates a tournament preserving custom organizerId',
+      () async {
+        final newTournament = ChampionshipTournament(
+          id: 'tournament-custom-1',
+          name: 'Torneo Empresarial',
+          category: 'Libre',
+          startDate: DateTime(2026, 7, 1),
+          endDate: DateTime(2026, 8, 30),
+          format: TournamentFormat.league,
+          status: TournamentStatus.openRegistration,
+          rules: const TournamentRulesConfig(),
+          updatedAt: DateTime(2026, 7, 1),
+          organizerId: 'org-user-777',
+        );
 
-      await repository.saveTournament(newTournament);
+        await repository.saveTournament(newTournament);
 
-      final loaded = await repository.loadTournaments();
-      final found = loaded.firstWhere((t) => t.id == 'tournament-custom-1');
-      expect(found.organizerId, 'org-user-777');
-      expect(found.name, 'Torneo Empresarial');
-    });
+        final loaded = await repository.loadTournaments();
+        final found = loaded.firstWhere((t) => t.id == 'tournament-custom-1');
+        expect(found.organizerId, 'org-user-777');
+        expect(found.name, 'Torneo Empresarial');
+      },
+    );
   });
 }

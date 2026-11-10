@@ -72,7 +72,9 @@ void main() {
 
   setUp(() {
     mockRepo = MockTournamentsRepository();
-    when(() => mockRepo.loadTournaments()).thenAnswer((_) async => [openTournament1, openTournament2, inProgressTournament]);
+    when(() => mockRepo.loadTournaments()).thenAnswer(
+      (_) async => [openTournament1, openTournament2, inProgressTournament],
+    );
     when(() => mockRepo.loadDraft()).thenAnswer((_) async => null);
     when(() => mockRepo.deleteTournament(any())).thenAnswer((_) async {});
 
@@ -101,45 +103,56 @@ void main() {
       verifyNever(() => mockRepo.deleteTournament(any()));
     });
 
-    test('blocks deletion if tournament has started or completed matches', () async {
-      await controller.loadCatalog();
+    test(
+      'blocks deletion if tournament has started or completed matches',
+      () async {
+        await controller.loadCatalog();
 
-      final success = await controller.deleteTournament(
-        tournamentId: 't-open-1',
-        hasStartedOrCompletedMatches: true,
-      );
+        final success = await controller.deleteTournament(
+          tournamentId: 't-open-1',
+          hasStartedOrCompletedMatches: true,
+        );
 
-      expect(success, isFalse);
-      expect(controller.state.lastFailure, isA<TournamentValidationFailure>());
-      expect(
-        (controller.state.lastFailure as TournamentValidationFailure).code,
-        TournamentValidationErrorCode.tournamentCannotBeDeleted,
-      );
-      verifyNever(() => mockRepo.deleteTournament(any()));
-    });
+        expect(success, isFalse);
+        expect(
+          controller.state.lastFailure,
+          isA<TournamentValidationFailure>(),
+        );
+        expect(
+          (controller.state.lastFailure as TournamentValidationFailure).code,
+          TournamentValidationErrorCode.tournamentCannotBeDeleted,
+        );
+        verifyNever(() => mockRepo.deleteTournament(any()));
+      },
+    );
 
-    test('successfully deletes eligible tournament, executes cascade, and resets selected tournament', () async {
-      await controller.loadCatalog();
-      controller.selectTournament('t-open-1');
-      expect(controller.state.selectedTournamentId, 't-open-1');
+    test(
+      'successfully deletes eligible tournament, executes cascade, and resets selected tournament',
+      () async {
+        await controller.loadCatalog();
+        controller.selectTournament('t-open-1');
+        expect(controller.state.selectedTournamentId, 't-open-1');
 
-      var cascadeExecuted = false;
-      when(() => mockRepo.loadTournaments()).thenAnswer((_) async => [openTournament2, inProgressTournament]);
+        var cascadeExecuted = false;
+        when(
+          () => mockRepo.loadTournaments(),
+        ).thenAnswer((_) async => [openTournament2, inProgressTournament]);
 
-      final success = await controller.deleteTournament(
-        tournamentId: 't-open-1',
-        hasStartedOrCompletedMatches: false,
-        onCascadeDeleteMatches: () async {
-          cascadeExecuted = true;
-        },
-      );
+        final success = await controller.deleteTournament(
+          tournamentId: 't-open-1',
+          hasStartedOrCompletedMatches: false,
+          onCascadeDeleteMatches: () async {
+            cascadeExecuted = true;
+          },
+        );
 
-      expect(success, isTrue);
-      expect(cascadeExecuted, isTrue);
-      verify(() => mockRepo.deleteTournament('t-open-1')).called(1);
+        expect(success, isTrue);
+        expect(cascadeExecuted, isTrue);
+        verify(() => mockRepo.deleteTournament('t-open-1')).called(1);
 
-      // Selected tournament falls back to first remaining tournament
-      expect(controller.state.selectedTournamentId, 't-open-2');
-    });
+        // Selected tournament falls back to first remaining tournament
+        expect(controller.state.selectedTournamentId, 't-open-2');
+      },
+    );
   });
 }

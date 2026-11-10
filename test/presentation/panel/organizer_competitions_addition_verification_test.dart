@@ -69,7 +69,9 @@ void main() {
     mockRepo = MockTournamentsRepository();
     inMemoryTournaments.clear();
 
-    when(() => mockRepo.loadTournaments()).thenAnswer((_) async => List.from(inMemoryTournaments));
+    when(
+      () => mockRepo.loadTournaments(),
+    ).thenAnswer((_) async => List.from(inMemoryTournaments));
     when(() => mockRepo.loadDraft()).thenAnswer((_) async => null);
     when(() => mockRepo.clearDraft()).thenAnswer((_) async {});
     when(() => mockRepo.saveTournament(any())).thenAnswer((inv) async {
@@ -100,11 +102,15 @@ void main() {
         environmentConfigProvider.overrideWithValue(
           EnvironmentConfig.development(),
         ),
-        localStorageRepositoryProvider.overrideWithValue(_FakeLocalStorageRepository()),
+        localStorageRepositoryProvider.overrideWithValue(
+          _FakeLocalStorageRepository(),
+        ),
         tournamentsRepositoryProvider.overrideWithValue(mockRepo),
         tournamentsControllerProvider.overrideWith((ref) => controller),
         activeUserRoleProvider.overrideWithValue(UserRole.organizer),
-        authControllerProvider.overrideWith((ref) => _FakeAuthController(authState)),
+        authControllerProvider.overrideWith(
+          (ref) => _FakeAuthController(authState),
+        ),
       ],
       child: const MaterialApp(
         localizationsDelegates: [
@@ -116,98 +122,116 @@ void main() {
         supportedLocales: AppLocalizations.supportedLocales,
         locale: Locale('es'),
         home: Scaffold(
-          body: SingleChildScrollView(
-            child: OrganizerPanelContent(),
-          ),
+          body: SingleChildScrollView(child: OrganizerPanelContent()),
         ),
       ),
     );
   }
 
   group('Verification: Competitions Addition & Display in Organizer Panel', () {
-    testWidgets('shows empty state initially, then immediately adds and displays newly created tournament in panel', (
-      tester,
-    ) async {
-      await controller.loadCatalog();
+    testWidgets(
+      'shows empty state initially, then immediately adds and displays newly created tournament in panel',
+      (tester) async {
+        await controller.loadCatalog();
 
-      await tester.pumpWidget(buildTestableOrganizerPanel());
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildTestableOrganizerPanel());
+        await tester.pumpAndSettle();
 
-      // 1. Initial Empty State in the section
-      expect(find.byKey(const Key('organizer_competitions_section')), findsOneWidget);
-      expect(find.byKey(const Key('organizer_competitions_empty_state')), findsOneWidget);
-      expect(find.text('No tienes competiciones activas'), findsOneWidget);
+        // 1. Initial Empty State in the section
+        expect(
+          find.byKey(const Key('organizer_competitions_section')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('organizer_competitions_empty_state')),
+          findsOneWidget,
+        );
+        expect(find.text('No tienes competiciones activas'), findsOneWidget);
 
-      // 2. Add a new competition dynamically
-      final newTournament = ChampionshipTournament(
-        id: 'tournament-super-cup',
-        name: 'Super Copa Intermunicipal 2026',
-        category: 'Libre Masculino',
-        startDate: DateTime(2026, 6, 1),
-        endDate: DateTime(2026, 9, 30),
-        format: TournamentFormat.knockoutCup,
-        status: TournamentStatus.openRegistration,
-        rules: const TournamentRulesConfig(),
-        updatedAt: DateTime(2026, 6, 1),
-        organizerId: 'org-test-user',
-      );
+        // 2. Add a new competition dynamically
+        final newTournament = ChampionshipTournament(
+          id: 'tournament-super-cup',
+          name: 'Super Copa Intermunicipal 2026',
+          category: 'Libre Masculino',
+          startDate: DateTime(2026, 6, 1),
+          endDate: DateTime(2026, 9, 30),
+          format: TournamentFormat.knockoutCup,
+          status: TournamentStatus.openRegistration,
+          rules: const TournamentRulesConfig(),
+          updatedAt: DateTime(2026, 6, 1),
+          organizerId: 'org-test-user',
+        );
 
-      await controller.saveTournament(
-        tournament: newTournament,
-        actorRole: UserRole.organizer,
-      );
+        await controller.saveTournament(
+          tournament: newTournament,
+          actorRole: UserRole.organizer,
+        );
 
-      // Pump to reflect reactive state in UI
-      await tester.pumpAndSettle();
+        // Pump to reflect reactive state in UI
+        await tester.pumpAndSettle();
 
-      // 3. Verify Empty State disappears and tournament card appears in Organizer Panel
-      expect(find.byKey(const Key('organizer_competitions_empty_state')), findsNothing);
-      expect(
-        find.byKey(const Key('organizer_competition_card_tournament-super-cup')),
-        findsOneWidget,
-      );
-      expect(find.text('Super Copa Intermunicipal 2026'), findsOneWidget);
-      expect(find.text('Libre Masculino'), findsOneWidget);
+        // 3. Verify Empty State disappears and tournament card appears in Organizer Panel
+        expect(
+          find.byKey(const Key('organizer_competitions_empty_state')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(
+            const Key('organizer_competition_card_tournament-super-cup'),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('Super Copa Intermunicipal 2026'), findsOneWidget);
+        expect(find.text('Libre Masculino'), findsOneWidget);
 
-      // 4. Verify Status Badge shows "Inscripciones Abiertas"
-      expect(
-        find.byKey(const Key('organizer_competition_status_badge_tournament-super-cup')),
-        findsOneWidget,
-      );
-      expect(find.text('Inscripciones Abiertas'), findsOneWidget);
+        // 4. Verify Status Badge shows "Inscripciones Abiertas"
+        expect(
+          find.byKey(
+            const Key(
+              'organizer_competition_status_badge_tournament-super-cup',
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('Inscripciones Abiertas'), findsOneWidget);
 
-      // 5. Add a second tournament
-      final secondTournament = ChampionshipTournament(
-        id: 'tournament-liga-juvenil',
-        name: 'Liga Juvenil Sub-18',
-        category: 'Juvenil',
-        startDate: DateTime(2026, 7, 1),
-        endDate: DateTime(2026, 11, 30),
-        format: TournamentFormat.league,
-        status: TournamentStatus.inProgress,
-        rules: const TournamentRulesConfig(),
-        updatedAt: DateTime(2026, 7, 1),
-        organizerId: 'org-test-user',
-      );
+        // 5. Add a second tournament
+        final secondTournament = ChampionshipTournament(
+          id: 'tournament-liga-juvenil',
+          name: 'Liga Juvenil Sub-18',
+          category: 'Juvenil',
+          startDate: DateTime(2026, 7, 1),
+          endDate: DateTime(2026, 11, 30),
+          format: TournamentFormat.league,
+          status: TournamentStatus.inProgress,
+          rules: const TournamentRulesConfig(),
+          updatedAt: DateTime(2026, 7, 1),
+          organizerId: 'org-test-user',
+        );
 
-      await controller.saveTournament(
-        tournament: secondTournament,
-        actorRole: UserRole.organizer,
-      );
+        await controller.saveTournament(
+          tournament: secondTournament,
+          actorRole: UserRole.organizer,
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      // Both cards are now listed in OrganizerPanelContent
-      expect(
-        find.byKey(const Key('organizer_competition_card_tournament-super-cup')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const Key('organizer_competition_card_tournament-liga-juvenil')),
-        findsOneWidget,
-      );
-      expect(find.text('Liga Juvenil Sub-18'), findsOneWidget);
-    });
+        // Both cards are now listed in OrganizerPanelContent
+        expect(
+          find.byKey(
+            const Key('organizer_competition_card_tournament-super-cup'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(
+            const Key('organizer_competition_card_tournament-liga-juvenil'),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('Liga Juvenil Sub-18'), findsOneWidget);
+      },
+    );
 
     testWidgets('filters out competitions belonging to other organizers', (
       tester,
@@ -239,67 +263,76 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should still be empty for the logged-in organizer
-      expect(find.byKey(const Key('organizer_competitions_empty_state')), findsOneWidget);
       expect(
-        find.byKey(const Key('organizer_competition_card_tournament-other-user')),
+        find.byKey(const Key('organizer_competitions_empty_state')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(
+          const Key('organizer_competition_card_tournament-other-user'),
+        ),
         findsNothing,
       );
       expect(find.text('Torneo Privado Otro Organizador'), findsNothing);
     });
 
-    testWidgets('renders competitions on 320x640 viewport with 1.3 text scaling without overflow', (
-      tester,
-    ) async {
-      tester.view.physicalSize = const Size(320, 640);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
+    testWidgets(
+      'renders competitions on 320x640 viewport with 1.3 text scaling without overflow',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
 
-      inMemoryTournaments.add(
-        ChampionshipTournament(
-          id: 'tournament-compact-check',
-          name: 'Copa Extrema De Futbol Sala Metropolitano 2026',
-          category: 'Primera Categoria Libre Superior',
-          startDate: DateTime(2026, 9, 1),
-          endDate: DateTime(2026, 12, 1),
-          format: TournamentFormat.mixedGroupsAndKnockout,
-          status: TournamentStatus.openRegistration,
-          rules: const TournamentRulesConfig(),
-          updatedAt: DateTime(2026, 9, 1),
-          organizerId: 'org-test-user',
-        ),
-      );
-
-      await controller.loadCatalog();
-
-      await tester.pumpWidget(
-        MediaQuery(
-          data: const MediaQueryData(
-            textScaler: TextScaler.linear(1.3),
-            size: Size(320, 640),
+        inMemoryTournaments.add(
+          ChampionshipTournament(
+            id: 'tournament-compact-check',
+            name: 'Copa Extrema De Futbol Sala Metropolitano 2026',
+            category: 'Primera Categoria Libre Superior',
+            startDate: DateTime(2026, 9, 1),
+            endDate: DateTime(2026, 12, 1),
+            format: TournamentFormat.mixedGroupsAndKnockout,
+            status: TournamentStatus.openRegistration,
+            rules: const TournamentRulesConfig(),
+            updatedAt: DateTime(2026, 9, 1),
+            organizerId: 'org-test-user',
           ),
-          child: buildTestableOrganizerPanel(),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
 
-      expect(
-        find.byKey(const Key('organizer_competition_card_tournament-compact-check')),
-        findsOneWidget,
-      );
-      expect(
-        find.text('Copa Extrema De Futbol Sala Metropolitano 2026'),
-        findsOneWidget,
-      );
-      // No overflow exceptions occurred
-      expect(tester.takeException(), isNull);
-    });
+        await controller.loadCatalog();
+
+        await tester.pumpWidget(
+          MediaQuery(
+            data: const MediaQueryData(
+              textScaler: TextScaler.linear(1.3),
+              size: Size(320, 640),
+            ),
+            child: buildTestableOrganizerPanel(),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(
+            const Key('organizer_competition_card_tournament-compact-check'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.text('Copa Extrema De Futbol Sala Metropolitano 2026'),
+          findsOneWidget,
+        );
+        // No overflow exceptions occurred
+        expect(tester.takeException(), isNull);
+      },
+    );
   });
 }
 
-class _FakeAuthController extends StateNotifier<AuthFlowState> implements AuthController {
+class _FakeAuthController extends StateNotifier<AuthFlowState>
+    implements AuthController {
   _FakeAuthController(super.state);
 
   @override

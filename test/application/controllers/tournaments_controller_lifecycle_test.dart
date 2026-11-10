@@ -60,9 +60,13 @@ void main() {
 
   setUp(() {
     mockRepo = MockTournamentsRepository();
-    when(() => mockRepo.loadTournaments()).thenAnswer((_) async => [openTournament, inProgressTournament]);
+    when(
+      () => mockRepo.loadTournaments(),
+    ).thenAnswer((_) async => [openTournament, inProgressTournament]);
     when(() => mockRepo.loadDraft()).thenAnswer((_) async => null);
-    when(() => mockRepo.saveTournament(any())).thenAnswer((inv) async => inv.positionalArguments[0] as ChampionshipTournament);
+    when(() => mockRepo.saveTournament(any())).thenAnswer(
+      (inv) async => inv.positionalArguments[0] as ChampionshipTournament,
+    );
 
     manageUseCase = ManageTournamentsUseCase(mockRepo);
     controller = TournamentsController(
@@ -91,54 +95,66 @@ void main() {
       );
     });
 
-    test('blocks transition to inProgress if fixture is not generated', () async {
-      await controller.loadCatalog();
+    test(
+      'blocks transition to inProgress if fixture is not generated',
+      () async {
+        await controller.loadCatalog();
 
-      final success = await controller.transitionTournamentStatus(
-        tournament: openTournament,
-        targetStatus: TournamentStatus.inProgress,
-        actorRole: UserRole.organizer,
-        enrolledTeamsCount: 4,
-        hasGeneratedFixture: false,
-      );
+        final success = await controller.transitionTournamentStatus(
+          tournament: openTournament,
+          targetStatus: TournamentStatus.inProgress,
+          actorRole: UserRole.organizer,
+          enrolledTeamsCount: 4,
+          hasGeneratedFixture: false,
+        );
 
-      expect(success, isFalse);
-      expect(controller.state.lastFailure, isA<TournamentValidationFailure>());
-      expect(
-        (controller.state.lastFailure as TournamentValidationFailure).code,
-        TournamentValidationErrorCode.missingFixtureToStart,
-      );
-    });
+        expect(success, isFalse);
+        expect(
+          controller.state.lastFailure,
+          isA<TournamentValidationFailure>(),
+        );
+        expect(
+          (controller.state.lastFailure as TournamentValidationFailure).code,
+          TournamentValidationErrorCode.missingFixtureToStart,
+        );
+      },
+    );
 
-    test('allows transition to inProgress when teams >= 2 and fixture exists', () async {
-      await controller.loadCatalog();
+    test(
+      'allows transition to inProgress when teams >= 2 and fixture exists',
+      () async {
+        await controller.loadCatalog();
 
-      final success = await controller.transitionTournamentStatus(
-        tournament: openTournament,
-        targetStatus: TournamentStatus.inProgress,
-        actorRole: UserRole.organizer,
-        enrolledTeamsCount: 4,
-        hasGeneratedFixture: true,
-      );
+        final success = await controller.transitionTournamentStatus(
+          tournament: openTournament,
+          targetStatus: TournamentStatus.inProgress,
+          actorRole: UserRole.organizer,
+          enrolledTeamsCount: 4,
+          hasGeneratedFixture: true,
+        );
 
-      expect(success, isTrue);
-    });
+        expect(success, isTrue);
+      },
+    );
 
-    test('blocks backward transition from inProgress to openRegistration', () async {
-      await controller.loadCatalog();
+    test(
+      'blocks backward transition from inProgress to openRegistration',
+      () async {
+        await controller.loadCatalog();
 
-      final success = await controller.transitionTournamentStatus(
-        tournament: inProgressTournament,
-        targetStatus: TournamentStatus.openRegistration,
-        actorRole: UserRole.organizer,
-      );
+        final success = await controller.transitionTournamentStatus(
+          tournament: inProgressTournament,
+          targetStatus: TournamentStatus.openRegistration,
+          actorRole: UserRole.organizer,
+        );
 
-      expect(success, isFalse);
-      expect(
-        (controller.state.lastFailure as TournamentValidationFailure).code,
-        TournamentValidationErrorCode.invalidStatusTransition,
-      );
-    });
+        expect(success, isFalse);
+        expect(
+          (controller.state.lastFailure as TournamentValidationFailure).code,
+          TournamentValidationErrorCode.invalidStatusTransition,
+        );
+      },
+    );
 
     test('allows transition from inProgress to finished', () async {
       await controller.loadCatalog();

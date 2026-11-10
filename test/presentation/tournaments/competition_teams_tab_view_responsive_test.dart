@@ -52,12 +52,12 @@ class _FakeConnectivityRepository implements ConnectivityRepository {
 class _FakeTournamentsController extends StateNotifier<TournamentsCatalogState>
     implements TournamentsController {
   _FakeTournamentsController(ChampionshipTournament tournament)
-      : super(
-          TournamentsCatalogState(
-            viewState: UiSuccessState<List<ChampionshipTournament>>([tournament]),
-            tournaments: [tournament],
-          ),
-        );
+    : super(
+        TournamentsCatalogState(
+          viewState: UiSuccessState<List<ChampionshipTournament>>([tournament]),
+          tournaments: [tournament],
+        ),
+      );
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -66,7 +66,7 @@ class _FakeTournamentsController extends StateNotifier<TournamentsCatalogState>
 class _FakeTeamsController extends StateNotifier<TeamsCatalogState>
     implements TeamsController {
   _FakeTeamsController(List<TournamentTeam> teams)
-      : super(TeamsCatalogState(teams: teams));
+    : super(TeamsCatalogState(teams: teams));
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -74,75 +74,98 @@ class _FakeTeamsController extends StateNotifier<TeamsCatalogState>
 
 void main() {
   group('CompetitionTeamsTabView Responsive Tests (HU 16.3 / Polish)', () {
-    testWidgets('renders cleanly on 320x640 with 130% text scaling without RenderFlex overflow', (tester) async {
-      tester.view.physicalSize = const Size(320, 640);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
+    testWidgets(
+      'renders cleanly on 320x640 with 130% text scaling without RenderFlex overflow',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
 
-      final tournament = createTestTournament(minPlayers: 11);
-      final teamIncomplete = createTestTeam(
-        id: 'team-inc',
-        tournamentId: tournament.id,
-        name: 'Club Atlético Defensores del Rosario',
-        shortCode: 'CADR',
-        playerCount: 8,
-        status: TeamEligibilityStatus.pendingVerification,
-      );
-      final teamEligible = createTestTeam(
-        id: 'team-eli',
-        tournamentId: tournament.id,
-        name: 'Sociedad Deportiva Universitaria de Viña',
-        shortCode: 'SDUV',
-        playerCount: 14,
-        status: TeamEligibilityStatus.eligible,
-      );
+        final tournament = createTestTournament(minPlayers: 11);
+        final teamIncomplete = createTestTeam(
+          id: 'team-inc',
+          tournamentId: tournament.id,
+          name: 'Club Atlético Defensores del Rosario',
+          shortCode: 'CADR',
+          playerCount: 8,
+          status: TeamEligibilityStatus.pendingVerification,
+        );
+        final teamEligible = createTestTeam(
+          id: 'team-eli',
+          tournamentId: tournament.id,
+          name: 'Sociedad Deportiva Universitaria de Viña',
+          shortCode: 'SDUV',
+          playerCount: 14,
+          status: TeamEligibilityStatus.eligible,
+        );
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            environmentConfigProvider.overrideWithValue(EnvironmentConfig.development()),
-            localStorageRepositoryProvider.overrideWithValue(_FakeLocalStorageRepository()),
-            connectivityRepositoryProvider.overrideWithValue(_FakeConnectivityRepository()),
-            tournamentsControllerProvider.overrideWith(
-              (ref) => _FakeTournamentsController(tournament),
-            ),
-            teamsControllerProvider.overrideWith(
-              (ref) => _FakeTeamsController([teamIncomplete, teamEligible]),
-            ),
-            activeUserRoleProvider.overrideWithValue(UserRole.organizer),
-          ],
-          child: MaterialApp(
-            theme: KickPulseTheme.darkTheme,
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: AppLocalizations.supportedLocales,
-            locale: const Locale('es'),
-            home: MediaQuery(
-              data: const MediaQueryData(
-                textScaler: TextScaler.linear(1.3),
-                size: Size(320, 640),
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              environmentConfigProvider.overrideWithValue(
+                EnvironmentConfig.development(),
               ),
-              child: Scaffold(
-                body: CompetitionTeamsTabView(tournamentId: tournament.id),
+              localStorageRepositoryProvider.overrideWithValue(
+                _FakeLocalStorageRepository(),
+              ),
+              connectivityRepositoryProvider.overrideWithValue(
+                _FakeConnectivityRepository(),
+              ),
+              tournamentsControllerProvider.overrideWith(
+                (ref) => _FakeTournamentsController(tournament),
+              ),
+              teamsControllerProvider.overrideWith(
+                (ref) => _FakeTeamsController([teamIncomplete, teamEligible]),
+              ),
+              activeUserRoleProvider.overrideWithValue(UserRole.organizer),
+            ],
+            child: MaterialApp(
+              theme: KickPulseTheme.darkTheme,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: const Locale('es'),
+              home: MediaQuery(
+                data: const MediaQueryData(
+                  textScaler: TextScaler.linear(1.3),
+                  size: Size(320, 640),
+                ),
+                child: Scaffold(
+                  body: CompetitionTeamsTabView(tournamentId: tournament.id),
+                ),
               ),
             ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(tester.takeException(), isNull);
-      expect(find.byKey(Key('competition_team_card_${teamIncomplete.id}')), findsOneWidget);
-      expect(find.byKey(Key('competition_team_card_${teamEligible.id}')), findsOneWidget);
-      expect(find.byKey(Key('competition_team_action_approve_${teamIncomplete.id}')), findsOneWidget);
-      expect(find.byKey(Key('competition_team_action_revoke_${teamEligible.id}')), findsOneWidget);
-    });
+        expect(tester.takeException(), isNull);
+        expect(
+          find.byKey(Key('competition_team_card_${teamIncomplete.id}')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(Key('competition_team_card_${teamEligible.id}')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(
+            Key('competition_team_action_approve_${teamIncomplete.id}'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(Key('competition_team_action_revoke_${teamEligible.id}')),
+          findsOneWidget,
+        );
+      },
+    );
   });
 }

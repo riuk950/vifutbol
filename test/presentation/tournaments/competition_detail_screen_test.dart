@@ -363,50 +363,49 @@ void main() {
       expect(find.text('Open Detail'), findsOneWidget);
     });
 
-    testWidgets(
-      'Organizer triggers direct fixture generation from FAB (US2)',
-      (tester) async {
-        await tester.pumpWidget(
-          createDetailTestApp(
-            tournamentId: 't-detail',
-            userRole: UserRole.organizer,
-            matches: const [],
-          ),
-        );
-        await tester.pumpAndSettle();
+    testWidgets('Organizer triggers direct fixture generation from FAB (US2)', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        createDetailTestApp(
+          tournamentId: 't-detail',
+          userRole: UserRole.organizer,
+          matches: const [],
+        ),
+      );
+      await tester.pumpAndSettle();
 
-        // Direct Generate Fixture FAB is visible immediately
-        final generateAction = find.byKey(
-          const Key('competition_detail_fab_generate_fixture'),
-        );
-        expect(generateAction, findsOneWidget);
-        expect(find.text('Generar Fixture'), findsOneWidget);
+      // Direct Generate Fixture FAB is visible immediately
+      final generateAction = find.byKey(
+        const Key('competition_detail_fab_generate_fixture'),
+      );
+      expect(generateAction, findsOneWidget);
+      expect(find.text('Generar Fixture'), findsOneWidget);
 
-        // Speed dial menu is absent
-        expect(
-          find.byKey(const Key('competition_detail_fab_menu')),
-          findsNothing,
-        );
+      // Speed dial menu is absent
+      expect(
+        find.byKey(const Key('competition_detail_fab_menu')),
+        findsNothing,
+      );
 
-        // Tap generate fixture action -> opens confirmation dialog
-        await tester.tap(generateAction);
-        await tester.pumpAndSettle();
+      // Tap generate fixture action -> opens confirmation dialog
+      await tester.tap(generateAction);
+      await tester.pumpAndSettle();
 
-        expect(
-          find.byKey(const Key('confirm_generate_fixture_button')),
-          findsOneWidget,
-        );
+      expect(
+        find.byKey(const Key('confirm_generate_fixture_button')),
+        findsOneWidget,
+      );
 
-        // Confirm fixture generation
-        await tester.tap(
-          find.byKey(const Key('confirm_generate_fixture_button')),
-        );
-        await tester.pumpAndSettle();
+      // Confirm fixture generation
+      await tester.tap(
+        find.byKey(const Key('confirm_generate_fixture_button')),
+      );
+      await tester.pumpAndSettle();
 
-        // Dialog dismissed, snackbar shown
-        expect(find.textContaining('Fixture generado'), findsOneWidget);
-      },
-    );
+      // Dialog dismissed, snackbar shown
+      expect(find.textContaining('Fixture generado'), findsOneWidget);
+    });
 
     testWidgets(
       'hides FAB menu for non-organizer roles or finished tournaments (US2)',
@@ -491,10 +490,7 @@ void main() {
       (tester) async {
         for (final role in UserRole.values) {
           await tester.pumpWidget(
-            createDetailTestApp(
-              tournamentId: 't-detail',
-              userRole: role,
-            ),
+            createDetailTestApp(tournamentId: 't-detail', userRole: role),
           );
           await tester.pumpAndSettle();
 
@@ -506,7 +502,8 @@ void main() {
           expect(
             find.byKey(const Key('competition_detail_fab_add_team')),
             findsNothing,
-            reason: '${role.name} must never see competition_detail_fab_add_team',
+            reason:
+                '${role.name} must never see competition_detail_fab_add_team',
           );
         }
       },

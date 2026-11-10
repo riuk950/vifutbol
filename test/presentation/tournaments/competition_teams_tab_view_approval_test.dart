@@ -52,12 +52,12 @@ class _FakeConnectivityRepository implements ConnectivityRepository {
 class _FakeTournamentsController extends StateNotifier<TournamentsCatalogState>
     implements TournamentsController {
   _FakeTournamentsController(ChampionshipTournament tournament)
-      : super(
-          TournamentsCatalogState(
-            viewState: UiSuccessState<List<ChampionshipTournament>>([tournament]),
-            tournaments: [tournament],
-          ),
-        );
+    : super(
+        TournamentsCatalogState(
+          viewState: UiSuccessState<List<ChampionshipTournament>>([tournament]),
+          tournaments: [tournament],
+        ),
+      );
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -66,7 +66,7 @@ class _FakeTournamentsController extends StateNotifier<TournamentsCatalogState>
 class _FakeTeamsController extends StateNotifier<TeamsCatalogState>
     implements TeamsController {
   _FakeTeamsController(List<TournamentTeam> teams)
-      : super(TeamsCatalogState(teams: teams));
+    : super(TeamsCatalogState(teams: teams));
 
   bool approveCalled = false;
 
@@ -99,9 +99,15 @@ Widget _buildTestApp({
   final fakeTeams = teamsController ?? _FakeTeamsController(teams);
   return ProviderScope(
     overrides: [
-      environmentConfigProvider.overrideWithValue(EnvironmentConfig.development()),
-      localStorageRepositoryProvider.overrideWithValue(_FakeLocalStorageRepository()),
-      connectivityRepositoryProvider.overrideWithValue(_FakeConnectivityRepository()),
+      environmentConfigProvider.overrideWithValue(
+        EnvironmentConfig.development(),
+      ),
+      localStorageRepositoryProvider.overrideWithValue(
+        _FakeLocalStorageRepository(),
+      ),
+      connectivityRepositoryProvider.overrideWithValue(
+        _FakeConnectivityRepository(),
+      ),
       tournamentsControllerProvider.overrideWith(
         (ref) => _FakeTournamentsController(tournament),
       ),
@@ -127,81 +133,109 @@ Widget _buildTestApp({
 
 void main() {
   group('CompetitionTeamsTabView Team Approval Widget Tests (HU 16.3 / US1)', () {
-    testWidgets('shows warning dialog when tapping Habilitar Equipo on team with < 11 players', (tester) async {
-      final tournament = createTestTournament(minPlayers: 11);
-      final team9 = createTestTeam(
-        id: 'team-9',
-        tournamentId: tournament.id,
-        name: 'Incomplete FC',
-        shortCode: 'INC',
-        playerCount: 9,
-        status: TeamEligibilityStatus.pendingVerification,
-      );
+    testWidgets(
+      'shows warning dialog when tapping Habilitar Equipo on team with < 11 players',
+      (tester) async {
+        final tournament = createTestTournament(minPlayers: 11);
+        final team9 = createTestTeam(
+          id: 'team-9',
+          tournamentId: tournament.id,
+          name: 'Incomplete FC',
+          shortCode: 'INC',
+          playerCount: 9,
+          status: TeamEligibilityStatus.pendingVerification,
+        );
 
-      final controller = _FakeTeamsController([team9]);
+        final controller = _FakeTeamsController([team9]);
 
-      await tester.pumpWidget(
-        _buildTestApp(
-          tournament: tournament,
-          teams: [team9],
-          teamsController: controller,
-        ),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          _buildTestApp(
+            tournament: tournament,
+            teams: [team9],
+            teamsController: controller,
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      final approveBtn = find.byKey(Key('competition_team_action_approve_${team9.id}'));
-      expect(approveBtn, findsOneWidget);
+        final approveBtn = find.byKey(
+          Key('competition_team_action_approve_${team9.id}'),
+        );
+        expect(approveBtn, findsOneWidget);
 
-      await tester.tap(approveBtn);
-      await tester.pumpAndSettle();
+        await tester.tap(approveBtn);
+        await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('competition_team_insufficient_quota_dialog')), findsOneWidget);
-      expect(
-        find.text('El equipo no cumple la cuota reglamentaria mínima (mínimo 11 jugadores requeridos, actual: 9)'),
-        findsOneWidget,
-      );
+        expect(
+          find.byKey(const Key('competition_team_insufficient_quota_dialog')),
+          findsOneWidget,
+        );
+        expect(
+          find.text(
+            'El equipo no cumple la cuota reglamentaria mínima (mínimo 11 jugadores requeridos, actual: 9)',
+          ),
+          findsOneWidget,
+        );
 
-      final confirmBtn = find.byKey(const Key('competition_team_dialog_confirm_button'));
-      expect(confirmBtn, findsOneWidget);
+        final confirmBtn = find.byKey(
+          const Key('competition_team_dialog_confirm_button'),
+        );
+        expect(confirmBtn, findsOneWidget);
 
-      await tester.tap(confirmBtn);
-      await tester.pumpAndSettle();
+        await tester.tap(confirmBtn);
+        await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('competition_team_insufficient_quota_dialog')), findsNothing);
-      expect(controller.approveCalled, isFalse);
-    });
+        expect(
+          find.byKey(const Key('competition_team_insufficient_quota_dialog')),
+          findsNothing,
+        );
+        expect(controller.approveCalled, isFalse);
+      },
+    );
 
-    testWidgets('successfully approves team with >= 11 players and updates status', (tester) async {
-      final tournament = createTestTournament(minPlayers: 11);
-      final team11 = createTestTeam(
-        id: 'team-11',
-        tournamentId: tournament.id,
-        name: 'Complete FC',
-        shortCode: 'COM',
-        playerCount: 11,
-        status: TeamEligibilityStatus.pendingVerification,
-      );
+    testWidgets(
+      'successfully approves team with >= 11 players and updates status',
+      (tester) async {
+        final tournament = createTestTournament(minPlayers: 11);
+        final team11 = createTestTeam(
+          id: 'team-11',
+          tournamentId: tournament.id,
+          name: 'Complete FC',
+          shortCode: 'COM',
+          playerCount: 11,
+          status: TeamEligibilityStatus.pendingVerification,
+        );
 
-      final controller = _FakeTeamsController([team11]);
+        final controller = _FakeTeamsController([team11]);
 
-      await tester.pumpWidget(
-        _buildTestApp(
-          tournament: tournament,
-          teams: [team11],
-          teamsController: controller,
-        ),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          _buildTestApp(
+            tournament: tournament,
+            teams: [team11],
+            teamsController: controller,
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      final approveBtn = find.byKey(Key('competition_team_action_approve_${team11.id}'));
-      expect(approveBtn, findsOneWidget);
+        final approveBtn = find.byKey(
+          Key('competition_team_action_approve_${team11.id}'),
+        );
+        expect(approveBtn, findsOneWidget);
 
-      await tester.tap(approveBtn);
-      await tester.pumpAndSettle();
+        await tester.tap(approveBtn);
+        await tester.pumpAndSettle();
 
-      expect(controller.approveCalled, isTrue);
-      expect(find.byKey(const Key('competition_team_insufficient_quota_dialog')), findsNothing);
-      expect(find.text('El equipo ha sido habilitado oficialmente para el campeonato'), findsOneWidget);
-    });
+        expect(controller.approveCalled, isTrue);
+        expect(
+          find.byKey(const Key('competition_team_insufficient_quota_dialog')),
+          findsNothing,
+        );
+        expect(
+          find.text(
+            'El equipo ha sido habilitado oficialmente para el campeonato',
+          ),
+          findsOneWidget,
+        );
+      },
+    );
   });
 }

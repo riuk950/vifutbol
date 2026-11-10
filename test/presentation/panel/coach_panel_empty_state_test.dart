@@ -24,7 +24,7 @@ import 'package:vifutbol/presentation/panel/widgets/coach_panel_content.dart';
 class _FakeTeamsController extends StateNotifier<TeamsCatalogState>
     implements TeamsController {
   _FakeTeamsController({List<TournamentTeam> teams = const []})
-      : super(TeamsCatalogState(teams: teams));
+    : super(TeamsCatalogState(teams: teams));
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -117,10 +117,7 @@ void main() {
       expect(find.text('Registrar mi Equipo'), findsOneWidget);
 
       // Verify normal metrics are NOT rendered
-      expect(
-        find.byKey(const Key('coach_metric_total_players')),
-        findsNothing,
-      );
+      expect(find.byKey(const Key('coach_metric_total_players')), findsNothing);
     });
 
     testWidgets('renders squad metrics when coach has a registered team', (

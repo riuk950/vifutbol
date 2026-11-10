@@ -40,7 +40,10 @@ void main() {
     ),
   ];
 
-  Widget buildCompactTestWidget(Widget child, {List<ChampionshipTournament>? tournaments}) {
+  Widget buildCompactTestWidget(
+    Widget child, {
+    List<ChampionshipTournament>? tournaments,
+  }) {
     return ProviderScope(
       overrides: [
         if (tournaments != null)
@@ -60,83 +63,106 @@ void main() {
             size: Size(320, 640),
             textScaler: TextScaler.linear(1.3),
           ),
-          child: Scaffold(
-            body: SingleChildScrollView(
-              child: child,
-            ),
-          ),
+          child: Scaffold(body: SingleChildScrollView(child: child)),
         ),
       ),
     );
   }
 
-  group('Organizer Competitions Responsive Tests (320x640 @ 130% text scale)', () {
-    testWidgets('OrganizerCompetitionsSection renders without overflow on compact screen', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(320, 640));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+  group(
+    'Organizer Competitions Responsive Tests (320x640 @ 130% text scale)',
+    () {
+      testWidgets(
+        'OrganizerCompetitionsSection renders without overflow on compact screen',
+        (tester) async {
+          await tester.binding.setSurfaceSize(const Size(320, 640));
+          addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(
-        buildCompactTestWidget(
-          const OrganizerCompetitionsSection(),
-          tournaments: sampleTournaments,
-        ),
+          await tester.pumpWidget(
+            buildCompactTestWidget(
+              const OrganizerCompetitionsSection(),
+              tournaments: sampleTournaments,
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(tester.takeException(), isNull);
+          expect(
+            find.byKey(const Key('organizer_competitions_section')),
+            findsOneWidget,
+          );
+        },
       );
-      await tester.pumpAndSettle();
 
-      expect(tester.takeException(), isNull);
-      expect(find.byKey(const Key('organizer_competitions_section')), findsOneWidget);
-    });
+      testWidgets(
+        'CompetitionEditDialog renders without overflow on compact screen',
+        (tester) async {
+          await tester.binding.setSurfaceSize(const Size(320, 640));
+          addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    testWidgets('CompetitionEditDialog renders without overflow on compact screen', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(320, 640));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+          await tester.pumpWidget(
+            buildCompactTestWidget(
+              CompetitionEditDialog(tournament: sampleTournaments.first),
+            ),
+          );
+          await tester.pumpAndSettle();
 
-      await tester.pumpWidget(
-        buildCompactTestWidget(
-          CompetitionEditDialog(tournament: sampleTournaments.first),
-        ),
+          expect(tester.takeException(), isNull);
+          expect(
+            find.byKey(const Key('competition_edit_save_button')),
+            findsOneWidget,
+          );
+        },
       );
-      await tester.pumpAndSettle();
 
-      expect(tester.takeException(), isNull);
-      expect(find.byKey(const Key('competition_edit_save_button')), findsOneWidget);
-    });
+      testWidgets(
+        'CompetitionLifecycleDialog renders without overflow on compact screen',
+        (tester) async {
+          await tester.binding.setSurfaceSize(const Size(320, 640));
+          addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    testWidgets('CompetitionLifecycleDialog renders without overflow on compact screen', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(320, 640));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+          await tester.pumpWidget(
+            buildCompactTestWidget(
+              CompetitionLifecycleDialog(
+                tournament: sampleTournaments.first,
+                enrolledTeamsCount: 1,
+                hasGeneratedFixture: false,
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
 
-      await tester.pumpWidget(
-        buildCompactTestWidget(
-          CompetitionLifecycleDialog(
-            tournament: sampleTournaments.first,
-            enrolledTeamsCount: 1,
-            hasGeneratedFixture: false,
-          ),
-        ),
+          expect(tester.takeException(), isNull);
+          expect(
+            find.byKey(const Key('competition_lifecycle_target_select')),
+            findsOneWidget,
+          );
+        },
       );
-      await tester.pumpAndSettle();
 
-      expect(tester.takeException(), isNull);
-      expect(find.byKey(const Key('competition_lifecycle_target_select')), findsOneWidget);
-    });
+      testWidgets(
+        'CompetitionDeleteDialog renders without overflow on compact screen',
+        (tester) async {
+          await tester.binding.setSurfaceSize(const Size(320, 640));
+          addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    testWidgets('CompetitionDeleteDialog renders without overflow on compact screen', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(320, 640));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+          await tester.pumpWidget(
+            buildCompactTestWidget(
+              CompetitionDeleteDialog(
+                tournament: sampleTournaments.first,
+                canDelete: true,
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
 
-      await tester.pumpWidget(
-        buildCompactTestWidget(
-          CompetitionDeleteDialog(
-            tournament: sampleTournaments.first,
-            canDelete: true,
-          ),
-        ),
+          expect(tester.takeException(), isNull);
+          expect(
+            find.byKey(const Key('competition_delete_confirm_button')),
+            findsOneWidget,
+          );
+        },
       );
-      await tester.pumpAndSettle();
-
-      expect(tester.takeException(), isNull);
-      expect(find.byKey(const Key('competition_delete_confirm_button')), findsOneWidget);
-    });
-  });
+    },
+  );
 }

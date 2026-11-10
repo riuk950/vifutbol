@@ -48,9 +48,13 @@ void main() {
 
   setUp(() {
     mockRepo = MockTournamentsRepository();
-    when(() => mockRepo.loadTournaments()).thenAnswer((_) async => initialTournaments);
+    when(
+      () => mockRepo.loadTournaments(),
+    ).thenAnswer((_) async => initialTournaments);
     when(() => mockRepo.loadDraft()).thenAnswer((_) async => null);
-    when(() => mockRepo.saveTournament(any())).thenAnswer((inv) async => inv.positionalArguments[0] as ChampionshipTournament);
+    when(() => mockRepo.saveTournament(any())).thenAnswer(
+      (inv) async => inv.positionalArguments[0] as ChampionshipTournament,
+    );
 
     manageUseCase = ManageTournamentsUseCase(mockRepo);
     controller = TournamentsController(
@@ -73,13 +77,19 @@ void main() {
       );
 
       expect(success, isTrue);
-      verify(() => mockRepo.saveTournament(any(that: predicate<ChampionshipTournament>((t) {
-        return t.id == 'tourn-1' &&
-            t.name == 'Torneo Modificado 2026' &&
-            t.category == 'Senior' &&
-            t.format == TournamentFormat.knockoutCup &&
-            t.rules.pointsForWin == 4;
-      })))).called(1);
+      verify(
+        () => mockRepo.saveTournament(
+          any(
+            that: predicate<ChampionshipTournament>((t) {
+              return t.id == 'tourn-1' &&
+                  t.name == 'Torneo Modificado 2026' &&
+                  t.category == 'Senior' &&
+                  t.format == TournamentFormat.knockoutCup &&
+                  t.rules.pointsForWin == 4;
+            }),
+          ),
+        ),
+      ).called(1);
     });
 
     test('fails update if tournament is not found', () async {

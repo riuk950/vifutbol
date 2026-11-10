@@ -22,9 +22,7 @@ void main() {
     organizerId: 'org-test',
   );
 
-  Widget buildTestableWidget({
-    required Widget child,
-  }) {
+  Widget buildTestableWidget({required Widget child}) {
     return ProviderScope(
       child: MaterialApp(
         localizationsDelegates: const [
@@ -41,44 +39,69 @@ void main() {
   }
 
   group('CompetitionDeleteDialog Widget Tests', () {
-    testWidgets('renders blocked state when canDelete is false', (tester) async {
+    testWidgets('renders blocked state when canDelete is false', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         buildTestableWidget(
           child: CompetitionDeleteDialog(
             tournament: sampleTournament,
             canDelete: false,
-            blockReason: 'No se puede eliminar una competición en curso o finalizada.',
+            blockReason:
+                'No se puede eliminar una competición en curso o finalizada.',
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('No se puede eliminar una competición en curso o finalizada.'), findsOneWidget);
-      expect(find.byKey(const Key('competition_delete_cancel_button')), findsOneWidget);
-      expect(find.byKey(const Key('competition_delete_confirm_button')), findsNothing);
-    });
-
-    testWidgets('renders confirmation state and triggers deletion when canDelete is true', (tester) async {
-      var confirmed = false;
-
-      await tester.pumpWidget(
-        buildTestableWidget(
-          child: CompetitionDeleteDialog(
-            tournament: sampleTournament,
-            canDelete: true,
-            onConfirmed: () async => confirmed = true,
-          ),
+      expect(
+        find.text(
+          'No se puede eliminar una competición en curso o finalizada.',
         ),
+        findsOneWidget,
       );
-      await tester.pumpAndSettle();
-
-      expect(find.byKey(const Key('competition_delete_confirm_button')), findsOneWidget);
-      expect(find.byKey(const Key('competition_delete_cancel_button')), findsOneWidget);
-
-      await tester.tap(find.byKey(const Key('competition_delete_confirm_button')));
-      await tester.pumpAndSettle();
-
-      expect(confirmed, isTrue);
+      expect(
+        find.byKey(const Key('competition_delete_cancel_button')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('competition_delete_confirm_button')),
+        findsNothing,
+      );
     });
+
+    testWidgets(
+      'renders confirmation state and triggers deletion when canDelete is true',
+      (tester) async {
+        var confirmed = false;
+
+        await tester.pumpWidget(
+          buildTestableWidget(
+            child: CompetitionDeleteDialog(
+              tournament: sampleTournament,
+              canDelete: true,
+              onConfirmed: () async => confirmed = true,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('competition_delete_confirm_button')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('competition_delete_cancel_button')),
+          findsOneWidget,
+        );
+
+        await tester.tap(
+          find.byKey(const Key('competition_delete_confirm_button')),
+        );
+        await tester.pumpAndSettle();
+
+        expect(confirmed, isTrue);
+      },
+    );
   });
 }

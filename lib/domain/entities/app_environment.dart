@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:vifutbol/domain/failures/app_failure.dart';
 
 /// Runtime execution environment.
@@ -62,6 +63,18 @@ class EnvironmentConfig {
     required this.supabase,
   });
 
+  /// Resolves an environment variable checking [dotenv] first, then [--dart-define],
+  /// and finally falling back to [defaultValue].
+  static String _resolveEnvVar(String key, {String defaultValue = ''}) {
+    if (dotenv.isInitialized) {
+      final value = dotenv.maybeGet(key);
+      if (value != null && value.trim().isNotEmpty) {
+        return value.trim();
+      }
+    }
+    return String.fromEnvironment(key, defaultValue: defaultValue);
+  }
+
   /// Factory for development environment.
   factory EnvironmentConfig.development({
     String appName = 'vifutbol DEV',
@@ -73,15 +86,12 @@ class EnvironmentConfig {
     _validatePrefix(AppEnvironment.development, localStoragePrefix);
     final resolvedSupabase =
         supabase ??
-        const SupabaseConfig(
-          url: String.fromEnvironment(
+        SupabaseConfig(
+          url: _resolveEnvVar(
             'SUPABASE_URL',
             defaultValue: 'https://supabase.artbusinesstechnology.com',
           ),
-          anonKey: String.fromEnvironment(
-            'SUPABASE_ANON_KEY',
-            defaultValue: '',
-          ),
+          anonKey: _resolveEnvVar('SUPABASE_ANON_KEY', defaultValue: ''),
         );
     _validateSupabase(AppEnvironment.development, resolvedSupabase);
 
@@ -107,12 +117,9 @@ class EnvironmentConfig {
     _validatePrefix(AppEnvironment.production, localStoragePrefix);
     final resolvedSupabase =
         supabase ??
-        const SupabaseConfig(
-          url: String.fromEnvironment('SUPABASE_URL', defaultValue: ''),
-          anonKey: String.fromEnvironment(
-            'SUPABASE_ANON_KEY',
-            defaultValue: '',
-          ),
+        SupabaseConfig(
+          url: _resolveEnvVar('SUPABASE_URL', defaultValue: ''),
+          anonKey: _resolveEnvVar('SUPABASE_ANON_KEY', defaultValue: ''),
         );
     _validateSupabase(AppEnvironment.production, resolvedSupabase);
 

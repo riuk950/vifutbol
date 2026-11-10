@@ -16,7 +16,9 @@ class _FakeTeamsRepository implements TeamsRepository {
   Future<List<TournamentTeam>> loadTeams() async => teams.values.toList();
 
   @override
-  Future<List<TournamentTeam>> loadTeamsForTournament(String tournamentId) async {
+  Future<List<TournamentTeam>> loadTeamsForTournament(
+    String tournamentId,
+  ) async {
     return teams.values.where((t) => t.tournamentId == tournamentId).toList();
   }
 
@@ -44,117 +46,129 @@ void main() {
     useCase = ManageTeamsEligibilityUseCase(repository);
   });
 
-  group('ManageTeamsEligibilityUseCase.approveTeamEligibility Tests (HU 16.3 / US1)', () {
-    test('rejects team approval when player count < 11 with exact canonical message', () async {
-      final tournament = createTestTournament(minPlayers: 11);
-      final teamWith9 = createTestTeam(
-        id: 'team-9',
-        tournamentId: tournament.id,
-        playerCount: 9,
-        status: TeamEligibilityStatus.pendingVerification,
-      );
-      await repository.saveTeam(teamWith9);
+  group(
+    'ManageTeamsEligibilityUseCase.approveTeamEligibility Tests (HU 16.3 / US1)',
+    () {
+      test(
+        'rejects team approval when player count < 11 with exact canonical message',
+        () async {
+          final tournament = createTestTournament(minPlayers: 11);
+          final teamWith9 = createTestTeam(
+            id: 'team-9',
+            tournamentId: tournament.id,
+            playerCount: 9,
+            status: TeamEligibilityStatus.pendingVerification,
+          );
+          await repository.saveTeam(teamWith9);
 
-      expect(
-        () => useCase.approveTeamEligibility(
-          teamId: teamWith9.id,
-          tournament: tournament,
-          actorRole: UserRole.organizer,
-        ),
-        throwsA(
-          isA<TeamEligibilityValidationFailure>()
-              .having(
-                (f) => f.code,
-                'code',
-                TeamEligibilityErrorCode.insufficientPlayersForApproval,
-              )
-              .having(
-                (f) => f.message,
-                'message',
-                equals(
-                  'El equipo no cumple la cuota reglamentaria mínima (mínimo 11 jugadores requeridos, actual: 9)',
-                ),
-              ),
-        ),
-      );
-    });
-
-    test('successfully approves team when player count >= 11 and transitions to eligible', () async {
-      final tournament = createTestTournament(minPlayers: 11);
-      final teamWith11 = createTestTeam(
-        id: 'team-11',
-        tournamentId: tournament.id,
-        playerCount: 11,
-        status: TeamEligibilityStatus.pendingVerification,
-      );
-      await repository.saveTeam(teamWith11);
-
-      final approved = await useCase.approveTeamEligibility(
-        teamId: teamWith11.id,
-        tournament: tournament,
-        actorRole: UserRole.organizer,
+          expect(
+            () => useCase.approveTeamEligibility(
+              teamId: teamWith9.id,
+              tournament: tournament,
+              actorRole: UserRole.organizer,
+            ),
+            throwsA(
+              isA<TeamEligibilityValidationFailure>()
+                  .having(
+                    (f) => f.code,
+                    'code',
+                    TeamEligibilityErrorCode.insufficientPlayersForApproval,
+                  )
+                  .having(
+                    (f) => f.message,
+                    'message',
+                    equals(
+                      'El equipo no cumple la cuota reglamentaria mínima (mínimo 11 jugadores requeridos, actual: 9)',
+                    ),
+                  ),
+            ),
+          );
+        },
       );
 
-      expect(approved.eligibilityStatus, equals(TeamEligibilityStatus.eligible));
-      expect(approved.isEligible, isTrue);
-      expect(approved.players.every((p) => p.isEligible), isTrue);
+      test(
+        'successfully approves team when player count >= 11 and transitions to eligible',
+        () async {
+          final tournament = createTestTournament(minPlayers: 11);
+          final teamWith11 = createTestTeam(
+            id: 'team-11',
+            tournamentId: tournament.id,
+            playerCount: 11,
+            status: TeamEligibilityStatus.pendingVerification,
+          );
+          await repository.saveTeam(teamWith11);
 
-      final stored = await repository.loadTeamsForTournament(tournament.id);
-      expect(stored.first.isEligible, isTrue);
-    });
+          final approved = await useCase.approveTeamEligibility(
+            teamId: teamWith11.id,
+            tournament: tournament,
+            actorRole: UserRole.organizer,
+          );
 
-    test('rejects non-organizer roles attempting to approve team', () async {
-      final tournament = createTestTournament(minPlayers: 11);
-      final teamWith11 = createTestTeam(
-        id: 'team-11',
-        tournamentId: tournament.id,
-        playerCount: 11,
+          expect(
+            approved.eligibilityStatus,
+            equals(TeamEligibilityStatus.eligible),
+          );
+          expect(approved.isEligible, isTrue);
+          expect(approved.players.every((p) => p.isEligible), isTrue);
+
+          final stored = await repository.loadTeamsForTournament(tournament.id);
+          expect(stored.first.isEligible, isTrue);
+        },
       );
-      await repository.saveTeam(teamWith11);
 
-      for (final nonOrganizerRole in [
-        UserRole.coach,
-        UserRole.referee,
-        UserRole.player,
-        UserRole.fan,
-      ]) {
+      test('rejects non-organizer roles attempting to approve team', () async {
+        final tournament = createTestTournament(minPlayers: 11);
+        final teamWith11 = createTestTeam(
+          id: 'team-11',
+          tournamentId: tournament.id,
+          playerCount: 11,
+        );
+        await repository.saveTeam(teamWith11);
+
+        for (final nonOrganizerRole in [
+          UserRole.coach,
+          UserRole.referee,
+          UserRole.player,
+          UserRole.fan,
+        ]) {
+          expect(
+            () => useCase.approveTeamEligibility(
+              teamId: teamWith11.id,
+              tournament: tournament,
+              actorRole: nonOrganizerRole,
+            ),
+            throwsA(isA<UnauthorizedRoleFailure>()),
+            reason: 'Role $nonOrganizerRole must be rejected',
+          );
+        }
+      });
+
+      test('rejects approval on finished tournament', () async {
+        final finishedTournament = createTestTournament(
+          status: TournamentStatus.finished,
+        );
+        final teamWith11 = createTestTeam(
+          id: 'team-11',
+          tournamentId: finishedTournament.id,
+          playerCount: 11,
+        );
+        await repository.saveTeam(teamWith11);
+
         expect(
           () => useCase.approveTeamEligibility(
             teamId: teamWith11.id,
-            tournament: tournament,
-            actorRole: nonOrganizerRole,
+            tournament: finishedTournament,
+            actorRole: UserRole.organizer,
           ),
-          throwsA(isA<UnauthorizedRoleFailure>()),
-          reason: 'Role $nonOrganizerRole must be rejected',
+          throwsA(
+            isA<TeamEligibilityValidationFailure>().having(
+              (f) => f.code,
+              'code',
+              TeamEligibilityErrorCode.tournamentRegistrationsClosed,
+            ),
+          ),
         );
-      }
-    });
-
-    test('rejects approval on finished tournament', () async {
-      final finishedTournament = createTestTournament(
-        status: TournamentStatus.finished,
-      );
-      final teamWith11 = createTestTeam(
-        id: 'team-11',
-        tournamentId: finishedTournament.id,
-        playerCount: 11,
-      );
-      await repository.saveTeam(teamWith11);
-
-      expect(
-        () => useCase.approveTeamEligibility(
-          teamId: teamWith11.id,
-          tournament: finishedTournament,
-          actorRole: UserRole.organizer,
-        ),
-        throwsA(
-          isA<TeamEligibilityValidationFailure>().having(
-            (f) => f.code,
-            'code',
-            TeamEligibilityErrorCode.tournamentRegistrationsClosed,
-          ),
-        ),
-      );
-    });
-  });
+      });
+    },
+  );
 }

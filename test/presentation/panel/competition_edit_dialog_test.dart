@@ -22,9 +22,7 @@ void main() {
     organizerId: 'org-test',
   );
 
-  Widget buildTestableWidget({
-    required Widget child,
-  }) {
+  Widget buildTestableWidget({required Widget child}) {
     return ProviderScope(
       child: MaterialApp(
         localizationsDelegates: const [
@@ -49,10 +47,22 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('competition_edit_name_input')), findsOneWidget);
-      expect(find.byKey(const Key('competition_edit_category_input')), findsOneWidget);
-      expect(find.byKey(const Key('competition_edit_save_button')), findsOneWidget);
-      expect(find.byKey(const Key('competition_edit_cancel_button')), findsOneWidget);
+      expect(
+        find.byKey(const Key('competition_edit_name_input')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('competition_edit_category_input')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('competition_edit_save_button')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('competition_edit_cancel_button')),
+        findsOneWidget,
+      );
 
       expect(find.text('Torneo Metropolitano'), findsOneWidget);
       expect(find.text('Libre Masculino'), findsOneWidget);
@@ -73,7 +83,10 @@ void main() {
       await tester.tap(find.byKey(const Key('competition_edit_save_button')));
       await tester.pumpAndSettle();
 
-      expect(find.text('El nombre debe tener al menos 3 caracteres'), findsOneWidget);
+      expect(
+        find.text('El nombre debe tener al menos 3 caracteres'),
+        findsOneWidget,
+      );
     });
   });
 }

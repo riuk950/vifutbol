@@ -97,34 +97,40 @@ void main() {
       final coachTeams = container.read(coachTeamsProvider);
 
       expect(coachTeams.length, equals(2));
-      expect(coachTeams.map((t) => t.id), containsAll(['team-coach-1', 'team-seed-1']));
+      expect(
+        coachTeams.map((t) => t.id),
+        containsAll(['team-coach-1', 'team-seed-1']),
+      );
       expect(coachTeams.map((t) => t.id), isNot(contains('team-other-coach')));
       expect(coachTeams.map((t) => t.id), isNot(contains('team-no-coach')));
     });
 
-    test('retains coach-seed-1 teams when session has no active coach or is null', () {
-      final container = ProviderContainer(
-        overrides: [
-          teamsControllerProvider.overrideWith(
-            (ref) => SimpleTeamsController(
-              TeamsCatalogState(
-                teams: [teamCoach1, teamSeed, teamOther, teamNullCoach],
+    test(
+      'retains coach-seed-1 teams when session has no active coach or is null',
+      () {
+        final container = ProviderContainer(
+          overrides: [
+            teamsControllerProvider.overrideWith(
+              (ref) => SimpleTeamsController(
+                TeamsCatalogState(
+                  teams: [teamCoach1, teamSeed, teamOther, teamNullCoach],
+                ),
               ),
             ),
-          ),
-          authControllerProvider.overrideWith(
-            (ref) => SimpleAuthController(
-              const AuthFlowState(status: AuthStatus.unauthenticated),
+            authControllerProvider.overrideWith(
+              (ref) => SimpleAuthController(
+                const AuthFlowState(status: AuthStatus.unauthenticated),
+              ),
             ),
-          ),
-        ],
-      );
-      addTearDown(container.dispose);
+          ],
+        );
+        addTearDown(container.dispose);
 
-      final coachTeams = container.read(coachTeamsProvider);
+        final coachTeams = container.read(coachTeamsProvider);
 
-      expect(coachTeams.length, equals(1));
-      expect(coachTeams.first.id, equals('team-seed-1'));
-    });
+        expect(coachTeams.length, equals(1));
+        expect(coachTeams.first.id, equals('team-seed-1'));
+      },
+    );
   });
 }

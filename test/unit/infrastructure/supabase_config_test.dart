@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/failures/app_failure.dart';
@@ -146,6 +147,39 @@ void main() {
       expect(supabaseMap['url'], 'https://supabase.artbusinesstechnology.com');
       expect(supabaseMap['anonKey'], '[REDACTED]');
       expect(supabaseMap['isConfigured'], isTrue);
+    });
+  });
+
+  group('dotenv resolution in EnvironmentConfig', () {
+    tearDown(() {
+      dotenv.clean();
+    });
+
+    test('resolves Supabase DEV credentials from dotenv', () {
+      dotenv.testLoad(
+        fileInput:
+            'SUPABASE_URL=https://supabase.artbusinesstechnology.com\nSUPABASE_ANON_KEY=test-oracle-anon-key\n',
+      );
+
+      final devConfig = EnvironmentConfig.development();
+      expect(
+        devConfig.supabase.url,
+        'https://supabase.artbusinesstechnology.com',
+      );
+      expect(devConfig.supabase.anonKey, 'test-oracle-anon-key');
+      expect(devConfig.supabase.isConfigured, isTrue);
+    });
+
+    test('resolves Supabase PROD credentials from dotenv', () {
+      dotenv.testLoad(
+        fileInput:
+            'SUPABASE_URL=https://prod-project.supabase.co\nSUPABASE_ANON_KEY=test-prod-cloud-key\n',
+      );
+
+      final prodConfig = EnvironmentConfig.production();
+      expect(prodConfig.supabase.url, 'https://prod-project.supabase.co');
+      expect(prodConfig.supabase.anonKey, 'test-prod-cloud-key');
+      expect(prodConfig.supabase.isConfigured, isTrue);
     });
   });
 }

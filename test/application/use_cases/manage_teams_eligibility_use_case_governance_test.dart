@@ -17,7 +17,9 @@ class _FakeTeamsRepository implements TeamsRepository {
   Future<List<TournamentTeam>> loadTeams() async => List.unmodifiable(_teams);
 
   @override
-  Future<List<TournamentTeam>> loadTeamsForTournament(String tournamentId) async {
+  Future<List<TournamentTeam>> loadTeamsForTournament(
+    String tournamentId,
+  ) async {
     return _teams.where((t) => t.tournamentId == tournamentId).toList();
   }
 
@@ -163,26 +165,29 @@ void main() {
       );
     }
 
-    test('UserRole.coach succeeds for team registration and autonomous creation', () async {
-      final createdInTournament = await useCase.registerOrUpdateTeam(
-        team: testTeam,
-        tournament: sampleTournament,
-        actorRole: UserRole.coach,
-      );
-      expect(createdInTournament.name, equals('Club Atlético Viña'));
-      expect(createdInTournament.tournamentId, equals(sampleTournament.id));
+    test(
+      'UserRole.coach succeeds for team registration and autonomous creation',
+      () async {
+        final createdInTournament = await useCase.registerOrUpdateTeam(
+          team: testTeam,
+          tournament: sampleTournament,
+          actorRole: UserRole.coach,
+        );
+        expect(createdInTournament.name, equals('Club Atlético Viña'));
+        expect(createdInTournament.tournamentId, equals(sampleTournament.id));
 
-      final createdAutonomous = await useCase.registerOrUpdateTeam(
-        team: TournamentTeam(
-          id: 'team-auto-1',
-          name: 'Club Autónomo',
-          shortCode: 'AUT',
-        ),
-        tournament: null,
-        actorRole: UserRole.coach,
-      );
-      expect(createdAutonomous.name, equals('Club Autónomo'));
-      expect(createdAutonomous.tournamentId, equals(''));
-    });
+        final createdAutonomous = await useCase.registerOrUpdateTeam(
+          team: TournamentTeam(
+            id: 'team-auto-1',
+            name: 'Club Autónomo',
+            shortCode: 'AUT',
+          ),
+          tournament: null,
+          actorRole: UserRole.coach,
+        );
+        expect(createdAutonomous.name, equals('Club Autónomo'));
+        expect(createdAutonomous.tournamentId, equals(''));
+      },
+    );
   });
 }

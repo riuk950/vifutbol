@@ -51,8 +51,9 @@ class _FakeTeamsRepository implements TeamsRepository {
   @override
   Future<List<TournamentTeam>> loadTeams() async => teams;
   @override
-  Future<List<TournamentTeam>> loadTeamsForTournament(String tournamentId) async =>
-      teams.where((t) => t.tournamentId == tournamentId).toList();
+  Future<List<TournamentTeam>> loadTeamsForTournament(
+    String tournamentId,
+  ) async => teams.where((t) => t.tournamentId == tournamentId).toList();
   @override
   Future<TournamentTeam> saveTeam(TournamentTeam team) async => team;
   @override
@@ -67,7 +68,9 @@ class _FakeTournamentsRepository implements TournamentsRepository {
   @override
   Future<List<ChampionshipTournament>> loadTournaments() async => tournaments;
   @override
-  Future<ChampionshipTournament> saveTournament(ChampionshipTournament t) async => t;
+  Future<ChampionshipTournament> saveTournament(
+    ChampionshipTournament t,
+  ) async => t;
   @override
   Future<void> deleteTournament(String id) async {}
   @override
@@ -106,9 +109,7 @@ void main() {
         connectivityRepositoryProvider.overrideWithValue(
           _FakeConnectivityRepository(),
         ),
-        teamsRepositoryProvider.overrideWithValue(
-          _FakeTeamsRepository([team]),
-        ),
+        teamsRepositoryProvider.overrideWithValue(_FakeTeamsRepository([team])),
         tournamentsRepositoryProvider.overrideWithValue(
           _FakeTournamentsRepository([tournament]),
         ),
@@ -154,7 +155,8 @@ void main() {
             expect(
               buttonFinder,
               findsNothing,
-              reason: '${role.name} must NOT see create_team_from_directory_button',
+              reason:
+                  '${role.name} must NOT see create_team_from_directory_button',
             );
           }
         }

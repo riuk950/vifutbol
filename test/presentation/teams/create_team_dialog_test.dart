@@ -49,8 +49,7 @@ class MockTeamsController extends StateNotifier<TeamsCatalogState>
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class MockTournamentsController
-    extends StateNotifier<TournamentsCatalogState>
+class MockTournamentsController extends StateNotifier<TournamentsCatalogState>
     implements TournamentsController {
   MockTournamentsController(super.state);
 
@@ -152,50 +151,57 @@ void main() {
         find.byKey(const Key('create_team_tournament_dropdown')),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('create_team_submit_button')), findsOneWidget);
-      expect(find.byKey(const Key('create_team_cancel_button')), findsOneWidget);
+      expect(
+        find.byKey(const Key('create_team_submit_button')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('create_team_cancel_button')),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('validates required minimum name length and short code bounds', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        buildTestableWidget(child: const CreateTeamDialog()),
-      );
-      await tester.pumpAndSettle();
+    testWidgets(
+      'validates required minimum name length and short code bounds',
+      (tester) async {
+        await tester.pumpWidget(
+          buildTestableWidget(child: const CreateTeamDialog()),
+        );
+        await tester.pumpAndSettle();
 
-      // Tap submit with empty inputs
-      await tester.tap(find.byKey(const Key('create_team_submit_button')));
-      await tester.pumpAndSettle();
+        // Tap submit with empty inputs
+        await tester.tap(find.byKey(const Key('create_team_submit_button')));
+        await tester.pumpAndSettle();
 
-      expect(
-        find.text('El nombre del equipo debe tener al menos 3 caracteres'),
-        findsOneWidget,
-      );
-      expect(mockTeamsController.createTeamCalled, isFalse);
+        expect(
+          find.text('El nombre del equipo debe tener al menos 3 caracteres'),
+          findsOneWidget,
+        );
+        expect(mockTeamsController.createTeamCalled, isFalse);
 
-      // Enter 1 char in name and 1 char in shortCode
-      await tester.enterText(
-        find.byKey(const Key('create_team_name_input')),
-        'FC',
-      );
-      await tester.enterText(
-        find.byKey(const Key('create_team_short_code_input')),
-        'F',
-      );
-      await tester.tap(find.byKey(const Key('create_team_submit_button')));
-      await tester.pumpAndSettle();
+        // Enter 1 char in name and 1 char in shortCode
+        await tester.enterText(
+          find.byKey(const Key('create_team_name_input')),
+          'FC',
+        );
+        await tester.enterText(
+          find.byKey(const Key('create_team_short_code_input')),
+          'F',
+        );
+        await tester.tap(find.byKey(const Key('create_team_submit_button')));
+        await tester.pumpAndSettle();
 
-      expect(
-        find.text('El nombre del equipo debe tener al menos 3 caracteres'),
-        findsOneWidget,
-      );
-      expect(
-        find.text('La sigla debe tener entre 2 y 4 caracteres'),
-        findsOneWidget,
-      );
-      expect(mockTeamsController.createTeamCalled, isFalse);
-    });
+        expect(
+          find.text('El nombre del equipo debe tener al menos 3 caracteres'),
+          findsOneWidget,
+        );
+        expect(
+          find.text('La sigla debe tener entre 2 y 4 caracteres'),
+          findsOneWidget,
+        );
+        expect(mockTeamsController.createTeamCalled, isFalse);
+      },
+    );
 
     testWidgets(
       'submits valid autonomous team successfully with coach session ID',

@@ -15,9 +15,7 @@ void main() {
     VoidCallback? onCreatePressed,
   }) {
     return ProviderScope(
-      overrides: [
-        organizerTournamentsProvider.overrideWithValue(tournaments),
-      ],
+      overrides: [organizerTournamentsProvider.overrideWithValue(tournaments)],
       child: MaterialApp(
         localizationsDelegates: const [
           AppLocalizations.delegate,

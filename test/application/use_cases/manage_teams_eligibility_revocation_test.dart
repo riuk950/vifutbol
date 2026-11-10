@@ -15,7 +15,9 @@ class _FakeTeamsRepository implements TeamsRepository {
   Future<List<TournamentTeam>> loadTeams() async => teams.values.toList();
 
   @override
-  Future<List<TournamentTeam>> loadTeamsForTournament(String tournamentId) async {
+  Future<List<TournamentTeam>> loadTeamsForTournament(
+    String tournamentId,
+  ) async {
     return teams.values.where((t) => t.tournamentId == tournamentId).toList();
   }
 
@@ -43,81 +45,103 @@ void main() {
     useCase = ManageTeamsEligibilityUseCase(repository);
   });
 
-  group('ManageTeamsEligibilityUseCase Revocation & Auto-Demotion Tests (HU 16.3 / US3)', () {
-    test('organizer successfully revokes eligible team reverting to pendingVerification', () async {
-      final tournament = createTestTournament(minPlayers: 11);
-      final eligibleTeam = createTestTeam(
-        id: 'team-rev',
-        tournamentId: tournament.id,
-        playerCount: 12,
-        status: TeamEligibilityStatus.eligible,
-      );
-      await repository.saveTeam(eligibleTeam);
+  group(
+    'ManageTeamsEligibilityUseCase Revocation & Auto-Demotion Tests (HU 16.3 / US3)',
+    () {
+      test(
+        'organizer successfully revokes eligible team reverting to pendingVerification',
+        () async {
+          final tournament = createTestTournament(minPlayers: 11);
+          final eligibleTeam = createTestTeam(
+            id: 'team-rev',
+            tournamentId: tournament.id,
+            playerCount: 12,
+            status: TeamEligibilityStatus.eligible,
+          );
+          await repository.saveTeam(eligibleTeam);
 
-      final revoked = await useCase.revokeTeamEligibility(
-        teamId: eligibleTeam.id,
-        tournament: tournament,
-        actorRole: UserRole.organizer,
-      );
-
-      expect(revoked.eligibilityStatus, equals(TeamEligibilityStatus.pendingVerification));
-      expect(revoked.isEligible, isFalse);
-      expect(revoked.players.every((p) => !p.isEligible), isTrue);
-
-      final stored = await repository.loadTeamsForTournament(tournament.id);
-      expect(stored.first.eligibilityStatus, equals(TeamEligibilityStatus.pendingVerification));
-    });
-
-    test('rejects non-organizer roles attempting to revoke team eligibility', () async {
-      final tournament = createTestTournament(minPlayers: 11);
-      final eligibleTeam = createTestTeam(
-        id: 'team-rev',
-        tournamentId: tournament.id,
-        playerCount: 11,
-        status: TeamEligibilityStatus.eligible,
-      );
-      await repository.saveTeam(eligibleTeam);
-
-      for (final nonOrganizer in [
-        UserRole.coach,
-        UserRole.referee,
-        UserRole.player,
-        UserRole.fan,
-      ]) {
-        expect(
-          () => useCase.revokeTeamEligibility(
+          final revoked = await useCase.revokeTeamEligibility(
             teamId: eligibleTeam.id,
             tournament: tournament,
-            actorRole: nonOrganizer,
-          ),
-          throwsA(isA<UnauthorizedRoleFailure>()),
-          reason: 'Role $nonOrganizer must be blocked from revoking eligibility',
-        );
-      }
-    });
+            actorRole: UserRole.organizer,
+          );
 
-    test('auto-demotes eligible team to pendingVerification when squad drops below 11 players', () async {
-      final tournament = createTestTournament(minPlayers: 11);
-      final teamWith11 = createTestTeam(
-        id: 'team-11',
-        tournamentId: tournament.id,
-        playerCount: 11,
-        status: TeamEligibilityStatus.eligible,
-      );
-      await repository.saveTeam(teamWith11);
+          expect(
+            revoked.eligibilityStatus,
+            equals(TeamEligibilityStatus.pendingVerification),
+          );
+          expect(revoked.isEligible, isFalse);
+          expect(revoked.players.every((p) => !p.isEligible), isTrue);
 
-      final playerToRemove = teamWith11.players.first.id;
-
-      final updated = await useCase.removePlayer(
-        teamId: teamWith11.id,
-        playerId: playerToRemove,
-        tournament: tournament,
-        actorRole: UserRole.coach,
+          final stored = await repository.loadTeamsForTournament(tournament.id);
+          expect(
+            stored.first.eligibilityStatus,
+            equals(TeamEligibilityStatus.pendingVerification),
+          );
+        },
       );
 
-      expect(updated.players.length, equals(10));
-      expect(updated.eligibilityStatus, equals(TeamEligibilityStatus.pendingVerification));
-      expect(updated.isEligible, isFalse);
-    });
-  });
+      test(
+        'rejects non-organizer roles attempting to revoke team eligibility',
+        () async {
+          final tournament = createTestTournament(minPlayers: 11);
+          final eligibleTeam = createTestTeam(
+            id: 'team-rev',
+            tournamentId: tournament.id,
+            playerCount: 11,
+            status: TeamEligibilityStatus.eligible,
+          );
+          await repository.saveTeam(eligibleTeam);
+
+          for (final nonOrganizer in [
+            UserRole.coach,
+            UserRole.referee,
+            UserRole.player,
+            UserRole.fan,
+          ]) {
+            expect(
+              () => useCase.revokeTeamEligibility(
+                teamId: eligibleTeam.id,
+                tournament: tournament,
+                actorRole: nonOrganizer,
+              ),
+              throwsA(isA<UnauthorizedRoleFailure>()),
+              reason:
+                  'Role $nonOrganizer must be blocked from revoking eligibility',
+            );
+          }
+        },
+      );
+
+      test(
+        'auto-demotes eligible team to pendingVerification when squad drops below 11 players',
+        () async {
+          final tournament = createTestTournament(minPlayers: 11);
+          final teamWith11 = createTestTeam(
+            id: 'team-11',
+            tournamentId: tournament.id,
+            playerCount: 11,
+            status: TeamEligibilityStatus.eligible,
+          );
+          await repository.saveTeam(teamWith11);
+
+          final playerToRemove = teamWith11.players.first.id;
+
+          final updated = await useCase.removePlayer(
+            teamId: teamWith11.id,
+            playerId: playerToRemove,
+            tournament: tournament,
+            actorRole: UserRole.coach,
+          );
+
+          expect(updated.players.length, equals(10));
+          expect(
+            updated.eligibilityStatus,
+            equals(TeamEligibilityStatus.pendingVerification),
+          );
+          expect(updated.isEligible, isFalse);
+        },
+      );
+    },
+  );
 }

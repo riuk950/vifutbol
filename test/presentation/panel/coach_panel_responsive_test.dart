@@ -31,7 +31,7 @@ import 'package:vifutbol/presentation/teams/dialogs/create_team_dialog.dart';
 class _FakeTeamsController extends StateNotifier<TeamsCatalogState>
     implements TeamsController {
   _FakeTeamsController({List<TournamentTeam> teams = const []})
-      : super(TeamsCatalogState(teams: teams));
+    : super(TeamsCatalogState(teams: teams));
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -40,7 +40,7 @@ class _FakeTeamsController extends StateNotifier<TeamsCatalogState>
 class _FakeMatchesController extends StateNotifier<MatchesCatalogState>
     implements MatchesCatalogController {
   _FakeMatchesController({List<ChampionshipMatch> matches = const []})
-      : super(MatchesCatalogState(matches: matches));
+    : super(MatchesCatalogState(matches: matches));
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -57,11 +57,11 @@ class _FakeAuthController extends StateNotifier<AuthFlowState>
 class _FakeTournamentsController extends StateNotifier<TournamentsCatalogState>
     implements TournamentsController {
   _FakeTournamentsController()
-      : super(
-          const TournamentsCatalogState(
-            viewState: UiSuccessState<List<ChampionshipTournament>>([]),
-          ),
-        );
+    : super(
+        const TournamentsCatalogState(
+          viewState: UiSuccessState<List<ChampionshipTournament>>([]),
+        ),
+      );
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

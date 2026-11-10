@@ -22,9 +22,7 @@ void main() {
     organizerId: 'org-test',
   );
 
-  Widget buildTestableWidget({
-    required Widget child,
-  }) {
+  Widget buildTestableWidget({required Widget child}) {
     return ProviderScope(
       child: MaterialApp(
         localizationsDelegates: const [
@@ -56,15 +54,25 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('competition_lifecycle_target_select')), findsOneWidget);
-      expect(find.byKey(const Key('competition_lifecycle_action_enroll_teams')), findsOneWidget);
+      expect(
+        find.byKey(const Key('competition_lifecycle_target_select')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('competition_lifecycle_action_enroll_teams')),
+        findsOneWidget,
+      );
 
-      await tester.tap(find.byKey(const Key('competition_lifecycle_action_enroll_teams')));
+      await tester.tap(
+        find.byKey(const Key('competition_lifecycle_action_enroll_teams')),
+      );
       await tester.pumpAndSettle();
       expect(enrollTapped, isTrue);
     });
 
-    testWidgets('triggers generate fixture action when clicked', (tester) async {
+    testWidgets('triggers generate fixture action when clicked', (
+      tester,
+    ) async {
       var fixtureTapped = false;
 
       await tester.pumpWidget(
@@ -79,14 +87,21 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('competition_lifecycle_action_generate_fixture')), findsOneWidget);
+      expect(
+        find.byKey(const Key('competition_lifecycle_action_generate_fixture')),
+        findsOneWidget,
+      );
 
-      await tester.tap(find.byKey(const Key('competition_lifecycle_action_generate_fixture')));
+      await tester.tap(
+        find.byKey(const Key('competition_lifecycle_action_generate_fixture')),
+      );
       await tester.pumpAndSettle();
       expect(fixtureTapped, isTrue);
     });
 
-    testWidgets('allows status transition when prerequisites are satisfied', (tester) async {
+    testWidgets('allows status transition when prerequisites are satisfied', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         buildTestableWidget(
           child: CompetitionLifecycleDialog(
@@ -98,9 +113,18 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('competition_lifecycle_action_enroll_teams')), findsNothing);
-      expect(find.byKey(const Key('competition_lifecycle_action_generate_fixture')), findsNothing);
-      expect(find.byKey(const Key('competition_lifecycle_confirm_button')), findsOneWidget);
+      expect(
+        find.byKey(const Key('competition_lifecycle_action_enroll_teams')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('competition_lifecycle_action_generate_fixture')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('competition_lifecycle_confirm_button')),
+        findsOneWidget,
+      );
     });
   });
 }
