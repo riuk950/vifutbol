@@ -135,10 +135,9 @@ class TournamentsController extends StateNotifier<TournamentsCatalogState> {
     required TournamentRulesConfig rules,
     required UserRole actorRole,
   }) async {
-    final existing = state.tournaments.cast<ChampionshipTournament?>().firstWhere(
-      (t) => t?.id == tournamentId,
-      orElse: () => null,
-    );
+    final existing = state.tournaments
+        .cast<ChampionshipTournament?>()
+        .firstWhere((t) => t?.id == tournamentId, orElse: () => null);
     if (existing == null) return false;
 
     final updated = existing.copyWith(
@@ -232,10 +231,9 @@ class TournamentsController extends StateNotifier<TournamentsCatalogState> {
   }) async {
     if (state.isSaving) return false;
 
-    final tournament = state.tournaments.cast<ChampionshipTournament?>().firstWhere(
-      (t) => t?.id == tournamentId,
-      orElse: () => null,
-    );
+    final tournament = state.tournaments
+        .cast<ChampionshipTournament?>()
+        .firstWhere((t) => t?.id == tournamentId, orElse: () => null);
 
     if (tournament == null) return false;
 

@@ -81,8 +81,9 @@ class _PlayersDirectoryScreenState
       playersDirectoryControllerProvider.notifier,
     );
     final capabilities = ref.watch(activeRoleCapabilitiesProvider);
-    final canRegisterPlayers =
-        capabilities.contains(RoleCapability.manageTeamRoster);
+    final canRegisterPlayers = capabilities.contains(
+      RoleCapability.manageTeamRoster,
+    );
 
     final visiblePlayers = directoryState.filteredPlayers;
     final tournaments = directoryState.availableTournaments;

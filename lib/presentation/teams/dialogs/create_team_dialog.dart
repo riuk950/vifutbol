@@ -56,8 +56,8 @@ class _CreateTeamDialogState extends ConsumerState<CreateTeamDialog> {
 
     final selectedTournament = _selectedTournamentId != null
         ? tournamentsState.tournaments
-            .where((t) => t.id == _selectedTournamentId)
-            .firstOrNull
+              .where((t) => t.id == _selectedTournamentId)
+              .firstOrNull
         : null;
 
     final coachId = authState.session?.user.id ?? 'coach-seed-1';
@@ -88,7 +88,8 @@ class _CreateTeamDialogState extends ConsumerState<CreateTeamDialog> {
     } else {
       final teamsState = ref.read(teamsControllerProvider);
       final failureMessage =
-          teamsState.lastFailure?.message ?? l10n.unauthorizedTeamCreationMessage;
+          teamsState.lastFailure?.message ??
+          l10n.unauthorizedTeamCreationMessage;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(failureMessage),
@@ -182,10 +183,7 @@ class _CreateTeamDialogState extends ConsumerState<CreateTeamDialog> {
                   ...openTournaments.map(
                     (tourn) => DropdownMenuItem<String?>(
                       value: tourn.id,
-                      child: Text(
-                        tourn.name,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      child: Text(tourn.name, overflow: TextOverflow.ellipsis),
                     ),
                   ),
                 ],

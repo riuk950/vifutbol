@@ -505,8 +505,13 @@ class CompetitionTeamsTabView extends ConsumerWidget {
                       size: 20,
                       color: KickPulseColors.accentPrimary,
                     ),
-                    onPressed: () =>
-                        _showMoveGroupDialog(context, ref, team, tournament, l10n),
+                    onPressed: () => _showMoveGroupDialog(
+                      context,
+                      ref,
+                      team,
+                      tournament,
+                      l10n,
+                    ),
                   ),
                 IconButton(
                   key: Key('competition_team_remove_${team.id}'),
@@ -516,15 +521,22 @@ class CompetitionTeamsTabView extends ConsumerWidget {
                     size: 20,
                     color: KickPulseColors.accentWarning,
                   ),
-                  onPressed: () =>
-                      _showRemoveTeamDialog(context, ref, team, tournament, l10n),
+                  onPressed: () => _showRemoveTeamDialog(
+                    context,
+                    ref,
+                    team,
+                    tournament,
+                    l10n,
+                  ),
                 ),
               ],
             ],
           ),
           if (canManage && tournament != null)
             Padding(
-              padding: const EdgeInsets.only(top: KickPulseRadiiSpacing.spaceSm),
+              padding: const EdgeInsets.only(
+                top: KickPulseRadiiSpacing.spaceSm,
+              ),
               child: Wrap(
                 spacing: KickPulseRadiiSpacing.spaceXs,
                 runSpacing: KickPulseRadiiSpacing.spaceXs,
@@ -661,7 +673,8 @@ class CompetitionTeamsTabView extends ConsumerWidget {
       );
     } else {
       final state = ref.read(teamsControllerProvider);
-      final msg = state.lastFailure?.message ?? 'Error al inhabilitar el equipo';
+      final msg =
+          state.lastFailure?.message ?? 'Error al inhabilitar el equipo';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(msg),

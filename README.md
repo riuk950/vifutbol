@@ -59,8 +59,21 @@ flutter run
 
 La aplicacion tiene diferentes ambientes para desarrollo y produccion.
 
-*   **Development:** `flutter run --flavor dev --target lib/env/main.dev.dart`
-*   **Production:** `flutter run --flavor prod --target lib/env/main.prod.dart`
+*   **Development:** `flutter run --flavor dev --target lib/env/main.dev.dart --dart-define=SUPABASE_URL=https://supabase.artbusinesstechnology.com --dart-define=SUPABASE_ANON_KEY=<tu_anon_key>`
+*   **Modo Local / Offline (sin backend remoto):** `flutter run --flavor dev --target lib/env/main.dev.dart` (si se omiten las variables o el servidor no es alcanzable, la app conmuta automáticamente a almacenamiento local con Hive sin bloquear la experiencia de usuario).
+*   **Production:** `flutter run --flavor prod --target lib/env/main.prod.dart --dart-define=SUPABASE_URL=<prod_url> --dart-define=SUPABASE_ANON_KEY=<prod_anon_key>`
+
+### ⚙️ Configuración de Variables de Entorno (Supabase)
+Copia la plantilla de variables de entorno `.env.example` a `.env` (ignorado en git):
+```bash
+cp .env.example .env
+```
+Y ejecuta inyectando los valores:
+```bash
+flutter run --flavor dev --target lib/env/main.dev.dart \
+  --dart-define=SUPABASE_URL=https://supabase.artbusinesstechnology.com \
+  --dart-define=SUPABASE_ANON_KEY=tu_dev_anon_key
+```
 
 ---
 

@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
+import 'package:vifutbol/application/providers/supabase_providers.dart';
 import 'package:vifutbol/application/use_cases/initialize_app_foundation_use_case.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/infrastructure/connectivity/platform_connectivity_repository.dart';
@@ -10,8 +14,12 @@ import 'package:vifutbol/infrastructure/storage/hive_local_storage_repository.da
 import 'package:vifutbol/presentation/app.dart';
 import 'package:vifutbol/presentation/navigation/app_router.dart';
 
-/// Bootstraps the application runtime with environment isolation and orientation lock.
-Future<void> bootstrapApp(EnvironmentConfig config) async {
+/// Bootstraps the application runtime with environment isolation,
+/// conditional Supabase backend initialization, and orientation lock.
+Future<ProviderContainer> bootstrapApp(
+  EnvironmentConfig config, {
+  void Function(Widget app)? appRunner,
+}) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // FR-008: Strict Portrait orientation lock for mobile smartphones
@@ -30,22 +38,46 @@ Future<void> bootstrapApp(EnvironmentConfig config) async {
   );
   await initializeFoundation(config);
 
+  // Initialize Supabase conditionally (FR-005)
+  if (config.supabase.isConfigured) {
+    try {
+      await Supabase.initialize(
+        url: config.supabase.url,
+        // ignore: deprecated_member_use
+        anonKey: config.supabase.anonKey,
+      );
+    } catch (e) {
+      debugPrint(
+        '[Supabase] Falló la inicialización remota; operando en modo local (Hive): $e',
+      );
+    }
+  } else {
+    debugPrint(
+      '[Supabase] No se suministraron credenciales; operando en modo local (Hive).',
+    );
+  }
+
   final connectivityRepository = PlatformConnectivityRepository();
 
   AppRouter.setupRouter();
 
-  runApp(
-    ProviderScope(
-      overrides: [
-        environmentConfigProvider.overrideWithValue(config),
-        localStorageRepositoryProvider.overrideWithValue(
-          localStorageRepository,
-        ),
-        connectivityRepositoryProvider.overrideWithValue(
-          connectivityRepository,
-        ),
-      ],
-      child: const App(),
-    ),
+  final container = ProviderContainer(
+    overrides: [
+      environmentConfigProvider.overrideWithValue(config),
+      localStorageRepositoryProvider.overrideWithValue(localStorageRepository),
+      connectivityRepositoryProvider.overrideWithValue(connectivityRepository),
+    ],
   );
+
+  final runner = appRunner ?? runApp;
+  runner(UncontrolledProviderScope(container: container, child: const App()));
+
+  // FR-008 / US3: Trigger health check asynchronously in background after runApp
+  if (config.supabase.isConfigured) {
+    unawaited(
+      container.read(backendHealthStatusProvider.notifier).checkHealth(),
+    );
+  }
+
+  return container;
 }

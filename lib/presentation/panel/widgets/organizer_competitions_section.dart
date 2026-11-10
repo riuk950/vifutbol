@@ -86,10 +86,7 @@ class OrganizerCompetitionsSection extends ConsumerWidget {
             ),
             const SizedBox(width: KickPulseRadiiSpacing.spaceXs),
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 2,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
                 color: KickPulseColors.surfaceElevated,
                 borderRadius: BorderRadius.circular(12),
@@ -147,9 +144,7 @@ class OrganizerCompetitionsSection extends ConsumerWidget {
                   ),
                   const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
                   KickPulseButton(
-                    key: const Key(
-                      'organizer_action_empty_create_competition',
-                    ),
+                    key: const Key('organizer_action_empty_create_competition'),
                     label: l10n.organizerCompetitionsEmptyCreateButton,
                     icon: const Icon(Icons.add_circle_outline, size: 20),
                     variant: KickPulseButtonVariant.primary,
@@ -201,7 +196,9 @@ class OrganizerCompetitionsSection extends ConsumerWidget {
                   ),
                 ),
                 PopupMenuButton<String>(
-                  key: Key('organizer_competition_menu_button_${tournament.id}'),
+                  key: Key(
+                    'organizer_competition_menu_button_${tournament.id}',
+                  ),
                   icon: const Icon(
                     Icons.more_vert,
                     color: KickPulseColors.textSecondary,

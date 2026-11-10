@@ -39,19 +39,20 @@ final tournamentsControllerProvider =
     });
 
 /// Reactive provider exposing tournaments belonging to the active organizer.
-final organizerTournamentsProvider =
-    Provider<List<ChampionshipTournament>>((ref) {
-      final catalogState = ref.watch(tournamentsControllerProvider);
-      var currentUserId = 'org-seed-1';
-      try {
-        final authState = ref.watch(authControllerProvider);
-        currentUserId = authState.session?.user.id ?? 'org-seed-1';
-      } catch (_) {
-        // Fallback in isolated test environments
-      }
+final organizerTournamentsProvider = Provider<List<ChampionshipTournament>>((
+  ref,
+) {
+  final catalogState = ref.watch(tournamentsControllerProvider);
+  var currentUserId = 'org-seed-1';
+  try {
+    final authState = ref.watch(authControllerProvider);
+    currentUserId = authState.session?.user.id ?? 'org-seed-1';
+  } catch (_) {
+    // Fallback in isolated test environments
+  }
 
-      return catalogState.tournaments.where((t) {
-        final tOrgId = t.organizerId ?? 'org-seed-1';
-        return tOrgId == currentUserId || tOrgId == 'org-seed-1';
-      }).toList();
-    });
+  return catalogState.tournaments.where((t) {
+    final tOrgId = t.organizerId ?? 'org-seed-1';
+    return tOrgId == currentUserId || tOrgId == 'org-seed-1';
+  }).toList();
+});

@@ -64,8 +64,9 @@ class _TeamsDirectoryScreenState extends ConsumerState<TeamsDirectoryScreen> {
       teamsDirectoryControllerProvider.notifier,
     );
     final capabilities = ref.watch(activeRoleCapabilitiesProvider);
-    final canRegisterTeams =
-        capabilities.contains(RoleCapability.manageTeamRoster);
+    final canRegisterTeams = capabilities.contains(
+      RoleCapability.manageTeamRoster,
+    );
 
     final visibleTeams = directoryState.filteredTeams;
     final tournaments = directoryState.availableTournaments;

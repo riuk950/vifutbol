@@ -93,4 +93,3 @@ final coachTeamsProvider = Provider<List<TournamentTeam>>((ref) {
     return team.coachId == 'coach-seed-1';
   }).toList();
 });
-

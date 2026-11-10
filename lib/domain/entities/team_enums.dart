@@ -10,8 +10,10 @@ enum TeamEligibilityStatus {
   static TeamEligibilityStatus fromJson(String value) {
     return switch (value) {
       'eligible' => TeamEligibilityStatus.eligible,
-      'pendingVerification' || 'pendingQuota' || 'readyForApproval' || _ =>
-        TeamEligibilityStatus.pendingVerification,
+      'pendingVerification' ||
+      'pendingQuota' ||
+      'readyForApproval' ||
+      _ => TeamEligibilityStatus.pendingVerification,
     };
   }
 

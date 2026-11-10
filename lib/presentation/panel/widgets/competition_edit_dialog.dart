@@ -12,10 +12,7 @@ import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_button.da
 
 /// Modal dialog allowing tournament organizers to edit metadata.
 class CompetitionEditDialog extends ConsumerStatefulWidget {
-  const CompetitionEditDialog({
-    super.key,
-    required this.tournament,
-  });
+  const CompetitionEditDialog({super.key, required this.tournament});
 
   final ChampionshipTournament tournament;
 
@@ -157,7 +154,10 @@ class _CompetitionEditDialogState extends ConsumerState<CompetitionEditDialog> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close, color: KickPulseColors.textSecondary),
+                      icon: const Icon(
+                        Icons.close,
+                        color: KickPulseColors.textSecondary,
+                      ),
                       onPressed: () => Navigator.of(context).pop(false),
                     ),
                   ],
@@ -173,8 +173,12 @@ class _CompetitionEditDialogState extends ConsumerState<CompetitionEditDialog> {
                     filled: true,
                     fillColor: KickPulseColors.surfaceElevated,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(KickPulseRadiiSpacing.chipRadius),
-                      borderSide: const BorderSide(color: KickPulseColors.borderSubtle),
+                      borderRadius: BorderRadius.circular(
+                        KickPulseRadiiSpacing.chipRadius,
+                      ),
+                      borderSide: const BorderSide(
+                        color: KickPulseColors.borderSubtle,
+                      ),
                     ),
                   ),
                   validator: (value) {
@@ -195,8 +199,12 @@ class _CompetitionEditDialogState extends ConsumerState<CompetitionEditDialog> {
                     filled: true,
                     fillColor: KickPulseColors.surfaceElevated,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(KickPulseRadiiSpacing.chipRadius),
-                      borderSide: const BorderSide(color: KickPulseColors.borderSubtle),
+                      borderRadius: BorderRadius.circular(
+                        KickPulseRadiiSpacing.chipRadius,
+                      ),
+                      borderSide: const BorderSide(
+                        color: KickPulseColors.borderSubtle,
+                      ),
                     ),
                   ),
                   validator: (value) {
@@ -219,8 +227,12 @@ class _CompetitionEditDialogState extends ConsumerState<CompetitionEditDialog> {
                     filled: true,
                     fillColor: KickPulseColors.surfaceElevated,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(KickPulseRadiiSpacing.chipRadius),
-                      borderSide: const BorderSide(color: KickPulseColors.borderSubtle),
+                      borderRadius: BorderRadius.circular(
+                        KickPulseRadiiSpacing.chipRadius,
+                      ),
+                      borderSide: const BorderSide(
+                        color: KickPulseColors.borderSubtle,
+                      ),
                     ),
                   ),
                   items: TournamentFormat.values.map((f) {
@@ -247,8 +259,12 @@ class _CompetitionEditDialogState extends ConsumerState<CompetitionEditDialog> {
                           filled: true,
                           fillColor: KickPulseColors.surfaceElevated,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(KickPulseRadiiSpacing.chipRadius),
-                            borderSide: const BorderSide(color: KickPulseColors.borderSubtle),
+                            borderRadius: BorderRadius.circular(
+                              KickPulseRadiiSpacing.chipRadius,
+                            ),
+                            borderSide: const BorderSide(
+                              color: KickPulseColors.borderSubtle,
+                            ),
                           ),
                         ),
                       ),
@@ -265,8 +281,12 @@ class _CompetitionEditDialogState extends ConsumerState<CompetitionEditDialog> {
                           filled: true,
                           fillColor: KickPulseColors.surfaceElevated,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(KickPulseRadiiSpacing.chipRadius),
-                            borderSide: const BorderSide(color: KickPulseColors.borderSubtle),
+                            borderRadius: BorderRadius.circular(
+                              KickPulseRadiiSpacing.chipRadius,
+                            ),
+                            borderSide: const BorderSide(
+                              color: KickPulseColors.borderSubtle,
+                            ),
                           ),
                         ),
                       ),

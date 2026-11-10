@@ -388,9 +388,12 @@ class _OrganizerPanelContentState extends ConsumerState<OrganizerPanelContent> {
           ),
           const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
           OrganizerCompetitionsSection(
-            onEditTournament: (tournament) => _onEditTournament(context, tournament),
-            onChangeStatus: (tournament) => _onChangeStatus(context, tournament),
-            onDeleteTournament: (tournament) => _onDeleteTournament(context, tournament),
+            onEditTournament: (tournament) =>
+                _onEditTournament(context, tournament),
+            onChangeStatus: (tournament) =>
+                _onChangeStatus(context, tournament),
+            onDeleteTournament: (tournament) =>
+                _onDeleteTournament(context, tournament),
           ),
         ],
       ),
@@ -401,10 +404,7 @@ class _OrganizerPanelContentState extends ConsumerState<OrganizerPanelContent> {
     BuildContext context,
     ChampionshipTournament tournament,
   ) async {
-    await CompetitionEditDialog.show(
-      context: context,
-      tournament: tournament,
-    );
+    await CompetitionEditDialog.show(context: context, tournament: tournament);
   }
 
   Future<void> _onChangeStatus(
@@ -412,8 +412,9 @@ class _OrganizerPanelContentState extends ConsumerState<OrganizerPanelContent> {
     ChampionshipTournament tournament,
   ) async {
     final teams = ref.read(teamsControllerProvider).teams;
-    final tournamentTeams =
-        teams.where((t) => t.tournamentId == tournament.id).toList();
+    final tournamentTeams = teams
+        .where((t) => t.tournamentId == tournament.id)
+        .toList();
     final matches = ref.read(matchesCatalogControllerProvider).matches;
     final hasFixture = matches.any((m) => m.tournamentId == tournament.id);
     final l10n = AppLocalizations.of(context);
@@ -424,10 +425,7 @@ class _OrganizerPanelContentState extends ConsumerState<OrganizerPanelContent> {
       enrolledTeamsCount: tournamentTeams.length,
       hasGeneratedFixture: hasFixture,
       onEnrollTeamsRequested: () async {
-        await CompetitionEnrollTeamDialog.show(
-          context,
-          tournament: tournament,
-        );
+        await CompetitionEnrollTeamDialog.show(context, tournament: tournament);
       },
       onGenerateFixtureRequested: () async {
         await _onGenerateFixture(context, [tournament], l10n);

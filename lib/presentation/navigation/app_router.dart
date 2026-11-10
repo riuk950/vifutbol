@@ -23,8 +23,13 @@ import 'package:vifutbol/presentation/venues/venue_form_screen.dart';
 /// Fluro router configuration for App Shell navigation.
 class AppRouter {
   static final FluroRouter router = FluroRouter();
+  static bool _isConfigured = false;
 
   static void setupRouter() {
+    if (_isConfigured) {
+      return;
+    }
+    _isConfigured = true;
     final rootHandler = Handler(
       handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
         return const AuthGate();

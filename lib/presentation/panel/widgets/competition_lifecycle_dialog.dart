@@ -103,7 +103,9 @@ class _CompetitionLifecycleDialogState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              l10n.competitionLifecycleSuccess(_statusLabel(_targetStatus, l10n)),
+              l10n.competitionLifecycleSuccess(
+                _statusLabel(_targetStatus, l10n),
+              ),
             ),
             backgroundColor: KickPulseColors.accentPrimary,
           ),
@@ -197,15 +199,20 @@ class _CompetitionLifecycleDialogState
                   ),
                 ),
                 items: [
-                  if (widget.tournament.status == TournamentStatus.openRegistration)
+                  if (widget.tournament.status ==
+                      TournamentStatus.openRegistration)
                     DropdownMenuItem(
                       value: TournamentStatus.inProgress,
-                      child: Text(_statusLabel(TournamentStatus.inProgress, l10n)),
+                      child: Text(
+                        _statusLabel(TournamentStatus.inProgress, l10n),
+                      ),
                     ),
                   if (widget.tournament.status == TournamentStatus.inProgress)
                     DropdownMenuItem(
                       value: TournamentStatus.finished,
-                      child: Text(_statusLabel(TournamentStatus.finished, l10n)),
+                      child: Text(
+                        _statusLabel(TournamentStatus.finished, l10n),
+                      ),
                     ),
                 ],
                 onChanged: (val) {
