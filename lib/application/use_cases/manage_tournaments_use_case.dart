@@ -168,6 +168,14 @@ class ManageTournamentsUseCase {
       );
     }
 
+    if (tournament.status == TournamentStatus.inProgress &&
+        targetStatus == TournamentStatus.openRegistration) {
+      throw const TournamentValidationFailure(
+        TournamentValidationErrorCode.invalidStatusTransition,
+        'No se puede revertir un torneo en curso a inscripciones abiertas',
+      );
+    }
+
     final updated = tournament.copyWith(
       status: targetStatus,
       updatedAt: DateTime.now(),

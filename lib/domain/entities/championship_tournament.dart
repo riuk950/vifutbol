@@ -25,6 +25,7 @@ class ChampionshipTournament {
     this.rules = const TournamentRulesConfig(),
     this.auditTrail = const <RuleAuditEntry>[],
     required this.updatedAt,
+    this.organizerId = 'org-seed-1',
   });
 
   final String id;
@@ -37,6 +38,7 @@ class ChampionshipTournament {
   final TournamentRulesConfig rules;
   final List<RuleAuditEntry> auditTrail;
   final DateTime updatedAt;
+  final String? organizerId;
 
   /// Returns true if critical rules (format or scoring points) differ between this and [other].
   bool hasCriticalRulesChanged(ChampionshipTournament other) {
@@ -54,6 +56,7 @@ class ChampionshipTournament {
     TournamentRulesConfig? rules,
     List<RuleAuditEntry>? auditTrail,
     DateTime? updatedAt,
+    String? organizerId,
   }) {
     return ChampionshipTournament(
       id: id ?? this.id,
@@ -66,6 +69,7 @@ class ChampionshipTournament {
       rules: rules ?? this.rules,
       auditTrail: auditTrail ?? this.auditTrail,
       updatedAt: updatedAt ?? this.updatedAt,
+      organizerId: organizerId ?? this.organizerId,
     );
   }
 
@@ -81,6 +85,7 @@ class ChampionshipTournament {
       'rules': rules.toJson(),
       'auditTrail': auditTrail.map((entry) => entry.toJson()).toList(),
       'updatedAt': updatedAt.toIso8601String(),
+      'organizerId': organizerId,
     };
   }
 
@@ -119,6 +124,7 @@ class ChampionshipTournament {
       updatedAt:
           DateTime.tryParse(json['updatedAt'] as String? ?? '') ??
           DateTime(2026, 1, 1),
+      organizerId: json['organizerId'] as String? ?? 'org-seed-1',
     );
   }
 
@@ -135,7 +141,8 @@ class ChampionshipTournament {
         other.status == status &&
         other.rules == rules &&
         _sameAuditList(other.auditTrail, auditTrail) &&
-        other.updatedAt == updatedAt;
+        other.updatedAt == updatedAt &&
+        other.organizerId == organizerId;
   }
 
   @override
@@ -150,5 +157,6 @@ class ChampionshipTournament {
     rules,
     Object.hashAll(auditTrail),
     updatedAt,
+    organizerId,
   );
 }

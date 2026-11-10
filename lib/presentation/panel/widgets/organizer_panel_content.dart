@@ -7,6 +7,7 @@ import 'package:vifutbol/application/providers/tournament_news_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
@@ -17,7 +18,12 @@ import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart
 import 'package:vifutbol/presentation/matches/dialogs/generate_fixture_confirmation_dialog.dart';
 import 'package:vifutbol/presentation/matches/widgets/schedule_match_dialog.dart';
 import 'package:vifutbol/presentation/news/widgets/create_news_dialog.dart';
+import 'package:vifutbol/presentation/panel/widgets/competition_delete_dialog.dart';
+import 'package:vifutbol/presentation/panel/widgets/competition_edit_dialog.dart';
+import 'package:vifutbol/presentation/panel/widgets/competition_lifecycle_dialog.dart';
+import 'package:vifutbol/presentation/panel/widgets/organizer_competitions_section.dart';
 import 'package:vifutbol/presentation/panel/widgets/select_tournament_for_fixture_sheet.dart';
+import 'package:vifutbol/presentation/tournaments/widgets/competition_enroll_team_dialog.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/tournament_backup_sheet.dart';
 
 /// Dynamic panel content for [UserRole.organizer].
@@ -380,8 +386,87 @@ class _OrganizerPanelContentState extends ConsumerState<OrganizerPanelContent> {
               ],
             ),
           ),
+          const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
+          OrganizerCompetitionsSection(
+            onEditTournament: (tournament) => _onEditTournament(context, tournament),
+            onChangeStatus: (tournament) => _onChangeStatus(context, tournament),
+            onDeleteTournament: (tournament) => _onDeleteTournament(context, tournament),
+          ),
         ],
       ),
+    );
+  }
+
+  Future<void> _onEditTournament(
+    BuildContext context,
+    ChampionshipTournament tournament,
+  ) async {
+    await CompetitionEditDialog.show(
+      context: context,
+      tournament: tournament,
+    );
+  }
+
+  Future<void> _onChangeStatus(
+    BuildContext context,
+    ChampionshipTournament tournament,
+  ) async {
+    final teams = ref.read(teamsControllerProvider).teams;
+    final tournamentTeams =
+        teams.where((t) => t.tournamentId == tournament.id).toList();
+    final matches = ref.read(matchesCatalogControllerProvider).matches;
+    final hasFixture = matches.any((m) => m.tournamentId == tournament.id);
+    final l10n = AppLocalizations.of(context);
+
+    await CompetitionLifecycleDialog.show(
+      context: context,
+      tournament: tournament,
+      enrolledTeamsCount: tournamentTeams.length,
+      hasGeneratedFixture: hasFixture,
+      onEnrollTeamsRequested: () async {
+        await CompetitionEnrollTeamDialog.show(
+          context,
+          tournament: tournament,
+        );
+      },
+      onGenerateFixtureRequested: () async {
+        await _onGenerateFixture(context, [tournament], l10n);
+      },
+    );
+  }
+
+  Future<void> _onDeleteTournament(
+    BuildContext context,
+    ChampionshipTournament tournament,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final matches = ref
+        .read(matchesCatalogControllerProvider)
+        .matches
+        .where((m) => m.tournamentId == tournament.id)
+        .toList();
+    final hasPlayedMatches = matches.any(
+      (m) =>
+          m.status == MatchStatus.inProgress ||
+          m.status == MatchStatus.completed,
+    );
+
+    bool canDelete = true;
+    String? blockReason;
+
+    if (tournament.status != TournamentStatus.openRegistration) {
+      canDelete = false;
+      blockReason = l10n.competitionDeleteBlockedInProgress;
+    } else if (hasPlayedMatches) {
+      canDelete = false;
+      blockReason = l10n.competitionDeleteBlockedHasMatches;
+    }
+
+    await CompetitionDeleteDialog.show(
+      context: context,
+      tournament: tournament,
+      canDelete: canDelete,
+      blockReason: blockReason,
     );
   }
 }

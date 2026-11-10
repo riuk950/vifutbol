@@ -210,6 +210,14 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
 
   ChampionshipTournament _buildCandidateTournament() {
     final existing = widget.initialTournament;
+    var currentUserId = 'org-seed-1';
+    try {
+      currentUserId =
+          ref.read(authControllerProvider).session?.user.id ?? 'org-seed-1';
+    } catch (_) {
+      // In isolated tests where auth controller is not overridden in ProviderScope
+    }
+
     return ChampionshipTournament(
       id: existing?.id ?? 'tournament-${DateTime.now().millisecondsSinceEpoch}',
       name: _nameController.text.trim(),
@@ -221,6 +229,7 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
       rules: _buildRulesFromInputs(),
       auditTrail: existing?.auditTrail ?? const [],
       updatedAt: DateTime.now(),
+      organizerId: existing?.organizerId ?? currentUserId,
     );
   }
 

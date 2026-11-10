@@ -12,6 +12,9 @@ abstract interface class TournamentsRepository {
     ChampionshipTournament tournament,
   );
 
+  /// Deletes a championship tournament by ID from persistent storage.
+  Future<void> deleteTournament(String tournamentId);
+
   /// Loads the temporary local creation draft if one exists.
   Future<TournamentDraft?> loadDraft();
 

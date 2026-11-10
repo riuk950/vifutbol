@@ -3527,5 +3527,154 @@
         "type": "String"
       }
     }
+  },
+  "organizerCompetitionsSectionTitle": "Mis Competiciones",
+  "@organizerCompetitionsSectionTitle": {
+    "description": "Título de la sección de competiciones del organizador"
+  },
+  "organizerCompetitionsCreateAction": "Nueva Competición",
+  "@organizerCompetitionsCreateAction": {
+    "description": "Botón para crear una nueva competición en el panel del organizador"
+  },
+  "organizerCompetitionsEmptyTitle": "No tienes competiciones activas",
+  "@organizerCompetitionsEmptyTitle": {
+    "description": "Título del estado vacío cuando el organizador no tiene torneos"
+  },
+  "organizerCompetitionsEmptySubtitle": "Crea y administra tus torneos, categorías y reglamentos desde este panel.",
+  "@organizerCompetitionsEmptySubtitle": {
+    "description": "Subtítulo descriptivo del estado vacío de competiciones"
+  },
+  "organizerCompetitionsEmptyCreateButton": "Crear mi primera competición",
+  "@organizerCompetitionsEmptyCreateButton": {
+    "description": "Botón de acción en el estado vacío para crear el primer torneo"
+  },
+  "organizerCompetitionsTeamsCount": "{count, plural, =1{1 equipo inscrito} other{{count} equipos inscritos}}",
+  "@organizerCompetitionsTeamsCount": {
+    "description": "Cantidad de equipos inscritos en el torneo",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "organizerCompetitionsMenuEdit": "Editar metadatos",
+  "@organizerCompetitionsMenuEdit": {
+    "description": "Opción de menú contextual para editar metadatos del torneo"
+  },
+  "organizerCompetitionsMenuStatus": "Cambiar estado de competición",
+  "@organizerCompetitionsMenuStatus": {
+    "description": "Opción de menú contextual para cambiar estado de ciclo de vida"
+  },
+  "organizerCompetitionsMenuDelete": "Eliminar competición",
+  "@organizerCompetitionsMenuDelete": {
+    "description": "Opción de menú contextual para eliminar competición"
+  },
+  "competitionEditDialogTitle": "Editar Competición",
+  "@competitionEditDialogTitle": {
+    "description": "Título del modal de edición de metadatos de la competición"
+  },
+  "competitionEditNameLabel": "Nombre del torneo",
+  "@competitionEditNameLabel": {
+    "description": "Etiqueta para campo de nombre en edición"
+  },
+  "competitionEditCategoryLabel": "Categoría",
+  "@competitionEditCategoryLabel": {
+    "description": "Etiqueta para campo de categoría en edición"
+  },
+  "competitionEditFormatLabel": "Formato de competición",
+  "@competitionEditFormatLabel": {
+    "description": "Etiqueta para campo de formato en edición"
+  },
+  "competitionEditSaveButton": "Guardar cambios",
+  "@competitionEditSaveButton": {
+    "description": "Botón para guardar cambios de edición de competición"
+  },
+  "competitionEditSavedSuccess": "Competición actualizada exitosamente.",
+  "@competitionEditSavedSuccess": {
+    "description": "Mensaje de éxito al guardar edición de torneo"
+  },
+  "competitionLifecycleDialogTitle": "Cambiar Estado del Torneo",
+  "@competitionLifecycleDialogTitle": {
+    "description": "Título del modal para cambiar estado del ciclo de vida"
+  },
+  "competitionLifecycleCurrentStatus": "Estado actual: {status}",
+  "@competitionLifecycleCurrentStatus": {
+    "description": "Texto que muestra el estado actual del torneo",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "competitionLifecycleTargetStatus": "Nuevo estado:",
+  "@competitionLifecycleTargetStatus": {
+    "description": "Etiqueta para seleccionar el nuevo estado del torneo"
+  },
+  "competitionLifecycleValidationMinTeams": "No se puede iniciar el torneo: requiere al menos 2 equipos inscritos (actuales: {count}).",
+  "@competitionLifecycleValidationMinTeams": {
+    "description": "Mensaje de validación cuando faltan equipos para iniciar torneo",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "competitionLifecycleValidationNoFixture": "No se puede iniciar el torneo: debes generar el fixture de partidos previamente.",
+  "@competitionLifecycleValidationNoFixture": {
+    "description": "Mensaje de validación cuando falta generar fixture para iniciar torneo"
+  },
+  "competitionLifecycleActionEnrollTeams": "Inscribir Equipos",
+  "@competitionLifecycleActionEnrollTeams": {
+    "description": "Botón de acción rápida para ir a inscribir equipos"
+  },
+  "competitionLifecycleActionGenerateFixture": "Generar Fixture",
+  "@competitionLifecycleActionGenerateFixture": {
+    "description": "Botón de acción rápida para ir a generar fixture"
+  },
+  "competitionLifecycleConfirmButton": "Confirmar cambio de estado",
+  "@competitionLifecycleConfirmButton": {
+    "description": "Botón para confirmar transición de estado"
+  },
+  "competitionLifecycleSuccess": "Estado del torneo actualizado a {status}.",
+  "@competitionLifecycleSuccess": {
+    "description": "Mensaje de confirmación al actualizar estado del torneo",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "competitionDeleteDialogTitle": "Eliminar Competición",
+  "@competitionDeleteDialogTitle": {
+    "description": "Título del diálogo para eliminar competición"
+  },
+  "competitionDeleteDialogMessage": "¿Estás seguro de que deseas eliminar permanentemente la competición \"{name}\"? Esta acción no se puede deshacer.",
+  "@competitionDeleteDialogMessage": {
+    "description": "Mensaje de confirmación destructiva para eliminar torneo",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "competitionDeleteBlockedInProgress": "No se puede eliminar una competición en curso o finalizada.",
+  "@competitionDeleteBlockedInProgress": {
+    "description": "Mensaje de bloqueo de eliminación si el torneo ya inició o finalizó"
+  },
+  "competitionDeleteBlockedHasMatches": "No se puede eliminar la competición porque ya cuenta con partidos disputados o en curso.",
+  "@competitionDeleteBlockedHasMatches": {
+    "description": "Mensaje de bloqueo de eliminación si el torneo tiene partidos disputados"
+  },
+  "competitionDeleteConfirmButton": "Eliminar definitivamente",
+  "@competitionDeleteConfirmButton": {
+    "description": "Botón de confirmación destructiva para eliminar torneo"
+  },
+  "competitionDeleteSuccess": "La competición ha sido eliminada.",
+  "@competitionDeleteSuccess": {
+    "description": "Mensaje de éxito tras eliminar una competición"
+  },
+  "competitionDeleteCancelButton": "Cancelar",
+  "@competitionDeleteCancelButton": {
+    "description": "Botón de cancelar en diálogo de eliminación"
   }
 }

@@ -65,6 +65,13 @@ class LocalTournamentsRepository implements TournamentsRepository {
   }
 
   @override
+  Future<void> deleteTournament(String tournamentId) async {
+    final existing = await loadTournaments();
+    final updated = existing.where((t) => t.id != tournamentId).toList();
+    await _persistTournaments(updated);
+  }
+
+  @override
   Future<TournamentDraft?> loadDraft() async {
     final raw = await storage.readString(draftStorageKey);
     if (raw == null || raw.trim().isEmpty) {
@@ -120,6 +127,7 @@ class LocalTournamentsRepository implements TournamentsRepository {
           leagueRounds: 2,
         ),
         updatedAt: seedTimestamp,
+        organizerId: 'org-seed-1',
       ),
       ChampionshipTournament(
         id: 'tournament-seed-copa-relampago',
@@ -144,6 +152,7 @@ class LocalTournamentsRepository implements TournamentsRepository {
           ),
         ),
         updatedAt: seedTimestamp,
+        organizerId: 'org-seed-1',
       ),
       ChampionshipTournament(
         id: 'tournament-seed-metropolitano-mixto',
@@ -172,6 +181,7 @@ class LocalTournamentsRepository implements TournamentsRepository {
           ),
         ),
         updatedAt: seedTimestamp,
+        organizerId: 'org-seed-1',
       ),
     ];
   }

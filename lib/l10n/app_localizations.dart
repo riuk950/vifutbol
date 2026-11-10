@@ -4803,6 +4803,192 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Equipo {teamName} inscrito en la competición'**
   String competitionEnrollTeamSuccess(String teamName);
+
+  /// Título de la sección de competiciones del organizador
+  ///
+  /// In es, this message translates to:
+  /// **'Mis Competiciones'**
+  String get organizerCompetitionsSectionTitle;
+
+  /// Botón para crear una nueva competición en el panel del organizador
+  ///
+  /// In es, this message translates to:
+  /// **'Nueva Competición'**
+  String get organizerCompetitionsCreateAction;
+
+  /// Título del estado vacío cuando el organizador no tiene torneos
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes competiciones activas'**
+  String get organizerCompetitionsEmptyTitle;
+
+  /// Subtítulo descriptivo del estado vacío de competiciones
+  ///
+  /// In es, this message translates to:
+  /// **'Crea y administra tus torneos, categorías y reglamentos desde este panel.'**
+  String get organizerCompetitionsEmptySubtitle;
+
+  /// Botón de acción en el estado vacío para crear el primer torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Crear mi primera competición'**
+  String get organizerCompetitionsEmptyCreateButton;
+
+  /// Cantidad de equipos inscritos en el torneo
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 equipo inscrito} other{{count} equipos inscritos}}'**
+  String organizerCompetitionsTeamsCount(num count);
+
+  /// Opción de menú contextual para editar metadatos del torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Editar metadatos'**
+  String get organizerCompetitionsMenuEdit;
+
+  /// Opción de menú contextual para cambiar estado de ciclo de vida
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar estado de competición'**
+  String get organizerCompetitionsMenuStatus;
+
+  /// Opción de menú contextual para eliminar competición
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar competición'**
+  String get organizerCompetitionsMenuDelete;
+
+  /// Título del modal de edición de metadatos de la competición
+  ///
+  /// In es, this message translates to:
+  /// **'Editar Competición'**
+  String get competitionEditDialogTitle;
+
+  /// Etiqueta para campo de nombre en edición
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre del torneo'**
+  String get competitionEditNameLabel;
+
+  /// Etiqueta para campo de categoría en edición
+  ///
+  /// In es, this message translates to:
+  /// **'Categoría'**
+  String get competitionEditCategoryLabel;
+
+  /// Etiqueta para campo de formato en edición
+  ///
+  /// In es, this message translates to:
+  /// **'Formato de competición'**
+  String get competitionEditFormatLabel;
+
+  /// Botón para guardar cambios de edición de competición
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar cambios'**
+  String get competitionEditSaveButton;
+
+  /// Mensaje de éxito al guardar edición de torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Competición actualizada exitosamente.'**
+  String get competitionEditSavedSuccess;
+
+  /// Título del modal para cambiar estado del ciclo de vida
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar Estado del Torneo'**
+  String get competitionLifecycleDialogTitle;
+
+  /// Texto que muestra el estado actual del torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Estado actual: {status}'**
+  String competitionLifecycleCurrentStatus(String status);
+
+  /// Etiqueta para seleccionar el nuevo estado del torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Nuevo estado:'**
+  String get competitionLifecycleTargetStatus;
+
+  /// Mensaje de validación cuando faltan equipos para iniciar torneo
+  ///
+  /// In es, this message translates to:
+  /// **'No se puede iniciar el torneo: requiere al menos 2 equipos inscritos (actuales: {count}).'**
+  String competitionLifecycleValidationMinTeams(int count);
+
+  /// Mensaje de validación cuando falta generar fixture para iniciar torneo
+  ///
+  /// In es, this message translates to:
+  /// **'No se puede iniciar el torneo: debes generar el fixture de partidos previamente.'**
+  String get competitionLifecycleValidationNoFixture;
+
+  /// Botón de acción rápida para ir a inscribir equipos
+  ///
+  /// In es, this message translates to:
+  /// **'Inscribir Equipos'**
+  String get competitionLifecycleActionEnrollTeams;
+
+  /// Botón de acción rápida para ir a generar fixture
+  ///
+  /// In es, this message translates to:
+  /// **'Generar Fixture'**
+  String get competitionLifecycleActionGenerateFixture;
+
+  /// Botón para confirmar transición de estado
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar cambio de estado'**
+  String get competitionLifecycleConfirmButton;
+
+  /// Mensaje de confirmación al actualizar estado del torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Estado del torneo actualizado a {status}.'**
+  String competitionLifecycleSuccess(String status);
+
+  /// Título del diálogo para eliminar competición
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar Competición'**
+  String get competitionDeleteDialogTitle;
+
+  /// Mensaje de confirmación destructiva para eliminar torneo
+  ///
+  /// In es, this message translates to:
+  /// **'¿Estás seguro de que deseas eliminar permanentemente la competición \"{name}\"? Esta acción no se puede deshacer.'**
+  String competitionDeleteDialogMessage(String name);
+
+  /// Mensaje de bloqueo de eliminación si el torneo ya inició o finalizó
+  ///
+  /// In es, this message translates to:
+  /// **'No se puede eliminar una competición en curso o finalizada.'**
+  String get competitionDeleteBlockedInProgress;
+
+  /// Mensaje de bloqueo de eliminación si el torneo tiene partidos disputados
+  ///
+  /// In es, this message translates to:
+  /// **'No se puede eliminar la competición porque ya cuenta con partidos disputados o en curso.'**
+  String get competitionDeleteBlockedHasMatches;
+
+  /// Botón de confirmación destructiva para eliminar torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar definitivamente'**
+  String get competitionDeleteConfirmButton;
+
+  /// Mensaje de éxito tras eliminar una competición
+  ///
+  /// In es, this message translates to:
+  /// **'La competición ha sido eliminada.'**
+  String get competitionDeleteSuccess;
+
+  /// Botón de cancelar en diálogo de eliminación
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get competitionDeleteCancelButton;
 }
 
 class _AppLocalizationsDelegate

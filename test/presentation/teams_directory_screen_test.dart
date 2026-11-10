@@ -74,6 +74,9 @@ class FakeTournamentsRepository implements TournamentsRepository {
   ) async => tournament;
 
   @override
+  Future<void> deleteTournament(String tournamentId) async {}
+
+  @override
   Future<TournamentDraft?> loadDraft() async => null;
 
   @override

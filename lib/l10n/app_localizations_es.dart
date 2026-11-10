@@ -2740,4 +2740,120 @@ class AppLocalizationsEs extends AppLocalizations {
   String competitionEnrollTeamSuccess(String teamName) {
     return 'Equipo $teamName inscrito en la competición';
   }
+
+  @override
+  String get organizerCompetitionsSectionTitle => 'Mis Competiciones';
+
+  @override
+  String get organizerCompetitionsCreateAction => 'Nueva Competición';
+
+  @override
+  String get organizerCompetitionsEmptyTitle =>
+      'No tienes competiciones activas';
+
+  @override
+  String get organizerCompetitionsEmptySubtitle =>
+      'Crea y administra tus torneos, categorías y reglamentos desde este panel.';
+
+  @override
+  String get organizerCompetitionsEmptyCreateButton =>
+      'Crear mi primera competición';
+
+  @override
+  String organizerCompetitionsTeamsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count equipos inscritos',
+      one: '1 equipo inscrito',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get organizerCompetitionsMenuEdit => 'Editar metadatos';
+
+  @override
+  String get organizerCompetitionsMenuStatus => 'Cambiar estado de competición';
+
+  @override
+  String get organizerCompetitionsMenuDelete => 'Eliminar competición';
+
+  @override
+  String get competitionEditDialogTitle => 'Editar Competición';
+
+  @override
+  String get competitionEditNameLabel => 'Nombre del torneo';
+
+  @override
+  String get competitionEditCategoryLabel => 'Categoría';
+
+  @override
+  String get competitionEditFormatLabel => 'Formato de competición';
+
+  @override
+  String get competitionEditSaveButton => 'Guardar cambios';
+
+  @override
+  String get competitionEditSavedSuccess =>
+      'Competición actualizada exitosamente.';
+
+  @override
+  String get competitionLifecycleDialogTitle => 'Cambiar Estado del Torneo';
+
+  @override
+  String competitionLifecycleCurrentStatus(String status) {
+    return 'Estado actual: $status';
+  }
+
+  @override
+  String get competitionLifecycleTargetStatus => 'Nuevo estado:';
+
+  @override
+  String competitionLifecycleValidationMinTeams(int count) {
+    return 'No se puede iniciar el torneo: requiere al menos 2 equipos inscritos (actuales: $count).';
+  }
+
+  @override
+  String get competitionLifecycleValidationNoFixture =>
+      'No se puede iniciar el torneo: debes generar el fixture de partidos previamente.';
+
+  @override
+  String get competitionLifecycleActionEnrollTeams => 'Inscribir Equipos';
+
+  @override
+  String get competitionLifecycleActionGenerateFixture => 'Generar Fixture';
+
+  @override
+  String get competitionLifecycleConfirmButton => 'Confirmar cambio de estado';
+
+  @override
+  String competitionLifecycleSuccess(String status) {
+    return 'Estado del torneo actualizado a $status.';
+  }
+
+  @override
+  String get competitionDeleteDialogTitle => 'Eliminar Competición';
+
+  @override
+  String competitionDeleteDialogMessage(String name) {
+    return '¿Estás seguro de que deseas eliminar permanentemente la competición \"$name\"? Esta acción no se puede deshacer.';
+  }
+
+  @override
+  String get competitionDeleteBlockedInProgress =>
+      'No se puede eliminar una competición en curso o finalizada.';
+
+  @override
+  String get competitionDeleteBlockedHasMatches =>
+      'No se puede eliminar la competición porque ya cuenta con partidos disputados o en curso.';
+
+  @override
+  String get competitionDeleteConfirmButton => 'Eliminar definitivamente';
+
+  @override
+  String get competitionDeleteSuccess => 'La competición ha sido eliminada.';
+
+  @override
+  String get competitionDeleteCancelButton => 'Cancelar';
 }

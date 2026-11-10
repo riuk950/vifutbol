@@ -107,6 +107,10 @@ enum TournamentValidationErrorCode {
   invalidBackupPackage,
   missingTwoStepConfirmation,
   pendingMandatoryMatchesForSeasonClosure,
+  invalidStatusTransition,
+  insufficientTeamsToStart,
+  missingFixtureToStart,
+  tournamentCannotBeDeleted,
 }
 
 /// Emitted when championship tournament or custom rule validation fails.

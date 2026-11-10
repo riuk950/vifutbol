@@ -3,6 +3,7 @@ import 'package:vifutbol/application/use_cases/manage_tournaments_use_case.dart'
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/tournament_draft.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
+import 'package:vifutbol/domain/entities/tournament_rules_config.dart';
 import 'package:vifutbol/domain/entities/tournaments_catalog_state.dart';
 import 'package:vifutbol/domain/entities/ui_view_state.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
@@ -125,13 +126,80 @@ class TournamentsController extends StateNotifier<TournamentsCatalogState> {
     }
   }
 
+  /// Updates tournament metadata and persists changes.
+  Future<bool> updateTournamentMetadata({
+    required String tournamentId,
+    required String name,
+    required String category,
+    required TournamentFormat format,
+    required TournamentRulesConfig rules,
+    required UserRole actorRole,
+  }) async {
+    final existing = state.tournaments.cast<ChampionshipTournament?>().firstWhere(
+      (t) => t?.id == tournamentId,
+      orElse: () => null,
+    );
+    if (existing == null) return false;
+
+    final updated = existing.copyWith(
+      name: name.trim(),
+      category: category.trim(),
+      format: format,
+      rules: rules,
+      updatedAt: DateTime.now(),
+    );
+
+    return saveTournament(
+      tournament: updated,
+      actorRole: actorRole,
+      existingTournament: existing,
+      confirmCriticalRuleOverride: true,
+      auditReason: 'Actualización de metadatos desde panel del organizador',
+    );
+  }
+
   /// Transitions a championship tournament to [targetStatus].
   Future<bool> transitionTournamentStatus({
     required ChampionshipTournament tournament,
     required TournamentStatus targetStatus,
     required UserRole actorRole,
+    int? enrolledTeamsCount,
+    bool? hasGeneratedFixture,
   }) async {
     if (state.isSaving) return false;
+
+    if (tournament.status == TournamentStatus.inProgress &&
+        targetStatus == TournamentStatus.openRegistration) {
+      state = state.copyWith(
+        lastFailure: const TournamentValidationFailure(
+          TournamentValidationErrorCode.invalidStatusTransition,
+          'No se puede revertir un torneo en curso a inscripciones abiertas',
+        ),
+      );
+      return false;
+    }
+
+    if (targetStatus == TournamentStatus.inProgress) {
+      if (enrolledTeamsCount != null && enrolledTeamsCount < 2) {
+        state = state.copyWith(
+          lastFailure: const TournamentValidationFailure(
+            TournamentValidationErrorCode.insufficientTeamsToStart,
+            'El torneo requiere al menos 2 equipos inscritos para iniciar',
+          ),
+        );
+        return false;
+      }
+
+      if (hasGeneratedFixture != null && !hasGeneratedFixture) {
+        state = state.copyWith(
+          lastFailure: const TournamentValidationFailure(
+            TournamentValidationErrorCode.missingFixtureToStart,
+            'Debes generar el fixture de partidos previamente para iniciar el torneo',
+          ),
+        );
+        return false;
+      }
+    }
 
     state = state.copyWith(isSaving: true, clearLastFailure: true);
 
@@ -147,6 +215,64 @@ class TournamentsController extends StateNotifier<TournamentsCatalogState> {
         selectedTournamentId: updated.id,
         isSaving: false,
         viewState: UiContentState<List<ChampionshipTournament>>(tournaments),
+      );
+      return true;
+    } catch (e) {
+      final failure = e is AppFailure ? e : DataLoadFailure(e.toString());
+      state = state.copyWith(isSaving: false, lastFailure: failure);
+      return false;
+    }
+  }
+
+  /// Deletes a championship tournament by ID with active selection fallback.
+  Future<bool> deleteTournament({
+    required String tournamentId,
+    required bool hasStartedOrCompletedMatches,
+    Future<void> Function()? onCascadeDeleteMatches,
+  }) async {
+    if (state.isSaving) return false;
+
+    final tournament = state.tournaments.cast<ChampionshipTournament?>().firstWhere(
+      (t) => t?.id == tournamentId,
+      orElse: () => null,
+    );
+
+    if (tournament == null) return false;
+
+    if (tournament.status != TournamentStatus.openRegistration ||
+        hasStartedOrCompletedMatches) {
+      state = state.copyWith(
+        lastFailure: const TournamentValidationFailure(
+          TournamentValidationErrorCode.tournamentCannotBeDeleted,
+          'No se puede eliminar una competición en curso, finalizada o con partidos disputados',
+        ),
+      );
+      return false;
+    }
+
+    state = state.copyWith(isSaving: true, clearLastFailure: true);
+
+    try {
+      await tournamentsRepository.deleteTournament(tournamentId);
+      if (onCascadeDeleteMatches != null) {
+        await onCascadeDeleteMatches();
+      }
+
+      final remaining = await tournamentsRepository.loadTournaments();
+      final newSelectedId = (state.selectedTournamentId == tournamentId)
+          ? (remaining.isNotEmpty ? remaining.first.id : null)
+          : state.selectedTournamentId;
+
+      state = state.copyWith(
+        tournaments: remaining,
+        selectedTournamentId: newSelectedId,
+        clearSelectedTournament: newSelectedId == null,
+        isSaving: false,
+        viewState: remaining.isEmpty
+            ? const UiEmptyState<List<ChampionshipTournament>>(
+                message: 'No hay campeonatos registrados',
+              )
+            : UiContentState<List<ChampionshipTournament>>(remaining),
       );
       return true;
     } catch (e) {

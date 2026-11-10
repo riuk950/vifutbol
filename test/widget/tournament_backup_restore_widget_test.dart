@@ -60,6 +60,11 @@ class _FakeTournamentsRepo implements TournamentsRepository {
   }
 
   @override
+  Future<void> deleteTournament(String tournamentId) async {
+    tournaments.remove(tournamentId);
+  }
+
+  @override
   Future<TournamentDraft?> loadDraft() async => null;
 
   @override
