@@ -74,6 +74,16 @@ class FakeTeamsController extends StateNotifier<TeamsCatalogState>
     : super(TeamsCatalogState(teams: teams));
 
   @override
+  Future<bool> enrollTeamInCompetition({
+    required TournamentTeam team,
+    required ChampionshipTournament tournament,
+    required UserRole actorRole,
+  }) async {
+    state = state.copyWith(teams: [...state.teams, team]);
+    return true;
+  }
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
@@ -244,6 +254,10 @@ void main() {
           findsOneWidget,
         );
         expect(
+          find.byKey(const Key('competition_detail_tab_teams')),
+          findsOneWidget,
+        );
+        expect(
           find.byKey(const Key('competition_detail_tab_info')),
           findsOneWidget,
         );
@@ -274,7 +288,17 @@ void main() {
           findsOneWidget,
         );
 
-        // 3. Switch to Información
+        // 3. Switch to Equipos
+        final teamsTab = find.byKey(const Key('competition_detail_tab_teams'));
+        await tester.tap(teamsTab);
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('competition_teams_empty_state')),
+          findsOneWidget,
+        );
+
+        // 4. Switch to Información
         final infoTab = find.byKey(const Key('competition_detail_tab_info'));
         await tester.tap(infoTab);
         await tester.pumpAndSettle();
@@ -478,6 +502,137 @@ void main() {
         expect(
           find.byKey(const Key('competition_detail_fab_generate_fixture')),
           findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('competition_detail_fab_add_team')),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'US1: Organizer opens "Agregar Equipo" from FAB, validates form, and enrolls new team',
+      (tester) async {
+        await tester.pumpWidget(
+          createDetailTestApp(
+            tournamentId: 't-detail',
+            userRole: UserRole.organizer,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // 1. Expand FAB Speed Dial
+        await tester.tap(find.byKey(const Key('competition_detail_fab_menu')));
+        await tester.pumpAndSettle();
+
+        // 2. Tap "Agregar Equipo"
+        final addTeamFab = find.byKey(
+          const Key('competition_detail_fab_add_team'),
+        );
+        expect(addTeamFab, findsOneWidget);
+        await tester.tap(addTeamFab);
+        await tester.pumpAndSettle();
+
+        // 3. Dialog is shown
+        expect(
+          find.byKey(const Key('competition_enroll_team_dialog')),
+          findsOneWidget,
+        );
+
+        // 4. Try submitting empty form
+        await tester.tap(find.byKey(const Key('enroll_team_submit_button')));
+        await tester.pumpAndSettle();
+
+        // Dialog should still be open due to validation
+        expect(
+          find.byKey(const Key('competition_enroll_team_dialog')),
+          findsOneWidget,
+        );
+
+        // 5. Fill valid team details
+        await tester.enterText(
+          find.byKey(const Key('enroll_team_name_field')),
+          'Águilas Doradas',
+        );
+        await tester.enterText(
+          find.byKey(const Key('enroll_team_short_code_field')),
+          'AGU',
+        );
+        await tester.pumpAndSettle();
+
+        // 6. Submit valid form
+        await tester.tap(find.byKey(const Key('enroll_team_submit_button')));
+        await tester.pumpAndSettle();
+
+        // 7. Dialog is dismissed and team enrolled
+        expect(
+          find.byKey(const Key('competition_enroll_team_dialog')),
+          findsNothing,
+        );
+      },
+    );
+
+    testWidgets(
+      'US1: Selects existing club from dropdown, pre-filling name and short code without assertion error',
+      (tester) async {
+        final existingClub = TournamentTeam(
+          id: 'team-seed-inter-san-juan',
+          tournamentId: 'other-tournament',
+          name: 'Inter San Juan',
+          shortCode: 'ISJ',
+        );
+
+        await tester.pumpWidget(
+          createDetailTestApp(
+            tournamentId: 't-detail',
+            userRole: UserRole.organizer,
+            teams: [existingClub],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // 1. Expand FAB Speed Dial
+        await tester.tap(find.byKey(const Key('competition_detail_fab_menu')));
+        await tester.pumpAndSettle();
+
+        // 2. Tap "Agregar Equipo"
+        await tester.tap(
+          find.byKey(const Key('competition_detail_fab_add_team')),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('competition_enroll_team_dialog')),
+          findsOneWidget,
+        );
+
+        // 3. Dropdown is present with existing club
+        final dropdown = find.byKey(
+          const Key('enroll_team_existing_club_dropdown'),
+        );
+        expect(dropdown, findsOneWidget);
+
+        // 4. Tap dropdown and select "Inter San Juan"
+        await tester.tap(dropdown);
+        await tester.pumpAndSettle();
+
+        final item = find.text('Inter San Juan (ISJ)').last;
+        await tester.tap(item);
+        await tester.pumpAndSettle();
+
+        // 5. Verify fields are pre-filled
+        expect(find.text('Inter San Juan'), findsWidgets);
+        expect(find.text('ISJ'), findsWidgets);
+
+        // 6. Submit the form
+        await tester.tap(find.byKey(const Key('enroll_team_submit_button')));
+        await tester.pumpAndSettle();
+
+        // 7. Dialog closes cleanly without any DropdownButton assertion
+        expect(tester.takeException(), isNull);
+        expect(
+          find.byKey(const Key('competition_enroll_team_dialog')),
+          findsNothing,
         );
       },
     );

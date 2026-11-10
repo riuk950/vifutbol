@@ -3415,5 +3415,117 @@
   "matchdayScheduleSavedSuccess": "Programación del partido guardada exitosamente.",
   "@matchdayScheduleSavedSuccess": {
     "description": "Mensaje de confirmación al guardar la programación de un partido"
+  },
+  "competitionDetailTabTeams": "Equipos",
+  "@competitionDetailTabTeams": {
+    "description": "Pestaña de equipos inscritos en el detalle de competición"
+  },
+  "competitionFabAddTeamLabel": "Agregar Equipo",
+  "@competitionFabAddTeamLabel": {
+    "description": "Etiqueta del botón flotante para agregar equipo a la competición"
+  },
+  "competitionTeamsEmptyTitle": "Sin equipos inscritos",
+  "@competitionTeamsEmptyTitle": {
+    "description": "Título del estado vacío cuando no hay equipos inscritos en la competición"
+  },
+  "competitionTeamsEmptyDescription": "Aún no hay clubes registrados en esta competición. Usa el botón de acciones para inscribir equipos.",
+  "@competitionTeamsEmptyDescription": {
+    "description": "Descripción del estado vacío en la pestaña de equipos de la competición"
+  },
+  "competitionTeamsHeaderCount": "Equipos Inscritos ({count})",
+  "@competitionTeamsHeaderCount": {
+    "description": "Encabezado con conteo de equipos inscritos en la competición",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "competitionTeamPlayersCount": "{count, plural, =1{1 jugador} other{{count} jugadores}}",
+  "@competitionTeamPlayersCount": {
+    "description": "Cantidad de jugadores inscritos en el equipo",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "competitionTeamMoveGroupTooltip": "Trasladar de grupo",
+  "@competitionTeamMoveGroupTooltip": {
+    "description": "Tooltip del botón para trasladar un equipo de grupo"
+  },
+  "competitionTeamRemoveTooltip": "Quitar del campeonato",
+  "@competitionTeamRemoveTooltip": {
+    "description": "Tooltip del botón para quitar un equipo de la competición"
+  },
+  "competitionMoveGroupDialogTitle": "Trasladar de Grupo",
+  "@competitionMoveGroupDialogTitle": {
+    "description": "Título del diálogo para trasladar un equipo de grupo"
+  },
+  "competitionMoveGroupSuccess": "{teamName} trasladado a {groupName}",
+  "@competitionMoveGroupSuccess": {
+    "description": "Mensaje de confirmación al trasladar un equipo de grupo",
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      },
+      "groupName": {
+        "type": "String"
+      }
+    }
+  },
+  "competitionRemoveTeamConfirmTitle": "Quitar Equipo del Campeonato",
+  "@competitionRemoveTeamConfirmTitle": {
+    "description": "Título del diálogo de confirmación para retirar un equipo"
+  },
+  "competitionRemoveTeamConfirmMessage": "¿Estás seguro de que deseas retirar a {teamName} de esta competición?",
+  "@competitionRemoveTeamConfirmMessage": {
+    "description": "Mensaje de advertencia para retirar un equipo del torneo",
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      }
+    }
+  },
+  "competitionRemoveTeamConfirmAction": "Quitar Equipo",
+  "@competitionRemoveTeamConfirmAction": {
+    "description": "Texto del botón de confirmación destructiva para quitar equipo"
+  },
+  "competitionRemoveTeamSuccess": "Equipo retirado del campeonato",
+  "@competitionRemoveTeamSuccess": {
+    "description": "Mensaje de éxito al quitar un equipo del campeonato"
+  },
+  "competitionRemoveTeamHasPlayedMatchesError": "No se puede retirar un equipo que ya tiene partidos en curso o finalizados",
+  "@competitionRemoveTeamHasPlayedMatchesError": {
+    "description": "Mensaje de error cuando se intenta retirar un equipo con partidos disputados o en juego"
+  },
+  "competitionEnrollTeamDialogTitle": "Inscribir Equipo en Competición",
+  "@competitionEnrollTeamDialogTitle": {
+    "description": "Título del diálogo para inscribir equipo en la competición"
+  },
+  "competitionEnrollTeamExistingClubLabel": "Copiar de club existente (opcional)",
+  "@competitionEnrollTeamExistingClubLabel": {
+    "description": "Etiqueta del selector de clubes existentes para pre-cargar datos"
+  },
+  "competitionEnrollTeamNewClubOption": "Crear nuevo equipo",
+  "@competitionEnrollTeamNewClubOption": {
+    "description": "Opción en el desplegable para crear un equipo nuevo desde cero"
+  },
+  "competitionEnrollTeamGroupLabel": "Grupo asignado",
+  "@competitionEnrollTeamGroupLabel": {
+    "description": "Etiqueta del selector de grupo en el diálogo de inscripción"
+  },
+  "competitionEnrollTeamSubmitAction": "Inscribir Equipo",
+  "@competitionEnrollTeamSubmitAction": {
+    "description": "Texto del botón de acción para confirmar la inscripción del equipo"
+  },
+  "competitionEnrollTeamSuccess": "Equipo {teamName} inscrito en la competición",
+  "@competitionEnrollTeamSuccess": {
+    "description": "Mensaje de confirmación al inscribir un equipo en la competición",
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      }
+    }
   }
 }

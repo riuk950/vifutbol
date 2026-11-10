@@ -13,9 +13,11 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dar
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
 import 'package:vifutbol/presentation/matches/dialogs/generate_fixture_confirmation_dialog.dart';
+import 'package:vifutbol/presentation/tournaments/widgets/competition_enroll_team_dialog.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/competition_fixture_tab_view.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/competition_info_tab_view.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/competition_standings_tab_view.dart';
+import 'package:vifutbol/presentation/tournaments/widgets/competition_teams_tab_view.dart';
 
 /// Dedicated competition detail screen (`/competitions/:id`) featuring fixed horizontal
 /// tabs for Matches, Standings, and Official Rules, with an Organizer Speed Dial FAB Menu.
@@ -48,6 +50,11 @@ class _CompetitionDetailScreenState
       case TournamentStatus.finished:
         return (l10n.tournamentStatusFinished, KickPulseBadgeVariant.neutral);
     }
+  }
+
+  Future<void> _handleEnrollTeam(ChampionshipTournament tournament) async {
+    setState(() => _isSpeedDialOpen = false);
+    await CompetitionEnrollTeamDialog.show(context, tournament: tournament);
   }
 
   Future<void> _handleGenerateFixture(ChampionshipTournament tournament) async {
@@ -117,6 +124,23 @@ class _CompetitionDetailScreenState
       children: [
         if (_isSpeedDialOpen) ...[
           FloatingActionButton.extended(
+            key: const Key('competition_detail_fab_add_team'),
+            heroTag: 'fab_action_add_team',
+            backgroundColor: KickPulseColors.surfaceElevated,
+            foregroundColor: KickPulseColors.accentPrimary,
+            elevation: 4,
+            icon: const Icon(Icons.group_add, size: 20),
+            label: Text(
+              l10n.competitionFabAddTeamLabel,
+              style: KickPulseTypography.captionMeta.copyWith(
+                fontWeight: FontWeight.bold,
+                color: KickPulseColors.accentPrimary,
+              ),
+            ),
+            onPressed: () => _handleEnrollTeam(tournament),
+          ),
+          const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+          FloatingActionButton.extended(
             key: const Key('competition_detail_fab_generate_fixture'),
             heroTag: 'fab_action_generate_fixture',
             backgroundColor: KickPulseColors.surfaceElevated,
@@ -162,10 +186,9 @@ class _CompetitionDetailScreenState
         : ('', KickPulseBadgeVariant.neutral);
 
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         key: const Key('competition_detail_screen'),
-        backgroundColor: KickPulseColors.canvasBackground,
         floatingActionButton: _buildFloatingActionButton(
           context,
           tournament,
@@ -220,6 +243,7 @@ class _CompetitionDetailScreenState
           ],
           bottom: TabBar(
             key: const Key('competition_detail_tab_bar'),
+            isScrollable: true,
             indicatorColor: KickPulseColors.accentPrimary,
             indicatorWeight: 3,
             labelColor: KickPulseColors.accentPrimary,
@@ -237,6 +261,10 @@ class _CompetitionDetailScreenState
                 text: l10n.competitionDetailTabStandings,
               ),
               Tab(
+                key: const Key('competition_detail_tab_teams'),
+                text: l10n.competitionDetailTabTeams,
+              ),
+              Tab(
                 key: const Key('competition_detail_tab_info'),
                 text: l10n.competitionDetailTabInfo,
               ),
@@ -248,6 +276,7 @@ class _CompetitionDetailScreenState
           children: [
             CompetitionFixtureTabView(tournamentId: widget.tournamentId),
             CompetitionStandingsTabView(tournamentId: widget.tournamentId),
+            CompetitionTeamsTabView(tournamentId: widget.tournamentId),
             CompetitionInfoTabView(tournamentId: widget.tournamentId),
           ],
         ),

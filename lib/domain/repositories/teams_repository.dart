@@ -17,4 +17,7 @@ abstract interface class TeamsRepository {
     String tournamentId,
     List<TournamentTeam> teams,
   );
+
+  /// Deletes a team by its [teamId] from storage.
+  Future<void> deleteTeam(String teamId);
 }

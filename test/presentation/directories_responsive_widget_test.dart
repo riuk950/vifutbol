@@ -117,6 +117,11 @@ class FakeTeamsRepository implements TeamsRepository {
     String tournamentId,
     List<TournamentTeam> updatedTeams,
   ) async {}
+
+  @override
+  Future<void> deleteTeam(String teamId) async {
+    teams.removeWhere((t) => t.id == teamId);
+  }
 }
 
 Widget createResponsiveApp({
@@ -393,8 +398,23 @@ void main() {
           findsOneWidget,
         );
 
+        // Switch to Equipos tab (scroll tab bar if needed)
+        final teamsTab = find.byKey(const Key('competition_detail_tab_teams'));
+        await tester.ensureVisible(teamsTab);
+        await tester.pumpAndSettle();
+        await tester.tap(teamsTab);
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(
+          find.byKey(const Key('competition_teams_tab_view')),
+          findsOneWidget,
+        );
+
         // Switch to Información tab
         final infoTab = find.byKey(const Key('competition_detail_tab_info'));
+        await tester.ensureVisible(infoTab);
+        await tester.pumpAndSettle();
         await tester.tap(infoTab);
         await tester.pumpAndSettle();
 

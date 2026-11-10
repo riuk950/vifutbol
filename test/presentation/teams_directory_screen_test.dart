@@ -106,6 +106,11 @@ class FakeTeamsRepository implements TeamsRepository {
     String tournamentId,
     List<TournamentTeam> updatedTeams,
   ) async {}
+
+  @override
+  Future<void> deleteTeam(String teamId) async {
+    teams.removeWhere((t) => t.id == teamId);
+  }
 }
 
 Widget createTeamsTestApp({

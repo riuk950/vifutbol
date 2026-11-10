@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vifutbol/application/use_cases/manage_teams_eligibility_use_case.dart';
+import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
@@ -9,6 +11,30 @@ import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/failures/app_failure.dart';
 import 'package:vifutbol/domain/repositories/teams_repository.dart';
+import 'package:vifutbol/domain/repositories/tournament_matches_repository.dart';
+
+class _FakeMatchesRepository implements TournamentMatchesRepository {
+  List<ChampionshipMatch> matches = [];
+
+  @override
+  Future<List<ChampionshipMatch>> loadMatchesForTournament(
+    String tournamentId,
+  ) async {
+    return matches.where((m) => m.tournamentId == tournamentId).toList();
+  }
+
+  @override
+  Future<void> replaceMatchesForTournament(
+    String tournamentId,
+    List<ChampionshipMatch> updatedMatches,
+  ) async {
+    matches.removeWhere((m) => m.tournamentId == tournamentId);
+    matches.addAll(updatedMatches);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 class _FakeTeamsRepository implements TeamsRepository {
   final List<TournamentTeam> _teams = [];
@@ -42,17 +68,24 @@ class _FakeTeamsRepository implements TeamsRepository {
     _teams.removeWhere((t) => t.tournamentId == tournamentId);
     _teams.addAll(teams);
   }
+
+  @override
+  Future<void> deleteTeam(String teamId) async {
+    _teams.removeWhere((t) => t.id == teamId);
+  }
 }
 
 void main() {
   late _FakeTeamsRepository repository;
+  late _FakeMatchesRepository matchesRepository;
   late ManageTeamsEligibilityUseCase useCase;
   late ChampionshipTournament openTournament;
   late ChampionshipTournament closedTournament;
 
   setUp(() {
     repository = _FakeTeamsRepository();
-    useCase = ManageTeamsEligibilityUseCase(repository);
+    matchesRepository = _FakeMatchesRepository();
+    useCase = ManageTeamsEligibilityUseCase(repository, matchesRepository);
 
     openTournament = ChampionshipTournament(
       id: 'tour-open',
@@ -260,6 +293,65 @@ void main() {
         );
 
         expect(savedOther.tournamentId, equals('tour-other'));
+      },
+    );
+
+    test(
+      'HU 15.4: enrollTeamInCompetition enforces Organizer role and editable tournament',
+      () async {
+        final team = TournamentTeam(
+          id: 'team-fab-1',
+          tournamentId: openTournament.id,
+          name: 'Club Atlético Fab',
+          shortCode: 'CAF',
+          groupName: 'Grupo A',
+        );
+
+        // Non-organizer (fan) rejected
+        expect(
+          () => useCase.enrollTeamInCompetition(
+            team: team,
+            tournament: openTournament,
+            actorRole: UserRole.fan,
+          ),
+          throwsA(isA<UnauthorizedRoleFailure>()),
+        );
+
+        // Finished tournament rejected
+        final finishedTournament = openTournament.copyWith(
+          status: TournamentStatus.finished,
+        );
+        expect(
+          () => useCase.enrollTeamInCompetition(
+            team: team,
+            tournament: finishedTournament,
+            actorRole: UserRole.organizer,
+          ),
+          throwsA(isA<TeamEligibilityValidationFailure>()),
+        );
+
+        // Organizer succeeds on inProgress tournament
+        final inProgressTournament = openTournament.copyWith(
+          status: TournamentStatus.inProgress,
+        );
+        final enrolled = await useCase.enrollTeamInCompetition(
+          team: team,
+          tournament: inProgressTournament,
+          actorRole: UserRole.organizer,
+        );
+        expect(enrolled.name, 'Club Atlético Fab');
+        expect(enrolled.shortCode, 'CAF');
+        expect(enrolled.groupName, 'Grupo A');
+
+        // Duplicate name rejected in same tournament
+        expect(
+          () => useCase.enrollTeamInCompetition(
+            team: team.copyWith(id: 'team-fab-2'),
+            tournament: inProgressTournament,
+            actorRole: UserRole.organizer,
+          ),
+          throwsA(isA<TeamEligibilityValidationFailure>()),
+        );
       },
     );
   });
@@ -752,4 +844,145 @@ void main() {
       );
     },
   );
+
+  group('US3: Team Group Relocation and Competition Removal', () {
+    test(
+      'moveTeamToGroup moves team to another group when Organizer',
+      () async {
+        final team = await repository.saveTeam(
+          TournamentTeam(
+            id: 'team-mv',
+            tournamentId: openTournament.id,
+            name: 'Deportivo Relocalizado',
+            shortCode: 'DREL',
+            groupName: 'Grupo A',
+          ),
+        );
+
+        final updated = await useCase.moveTeamToGroup(
+          teamId: team.id,
+          groupName: 'Grupo B',
+          tournament: openTournament,
+          actorRole: UserRole.organizer,
+        );
+
+        expect(updated.groupName, equals('Grupo B'));
+        final inRepo = (await repository.loadTeams()).firstWhere(
+          (t) => t.id == team.id,
+        );
+        expect(inRepo.groupName, equals('Grupo B'));
+      },
+    );
+
+    test('moveTeamToGroup rejects non-organizer roles', () async {
+      expect(
+        () => useCase.moveTeamToGroup(
+          teamId: 'team-x',
+          groupName: 'Grupo B',
+          tournament: openTournament,
+          actorRole: UserRole.coach,
+        ),
+        throwsA(isA<UnauthorizedRoleFailure>()),
+      );
+    });
+
+    test('moveTeamToGroup rejects finished tournament', () async {
+      expect(
+        () => useCase.moveTeamToGroup(
+          teamId: 'team-x',
+          groupName: 'Grupo B',
+          tournament: closedTournament,
+          actorRole: UserRole.organizer,
+        ),
+        throwsA(isA<TeamEligibilityValidationFailure>()),
+      );
+    });
+
+    test(
+      'removeTeamFromCompetition deletes team and cleans pending matches',
+      () async {
+        final team = await repository.saveTeam(
+          TournamentTeam(
+            id: 'team-rem',
+            tournamentId: openTournament.id,
+            name: 'Equipo Por Borrar',
+            shortCode: 'EPB',
+          ),
+        );
+
+        matchesRepository.matches = [
+          ChampionshipMatch(
+            id: 'm-pending',
+            tournamentId: openTournament.id,
+            roundNumber: 1,
+            roundName: 'Jornada 1',
+            homeTeamId: team.id,
+            awayTeamId: 'team-other',
+            status: MatchStatus.scheduled,
+          ),
+          ChampionshipMatch(
+            id: 'm-other',
+            tournamentId: openTournament.id,
+            roundNumber: 1,
+            roundName: 'Jornada 1',
+            homeTeamId: 'team-a',
+            awayTeamId: 'team-b',
+            status: MatchStatus.scheduled,
+          ),
+        ];
+
+        await useCase.removeTeamFromCompetition(
+          teamId: team.id,
+          tournament: openTournament,
+          actorRole: UserRole.organizer,
+        );
+
+        final teams = await repository.loadTeams();
+        expect(teams.any((t) => t.id == team.id), isFalse);
+        expect(matchesRepository.matches.length, equals(1));
+        expect(matchesRepository.matches.first.id, equals('m-other'));
+      },
+    );
+
+    test(
+      'removeTeamFromCompetition blocks removal if team has completed/inProgress matches',
+      () async {
+        final team = await repository.saveTeam(
+          TournamentTeam(
+            id: 'team-played',
+            tournamentId: openTournament.id,
+            name: 'Equipo Con Partidos',
+            shortCode: 'ECP',
+          ),
+        );
+
+        matchesRepository.matches = [
+          ChampionshipMatch(
+            id: 'm-comp',
+            tournamentId: openTournament.id,
+            roundNumber: 1,
+            roundName: 'Jornada 1',
+            homeTeamId: team.id,
+            awayTeamId: 'team-other',
+            status: MatchStatus.completed,
+            homeScore: 2,
+            awayScore: 1,
+          ),
+        ];
+
+        expect(
+          () => useCase.removeTeamFromCompetition(
+            teamId: team.id,
+            tournament: openTournament,
+            actorRole: UserRole.organizer,
+          ),
+          throwsA(
+            predicate<TeamEligibilityValidationFailure>(
+              (f) => f.code == TeamEligibilityErrorCode.teamHasPlayedMatches,
+            ),
+          ),
+        );
+      },
+    );
+  });
 }

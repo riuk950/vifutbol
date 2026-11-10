@@ -226,6 +226,33 @@ class StandingsCalculatorService {
     );
   }
 
+  /// Resolves the valid group names for a given [groupCount] (clamped between 2 and 8).
+  static List<String> buildValidGroupNames(int groupCount) {
+    final count = groupCount.clamp(2, 8);
+    return List<String>.generate(
+      count,
+      (g) => 'Grupo ${String.fromCharCode('A'.codeUnitAt(0) + g)}',
+    );
+  }
+
+  /// Deterministically resolves the effective group name of a team within a tournament.
+  static String resolveEffectiveGroupName({
+    required TournamentTeam team,
+    required List<TournamentTeam> allTournamentTeams,
+    required int groupCount,
+  }) {
+    final validGroups = buildValidGroupNames(groupCount);
+    if (team.groupName != null && validGroups.contains(team.groupName)) {
+      return team.groupName!;
+    }
+
+    final sortedTeams = List<TournamentTeam>.from(allTournamentTeams)
+      ..sort((a, b) => a.id.compareTo(b.id));
+    final index = sortedTeams.indexWhere((t) => t.id == team.id);
+    final effectiveIndex = index >= 0 ? index : 0;
+    return validGroups[effectiveIndex % validGroups.length];
+  }
+
   /// Computes independent per-group [StandingsTable] instances for
   /// [TournamentFormat.mixedGroupsAndKnockout] (`FR-004`).
   List<StandingsTable> calculateGroupStageTables({
@@ -235,22 +262,31 @@ class StandingsCalculatorService {
     required List<DigitalMatchReport> closedReports,
   }) {
     final groupCount = tournament.rules.groupStageConfig.groupCount.clamp(2, 8);
+    final validGroups = buildValidGroupNames(groupCount);
     final sortedTeams = List<TournamentTeam>.from(teams)
       ..sort((a, b) => a.id.compareTo(b.id));
 
-    final buckets = List<List<TournamentTeam>>.generate(
-      groupCount,
-      (_) => <TournamentTeam>[],
-    );
-    for (var i = 0; i < sortedTeams.length; i++) {
-      buckets[i % groupCount].add(sortedTeams[i]);
+    final groupBuckets = <String, List<TournamentTeam>>{
+      for (final g in validGroups) g: <TournamentTeam>[],
+    };
+
+    final unassignedTeams = <TournamentTeam>[];
+    for (final team in sortedTeams) {
+      if (team.groupName != null && validGroups.contains(team.groupName)) {
+        groupBuckets[team.groupName!]!.add(team);
+      } else {
+        unassignedTeams.add(team);
+      }
+    }
+
+    for (var i = 0; i < unassignedTeams.length; i++) {
+      final targetGroup = validGroups[i % groupCount];
+      groupBuckets[targetGroup]!.add(unassignedTeams[i]);
     }
 
     final tables = <StandingsTable>[];
-    for (var g = 0; g < groupCount; g++) {
-      final groupLetter = String.fromCharCode('A'.codeUnitAt(0) + g);
-      final groupName = 'Grupo $groupLetter';
-      final groupTeams = buckets[g];
+    for (final groupName in validGroups) {
+      final groupTeams = groupBuckets[groupName] ?? const [];
       if (groupTeams.isEmpty) continue;
 
       tables.add(

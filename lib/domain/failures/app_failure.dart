@@ -134,6 +134,7 @@ enum TeamEligibilityErrorCode {
   maxPlayersQuotaReached,
   insufficientPlayersForApproval,
   teamNotFound,
+  teamHasPlayedMatches,
 }
 
 /// Emitted when team enrollment, player registration, or eligibility validation fails.

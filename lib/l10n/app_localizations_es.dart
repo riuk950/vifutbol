@@ -2656,4 +2656,88 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get matchdayScheduleSavedSuccess =>
       'Programación del partido guardada exitosamente.';
+
+  @override
+  String get competitionDetailTabTeams => 'Equipos';
+
+  @override
+  String get competitionFabAddTeamLabel => 'Agregar Equipo';
+
+  @override
+  String get competitionTeamsEmptyTitle => 'Sin equipos inscritos';
+
+  @override
+  String get competitionTeamsEmptyDescription =>
+      'Aún no hay clubes registrados en esta competición. Usa el botón de acciones para inscribir equipos.';
+
+  @override
+  String competitionTeamsHeaderCount(int count) {
+    return 'Equipos Inscritos ($count)';
+  }
+
+  @override
+  String competitionTeamPlayersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count jugadores',
+      one: '1 jugador',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get competitionTeamMoveGroupTooltip => 'Trasladar de grupo';
+
+  @override
+  String get competitionTeamRemoveTooltip => 'Quitar del campeonato';
+
+  @override
+  String get competitionMoveGroupDialogTitle => 'Trasladar de Grupo';
+
+  @override
+  String competitionMoveGroupSuccess(String teamName, String groupName) {
+    return '$teamName trasladado a $groupName';
+  }
+
+  @override
+  String get competitionRemoveTeamConfirmTitle =>
+      'Quitar Equipo del Campeonato';
+
+  @override
+  String competitionRemoveTeamConfirmMessage(String teamName) {
+    return '¿Estás seguro de que deseas retirar a $teamName de esta competición?';
+  }
+
+  @override
+  String get competitionRemoveTeamConfirmAction => 'Quitar Equipo';
+
+  @override
+  String get competitionRemoveTeamSuccess => 'Equipo retirado del campeonato';
+
+  @override
+  String get competitionRemoveTeamHasPlayedMatchesError =>
+      'No se puede retirar un equipo que ya tiene partidos en curso o finalizados';
+
+  @override
+  String get competitionEnrollTeamDialogTitle =>
+      'Inscribir Equipo en Competición';
+
+  @override
+  String get competitionEnrollTeamExistingClubLabel =>
+      'Copiar de club existente (opcional)';
+
+  @override
+  String get competitionEnrollTeamNewClubOption => 'Crear nuevo equipo';
+
+  @override
+  String get competitionEnrollTeamGroupLabel => 'Grupo asignado';
+
+  @override
+  String get competitionEnrollTeamSubmitAction => 'Inscribir Equipo';
+
+  @override
+  String competitionEnrollTeamSuccess(String teamName) {
+    return 'Equipo $teamName inscrito en la competición';
+  }
 }

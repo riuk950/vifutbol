@@ -375,5 +375,59 @@ void main() {
         expect(groupTables[1].rows.length, 2);
       },
     );
+
+    test(
+      'HU 15.4: Group stage calculation respects explicit team.groupName assignments and resolves effective groups',
+      () {
+        final tournament = buildTournament(
+          format: TournamentFormat.mixedGroupsAndKnockout,
+          rules: const TournamentRulesConfig(
+            groupStageConfig: GroupStageConfig(
+              groupCount: 2,
+              advancingPerGroup: 1,
+            ),
+          ),
+        );
+        // Explicitly put t-1 and t-2 into Grupo B, and t-3 into Grupo A, t-4 unassigned
+        final teams = [
+          buildTeam('t-1', 'Alfa', 'ALF').copyWith(groupName: 'Grupo B'),
+          buildTeam('t-2', 'Beta', 'BET').copyWith(groupName: 'Grupo B'),
+          buildTeam('t-3', 'Gamma', 'GAM').copyWith(groupName: 'Grupo A'),
+          buildTeam('t-4', 'Delta', 'DEL'), // unassigned -> fallback to Grupo A
+        ];
+
+        final groupTables = calculator.calculateGroupStageTables(
+          tournament: tournament,
+          teams: teams,
+          matches: const [],
+          closedReports: const [],
+        );
+
+        expect(groupTables.length, 2);
+        final groupA = groupTables.firstWhere((g) => g.groupName == 'Grupo A');
+        final groupB = groupTables.firstWhere((g) => g.groupName == 'Grupo B');
+
+        expect(groupA.rows.map((r) => r.teamId), containsAll(['t-3', 't-4']));
+        expect(groupB.rows.map((r) => r.teamId), containsAll(['t-1', 't-2']));
+
+        // Verify helper resolveEffectiveGroupName
+        expect(
+          StandingsCalculatorService.resolveEffectiveGroupName(
+            team: teams[0],
+            allTournamentTeams: teams,
+            groupCount: 2,
+          ),
+          'Grupo B',
+        );
+        expect(
+          StandingsCalculatorService.resolveEffectiveGroupName(
+            team: teams[2],
+            allTournamentTeams: teams,
+            groupCount: 2,
+          ),
+          'Grupo A',
+        );
+      },
+    );
   });
 }

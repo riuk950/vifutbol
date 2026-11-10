@@ -23,7 +23,8 @@ final teamsRepositoryProvider = Provider<TeamsRepository>((ref) {
 final manageTeamsEligibilityUseCaseProvider =
     Provider<ManageTeamsEligibilityUseCase>((ref) {
       final repository = ref.watch(teamsRepositoryProvider);
-      return ManageTeamsEligibilityUseCase(repository);
+      final matchesRepo = ref.watch(tournamentMatchesRepositoryProvider);
+      return ManageTeamsEligibilityUseCase(repository, matchesRepo);
     });
 
 /// StateNotifierProvider exposing [TeamsController].

@@ -1,4 +1,5 @@
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/role_permission_matrix.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
@@ -7,14 +8,19 @@ import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/failures/app_failure.dart';
 import 'package:vifutbol/domain/repositories/teams_repository.dart';
+import 'package:vifutbol/domain/repositories/tournament_matches_repository.dart';
 
 /// Use case that orchestrates team registration, player roster enrollment,
 /// sports integrity uniqueness checks (team name, shirt number, player document),
 /// quota threshold evaluations, and official eligibility approvals.
 class ManageTeamsEligibilityUseCase {
-  const ManageTeamsEligibilityUseCase(this._repository);
+  const ManageTeamsEligibilityUseCase(
+    this._repository, [
+    this._matchesRepository,
+  ]);
 
   final TeamsRepository _repository;
+  final TournamentMatchesRepository? _matchesRepository;
 
   /// Registers or updates a [TournamentTeam] in a championship.
   ///
@@ -62,6 +68,134 @@ class ManageTeamsEligibilityUseCase {
     final sanitizedTeam = team.copyWith(
       name: trimmedName,
       shortCode: trimmedShortCode.toUpperCase(),
+      updatedAt: DateTime.now(),
+    );
+
+    return _repository.saveTeam(sanitizedTeam);
+  }
+
+  /// Moves an enrolled team to a target group in a tournament.
+  ///
+  /// Enforces Organizer role and editable tournament status.
+  Future<TournamentTeam> moveTeamToGroup({
+    required String teamId,
+    required String groupName,
+    required ChampionshipTournament tournament,
+    required UserRole actorRole,
+  }) async {
+    _ensureTournamentManagementPermission(actorRole);
+    _ensureEditableTournament(tournament);
+
+    final teams = await _repository.loadTeamsForTournament(tournament.id);
+    final index = teams.indexWhere((t) => t.id == teamId);
+    if (index < 0) {
+      throw const TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.teamNotFound,
+        'Equipo no encontrado en la competición',
+      );
+    }
+
+    final team = teams[index];
+    final updatedTeam = team.copyWith(
+      groupName: groupName.trim(),
+      updatedAt: DateTime.now(),
+    );
+
+    return _repository.saveTeam(updatedTeam);
+  }
+
+  /// Removes an enrolled team from a tournament.
+  ///
+  /// Enforces Organizer role and editable tournament status.
+  /// Blocks removal if the team has matches that are inProgress or completed.
+  /// Cleans up any scheduled/pending matches belonging to this team.
+  Future<void> removeTeamFromCompetition({
+    required String teamId,
+    required ChampionshipTournament tournament,
+    required UserRole actorRole,
+  }) async {
+    _ensureTournamentManagementPermission(actorRole);
+    _ensureEditableTournament(tournament);
+
+    if (_matchesRepository != null) {
+      final tournamentMatches = await _matchesRepository
+          .loadMatchesForTournament(tournament.id);
+      final hasPlayedMatches = tournamentMatches.any(
+        (m) =>
+            (m.homeTeamId == teamId || m.awayTeamId == teamId) &&
+            (m.status == MatchStatus.inProgress ||
+                m.status == MatchStatus.completed),
+      );
+
+      if (hasPlayedMatches) {
+        throw const TeamEligibilityValidationFailure(
+          TeamEligibilityErrorCode.teamHasPlayedMatches,
+          'No se puede retirar un equipo que ya tiene partidos en curso o finalizados',
+        );
+      }
+
+      final remainingMatches = tournamentMatches
+          .where((m) => m.homeTeamId != teamId && m.awayTeamId != teamId)
+          .toList();
+      await _matchesRepository.replaceMatchesForTournament(
+        tournament.id,
+        remainingMatches,
+      );
+    }
+
+    await _repository.deleteTeam(teamId);
+  }
+
+  /// Enrolls a team into a championship competition from the Organizer's perspective.
+  ///
+  /// Throws [UnauthorizedRoleFailure] if [actorRole] does not have [RoleCapability.manageTournaments].
+  /// Throws [TeamEligibilityValidationFailure] if tournament is not editable, fields are invalid,
+  /// or team name collides within the tournament.
+  Future<TournamentTeam> enrollTeamInCompetition({
+    required TournamentTeam team,
+    required ChampionshipTournament tournament,
+    required UserRole actorRole,
+  }) async {
+    _ensureTournamentManagementPermission(actorRole);
+    _ensureEditableTournament(tournament);
+
+    final trimmedName = team.name.trim();
+    if (trimmedName.length < 3) {
+      throw const TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.invalidTeamName,
+        'El nombre del equipo debe tener al menos 3 caracteres',
+      );
+    }
+
+    final trimmedShortCode = team.shortCode.trim();
+    if (trimmedShortCode.length < 2 || trimmedShortCode.length > 4) {
+      throw const TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.invalidShortCode,
+        'La sigla debe tener entre 2 y 4 caracteres',
+      );
+    }
+
+    final tournamentTeams = await _repository.loadTeamsForTournament(
+      tournament.id,
+    );
+
+    final isDuplicateName = tournamentTeams.any(
+      (t) => t.id != team.id && t.normalizedName == team.normalizedName,
+    );
+    if (isDuplicateName) {
+      throw const TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.duplicateTeamNameInTournament,
+        'Ya existe un equipo con este nombre en este campeonato',
+      );
+    }
+
+    final sanitizedTeam = team.copyWith(
+      tournamentId: tournament.id,
+      name: trimmedName,
+      shortCode: trimmedShortCode.toUpperCase(),
+      groupName: team.groupName?.trim().isNotEmpty == true
+          ? team.groupName!.trim()
+          : null,
       updatedAt: DateTime.now(),
     );
 
@@ -292,6 +426,26 @@ class ManageTeamsEligibilityUseCase {
     );
 
     return _repository.saveTeam(approvedTeam);
+  }
+
+  void _ensureTournamentManagementPermission(UserRole role) {
+    if (!RolePermissionMatrix.hasCapability(
+      role,
+      RoleCapability.manageTournaments,
+    )) {
+      throw const UnauthorizedRoleFailure(
+        'Solo el Organizador puede gestionar la inscripción de equipos en la competición',
+      );
+    }
+  }
+
+  void _ensureEditableTournament(ChampionshipTournament tournament) {
+    if (!tournament.status.isEditable) {
+      throw const TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.tournamentRegistrationsClosed,
+        'El campeonato ha finalizado y se encuentra en modo de solo lectura histórica.',
+      );
+    }
   }
 
   void _ensureRosterManagementPermission(UserRole role) {

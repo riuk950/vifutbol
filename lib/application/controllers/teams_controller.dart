@@ -75,6 +75,109 @@ class TeamsController extends StateNotifier<TeamsCatalogState> {
     }
   }
 
+  /// Enrolls a team into a competition from the Organizer's workflow with single-flight protection.
+  Future<bool> enrollTeamInCompetition({
+    required TournamentTeam team,
+    required ChampionshipTournament tournament,
+    required UserRole actorRole,
+  }) async {
+    if (state.isSaving) return false;
+
+    state = state.copyWith(isSaving: true, clearLastFailure: true);
+
+    try {
+      final saved = await manageTeamsEligibilityUseCase.enrollTeamInCompetition(
+        team: team,
+        tournament: tournament,
+        actorRole: actorRole,
+      );
+
+      final updatedTeams = await teamsRepository.loadTeams();
+      state = state.copyWith(
+        teams: updatedTeams,
+        selectedTeamId: saved.id,
+        isSaving: false,
+      );
+      return true;
+    } catch (e) {
+      final failure = e is AppFailure
+          ? e
+          : const TeamEligibilityValidationFailure(
+              TeamEligibilityErrorCode.invalidTeamName,
+            );
+      state = state.copyWith(isSaving: false, lastFailure: failure);
+      return false;
+    }
+  }
+
+  /// Moves an enrolled team to a target group in the competition.
+  Future<bool> moveTeamToGroup({
+    required String teamId,
+    required String groupName,
+    required ChampionshipTournament tournament,
+    required UserRole actorRole,
+  }) async {
+    if (state.isSaving) return false;
+
+    state = state.copyWith(isSaving: true, clearLastFailure: true);
+
+    try {
+      await manageTeamsEligibilityUseCase.moveTeamToGroup(
+        teamId: teamId,
+        groupName: groupName,
+        tournament: tournament,
+        actorRole: actorRole,
+      );
+
+      final updatedTeams = await teamsRepository.loadTeams();
+      state = state.copyWith(teams: updatedTeams, isSaving: false);
+      return true;
+    } catch (e) {
+      final failure = e is AppFailure
+          ? e
+          : const TeamEligibilityValidationFailure(
+              TeamEligibilityErrorCode.teamNotFound,
+            );
+      state = state.copyWith(isSaving: false, lastFailure: failure);
+      return false;
+    }
+  }
+
+  /// Removes an enrolled team from a competition.
+  Future<bool> removeTeamFromCompetition({
+    required String teamId,
+    required ChampionshipTournament tournament,
+    required UserRole actorRole,
+  }) async {
+    if (state.isSaving) return false;
+
+    state = state.copyWith(isSaving: true, clearLastFailure: true);
+
+    try {
+      await manageTeamsEligibilityUseCase.removeTeamFromCompetition(
+        teamId: teamId,
+        tournament: tournament,
+        actorRole: actorRole,
+      );
+
+      final updatedTeams = await teamsRepository.loadTeams();
+      state = state.copyWith(
+        teams: updatedTeams,
+        clearSelectedTeamId: state.selectedTeamId == teamId,
+        isSaving: false,
+      );
+      return true;
+    } catch (e) {
+      final failure = e is AppFailure
+          ? e
+          : const TeamEligibilityValidationFailure(
+              TeamEligibilityErrorCode.teamNotFound,
+            );
+      state = state.copyWith(isSaving: false, lastFailure: failure);
+      return false;
+    }
+  }
+
   /// Enrolls or updates a player in a team roster.
   Future<bool> enrollOrUpdatePlayer({
     required String teamId,

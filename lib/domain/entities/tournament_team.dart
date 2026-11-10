@@ -12,6 +12,7 @@ class TournamentTeam {
   final int secondaryColorHex;
   final TeamEligibilityStatus eligibilityStatus;
   final List<RegisteredPlayer> players;
+  final String? groupName;
   final DateTime updatedAt;
 
   TournamentTeam({
@@ -24,6 +25,7 @@ class TournamentTeam {
     this.secondaryColorHex = 0xFF0A0E17,
     this.eligibilityStatus = TeamEligibilityStatus.pendingQuota,
     List<RegisteredPlayer> players = const [],
+    this.groupName,
     DateTime? updatedAt,
   }) : players = List.unmodifiable(
          [...players]..sort((a, b) => a.shirtNumber.compareTo(b.shirtNumber)),
@@ -52,6 +54,8 @@ class TournamentTeam {
     int? secondaryColorHex,
     TeamEligibilityStatus? eligibilityStatus,
     List<RegisteredPlayer>? players,
+    String? groupName,
+    bool clearGroupName = false,
     DateTime? updatedAt,
   }) {
     return TournamentTeam(
@@ -64,6 +68,7 @@ class TournamentTeam {
       secondaryColorHex: secondaryColorHex ?? this.secondaryColorHex,
       eligibilityStatus: eligibilityStatus ?? this.eligibilityStatus,
       players: players ?? this.players,
+      groupName: clearGroupName ? null : (groupName ?? this.groupName),
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
@@ -79,6 +84,7 @@ class TournamentTeam {
       'secondaryColorHex': secondaryColorHex,
       'eligibilityStatus': eligibilityStatus.name,
       'players': players.map((p) => p.toJson()).toList(),
+      'groupName': groupName,
       'updatedAt': updatedAt.toIso8601String(),
     };
   }
@@ -105,6 +111,7 @@ class TournamentTeam {
             (item) => RegisteredPlayer.fromJson(item as Map<String, dynamic>),
           )
           .toList(),
+      groupName: json['groupName'] as String?,
       updatedAt: json['updatedAt'] != null
           ? DateTime.parse(json['updatedAt'] as String)
           : DateTime.now(),

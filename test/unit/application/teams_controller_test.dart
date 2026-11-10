@@ -43,6 +43,11 @@ class _FakeTeamsRepository implements TeamsRepository {
     _teams.removeWhere((t) => t.tournamentId == tournamentId);
     _teams.addAll(teams);
   }
+
+  @override
+  Future<void> deleteTeam(String teamId) async {
+    _teams.removeWhere((t) => t.id == teamId);
+  }
 }
 
 void main() {
@@ -116,6 +121,37 @@ void main() {
         isA<TeamEligibilityValidationFailure>(),
       );
     });
+
+    test(
+      'HU 15.4: enrollTeamInCompetition adds team to state and respects single-flight',
+      () async {
+        final team = TournamentTeam(
+          id: 'team-enroll-1',
+          tournamentId: tournament.id,
+          name: 'Deportivo Enroll',
+          shortCode: 'DEN',
+          groupName: 'Grupo B',
+        );
+
+        final success = await controller.enrollTeamInCompetition(
+          team: team,
+          tournament: tournament,
+          actorRole: UserRole.organizer,
+        );
+
+        expect(success, isTrue);
+        expect(
+          controller.state.teams.any((t) => t.id == 'team-enroll-1'),
+          isTrue,
+        );
+        expect(
+          controller.state.teams
+              .firstWhere((t) => t.id == 'team-enroll-1')
+              .groupName,
+          'Grupo B',
+        );
+      },
+    );
 
     test('enrolls and removes player in team', () async {
       final team = TournamentTeam(
@@ -223,6 +259,51 @@ void main() {
       expect(controller.state.selectedTeamId, equals('team-custom'));
 
       controller.selectTeam(null);
+      expect(controller.state.selectedTeamId, isNull);
+    });
+
+    test('moveTeamToGroup updates team group and reloads teams', () async {
+      final team = TournamentTeam(
+        id: 'team-ctrl-mv',
+        tournamentId: tournament.id,
+        name: 'Club Movible',
+        shortCode: 'CMV',
+        groupName: 'Grupo A',
+      );
+      await repository.saveTeam(team);
+      await controller.loadTeams();
+
+      final success = await controller.moveTeamToGroup(
+        teamId: team.id,
+        groupName: 'Grupo B',
+        tournament: tournament,
+        actorRole: UserRole.organizer,
+      );
+
+      expect(success, isTrue);
+      final updated = controller.state.teams.firstWhere((t) => t.id == team.id);
+      expect(updated.groupName, equals('Grupo B'));
+    });
+
+    test('removeTeamFromCompetition deletes team and updates state', () async {
+      final team = TournamentTeam(
+        id: 'team-ctrl-del',
+        tournamentId: tournament.id,
+        name: 'Club Eliminable',
+        shortCode: 'CEL',
+      );
+      await repository.saveTeam(team);
+      await controller.loadTeams();
+      controller.selectTeam(team.id);
+
+      final success = await controller.removeTeamFromCompetition(
+        teamId: team.id,
+        tournament: tournament,
+        actorRole: UserRole.organizer,
+      );
+
+      expect(success, isTrue);
+      expect(controller.state.teams.any((t) => t.id == team.id), isFalse);
       expect(controller.state.selectedTeamId, isNull);
     });
   });

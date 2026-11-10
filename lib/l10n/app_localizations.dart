@@ -4677,6 +4677,132 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Programación del partido guardada exitosamente.'**
   String get matchdayScheduleSavedSuccess;
+
+  /// Pestaña de equipos inscritos en el detalle de competición
+  ///
+  /// In es, this message translates to:
+  /// **'Equipos'**
+  String get competitionDetailTabTeams;
+
+  /// Etiqueta del botón flotante para agregar equipo a la competición
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar Equipo'**
+  String get competitionFabAddTeamLabel;
+
+  /// Título del estado vacío cuando no hay equipos inscritos en la competición
+  ///
+  /// In es, this message translates to:
+  /// **'Sin equipos inscritos'**
+  String get competitionTeamsEmptyTitle;
+
+  /// Descripción del estado vacío en la pestaña de equipos de la competición
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay clubes registrados en esta competición. Usa el botón de acciones para inscribir equipos.'**
+  String get competitionTeamsEmptyDescription;
+
+  /// Encabezado con conteo de equipos inscritos en la competición
+  ///
+  /// In es, this message translates to:
+  /// **'Equipos Inscritos ({count})'**
+  String competitionTeamsHeaderCount(int count);
+
+  /// Cantidad de jugadores inscritos en el equipo
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 jugador} other{{count} jugadores}}'**
+  String competitionTeamPlayersCount(int count);
+
+  /// Tooltip del botón para trasladar un equipo de grupo
+  ///
+  /// In es, this message translates to:
+  /// **'Trasladar de grupo'**
+  String get competitionTeamMoveGroupTooltip;
+
+  /// Tooltip del botón para quitar un equipo de la competición
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar del campeonato'**
+  String get competitionTeamRemoveTooltip;
+
+  /// Título del diálogo para trasladar un equipo de grupo
+  ///
+  /// In es, this message translates to:
+  /// **'Trasladar de Grupo'**
+  String get competitionMoveGroupDialogTitle;
+
+  /// Mensaje de confirmación al trasladar un equipo de grupo
+  ///
+  /// In es, this message translates to:
+  /// **'{teamName} trasladado a {groupName}'**
+  String competitionMoveGroupSuccess(String teamName, String groupName);
+
+  /// Título del diálogo de confirmación para retirar un equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar Equipo del Campeonato'**
+  String get competitionRemoveTeamConfirmTitle;
+
+  /// Mensaje de advertencia para retirar un equipo del torneo
+  ///
+  /// In es, this message translates to:
+  /// **'¿Estás seguro de que deseas retirar a {teamName} de esta competición?'**
+  String competitionRemoveTeamConfirmMessage(String teamName);
+
+  /// Texto del botón de confirmación destructiva para quitar equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar Equipo'**
+  String get competitionRemoveTeamConfirmAction;
+
+  /// Mensaje de éxito al quitar un equipo del campeonato
+  ///
+  /// In es, this message translates to:
+  /// **'Equipo retirado del campeonato'**
+  String get competitionRemoveTeamSuccess;
+
+  /// Mensaje de error cuando se intenta retirar un equipo con partidos disputados o en juego
+  ///
+  /// In es, this message translates to:
+  /// **'No se puede retirar un equipo que ya tiene partidos en curso o finalizados'**
+  String get competitionRemoveTeamHasPlayedMatchesError;
+
+  /// Título del diálogo para inscribir equipo en la competición
+  ///
+  /// In es, this message translates to:
+  /// **'Inscribir Equipo en Competición'**
+  String get competitionEnrollTeamDialogTitle;
+
+  /// Etiqueta del selector de clubes existentes para pre-cargar datos
+  ///
+  /// In es, this message translates to:
+  /// **'Copiar de club existente (opcional)'**
+  String get competitionEnrollTeamExistingClubLabel;
+
+  /// Opción en el desplegable para crear un equipo nuevo desde cero
+  ///
+  /// In es, this message translates to:
+  /// **'Crear nuevo equipo'**
+  String get competitionEnrollTeamNewClubOption;
+
+  /// Etiqueta del selector de grupo en el diálogo de inscripción
+  ///
+  /// In es, this message translates to:
+  /// **'Grupo asignado'**
+  String get competitionEnrollTeamGroupLabel;
+
+  /// Texto del botón de acción para confirmar la inscripción del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Inscribir Equipo'**
+  String get competitionEnrollTeamSubmitAction;
+
+  /// Mensaje de confirmación al inscribir un equipo en la competición
+  ///
+  /// In es, this message translates to:
+  /// **'Equipo {teamName} inscrito en la competición'**
+  String competitionEnrollTeamSuccess(String teamName);
 }
 
 class _AppLocalizationsDelegate
