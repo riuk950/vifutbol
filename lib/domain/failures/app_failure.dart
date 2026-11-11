@@ -74,6 +74,15 @@ class InvalidAuthorizationCodeFailure extends AppFailure {
   ]);
 }
 
+/// Emitted when user registration or sign-in requires email verification before issuing a session.
+class EmailVerificationRequiredFailure extends AppFailure {
+  const EmailVerificationRequiredFailure([
+    super.message =
+        'Cuenta creada. Revisa tu correo para confirmar tu cuenta antes de iniciar sesión.',
+    super.cause,
+  ]);
+}
+
 /// Emitted when venue or pitch data validation fails.
 class InvalidVenueDataFailure extends AppFailure {
   const InvalidVenueDataFailure([

@@ -30,6 +30,9 @@ class LocalAuthRepository implements AuthRepository {
   static const String officialAuthorizationCode = 'VIFUTBOL-PRO-2026';
 
   @override
+  Stream<AuthSession?> get onSessionStateChanged => const Stream.empty();
+
+  @override
   Future<AuthSession?> restoreSession() async {
     final raw = await storage.readString(_sessionKey);
     if (raw == null || raw.trim().isEmpty) {

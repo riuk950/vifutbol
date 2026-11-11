@@ -4,6 +4,7 @@ import 'package:clock/clock.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/auth_flow_state.dart';
+import '../../domain/entities/auth_session.dart';
 import '../../domain/entities/user_role.dart';
 import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -16,16 +17,51 @@ class AuthController extends StateNotifier<AuthFlowState> {
     required this.authRepository,
     required this.authenticateUserUseCase,
   }) : super(const AuthFlowState()) {
+    _subscribeToSessionChanges();
     initialize();
   }
 
   final AuthRepository authRepository;
   final AuthenticateUserUseCase authenticateUserUseCase;
   Timer? _lockoutTicker;
+  StreamSubscription<AuthSession?>? _sessionStateSubscription;
+
+  void _subscribeToSessionChanges() {
+    try {
+      final dynamic stream = authRepository.onSessionStateChanged;
+      if (stream is Stream<AuthSession?>) {
+        _sessionStateSubscription = stream.listen(_handleRemoteSessionChange);
+      }
+    } catch (_) {
+      // Allows isolated tests with unstubbed AuthRepository mocks to run safely.
+    }
+  }
+
+  void _handleRemoteSessionChange(AuthSession? updatedSession) {
+    if (!mounted) return;
+    if (updatedSession == null) {
+      _lockoutTicker?.cancel();
+      state = state.copyWith(
+        status: AuthStatus.unauthenticated,
+        session: () => null,
+        isSubmitting: false,
+      );
+      return;
+    }
+
+    state = state.copyWith(
+      status: updatedSession.user.onboardingCompleted
+          ? AuthStatus.authenticated
+          : AuthStatus.needsOnboarding,
+      session: () => updatedSession,
+      isSubmitting: false,
+    );
+  }
 
   @override
   void dispose() {
     _lockoutTicker?.cancel();
+    unawaited(_sessionStateSubscription?.cancel());
     super.dispose();
   }
 

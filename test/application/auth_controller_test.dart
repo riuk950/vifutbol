@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -39,6 +41,9 @@ void main() {
     authenticateUserUseCase = AuthenticateUserUseCase(mockRepository);
 
     when(() => mockRepository.restoreSession()).thenAnswer((_) async => null);
+    when(
+      () => mockRepository.onSessionStateChanged,
+    ).thenAnswer((_) => const Stream.empty());
   });
 
   group('AuthController unit tests (US1)', () {
@@ -293,6 +298,43 @@ void main() {
         expect(controller.state.status, AuthStatus.unauthenticated);
         expect(controller.state.session, isNull);
         verify(() => mockRepository.signOut()).called(1);
+      },
+    );
+
+    test(
+      'subscribes to onSessionStateChanged, reacts to tokenRefreshed/signedOut and cancels on dispose',
+      () async {
+        final sessionStream = StreamController<AuthSession?>();
+        when(
+          () => mockRepository.onSessionStateChanged,
+        ).thenAnswer((_) => sessionStream.stream);
+
+        final localController = AuthController(
+          authRepository: mockRepository,
+          authenticateUserUseCase: authenticateUserUseCase,
+        );
+        await Future<void>.delayed(Duration.zero);
+
+        expect(sessionStream.hasListener, isTrue);
+
+        final completedSession = testSession.copyWith(
+          user: testAccount.copyWith(onboardingCompleted: true),
+        );
+        sessionStream.add(completedSession);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(localController.state.status, AuthStatus.authenticated);
+        expect(localController.state.session, equals(completedSession));
+
+        sessionStream.add(null);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(localController.state.status, AuthStatus.unauthenticated);
+        expect(localController.state.session, isNull);
+
+        localController.dispose();
+        expect(sessionStream.hasListener, isFalse);
+        await sessionStream.close();
       },
     );
   });

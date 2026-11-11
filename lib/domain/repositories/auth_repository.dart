@@ -43,4 +43,7 @@ abstract class AuthRepository {
 
   /// Clears stored authentication session and returns the user to unauthenticated state.
   Future<void> signOut();
+
+  /// Emits session lifecycle updates when the underlying auth provider refreshes or invalidates a session.
+  Stream<AuthSession?> get onSessionStateChanged => const Stream.empty();
 }
