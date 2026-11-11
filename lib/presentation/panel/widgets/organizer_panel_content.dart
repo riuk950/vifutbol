@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
-import 'package:vifutbol/application/providers/tournament_news_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
-import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
@@ -13,161 +10,16 @@ import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
-import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_button.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
-import 'package:vifutbol/presentation/matches/dialogs/generate_fixture_confirmation_dialog.dart';
-import 'package:vifutbol/presentation/matches/widgets/schedule_match_dialog.dart';
-import 'package:vifutbol/presentation/news/widgets/create_news_dialog.dart';
 import 'package:vifutbol/presentation/panel/widgets/competition_delete_dialog.dart';
 import 'package:vifutbol/presentation/panel/widgets/competition_edit_dialog.dart';
 import 'package:vifutbol/presentation/panel/widgets/competition_lifecycle_dialog.dart';
 import 'package:vifutbol/presentation/panel/widgets/organizer_competitions_section.dart';
-import 'package:vifutbol/presentation/panel/widgets/select_tournament_for_fixture_sheet.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/competition_enroll_team_dialog.dart';
-import 'package:vifutbol/presentation/tournaments/widgets/tournament_backup_sheet.dart';
 
 /// Dynamic panel content for [UserRole.organizer].
-class OrganizerPanelContent extends ConsumerStatefulWidget {
+class OrganizerPanelContent extends ConsumerWidget {
   const OrganizerPanelContent({super.key});
-
-  @override
-  ConsumerState<OrganizerPanelContent> createState() =>
-      _OrganizerPanelContentState();
-}
-
-class _OrganizerPanelContentState extends ConsumerState<OrganizerPanelContent> {
-  bool _isGeneratingFixture = false;
-
-  Future<void> _onGenerateFixture(
-    BuildContext context,
-    List<ChampionshipTournament> tournaments,
-    AppLocalizations l10n,
-  ) async {
-    if (_isGeneratingFixture) return;
-
-    final editableTournaments = tournaments
-        .where(
-          (t) =>
-              t.status == TournamentStatus.openRegistration ||
-              t.status == TournamentStatus.inProgress,
-        )
-        .toList();
-
-    if (editableTournaments.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.organizerNoEditableTournamentsForFixture),
-          backgroundColor: KickPulseColors.surfaceElevated,
-        ),
-      );
-      return;
-    }
-
-    final selectedTournament = await SelectTournamentForFixtureSheet.show(
-      context: context,
-      tournaments: editableTournaments,
-    );
-
-    if (selectedTournament == null || !context.mounted) return;
-
-    final confirmed = await GenerateFixtureConfirmationDialog.show(context);
-    if (confirmed != true || !context.mounted) return;
-
-    setState(() => _isGeneratingFixture = true);
-
-    try {
-      final teams = ref.read(teamsControllerProvider).teams;
-      final userRole = ref.read(activeUserRoleProvider);
-      final success = await ref
-          .read(matchesCatalogControllerProvider.notifier)
-          .generateFixture(
-            tournament: selectedTournament,
-            teams: teams,
-            userRole: userRole,
-          );
-
-      if (success && context.mounted) {
-        final matches = ref
-            .read(matchesCatalogControllerProvider)
-            .matches
-            .where((m) => m.tournamentId == selectedTournament.id)
-            .toList();
-        ref.read(dailyMatchesFeedControllerProvider.notifier).refresh();
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.matchdayFixtureGeneratedSuccess(matches.length)),
-            backgroundColor: KickPulseColors.accentPrimary,
-          ),
-        );
-
-        Navigator.of(
-          context,
-        ).pushNamed('/competitions/${selectedTournament.id}');
-      } else if (!success && context.mounted) {
-        final catalogState = ref.read(matchesCatalogControllerProvider);
-        if (catalogState.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(catalogState.errorMessage!),
-              backgroundColor: KickPulseColors.accentWarning,
-            ),
-          );
-        }
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isGeneratingFixture = false);
-      }
-    }
-  }
-
-  void _onScheduleMatches(
-    BuildContext context,
-    List<ChampionshipTournament> tournaments,
-    List<ChampionshipMatch> matches,
-    AppLocalizations l10n,
-  ) {
-    final pendingMatches = matches
-        .where((m) => m.scheduledStartTime == null)
-        .toList();
-
-    if (pendingMatches.isNotEmpty) {
-      final match = pendingMatches.first;
-      final tournament = tournaments.cast<ChampionshipTournament?>().firstWhere(
-        (t) => t?.id == match.tournamentId,
-        orElse: () => null,
-      );
-
-      if (tournament != null) {
-        ScheduleMatchDialog.show(
-          context: context,
-          match: match,
-          tournament: tournament,
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${l10n.organizerPendingMatchesAction}: 0'),
-          backgroundColor: KickPulseColors.surfaceElevated,
-        ),
-      );
-    }
-  }
-
-  void _onBackup(
-    BuildContext context,
-    List<ChampionshipTournament> tournaments,
-    AppLocalizations l10n,
-  ) {
-    if (tournaments.isNotEmpty) {
-      TournamentBackupSheet.show(
-        context: context,
-        tournament: tournaments.first,
-      );
-    }
-  }
 
   Widget _buildMetricCard({
     required Key key,
@@ -214,56 +66,77 @@ class _OrganizerPanelContentState extends ConsumerState<OrganizerPanelContent> {
     );
   }
 
-  Future<void> _onPublishNews(
+  Future<void> _onEditTournament(
     BuildContext context,
-    List<ChampionshipTournament> tournaments,
-    AppLocalizations l10n,
+    ChampionshipTournament tournament,
   ) async {
-    final editableTournaments = tournaments
-        .where((t) => t.status != TournamentStatus.finished)
+    await CompetitionEditDialog.show(context: context, tournament: tournament);
+  }
+
+  Future<void> _onChangeStatus(
+    BuildContext context,
+    WidgetRef ref,
+    ChampionshipTournament tournament,
+  ) async {
+    final teams = ref.read(teamsControllerProvider).teams;
+    final tournamentTeams = teams
+        .where((t) => t.tournamentId == tournament.id)
         .toList();
+    final matches = ref.read(matchesCatalogControllerProvider).matches;
+    final hasFixture = matches.any((m) => m.tournamentId == tournament.id);
 
-    if (editableTournaments.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.organizerNoEditableTournamentsForNews),
-          backgroundColor: KickPulseColors.surfaceElevated,
-        ),
-      );
-      return;
-    }
-
-    final initialTournamentId =
-        ref.read(tournamentsControllerProvider).selectedTournamentId ??
-        editableTournaments.first.id;
-
-    final newItem = await CreateNewsDialog.show(
+    await CompetitionLifecycleDialog.show(
       context: context,
-      tournamentId: initialTournamentId,
-      authorUserId: 'organizer-current',
-      authorName: 'Organizador Oficial',
-      availableTournaments: editableTournaments,
+      tournament: tournament,
+      enrolledTeamsCount: tournamentTeams.length,
+      hasGeneratedFixture: hasFixture,
+      onEnrollTeamsRequested: () async {
+        await CompetitionEnrollTeamDialog.show(context, tournament: tournament);
+      },
+      onGenerateFixtureRequested: () {
+        Navigator.of(context).pushNamed('/competitions/${tournament.id}');
+      },
+    );
+  }
+
+  Future<void> _onDeleteTournament(
+    BuildContext context,
+    WidgetRef ref,
+    ChampionshipTournament tournament,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final matches = ref
+        .read(matchesCatalogControllerProvider)
+        .matches
+        .where((m) => m.tournamentId == tournament.id)
+        .toList();
+    final hasPlayedMatches = matches.any(
+      (m) =>
+          m.status == MatchStatus.inProgress ||
+          m.status == MatchStatus.completed,
     );
 
-    if (newItem != null && context.mounted) {
-      final userRole = ref.read(activeUserRoleProvider);
-      final success = await ref
-          .read(tournamentNewsControllerProvider.notifier)
-          .publishNews(item: newItem, userRole: userRole);
+    bool canDelete = true;
+    String? blockReason;
 
-      if (success && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.newsPublishedSuccess),
-            backgroundColor: KickPulseColors.accentPrimary,
-          ),
-        );
-      }
+    if (tournament.status != TournamentStatus.openRegistration) {
+      canDelete = false;
+      blockReason = l10n.competitionDeleteBlockedInProgress;
+    } else if (hasPlayedMatches) {
+      canDelete = false;
+      blockReason = l10n.competitionDeleteBlockedHasMatches;
     }
+
+    await CompetitionDeleteDialog.show(
+      context: context,
+      tournament: tournament,
+      canDelete: canDelete,
+      blockReason: blockReason,
+    );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final tournamentsState = ref.watch(tournamentsControllerProvider);
     final matchesCatalogState = ref.watch(matchesCatalogControllerProvider);
@@ -333,138 +206,17 @@ class _OrganizerPanelContentState extends ConsumerState<OrganizerPanelContent> {
           ),
           const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
 
-          // Quick Actions Section
-          Text(
-            l10n.organizerQuickActionsTitle,
-            style: KickPulseTypography.sectionHeader,
-          ),
-          const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
-          KickPulseCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                KickPulseButton(
-                  key: const Key('organizer_action_generate_fixture'),
-                  label: l10n.organizerActionGenerateFixture,
-                  icon: const Icon(Icons.alt_route, size: 20),
-                  variant: KickPulseButtonVariant.primary,
-                  isLoading: _isGeneratingFixture,
-                  onPressed: () async {
-                    await _onGenerateFixture(context, tournaments, l10n);
-                  },
-                ),
-                const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
-                KickPulseButton(
-                  key: const Key('organizer_action_schedule_matches'),
-                  label: l10n.organizerActionScheduleMatches,
-                  icon: const Icon(Icons.calendar_month, size: 20),
-                  variant: KickPulseButtonVariant.secondary,
-                  onPressed: () async {
-                    _onScheduleMatches(context, tournaments, matches, l10n);
-                  },
-                ),
-                const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
-                KickPulseButton(
-                  key: const Key('organizer_action_publish_news'),
-                  label: l10n.organizerActionPublishNews,
-                  icon: const Icon(Icons.campaign_outlined, size: 20),
-                  variant: KickPulseButtonVariant.secondary,
-                  onPressed: () async {
-                    await _onPublishNews(context, tournaments, l10n);
-                  },
-                ),
-                const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
-                KickPulseButton(
-                  key: const Key('organizer_action_backup'),
-                  label: l10n.organizerActionBackup,
-                  icon: const Icon(Icons.backup_outlined, size: 20),
-                  variant: KickPulseButtonVariant.outline,
-                  onPressed: () async {
-                    _onBackup(context, tournaments, l10n);
-                  },
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
+          // Competitions Section
           OrganizerCompetitionsSection(
             onEditTournament: (tournament) =>
                 _onEditTournament(context, tournament),
             onChangeStatus: (tournament) =>
-                _onChangeStatus(context, tournament),
+                _onChangeStatus(context, ref, tournament),
             onDeleteTournament: (tournament) =>
-                _onDeleteTournament(context, tournament),
+                _onDeleteTournament(context, ref, tournament),
           ),
         ],
       ),
-    );
-  }
-
-  Future<void> _onEditTournament(
-    BuildContext context,
-    ChampionshipTournament tournament,
-  ) async {
-    await CompetitionEditDialog.show(context: context, tournament: tournament);
-  }
-
-  Future<void> _onChangeStatus(
-    BuildContext context,
-    ChampionshipTournament tournament,
-  ) async {
-    final teams = ref.read(teamsControllerProvider).teams;
-    final tournamentTeams = teams
-        .where((t) => t.tournamentId == tournament.id)
-        .toList();
-    final matches = ref.read(matchesCatalogControllerProvider).matches;
-    final hasFixture = matches.any((m) => m.tournamentId == tournament.id);
-    final l10n = AppLocalizations.of(context);
-
-    await CompetitionLifecycleDialog.show(
-      context: context,
-      tournament: tournament,
-      enrolledTeamsCount: tournamentTeams.length,
-      hasGeneratedFixture: hasFixture,
-      onEnrollTeamsRequested: () async {
-        await CompetitionEnrollTeamDialog.show(context, tournament: tournament);
-      },
-      onGenerateFixtureRequested: () async {
-        await _onGenerateFixture(context, [tournament], l10n);
-      },
-    );
-  }
-
-  Future<void> _onDeleteTournament(
-    BuildContext context,
-    ChampionshipTournament tournament,
-  ) async {
-    final l10n = AppLocalizations.of(context);
-    final matches = ref
-        .read(matchesCatalogControllerProvider)
-        .matches
-        .where((m) => m.tournamentId == tournament.id)
-        .toList();
-    final hasPlayedMatches = matches.any(
-      (m) =>
-          m.status == MatchStatus.inProgress ||
-          m.status == MatchStatus.completed,
-    );
-
-    bool canDelete = true;
-    String? blockReason;
-
-    if (tournament.status != TournamentStatus.openRegistration) {
-      canDelete = false;
-      blockReason = l10n.competitionDeleteBlockedInProgress;
-    } else if (hasPlayedMatches) {
-      canDelete = false;
-      blockReason = l10n.competitionDeleteBlockedHasMatches;
-    }
-
-    await CompetitionDeleteDialog.show(
-      context: context,
-      tournament: tournament,
-      canDelete: canDelete,
-      blockReason: blockReason,
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/panel/widgets/coach_panel_content.dart';
 import 'package:vifutbol/presentation/panel/widgets/fan_panel_restricted_content.dart';
+import 'package:vifutbol/presentation/panel/widgets/organizer_panel_appbar_menu.dart';
 import 'package:vifutbol/presentation/panel/widgets/organizer_panel_content.dart';
 import 'package:vifutbol/presentation/panel/widgets/player_panel_content.dart';
 import 'package:vifutbol/presentation/panel/widgets/referee_panel_content.dart';
@@ -60,6 +61,10 @@ class PanelScreen extends ConsumerWidget {
           _appBarTitle(l10n, activeRole),
           key: const Key('panel_screen_title'),
         ),
+        actions: [
+          if (activeRole == UserRole.organizer)
+            const OrganizerPanelAppBarMenu(),
+        ],
       ),
       body: SafeArea(child: _buildRoleContent(activeRole)),
     );
