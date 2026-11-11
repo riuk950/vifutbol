@@ -1,6 +1,15 @@
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_rules_config.dart';
 
+bool _sameStringList(List<String> a, List<String> b) {
+  if (identical(a, b)) return true;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
 /// Local draft value object preserved when the organizer exits the creation
 /// wizard or when the mobile application moves to the background.
 class TournamentDraft {
@@ -12,6 +21,7 @@ class TournamentDraft {
     this.format = TournamentFormat.league,
     this.rules = const TournamentRulesConfig(),
     required this.savedAt,
+    this.venueIds = const <String>[],
   });
 
   final String name;
@@ -21,6 +31,7 @@ class TournamentDraft {
   final TournamentFormat format;
   final TournamentRulesConfig rules;
   final DateTime savedAt;
+  final List<String> venueIds;
 
   TournamentDraft copyWith({
     String? name,
@@ -30,6 +41,7 @@ class TournamentDraft {
     TournamentFormat? format,
     TournamentRulesConfig? rules,
     DateTime? savedAt,
+    List<String>? venueIds,
   }) {
     return TournamentDraft(
       name: name ?? this.name,
@@ -39,6 +51,7 @@ class TournamentDraft {
       format: format ?? this.format,
       rules: rules ?? this.rules,
       savedAt: savedAt ?? this.savedAt,
+      venueIds: venueIds ?? this.venueIds,
     );
   }
 
@@ -51,11 +64,13 @@ class TournamentDraft {
       'format': format.name,
       'rules': rules.toJson(),
       'savedAt': savedAt.toIso8601String(),
+      'venueIds': venueIds,
     };
   }
 
   factory TournamentDraft.fromJson(Map<String, dynamic> json) {
     final formatName = json['format'] as String?;
+    final rawVenues = json['venueIds'] as List<dynamic>? ?? const <dynamic>[];
     return TournamentDraft(
       name: json['name'] as String? ?? '',
       category: json['category'] as String? ?? '',
@@ -77,6 +92,7 @@ class TournamentDraft {
       savedAt:
           DateTime.tryParse(json['savedAt'] as String? ?? '') ??
           DateTime(2026, 6, 1),
+      venueIds: rawVenues.map((e) => e.toString()).toList(),
     );
   }
 
@@ -90,10 +106,19 @@ class TournamentDraft {
         other.endDate == endDate &&
         other.format == format &&
         other.rules == rules &&
-        other.savedAt == savedAt;
+        other.savedAt == savedAt &&
+        _sameStringList(other.venueIds, venueIds);
   }
 
   @override
-  int get hashCode =>
-      Object.hash(name, category, startDate, endDate, format, rules, savedAt);
+  int get hashCode => Object.hash(
+    name,
+    category,
+    startDate,
+    endDate,
+    format,
+    rules,
+    savedAt,
+    Object.hashAll(venueIds),
+  );
 }

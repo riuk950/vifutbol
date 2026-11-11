@@ -64,6 +64,7 @@ void main() {
         environmentConfigProvider.overrideWithValue(
           EnvironmentConfig.production(),
         ),
+        localStorageRepositoryProvider.overrideWithValue(_TestStorage()),
         tournamentsRepositoryProvider.overrideWithValue(repository),
         manageTournamentsUseCaseProvider.overrideWithValue(useCase),
         activeUserRoleProvider.overrideWithValue(UserRole.organizer),

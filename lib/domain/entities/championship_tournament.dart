@@ -11,6 +11,15 @@ bool _sameAuditList(List<RuleAuditEntry> a, List<RuleAuditEntry> b) {
   return true;
 }
 
+bool _sameStringList(List<String> a, List<String> b) {
+  if (identical(a, b)) return true;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
 /// Aggregate root representing an official championship tournament and its
 /// governing custom rules and audit trail.
 class ChampionshipTournament {
@@ -26,6 +35,7 @@ class ChampionshipTournament {
     this.auditTrail = const <RuleAuditEntry>[],
     required this.updatedAt,
     this.organizerId = 'org-seed-1',
+    this.venueIds = const <String>[],
   });
 
   final String id;
@@ -39,6 +49,7 @@ class ChampionshipTournament {
   final List<RuleAuditEntry> auditTrail;
   final DateTime updatedAt;
   final String? organizerId;
+  final List<String> venueIds;
 
   /// Returns true if critical rules (format or scoring points) differ between this and [other].
   bool hasCriticalRulesChanged(ChampionshipTournament other) {
@@ -57,6 +68,7 @@ class ChampionshipTournament {
     List<RuleAuditEntry>? auditTrail,
     DateTime? updatedAt,
     String? organizerId,
+    List<String>? venueIds,
   }) {
     return ChampionshipTournament(
       id: id ?? this.id,
@@ -70,6 +82,7 @@ class ChampionshipTournament {
       auditTrail: auditTrail ?? this.auditTrail,
       updatedAt: updatedAt ?? this.updatedAt,
       organizerId: organizerId ?? this.organizerId,
+      venueIds: venueIds ?? this.venueIds,
     );
   }
 
@@ -86,6 +99,7 @@ class ChampionshipTournament {
       'auditTrail': auditTrail.map((entry) => entry.toJson()).toList(),
       'updatedAt': updatedAt.toIso8601String(),
       'organizerId': organizerId,
+      'venueIds': venueIds,
     };
   }
 
@@ -93,6 +107,7 @@ class ChampionshipTournament {
     final formatName = json['format'] as String?;
     final statusName = json['status'] as String?;
     final rawAudit = json['auditTrail'] as List<dynamic>? ?? const <dynamic>[];
+    final rawVenues = json['venueIds'] as List<dynamic>? ?? const <dynamic>[];
 
     return ChampionshipTournament(
       id: json['id'] as String? ?? '',
@@ -125,6 +140,7 @@ class ChampionshipTournament {
           DateTime.tryParse(json['updatedAt'] as String? ?? '') ??
           DateTime(2026, 1, 1),
       organizerId: json['organizerId'] as String? ?? 'org-seed-1',
+      venueIds: rawVenues.map((e) => e.toString()).toList(),
     );
   }
 
@@ -142,7 +158,8 @@ class ChampionshipTournament {
         other.rules == rules &&
         _sameAuditList(other.auditTrail, auditTrail) &&
         other.updatedAt == updatedAt &&
-        other.organizerId == organizerId;
+        other.organizerId == organizerId &&
+        _sameStringList(other.venueIds, venueIds);
   }
 
   @override
@@ -158,5 +175,6 @@ class ChampionshipTournament {
     Object.hashAll(auditTrail),
     updatedAt,
     organizerId,
+    Object.hashAll(venueIds),
   );
 }

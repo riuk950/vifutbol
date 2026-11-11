@@ -3780,5 +3780,49 @@
   "teamEligibilityRevokedSuccess": "El equipo ha sido inhabilitado para el campeonato",
   "@teamEligibilityRevokedSuccess": {
     "description": "Mensaje tras inhabilitar un equipo"
+  },
+  "venuesSectionTitle": "Sedes Oficiales",
+  "@venuesSectionTitle": {
+    "description": "Título de la sección de sedes en el formulario de torneo"
+  },
+  "venuesSectionSubtitle": "Selecciona las sedes donde se disputarán los partidos",
+  "@venuesSectionSubtitle": {
+    "description": "Subtítulo de la sección de sedes en el formulario de torneo"
+  },
+  "noVenuesRegistered": "No hay sedes registradas todavía",
+  "@noVenuesRegistered": {
+    "description": "Mensaje cuando no hay sedes registradas en el sistema"
+  },
+  "createNewVenue": "Crear Nueva Sede",
+  "@createNewVenue": {
+    "description": "Botón para abrir el formulario modal de creación de sede"
+  },
+  "venueNameLabel": "Nombre de la Sede",
+  "@venueNameLabel": {
+    "description": "Etiqueta para el campo de nombre de la sede"
+  },
+  "venueAddressLabel": "Dirección",
+  "@venueAddressLabel": {
+    "description": "Etiqueta para el campo de dirección de la sede"
+  },
+  "venuePitchesCountLabel": "Número de Canchas",
+  "@venuePitchesCountLabel": {
+    "description": "Etiqueta para el campo de número de canchas"
+  },
+  "venueNameTooShort": "El nombre debe tener al menos 3 caracteres",
+  "@venueNameTooShort": {
+    "description": "Error de validación cuando el nombre de la sede tiene menos de 3 caracteres"
+  },
+  "venueAddressTooShort": "La dirección debe tener al menos 5 caracteres",
+  "@venueAddressTooShort": {
+    "description": "Error de validación cuando la dirección tiene menos de 5 caracteres"
+  },
+  "venuePitchesInvalid": "Debe tener al menos 1 cancha",
+  "@venuePitchesInvalid": {
+    "description": "Error de validación cuando el número de canchas es menor a 1"
+  },
+  "venueNameDuplicate": "Ya existe una sede con este nombre. Selecciónala de la lista o elige otro nombre.",
+  "@venueNameDuplicate": {
+    "description": "Error de validación cuando ya existe una sede con el mismo nombre"
   }
 }

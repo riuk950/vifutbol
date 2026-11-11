@@ -2932,4 +2932,40 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get teamEligibilityRevokedSuccess =>
       'El equipo ha sido inhabilitado para el campeonato';
+
+  @override
+  String get venuesSectionTitle => 'Sedes Oficiales';
+
+  @override
+  String get venuesSectionSubtitle =>
+      'Selecciona las sedes donde se disputarán los partidos';
+
+  @override
+  String get noVenuesRegistered => 'No hay sedes registradas todavía';
+
+  @override
+  String get createNewVenue => 'Crear Nueva Sede';
+
+  @override
+  String get venueNameLabel => 'Nombre de la Sede';
+
+  @override
+  String get venueAddressLabel => 'Dirección';
+
+  @override
+  String get venuePitchesCountLabel => 'Número de Canchas';
+
+  @override
+  String get venueNameTooShort => 'El nombre debe tener al menos 3 caracteres';
+
+  @override
+  String get venueAddressTooShort =>
+      'La dirección debe tener al menos 5 caracteres';
+
+  @override
+  String get venuePitchesInvalid => 'Debe tener al menos 1 cancha';
+
+  @override
+  String get venueNameDuplicate =>
+      'Ya existe una sede con este nombre. Selecciónala de la lista o elige otro nombre.';
 }

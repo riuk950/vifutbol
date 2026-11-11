@@ -22,6 +22,18 @@ class ManageVenuesUseCase {
       );
     }
 
+    final existingVenues = await _venuesRepository.loadVenues();
+    final isDuplicate = existingVenues.any(
+      (v) =>
+          v.id != venue.id &&
+          v.name.trim().toLowerCase() == trimmedName.toLowerCase(),
+    );
+    if (isDuplicate) {
+      throw const InvalidVenueDataFailure(
+        'Ya existe una sede con este nombre. Selecciónala de la lista o elige otro nombre.',
+      );
+    }
+
     final String trimmedAddress = venue.address.trim();
     if (trimmedAddress.length < 5) {
       throw const InvalidVenueDataFailure(

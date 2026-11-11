@@ -89,14 +89,19 @@ class TournamentsController extends StateNotifier<TournamentsCatalogState> {
     ChampionshipTournament? existingTournament,
     bool confirmCriticalRuleOverride = false,
     String? auditReason,
+    List<String>? venueIds,
   }) async {
     if (state.isSaving) return false;
 
     state = state.copyWith(isSaving: true, clearLastFailure: true);
 
     try {
+      final tournamentToSave = venueIds != null
+          ? tournament.copyWith(venueIds: venueIds)
+          : tournament;
+
       final saved = await manageTournamentsUseCase.saveTournament(
-        tournament: tournament,
+        tournament: tournamentToSave,
         actorRole: actorRole,
         existingTournament: existingTournament,
         confirmCriticalRuleOverride: confirmCriticalRuleOverride,

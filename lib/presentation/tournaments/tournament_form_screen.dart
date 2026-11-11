@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
+import 'package:vifutbol/application/providers/venues_providers.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/sports_venue.dart';
 import 'package:vifutbol/domain/entities/tournament_draft.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_rules_config.dart';
@@ -13,6 +15,7 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_button.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/tournament_rules_summary_card.dart';
+import 'package:vifutbol/presentation/venues/widgets/create_venue_bottom_sheet.dart';
 
 /// Screen for creating a new championship tournament or editing an existing one,
 /// including custom rules, audited critical-rule protection when in progress,
@@ -48,6 +51,7 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
   late bool _twoLeggedTies;
   late bool _directPenaltyShootout;
   late List<TiebreakerCriterion> _tiebreakerOrder;
+  late List<String> _selectedVenueIds;
 
   AppLifecycleListener? _lifecycleListener;
   bool _isDirty = false;
@@ -72,6 +76,7 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
         endDate: existing.endDate,
         format: existing.format,
         rules: existing.rules,
+        venueIds: existing.venueIds,
       );
     } else if (draft != null) {
       _restoredFromDraft = true;
@@ -82,6 +87,7 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
         endDate: draft.endDate,
         format: draft.format,
         rules: draft.rules,
+        venueIds: draft.venueIds,
       );
     } else {
       _initFields(
@@ -91,6 +97,7 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
         endDate: DateTime(2026, 8, 30),
         format: TournamentFormat.league,
         rules: const TournamentRulesConfig(),
+        venueIds: const <String>[],
       );
     }
 
@@ -114,6 +121,7 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
     required DateTime endDate,
     required TournamentFormat format,
     required TournamentRulesConfig rules,
+    required List<String> venueIds,
   }) {
     _nameController = TextEditingController(text: name)
       ..addListener(_markDirty);
@@ -155,6 +163,7 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
     _twoLeggedTies = rules.knockoutConfig.twoLeggedTies;
     _directPenaltyShootout = rules.knockoutConfig.directPenaltyShootoutOnDraw;
     _tiebreakerOrder = List<TiebreakerCriterion>.from(rules.tiebreakerOrder);
+    _selectedVenueIds = List<String>.from(venueIds);
   }
 
   void _markDirty() {
@@ -230,6 +239,7 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
       auditTrail: existing?.auditTrail ?? const [],
       updatedAt: DateTime.now(),
       organizerId: existing?.organizerId ?? currentUserId,
+      venueIds: List<String>.unmodifiable(_selectedVenueIds),
     );
   }
 
@@ -242,8 +252,21 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
       format: _format,
       rules: _buildRulesFromInputs(),
       savedAt: DateTime.now(),
+      venueIds: List<String>.unmodifiable(_selectedVenueIds),
     );
     await ref.read(tournamentsControllerProvider.notifier).saveDraft(draft);
+  }
+
+  Future<void> _handleCreateNewVenue() async {
+    final newVenue = await showCreateVenueBottomSheet(context);
+    if (newVenue != null && mounted) {
+      setState(() {
+        if (!_selectedVenueIds.contains(newVenue.id)) {
+          _selectedVenueIds.add(newVenue.id);
+        }
+        _isDirty = true;
+      });
+    }
   }
 
   String? _validateCandidate(
@@ -317,6 +340,7 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
           existingTournament: existing,
           confirmCriticalRuleOverride: confirmCriticalOverride,
           auditReason: auditReason,
+          venueIds: _selectedVenueIds,
         );
 
     if (!mounted) return;
@@ -1043,6 +1067,96 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
                         decoration: InputDecoration(
                           labelText: l10n.tournamentHalfDurationLabel,
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+                KickPulseCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  l10n.venuesSectionTitle,
+                                  style: KickPulseTypography.cardTitle,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  l10n.venuesSectionSubtitle,
+                                  style: KickPulseTypography.captionMeta,
+                                ),
+                              ],
+                            ),
+                          ),
+                          TextButton.icon(
+                            key: const Key('create_new_venue_inline_button'),
+                            onPressed: _handleCreateNewVenue,
+                            icon: const Icon(Icons.add, size: 18),
+                            label: Text(l10n.createNewVenue),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+                      Consumer(
+                        builder: (context, ref, _) {
+                          List<SportsVenue> venues = const [];
+                          try {
+                            venues = ref.watch(venuesControllerProvider).venues;
+                          } catch (_) {
+                            // Defensive for isolated test environments
+                          }
+                          if (venues.isEmpty) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Text(
+                                l10n.noVenuesRegistered,
+                                style: KickPulseTypography.captionMeta,
+                              ),
+                            );
+                          }
+                          return Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: venues.map((venue) {
+                              final isSelected = _selectedVenueIds.contains(
+                                venue.id,
+                              );
+                              return FilterChip(
+                                key: Key('venue_chip_${venue.id}'),
+                                label: Text(venue.name),
+                                selected: isSelected,
+                                onSelected: (selected) {
+                                  setState(() {
+                                    if (selected) {
+                                      _selectedVenueIds.add(venue.id);
+                                    } else {
+                                      _selectedVenueIds.remove(venue.id);
+                                    }
+                                    _isDirty = true;
+                                  });
+                                },
+                                selectedColor: KickPulseColors.accentPrimary
+                                    .withValues(alpha: 0.2),
+                                checkmarkColor: KickPulseColors.accentPrimary,
+                                labelStyle: TextStyle(
+                                  color: isSelected
+                                      ? KickPulseColors.accentPrimary
+                                      : KickPulseColors.textSecondary,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                ),
+                              );
+                            }).toList(),
+                          );
+                        },
                       ),
                     ],
                   ),

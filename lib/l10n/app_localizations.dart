@@ -5115,6 +5115,72 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'El equipo ha sido inhabilitado para el campeonato'**
   String get teamEligibilityRevokedSuccess;
+
+  /// Título de la sección de sedes en el formulario de torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Sedes Oficiales'**
+  String get venuesSectionTitle;
+
+  /// Subtítulo de la sección de sedes en el formulario de torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona las sedes donde se disputarán los partidos'**
+  String get venuesSectionSubtitle;
+
+  /// Mensaje cuando no hay sedes registradas en el sistema
+  ///
+  /// In es, this message translates to:
+  /// **'No hay sedes registradas todavía'**
+  String get noVenuesRegistered;
+
+  /// Botón para abrir el formulario modal de creación de sede
+  ///
+  /// In es, this message translates to:
+  /// **'Crear Nueva Sede'**
+  String get createNewVenue;
+
+  /// Etiqueta para el campo de nombre de la sede
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre de la Sede'**
+  String get venueNameLabel;
+
+  /// Etiqueta para el campo de dirección de la sede
+  ///
+  /// In es, this message translates to:
+  /// **'Dirección'**
+  String get venueAddressLabel;
+
+  /// Etiqueta para el campo de número de canchas
+  ///
+  /// In es, this message translates to:
+  /// **'Número de Canchas'**
+  String get venuePitchesCountLabel;
+
+  /// Error de validación cuando el nombre de la sede tiene menos de 3 caracteres
+  ///
+  /// In es, this message translates to:
+  /// **'El nombre debe tener al menos 3 caracteres'**
+  String get venueNameTooShort;
+
+  /// Error de validación cuando la dirección tiene menos de 5 caracteres
+  ///
+  /// In es, this message translates to:
+  /// **'La dirección debe tener al menos 5 caracteres'**
+  String get venueAddressTooShort;
+
+  /// Error de validación cuando el número de canchas es menor a 1
+  ///
+  /// In es, this message translates to:
+  /// **'Debe tener al menos 1 cancha'**
+  String get venuePitchesInvalid;
+
+  /// Error de validación cuando ya existe una sede con el mismo nombre
+  ///
+  /// In es, this message translates to:
+  /// **'Ya existe una sede con este nombre. Selecciónala de la lista o elige otro nombre.'**
+  String get venueNameDuplicate;
 }
 
 class _AppLocalizationsDelegate
