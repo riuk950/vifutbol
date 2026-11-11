@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
@@ -121,6 +122,21 @@ class FixtureSchedulingUseCase {
       throw const FixtureScheduleValidationFailure(
         FixtureScheduleErrorCode.tournamentClosed,
         'El torneo ya se encuentra finalizado.',
+      );
+    }
+
+    final now = clock.now();
+    final presentMinute = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+      now.minute,
+    );
+    if (scheduledStartTime.isBefore(presentMinute)) {
+      throw const FixtureScheduleValidationFailure(
+        FixtureScheduleErrorCode.invalidScheduleTimes,
+        'No puedes programar un partido en una fecha u hora pasada.',
       );
     }
 

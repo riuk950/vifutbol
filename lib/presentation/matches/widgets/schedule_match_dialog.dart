@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -56,15 +57,54 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
   @override
   void initState() {
     super.initState();
-    final initialRaw =
-        widget.match.scheduledStartTime ??
-        DateTime.now().add(const Duration(days: 1));
-    DateTime initial = initialRaw;
-    if (widget.match.scheduledStartTime == null) {
-      if (initial.isBefore(widget.tournament.startDate)) {
-        initial = widget.tournament.startDate;
-      } else if (initial.isAfter(widget.tournament.endDate)) {
-        initial = widget.tournament.endDate;
+    final now = clock.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final presentMinute = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+      now.minute,
+    );
+    final tournamentStartDay = DateTime(
+      widget.tournament.startDate.year,
+      widget.tournament.startDate.month,
+      widget.tournament.startDate.day,
+    );
+    final tournamentEndDay = DateTime(
+      widget.tournament.endDate.year,
+      widget.tournament.endDate.month,
+      widget.tournament.endDate.day,
+    );
+    final earliestAllowedDay = tournamentStartDay.isAfter(today)
+        ? tournamentStartDay
+        : today;
+
+    DateTime initial;
+    if (widget.match.scheduledStartTime != null) {
+      initial = widget.match.scheduledStartTime!.isBefore(presentMinute)
+          ? presentMinute
+          : widget.match.scheduledStartTime!;
+    } else {
+      initial = now.add(const Duration(days: 1));
+      final initialDay = DateTime(initial.year, initial.month, initial.day);
+      if (initialDay.isBefore(earliestAllowedDay)) {
+        initial = DateTime(
+          earliestAllowedDay.year,
+          earliestAllowedDay.month,
+          earliestAllowedDay.day,
+          initial.hour,
+          initial.minute,
+        );
+      } else if (!tournamentEndDay.isBefore(earliestAllowedDay) &&
+          initialDay.isAfter(tournamentEndDay)) {
+        initial = DateTime(
+          tournamentEndDay.year,
+          tournamentEndDay.month,
+          tournamentEndDay.day,
+          initial.hour,
+          initial.minute,
+        );
       }
     }
     _selectedDate = DateTime(initial.year, initial.month, initial.day);
@@ -113,23 +153,47 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
   }
 
   Future<void> _pickDate() async {
-    DateTime firstDate = _selectedDate.isBefore(widget.tournament.startDate)
-        ? _selectedDate
-        : widget.tournament.startDate;
-    DateTime lastDate = _selectedDate.isAfter(widget.tournament.endDate)
-        ? _selectedDate
-        : widget.tournament.endDate;
+    final now = clock.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tournamentStartDay = DateTime(
+      widget.tournament.startDate.year,
+      widget.tournament.startDate.month,
+      widget.tournament.startDate.day,
+    );
+    final tournamentEndDay = DateTime(
+      widget.tournament.endDate.year,
+      widget.tournament.endDate.month,
+      widget.tournament.endDate.day,
+    );
+
+    final firstDate = tournamentStartDay.isAfter(today)
+        ? tournamentStartDay
+        : today;
+    var lastDate = tournamentEndDay.isAfter(_selectedDate)
+        ? tournamentEndDay
+        : _selectedDate;
     if (lastDate.isBefore(firstDate)) {
       lastDate = firstDate;
     }
+
+    var initialDate = _selectedDate;
+    if (initialDate.isBefore(firstDate)) {
+      initialDate = firstDate;
+    } else if (initialDate.isAfter(lastDate)) {
+      initialDate = lastDate;
+    }
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: initialDate,
       firstDate: firstDate,
       lastDate: lastDate,
     );
     if (picked != null && mounted) {
-      setState(() => _selectedDate = picked);
+      setState(() {
+        _selectedDate = picked;
+        _localError = null;
+      });
     }
   }
 
@@ -139,7 +203,10 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
       initialTime: _selectedTime,
     );
     if (picked != null && mounted) {
-      setState(() => _selectedTime = picked);
+      setState(() {
+        _selectedTime = picked;
+        _localError = null;
+      });
     }
   }
 
@@ -161,6 +228,19 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
       _selectedTime.hour,
       _selectedTime.minute,
     );
+
+    final now = clock.now();
+    final presentMinute = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+      now.minute,
+    );
+    if (scheduledStartTime.isBefore(presentMinute)) {
+      setState(() => _localError = l10n.scheduleMatchPastDateTimeError);
+      return;
+    }
 
     final userRole = ref.read(activeUserRoleProvider);
 

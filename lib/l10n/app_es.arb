@@ -1663,6 +1663,10 @@
   "@scheduleMatchSuccessMessage": {
     "description": "Notificación de guardado exitoso de partido programado"
   },
+  "scheduleMatchPastDateTimeError": "No puedes programar un partido en una fecha u hora pasada.",
+  "@scheduleMatchPastDateTimeError": {
+    "description": "Error cuando se intenta programar un partido para una fecha u hora anterior al momento actual"
+  },
   "scheduleCollisionPitchTitle": "Conflicto de Cancha",
   "@scheduleCollisionPitchTitle": {
     "description": "Título de colisión por cruce en la misma cancha"

@@ -1307,6 +1307,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get scheduleMatchSuccessMessage => 'Partido programado exitosamente.';
 
   @override
+  String get scheduleMatchPastDateTimeError =>
+      'No puedes programar un partido en una fecha u hora pasada.';
+
+  @override
   String get scheduleCollisionPitchTitle => 'Conflicto de Cancha';
 
   @override

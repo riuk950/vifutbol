@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vifutbol/application/controllers/matches_catalog_controller.dart';
 import 'package:vifutbol/application/use_cases/fixture_scheduling_use_case.dart';
@@ -140,54 +141,69 @@ void main() {
       expect(controller.state.filteredMatches.isNotEmpty, isTrue);
     });
 
-    test('schedules match via controller', () async {
-      await controller.generateFixture(
-        tournament: testTournament,
-        teams: testTeams,
-        userRole: UserRole.organizer,
-      );
+    test(
+      'schedules match via controller',
+      () => withClock(Clock.fixed(DateTime(2026, 6, 1, 9, 0)), () async {
+        await controller.generateFixture(
+          tournament: testTournament,
+          teams: testTeams,
+          userRole: UserRole.organizer,
+        );
 
-      final match = controller.state.matches.first;
-      final referees = await repository.loadOfficialReferees();
-      const pitch = VenuePitch(
-        id: 'pitch-ctrl-1',
-        name: 'Cancha 1',
-        surfaceType: PitchSurfaceType.syntheticGrass,
-        format: PitchFormat.football11,
-        capacity: 100,
-        hasLighting: true,
-        status: VenueOperationalStatus.active,
-      );
-      final venue = SportsVenue(
-        id: 'venue-ctrl-1',
-        name: 'Sede Central',
-        address: 'Calle 10',
-        urbanReference: 'Centro',
-        coordinate: const GeoCoordinate(latitude: 4.6, longitude: -74.0),
-        pitches: const [pitch],
-        status: VenueOperationalStatus.active,
-        updatedAt: DateTime.now(),
-      );
+        final match = controller.state.matches.first;
+        final referees = await repository.loadOfficialReferees();
+        const pitch = VenuePitch(
+          id: 'pitch-ctrl-1',
+          name: 'Cancha 1',
+          surfaceType: PitchSurfaceType.syntheticGrass,
+          format: PitchFormat.football11,
+          capacity: 100,
+          hasLighting: true,
+          status: VenueOperationalStatus.active,
+        );
+        final venue = SportsVenue(
+          id: 'venue-ctrl-1',
+          name: 'Sede Central',
+          address: 'Calle 10',
+          urbanReference: 'Centro',
+          coordinate: const GeoCoordinate(latitude: 4.6, longitude: -74.0),
+          pitches: const [pitch],
+          status: VenueOperationalStatus.active,
+          updatedAt: DateTime.now(),
+        );
 
-      final success = await controller.scheduleMatch(
-        matchId: match.id,
-        tournament: testTournament,
-        scheduledStartTime: DateTime(2026, 7, 1, 14, 0),
-        venue: venue,
-        pitch: pitch,
-        referee: referees.first,
-        userRole: UserRole.organizer,
-      );
+        final pastSuccess = await controller.scheduleMatch(
+          matchId: match.id,
+          tournament: testTournament,
+          scheduledStartTime: DateTime(2026, 5, 31, 14, 0),
+          venue: venue,
+          pitch: pitch,
+          referee: referees.first,
+          userRole: UserRole.organizer,
+        );
+        expect(pastSuccess, isFalse);
+        expect(controller.state.errorMessage, isNotNull);
 
-      expect(success, isTrue);
-      final scheduled = controller.state.matches.firstWhere(
-        (m) => m.id == match.id,
-      );
-      expect(scheduled.status, MatchStatus.scheduled);
-      expect(scheduled.refereeName, referees.first.fullName);
-      // Auto transitions selectedDate to scheduled day
-      expect(controller.state.selectedDate, DateTime(2026, 7, 1));
-    });
+        final success = await controller.scheduleMatch(
+          matchId: match.id,
+          tournament: testTournament,
+          scheduledStartTime: DateTime(2026, 7, 1, 14, 0),
+          venue: venue,
+          pitch: pitch,
+          referee: referees.first,
+          userRole: UserRole.organizer,
+        );
+
+        expect(success, isTrue);
+        final scheduled = controller.state.matches.firstWhere(
+          (m) => m.id == match.id,
+        );
+        expect(scheduled.status, MatchStatus.scheduled);
+        expect(scheduled.refereeName, referees.first.fullName);
+        // Auto transitions selectedDate to scheduled day
+        expect(controller.state.selectedDate, DateTime(2026, 7, 1));
+      }),
+    );
 
     test(
       'calendar date filtering, unscheduled matches and date selection',

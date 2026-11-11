@@ -2362,6 +2362,12 @@ abstract class AppLocalizations {
   /// **'Partido programado exitosamente.'**
   String get scheduleMatchSuccessMessage;
 
+  /// Error cuando se intenta programar un partido para una fecha u hora anterior al momento actual
+  ///
+  /// In es, this message translates to:
+  /// **'No puedes programar un partido en una fecha u hora pasada.'**
+  String get scheduleMatchPastDateTimeError;
+
   /// Título de colisión por cruce en la misma cancha
   ///
   /// In es, this message translates to:
