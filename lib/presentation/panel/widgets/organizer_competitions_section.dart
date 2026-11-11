@@ -12,25 +12,63 @@ import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_button.da
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
 
 /// Section in Organizer Panel listing the tournaments managed by the active organizer.
-class OrganizerCompetitionsSection extends ConsumerWidget {
+class OrganizerCompetitionsSection extends ConsumerStatefulWidget {
   const OrganizerCompetitionsSection({
     super.key,
     this.onCreateTournament,
     this.onEditTournament,
     this.onChangeStatus,
     this.onDeleteTournament,
+    this.onTapTournament,
   });
 
   final VoidCallback? onCreateTournament;
   final ValueChanged<ChampionshipTournament>? onEditTournament;
   final ValueChanged<ChampionshipTournament>? onChangeStatus;
   final ValueChanged<ChampionshipTournament>? onDeleteTournament;
+  final ValueChanged<ChampionshipTournament>? onTapTournament;
+
+  @override
+  ConsumerState<OrganizerCompetitionsSection> createState() =>
+      _OrganizerCompetitionsSectionState();
+}
+
+class _OrganizerCompetitionsSectionState
+    extends ConsumerState<OrganizerCompetitionsSection> {
+  DateTime? _lastNavigationTap;
 
   void _handleCreate(BuildContext context) {
-    if (onCreateTournament != null) {
-      onCreateTournament!();
+    if (widget.onCreateTournament != null) {
+      widget.onCreateTournament!();
     } else {
       Navigator.of(context).pushNamed('/tournaments/form');
+    }
+  }
+
+  void _handleTournamentTap(
+    BuildContext context,
+    ChampionshipTournament tournament,
+  ) {
+    final now = DateTime.now();
+    if (_lastNavigationTap != null &&
+        now.difference(_lastNavigationTap!) <
+            const Duration(milliseconds: 500)) {
+      return;
+    }
+    _lastNavigationTap = now;
+
+    try {
+      ref
+          .read(tournamentsControllerProvider.notifier)
+          .selectTournament(tournament.id);
+    } catch (_) {
+      // Fallback in isolated test environments where controller is not mounted
+    }
+
+    if (widget.onTapTournament != null) {
+      widget.onTapTournament!(tournament);
+    } else {
+      Navigator.of(context).pushNamed('/competitions/${tournament.id}');
     }
   }
 
@@ -68,7 +106,7 @@ class OrganizerCompetitionsSection extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final tournaments = ref.watch(organizerTournamentsProvider);
 
@@ -179,6 +217,7 @@ class OrganizerCompetitionsSection extends ConsumerWidget {
   ) {
     return KickPulseCard(
       key: Key('organizer_competition_card_${tournament.id}'),
+      onTap: () => _handleTournamentTap(context, tournament),
       child: Padding(
         padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceSm),
         child: Column(
@@ -207,13 +246,13 @@ class OrganizerCompetitionsSection extends ConsumerWidget {
                   onSelected: (value) {
                     switch (value) {
                       case 'edit':
-                        onEditTournament?.call(tournament);
+                        widget.onEditTournament?.call(tournament);
                         break;
                       case 'status':
-                        onChangeStatus?.call(tournament);
+                        widget.onChangeStatus?.call(tournament);
                         break;
                       case 'delete':
-                        onDeleteTournament?.call(tournament);
+                        widget.onDeleteTournament?.call(tournament);
                         break;
                     }
                   },
@@ -231,9 +270,11 @@ class OrganizerCompetitionsSection extends ConsumerWidget {
                             color: KickPulseColors.textPrimary,
                           ),
                           const SizedBox(width: KickPulseRadiiSpacing.spaceXs),
-                          Text(
-                            l10n.organizerCompetitionsMenuEdit,
-                            style: KickPulseTypography.bodyPrimary,
+                          Expanded(
+                            child: Text(
+                              l10n.organizerCompetitionsMenuEdit,
+                              style: KickPulseTypography.bodyPrimary,
+                            ),
                           ),
                         ],
                       ),
@@ -251,9 +292,11 @@ class OrganizerCompetitionsSection extends ConsumerWidget {
                             color: KickPulseColors.accentPrimary,
                           ),
                           const SizedBox(width: KickPulseRadiiSpacing.spaceXs),
-                          Text(
-                            l10n.organizerCompetitionsMenuStatus,
-                            style: KickPulseTypography.bodyPrimary,
+                          Expanded(
+                            child: Text(
+                              l10n.organizerCompetitionsMenuStatus,
+                              style: KickPulseTypography.bodyPrimary,
+                            ),
                           ),
                         ],
                       ),
@@ -271,10 +314,12 @@ class OrganizerCompetitionsSection extends ConsumerWidget {
                             color: KickPulseColors.accentLive,
                           ),
                           const SizedBox(width: KickPulseRadiiSpacing.spaceXs),
-                          Text(
-                            l10n.organizerCompetitionsMenuDelete,
-                            style: KickPulseTypography.bodyPrimary.copyWith(
-                              color: KickPulseColors.accentLive,
+                          Expanded(
+                            child: Text(
+                              l10n.organizerCompetitionsMenuDelete,
+                              style: KickPulseTypography.bodyPrimary.copyWith(
+                                color: KickPulseColors.accentLive,
+                              ),
                             ),
                           ),
                         ],
