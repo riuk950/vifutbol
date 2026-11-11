@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +16,7 @@ import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/connectivity_status.dart';
+import 'package:vifutbol/domain/entities/geo_coordinate.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/match_referee.dart';
@@ -26,15 +29,51 @@ import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/entities/tournaments_catalog_state.dart';
 import 'package:vifutbol/domain/entities/ui_view_state.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
+import 'package:vifutbol/domain/entities/venue_enums.dart';
 import 'package:vifutbol/domain/entities/venue_pitch.dart';
 import 'package:vifutbol/domain/repositories/connectivity_repository.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
+import 'package:vifutbol/infrastructure/repositories/local_tournament_matches_repository.dart';
+import 'package:vifutbol/infrastructure/venues/local_venues_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_theme.dart';
 import 'package:vifutbol/presentation/matches/widgets/schedule_match_dialog.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/competition_fixture_tab_view.dart';
 
 class _FakeLocalStorageRepository implements LocalStorageRepository {
+  _FakeLocalStorageRepository() {
+    final venue = SportsVenue(
+      id: 'venue-1',
+      name: 'Sede Central',
+      address: 'Calle 10 # 20-30',
+      urbanReference: 'Parque Central',
+      coordinate: const GeoCoordinate(latitude: 4.65, longitude: -74.08),
+      pitches: const [
+        VenuePitch(
+          id: 'pitch-1',
+          name: 'Cancha 1',
+          surfaceType: PitchSurfaceType.syntheticGrass,
+          format: PitchFormat.football11,
+          capacity: 200,
+          hasLighting: true,
+          status: VenueOperationalStatus.active,
+        ),
+      ],
+      status: VenueOperationalStatus.active,
+      updatedAt: DateTime(2026, 3, 1),
+    );
+    const referee = MatchReferee(
+      id: 'ref-1',
+      fullName: 'Wilmar Roldán',
+      certificationLevel: 'FIFA',
+      isActive: true,
+    );
+    _store[LocalVenuesRepository.storageKey] = jsonEncode([venue.toJson()]);
+    _store[LocalTournamentMatchesRepository.refereesStorageKey] = jsonEncode([
+      referee.toJson(),
+    ]);
+  }
+
   final Map<String, String> _store = <String, String>{};
 
   @override

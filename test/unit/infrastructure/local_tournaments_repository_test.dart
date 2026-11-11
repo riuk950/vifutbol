@@ -38,7 +38,7 @@ class _InMemoryLocalStorageRepository implements LocalStorageRepository {
 void main() {
   group('LocalTournamentsRepository', () {
     test(
-      'preloads 3 representative seed tournaments in development environment',
+      'returns empty list in development environment when storage is empty',
       () async {
         final storage = _InMemoryLocalStorageRepository();
         final repository = LocalTournamentsRepository(
@@ -47,12 +47,7 @@ void main() {
         );
 
         final loaded = await repository.loadTournaments();
-        expect(loaded.length, 3);
-        expect(loaded.map((t) => t.format).toSet(), <TournamentFormat>{
-          TournamentFormat.league,
-          TournamentFormat.knockoutCup,
-          TournamentFormat.mixedGroupsAndKnockout,
-        });
+        expect(loaded, isEmpty);
       },
     );
 

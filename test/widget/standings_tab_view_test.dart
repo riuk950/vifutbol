@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,8 +13,11 @@ import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/application/use_cases/manage_teams_eligibility_use_case.dart';
 import 'package:vifutbol/application/use_cases/manage_tournaments_use_case.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
+import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/role_permission_matrix.dart';
+import 'package:vifutbol/domain/entities/tournament_enums.dart';
+import 'package:vifutbol/domain/entities/tournament_rules_config.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/infrastructure/repositories/local_teams_repository.dart';
@@ -22,6 +27,36 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_theme.dart';
 import 'package:vifutbol/presentation/shell/tabs/standings_tab_view.dart';
 
 class _MemoryStorage implements LocalStorageRepository {
+  _MemoryStorage() {
+    final tournaments = [
+      ChampionshipTournament(
+        id: 't-clausura-1',
+        name: 'Liga Clausura ViFutbol 2026',
+        category: 'Libre Masculino',
+        startDate: DateTime(2026, 5, 1),
+        endDate: DateTime(2026, 12, 30),
+        format: TournamentFormat.league,
+        status: TournamentStatus.openRegistration,
+        rules: const TournamentRulesConfig(),
+        updatedAt: DateTime(2026, 4, 17),
+      ),
+      ChampionshipTournament(
+        id: 't-copa-1',
+        name: 'Copa Relámpago Nocturna',
+        category: 'Libre Abierta',
+        startDate: DateTime(2026, 5, 1),
+        endDate: DateTime(2026, 12, 30),
+        format: TournamentFormat.knockoutCup,
+        status: TournamentStatus.inProgress,
+        rules: const TournamentRulesConfig(),
+        updatedAt: DateTime(2026, 4, 17),
+      ),
+    ];
+    _map[LocalTournamentsRepository.catalogStorageKey] = jsonEncode(
+      tournaments.map((t) => t.toJson()).toList(),
+    );
+  }
+
   final Map<String, String> _map = <String, String>{};
 
   @override

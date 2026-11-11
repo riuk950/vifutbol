@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
-import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/match_referee.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/domain/repositories/tournament_matches_repository.dart';
@@ -108,12 +107,6 @@ class LocalTournamentMatchesRepository implements TournamentMatchesRepository {
       } catch (_) {}
     }
 
-    if (config.environment == AppEnvironment.development) {
-      final seeds = _buildSeedReferees();
-      await _persistReferees(seeds);
-      return seeds;
-    }
-
     return const <MatchReferee>[];
   }
 
@@ -129,12 +122,6 @@ class LocalTournamentMatchesRepository implements TournamentMatchesRepository {
       } catch (_) {}
     }
 
-    if (config.environment == AppEnvironment.development) {
-      final seeds = _buildSeedMatches();
-      await _persistMatches(seeds);
-      return seeds;
-    }
-
     return const <ChampionshipMatch>[];
   }
 
@@ -144,67 +131,5 @@ class LocalTournamentMatchesRepository implements TournamentMatchesRepository {
     if (!_matchesStreamController.isClosed) {
       _matchesStreamController.add(matches);
     }
-  }
-
-  Future<void> _persistReferees(List<MatchReferee> referees) async {
-    final jsonList = referees.map((r) => r.toJson()).toList();
-    await storage.writeString(refereesStorageKey, jsonEncode(jsonList));
-  }
-
-  List<MatchReferee> _buildSeedReferees() {
-    return const [
-      MatchReferee(
-        id: 'ref-seed-1',
-        fullName: 'Nicolás Gallo',
-        certificationLevel: 'FIFA',
-        isActive: true,
-      ),
-      MatchReferee(
-        id: 'ref-seed-2',
-        fullName: 'Wilmar Roldán',
-        certificationLevel: 'FIFA',
-        isActive: true,
-      ),
-      MatchReferee(
-        id: 'ref-seed-3',
-        fullName: 'Andrés Rojas',
-        certificationLevel: 'Nacional',
-        isActive: true,
-      ),
-    ];
-  }
-
-  List<ChampionshipMatch> _buildSeedMatches() {
-    final now = DateTime.now();
-    final firstMatchStart = DateTime(now.year, now.month, now.day + 2, 14, 0);
-    final firstMatchEnd = DateTime(now.year, now.month, now.day + 2, 15, 45);
-
-    return [
-      ChampionshipMatch(
-        id: 'match-seed-clausura-1',
-        tournamentId: 'tournament-seed-liga-clausura',
-        roundNumber: 1,
-        roundName: 'Jornada 1',
-        homeTeamId: 'team-seed-atletico-norte',
-        awayTeamId: 'team-seed-real-sabana',
-        scheduledStartTime: firstMatchStart,
-        scheduledEndTime: firstMatchEnd,
-        venueId: 'venue-seed-campin',
-        pitchId: 'pitch-campin-1',
-        pitchName: 'Cancha Principal (F11)',
-        refereeId: 'ref-seed-2',
-        refereeName: 'Wilmar Roldán',
-        status: MatchStatus.scheduled,
-      ),
-      ChampionshipMatch(
-        id: 'match-seed-clausura-2',
-        tournamentId: 'tournament-seed-liga-clausura',
-        roundNumber: 2,
-        roundName: 'Jornada 2',
-        homeTeamId: 'team-seed-real-sabana',
-        awayTeamId: 'team-seed-atletico-norte',
-        status: MatchStatus.pendingSchedule,
-      ),
-    ];
   }
 }

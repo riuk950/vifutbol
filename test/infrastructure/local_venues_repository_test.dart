@@ -43,22 +43,14 @@ void main() {
     prodRepo = LocalVenuesRepository(storage: mockStorage, config: prodConfig);
   });
 
-  group('LocalVenuesRepository - Environment Isolation & Seed Catalog', () {
+  group('LocalVenuesRepository - Environment Isolation', () {
     test(
-      'automatically seeds 3 urban venues in dev environment when storage is empty',
+      'returns empty list in dev environment when storage is empty without seeding',
       () async {
         final venues = await devRepo.loadVenues();
 
-        expect(venues.length, 3);
-        expect(venues[0].name, 'Complejo Deportivo El Salitre');
-        expect(venues[0].pitches.length, 3);
-        expect(venues[1].name, 'Centro Deportivo La Candelaria');
-        expect(venues[1].pitches.length, 2);
-        expect(venues[2].name, 'Polideportivo Metropolitano Norte');
-        expect(venues[2].pitches.length, 2);
-
-        // Verify that seed data was persisted to storage
-        expect(inMemoryStore[LocalVenuesRepository.storageKey], isNotNull);
+        expect(venues, isEmpty);
+        expect(inMemoryStore[LocalVenuesRepository.storageKey], isNull);
       },
     );
 
@@ -138,13 +130,13 @@ void main() {
     test(
       'loads offline catalog in less than 200 milliseconds (SC-003)',
       () async {
-        await devRepo.loadVenues(); // populates seed venues
+        await devRepo.saveVenue(customVenue);
 
         final stopwatch = Stopwatch()..start();
         final venues = await devRepo.loadVenues();
         stopwatch.stop();
 
-        expect(venues.length, 3);
+        expect(venues.length, 1);
         expect(stopwatch.elapsedMilliseconds, lessThan(200));
       },
     );

@@ -38,12 +38,35 @@ class _MemoryStorage implements LocalStorageRepository {
 void main() {
   group('TournamentsController', () {
     test(
-      'loads dev seed catalog, filters by format, selects tournament, and manages drafts',
+      'loads catalog, filters by format, selects tournament, and manages drafts',
       () async {
         final repository = LocalTournamentsRepository(
           storage: _MemoryStorage(),
           config: EnvironmentConfig.development(),
         );
+        await repository.saveTournament(
+          ChampionshipTournament(
+            id: 't-league',
+            name: 'Liga ViFutbol',
+            category: 'Libre',
+            startDate: DateTime(2026, 5, 1),
+            endDate: DateTime(2026, 9, 30),
+            format: TournamentFormat.league,
+            updatedAt: DateTime(2026, 5, 1),
+          ),
+        );
+        await repository.saveTournament(
+          ChampionshipTournament(
+            id: 't-cup',
+            name: 'Copa Relámpago',
+            category: 'Libre',
+            startDate: DateTime(2026, 5, 1),
+            endDate: DateTime(2026, 9, 30),
+            format: TournamentFormat.knockoutCup,
+            updatedAt: DateTime(2026, 5, 1),
+          ),
+        );
+
         final controller = TournamentsController(
           tournamentsRepository: repository,
           manageTournamentsUseCase: ManageTournamentsUseCase(repository),
@@ -54,7 +77,7 @@ void main() {
           controller.state.viewState,
           isA<UiContentState<List<ChampionshipTournament>>>(),
         );
-        expect(controller.state.tournaments.length, 3);
+        expect(controller.state.tournaments.length, 2);
 
         controller.setFormatFilter(TournamentFormat.knockoutCup);
         expect(controller.state.filteredTournaments.length, 1);

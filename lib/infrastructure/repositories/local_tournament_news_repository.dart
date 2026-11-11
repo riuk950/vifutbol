@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:vifutbol/domain/entities/app_environment.dart';
-import 'package:vifutbol/domain/entities/tournament_news_category.dart';
 import 'package:vifutbol/domain/entities/tournament_news_item.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/domain/repositories/tournament_news_repository.dart';
@@ -97,12 +96,6 @@ class LocalTournamentNewsRepository implements TournamentNewsRepository {
       }
     } catch (_) {}
 
-    if (config.environment == AppEnvironment.development) {
-      final seeds = _buildSeedNews();
-      await _persistNews(seeds);
-      return seeds;
-    }
-
     return const <TournamentNewsItem>[];
   }
 
@@ -112,34 +105,5 @@ class LocalTournamentNewsRepository implements TournamentNewsRepository {
     if (!_newsStreamController.isClosed) {
       _newsStreamController.add(items);
     }
-  }
-
-  List<TournamentNewsItem> _buildSeedNews() {
-    return [
-      TournamentNewsItem(
-        id: 'news-seed-1',
-        tournamentId: 'tournament-seed-liga-clausura',
-        title: 'Inicio Oficial de la Liga Clausura 2026',
-        body:
-            'El comité organizador da la bienvenida a todos los clubes y aficionados al torneo Clausura. Se recuerda verificar canchas y horarios asignados en la pestaña Jornada.',
-        category: TournamentNewsCategory.general,
-        publishedAt: DateTime(2026, 5, 1, 9, 0),
-        authorUserId: 'user-organizer-1',
-        authorName: 'Comité Organizador ViFutbol',
-        isPinned: true,
-      ),
-      TournamentNewsItem(
-        id: 'news-seed-2',
-        tournamentId: 'tournament-seed-liga-clausura',
-        title: 'Boletín Disciplinario Jornada 1',
-        body:
-            'Resolución de amonestaciones y juego limpio correspondiente a los partidos inaugurales. Sin sanciones graves reportadas.',
-        category: TournamentNewsCategory.disciplinary,
-        publishedAt: DateTime(2026, 5, 2, 18, 30),
-        authorUserId: 'user-organizer-1',
-        authorName: 'Tribunal Deportivo ViFutbol',
-        isPinned: false,
-      ),
-    ];
   }
 }

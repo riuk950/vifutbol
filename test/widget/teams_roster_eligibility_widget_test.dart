@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,10 +13,14 @@ import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/application/use_cases/manage_teams_eligibility_use_case.dart';
 import 'package:vifutbol/application/use_cases/manage_tournaments_use_case.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
+import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/role_permission_matrix.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
+import 'package:vifutbol/domain/entities/tournament_enums.dart';
+import 'package:vifutbol/domain/entities/tournament_rules_config.dart';
+import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/infrastructure/repositories/local_teams_repository.dart';
@@ -26,6 +32,62 @@ import 'package:vifutbol/presentation/shell/tabs/standings_tab_view.dart';
 import 'package:vifutbol/presentation/teams/team_roster_detail_screen.dart';
 
 class _MemoryStorage implements LocalStorageRepository {
+  _MemoryStorage() {
+    const tournamentId = 'tournament-seed-liga-clausura';
+    final tournament = ChampionshipTournament(
+      id: tournamentId,
+      name: 'Liga Clausura ViFutbol 2026',
+      category: 'Libre Masculino',
+      startDate: DateTime(2026, 5, 1),
+      endDate: DateTime(2026, 12, 30),
+      format: TournamentFormat.league,
+      status: TournamentStatus.openRegistration,
+      rules: const TournamentRulesConfig(minPlayersPerTeam: 7),
+      updatedAt: DateTime(2026, 4, 17),
+    );
+    final atn = TournamentTeam(
+      id: 'team-seed-atletico-norte',
+      tournamentId: tournamentId,
+      name: 'Atlético Norte FC',
+      shortCode: 'ATN',
+      eligibilityStatus: TeamEligibilityStatus.eligible,
+      players: const [
+        RegisteredPlayer(
+          id: 'p-atn-10',
+          fullName: 'James Rodríguez',
+          documentId: '10100010',
+          shirtNumber: 10,
+          position: PlayerPosition.midfielder,
+          isEligible: true,
+        ),
+      ],
+    );
+    final rsc = TournamentTeam(
+      id: 'team-seed-real-sabana',
+      tournamentId: tournamentId,
+      name: 'Real Sabana Club',
+      shortCode: 'RSC',
+      eligibilityStatus: TeamEligibilityStatus.pendingVerification,
+      players: List.generate(
+        9,
+        (i) => RegisteredPlayer(
+          id: 'p-rsc-${i + 1}',
+          fullName: 'Jugador RSC ${i + 1}',
+          documentId: '2020000${i + 1}',
+          shirtNumber: i + 1,
+          position: PlayerPosition.midfielder,
+        ),
+      ),
+    );
+    _map[LocalTournamentsRepository.catalogStorageKey] = jsonEncode([
+      tournament.toJson(),
+    ]);
+    _map[LocalTeamsRepository.catalogStorageKey] = jsonEncode([
+      atn.toJson(),
+      rsc.toJson(),
+    ]);
+  }
+
   final Map<String, String> _map = <String, String>{};
 
   @override

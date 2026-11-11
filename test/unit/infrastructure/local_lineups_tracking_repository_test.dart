@@ -38,48 +38,46 @@ class _InMemoryStorage implements LocalStorageRepository {
 
 void main() {
   group('LocalLineupsTrackingRepository', () {
-    test('loads dev seeds including suspended player', () async {
-      final storage = _InMemoryStorage();
-      final repo = LocalLineupsTrackingRepository(
-        storage: storage,
-        config: EnvironmentConfig.development(),
-      );
+    test(
+      'returns default zeroed metrics when tracking storage is empty',
+      () async {
+        final storage = _InMemoryStorage();
+        final repo = LocalLineupsTrackingRepository(
+          storage: storage,
+          config: EnvironmentConfig.development(),
+        );
 
-      final roster = [
-        const RegisteredPlayer(
-          id: 'p-seed-atn-8',
-          fullName: 'Wilmar Barrios',
-          documentId: '10100008',
-          shirtNumber: 6,
-          position: PlayerPosition.midfielder,
-        ),
-        const RegisteredPlayer(
-          id: 'p-seed-atn-2',
-          fullName: 'Yerry Mina',
-          documentId: '10100002',
-          shirtNumber: 4,
-          position: PlayerPosition.defender,
-        ),
-      ];
+        final roster = [
+          const RegisteredPlayer(
+            id: 'p-1',
+            fullName: 'Wilmar Barrios',
+            documentId: '10100008',
+            shirtNumber: 6,
+            position: PlayerPosition.midfielder,
+          ),
+          const RegisteredPlayer(
+            id: 'p-2',
+            fullName: 'Yerry Mina',
+            documentId: '10100002',
+            shirtNumber: 4,
+            position: PlayerPosition.defender,
+          ),
+        ];
 
-      final trackingList = await repo.loadTrackingForTeam(
-        'tournament-seed-liga-clausura',
-        'team-seed-atletico-norte',
-        roster,
-      );
+        final trackingList = await repo.loadTrackingForTeam(
+          'tournament-1',
+          'team-1',
+          roster,
+        );
 
-      expect(trackingList.length, equals(2));
-
-      final barrios = trackingList.firstWhere(
-        (t) => t.playerId == 'p-seed-atn-8',
-      );
-      expect(barrios.pendingSuspensionMatches, equals(1));
-      expect(barrios.isSuspended(3), isTrue);
-
-      final mina = trackingList.firstWhere((t) => t.playerId == 'p-seed-atn-2');
-      expect(mina.yellowCards, equals(2));
-      expect(mina.isAtYellowCardWarning(3), isTrue);
-    });
+        expect(trackingList.length, equals(2));
+        expect(
+          trackingList.every((t) => t.pendingSuspensionMatches == 0),
+          isTrue,
+        );
+        expect(trackingList.every((t) => t.yellowCards == 0), isTrue);
+      },
+    );
 
     test('saves and retrieves convocation', () async {
       final storage = _InMemoryStorage();

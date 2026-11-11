@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +14,14 @@ import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/application/use_cases/manage_lineups_tracking_use_case.dart';
 import 'package:vifutbol/application/use_cases/manage_teams_eligibility_use_case.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
+import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
+import 'package:vifutbol/domain/entities/player_internal_tracking.dart';
+import 'package:vifutbol/domain/entities/registered_player.dart';
+import 'package:vifutbol/domain/entities/team_enums.dart';
+import 'package:vifutbol/domain/entities/tournament_enums.dart';
+import 'package:vifutbol/domain/entities/tournament_rules_config.dart';
+import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/infrastructure/repositories/local_lineups_tracking_repository.dart';
@@ -23,6 +32,170 @@ import 'package:vifutbol/presentation/navigation/app_router.dart';
 import 'package:vifutbol/presentation/teams/coach_lineup_tracking_screen.dart';
 
 class _WidgetTestStorage implements LocalStorageRepository {
+  _WidgetTestStorage() {
+    const tournamentId = 'tournament-seed-liga-clausura';
+    const teamId = 'team-seed-atletico-norte';
+    final tournament = ChampionshipTournament(
+      id: tournamentId,
+      name: 'Liga Clausura ViFutbol 2026',
+      category: 'Libre Masculino',
+      startDate: DateTime(2026, 5, 1),
+      endDate: DateTime(2026, 12, 30),
+      format: TournamentFormat.league,
+      status: TournamentStatus.openRegistration,
+      rules: const TournamentRulesConfig(yellowCardSuspensionLimit: 3),
+      updatedAt: DateTime(2026, 4, 17),
+    );
+    const players = [
+      RegisteredPlayer(
+        id: 'p-seed-atn-1',
+        fullName: 'David Ospina',
+        documentId: '10100001',
+        shirtNumber: 1,
+        position: PlayerPosition.goalkeeper,
+        isEligible: true,
+      ),
+      RegisteredPlayer(
+        id: 'p-seed-atn-2',
+        fullName: 'Yerry Mina',
+        documentId: '10100002',
+        shirtNumber: 4,
+        position: PlayerPosition.defender,
+        isEligible: true,
+      ),
+      RegisteredPlayer(
+        id: 'p-seed-atn-3',
+        fullName: 'Dávinson Sánchez',
+        documentId: '10100003',
+        shirtNumber: 2,
+        position: PlayerPosition.defender,
+        isEligible: true,
+      ),
+      RegisteredPlayer(
+        id: 'p-seed-atn-4',
+        fullName: 'Santiago Arias',
+        documentId: '10100004',
+        shirtNumber: 5,
+        position: PlayerPosition.defender,
+        isEligible: true,
+      ),
+      RegisteredPlayer(
+        id: 'p-seed-atn-17',
+        fullName: 'Johan Mojica',
+        documentId: '10100017',
+        shirtNumber: 3,
+        position: PlayerPosition.defender,
+        isEligible: true,
+      ),
+      RegisteredPlayer(
+        id: 'p-seed-atn-8',
+        fullName: 'Wilmar Barrios',
+        documentId: '10100008',
+        shirtNumber: 6,
+        position: PlayerPosition.midfielder,
+        isEligible: true,
+      ),
+      RegisteredPlayer(
+        id: 'p-seed-atn-6',
+        fullName: 'James Rodríguez',
+        documentId: '10100006',
+        shirtNumber: 10,
+        position: PlayerPosition.midfielder,
+        isEligible: true,
+      ),
+      RegisteredPlayer(
+        id: 'p-seed-atn-11',
+        fullName: 'Juan Cuadrado',
+        documentId: '10100011',
+        shirtNumber: 11,
+        position: PlayerPosition.midfielder,
+        isEligible: true,
+      ),
+      RegisteredPlayer(
+        id: 'p-seed-atn-14',
+        fullName: 'Jefferson Lerma',
+        documentId: '10100014',
+        shirtNumber: 14,
+        position: PlayerPosition.midfielder,
+        isEligible: true,
+      ),
+      RegisteredPlayer(
+        id: 'p-seed-atn-7',
+        fullName: 'Luis Díaz',
+        documentId: '10100007',
+        shirtNumber: 7,
+        position: PlayerPosition.forward,
+        isEligible: true,
+      ),
+      RegisteredPlayer(
+        id: 'p-seed-atn-5',
+        fullName: 'Falcao',
+        documentId: '10100005',
+        shirtNumber: 9,
+        position: PlayerPosition.forward,
+        isEligible: true,
+      ),
+      RegisteredPlayer(
+        id: 'p-seed-atn-12',
+        fullName: 'Camilo Vargas',
+        documentId: '10100012',
+        shirtNumber: 12,
+        position: PlayerPosition.goalkeeper,
+        isEligible: true,
+      ),
+      RegisteredPlayer(
+        id: 'p-seed-atn-13',
+        fullName: 'Carlos Cuesta',
+        documentId: '10100013',
+        shirtNumber: 13,
+        position: PlayerPosition.defender,
+        isEligible: true,
+      ),
+      RegisteredPlayer(
+        id: 'p-seed-atn-15',
+        fullName: 'Mateus Uribe',
+        documentId: '10100015',
+        shirtNumber: 8,
+        position: PlayerPosition.midfielder,
+        isEligible: true,
+      ),
+    ];
+    final atn = TournamentTeam(
+      id: teamId,
+      tournamentId: tournamentId,
+      name: 'Atlético Norte FC',
+      shortCode: 'ATN',
+      eligibilityStatus: TeamEligibilityStatus.eligible,
+      players: players,
+    );
+    const trackings = [
+      PlayerInternalTracking(
+        playerId: 'p-seed-atn-8',
+        teamId: teamId,
+        tournamentId: tournamentId,
+        matchesPlayed: 4,
+        yellowCards: 2,
+        redCards: 1,
+        pendingSuspensionMatches: 1,
+      ),
+      PlayerInternalTracking(
+        playerId: 'p-seed-atn-2',
+        teamId: teamId,
+        tournamentId: tournamentId,
+        matchesPlayed: 5,
+        goals: 1,
+        yellowCards: 2,
+      ),
+    ];
+    _map[LocalTournamentsRepository.catalogStorageKey] = jsonEncode([
+      tournament.toJson(),
+    ]);
+    _map[LocalTeamsRepository.catalogStorageKey] = jsonEncode([atn.toJson()]);
+    _map[LocalLineupsTrackingRepository.trackingStorageKey] = jsonEncode(
+      trackings.map((t) => t.toJson()).toList(),
+    );
+  }
+
   final Map<String, String> _map = <String, String>{};
 
   @override

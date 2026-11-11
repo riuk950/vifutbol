@@ -39,27 +39,33 @@ void main() {
   });
 
   group('LocalTournamentsRepository CRUD & organizerId Tests', () {
-    test(
-      'loads dev seed tournaments with default organizerId org-seed-1',
-      () async {
-        final tournaments = await repository.loadTournaments();
-        expect(tournaments.length, 3);
-        for (final t in tournaments) {
-          expect(t.organizerId, 'org-seed-1');
-        }
-      },
-    );
+    test('returns empty list when dev storage has no tournaments', () async {
+      final tournaments = await repository.loadTournaments();
+      expect(tournaments, isEmpty);
+    });
 
     test('deletes a tournament by ID from storage', () async {
-      final initial = await repository.loadTournaments();
-      expect(initial.length, 3);
-      final idToDelete = initial.first.id;
+      final t1 = ChampionshipTournament(
+        id: 't-1',
+        name: 'Liga 1',
+        category: 'Libre',
+        startDate: DateTime(2026, 7, 1),
+        endDate: DateTime(2026, 8, 30),
+        format: TournamentFormat.league,
+        status: TournamentStatus.openRegistration,
+        rules: const TournamentRulesConfig(),
+        updatedAt: DateTime(2026, 7, 1),
+        organizerId: 'org-1',
+      );
+      final t2 = t1.copyWith(id: 't-2', name: 'Liga 2');
+      await repository.saveTournament(t1);
+      await repository.saveTournament(t2);
 
-      await repository.deleteTournament(idToDelete);
+      await repository.deleteTournament('t-1');
 
       final remaining = await repository.loadTournaments();
-      expect(remaining.length, 2);
-      expect(remaining.any((t) => t.id == idToDelete), isFalse);
+      expect(remaining.length, 1);
+      expect(remaining.any((t) => t.id == 't-1'), isFalse);
     });
 
     test(

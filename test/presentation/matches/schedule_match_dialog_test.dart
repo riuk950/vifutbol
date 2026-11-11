@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -11,31 +13,72 @@ import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/connectivity_status.dart';
+import 'package:vifutbol/domain/entities/geo_coordinate.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/match_referee.dart';
 import 'package:vifutbol/domain/entities/matches_catalog_state.dart';
 import 'package:vifutbol/domain/entities/sports_venue.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
+import 'package:vifutbol/domain/entities/venue_enums.dart';
 import 'package:vifutbol/domain/entities/venue_pitch.dart';
 import 'package:vifutbol/domain/repositories/connectivity_repository.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
+import 'package:vifutbol/infrastructure/repositories/local_tournament_matches_repository.dart';
+import 'package:vifutbol/infrastructure/venues/local_venues_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_theme.dart';
 import 'package:vifutbol/presentation/matches/widgets/schedule_match_dialog.dart';
 
 class _FakeLocalStorageRepository implements LocalStorageRepository {
+  _FakeLocalStorageRepository() {
+    final venue = SportsVenue(
+      id: 'venue-1',
+      name: 'Sede Test',
+      address: 'Calle 10 # 20-30',
+      urbanReference: 'Centro',
+      coordinate: const GeoCoordinate(latitude: 4.65, longitude: -74.08),
+      pitches: const [
+        VenuePitch(
+          id: 'pitch-1',
+          name: 'Cancha 1',
+          surfaceType: PitchSurfaceType.syntheticGrass,
+          format: PitchFormat.football11,
+          capacity: 100,
+          hasLighting: true,
+          status: VenueOperationalStatus.active,
+        ),
+      ],
+      status: VenueOperationalStatus.active,
+      updatedAt: DateTime(2026, 11, 1),
+    );
+    const referee = MatchReferee(
+      id: 'ref-1',
+      fullName: 'Árbitro Test',
+      certificationLevel: 'FIFA',
+      isActive: true,
+    );
+    _store[LocalVenuesRepository.storageKey] = jsonEncode([venue.toJson()]);
+    _store[LocalTournamentMatchesRepository.refereesStorageKey] = jsonEncode([
+      referee.toJson(),
+    ]);
+  }
+
+  final Map<String, String> _store = {};
+
   @override
   bool get isUsingFallbackMemory => true;
   @override
-  Future<void> clearNamespace() async {}
+  Future<void> clearNamespace() async => _store.clear();
   @override
   Future<LocalStorageStatus> initialize(String prefix) async =>
       LocalStorageStatus(isPersistent: true, storageNamespace: prefix);
   @override
-  Future<String?> readString(String key) async => null;
+  Future<String?> readString(String key) async => _store[key];
   @override
-  Future<void> writeString(String key, String value) async {}
+  Future<void> writeString(String key, String value) async {
+    _store[key] = value;
+  }
 }
 
 class _FakeConnectivityRepository implements ConnectivityRepository {

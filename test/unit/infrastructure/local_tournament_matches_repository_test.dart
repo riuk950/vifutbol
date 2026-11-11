@@ -48,18 +48,15 @@ void main() {
     });
 
     test(
-      'preloads seed referees and seed matches in dev environment',
+      'returns empty referees and matches in development when storage is empty',
       () async {
         final referees = await repository.loadOfficialReferees();
-        expect(referees.length, 3);
-        expect(referees.any((r) => r.fullName == 'Wilmar Roldán'), isTrue);
+        expect(referees, isEmpty);
 
         final matches = await repository.loadMatchesForTournament(
-          'tournament-seed-liga-clausura',
+          'tournament-1',
         );
-        expect(matches.length, 2);
-        expect(matches.first.roundName, 'Jornada 1');
-        expect(matches.first.status, MatchStatus.scheduled);
+        expect(matches, isEmpty);
       },
     );
 

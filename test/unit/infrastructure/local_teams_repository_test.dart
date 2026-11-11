@@ -36,28 +36,19 @@ class _InMemoryLocalStorageRepository implements LocalStorageRepository {
 
 void main() {
   group('LocalTeamsRepository', () {
-    test('preloads 20 seed teams in development environment', () async {
-      final storage = _InMemoryLocalStorageRepository();
-      final repository = LocalTeamsRepository(
-        storage: storage,
-        config: EnvironmentConfig.development(),
-      );
+    test(
+      'returns empty list in development environment when storage is empty',
+      () async {
+        final storage = _InMemoryLocalStorageRepository();
+        final repository = LocalTeamsRepository(
+          storage: storage,
+          config: EnvironmentConfig.development(),
+        );
 
-      final teams = await repository.loadTeams();
-      expect(teams.length, equals(20));
-
-      final atn = teams.firstWhere((t) => t.shortCode == 'ATN');
-      expect(atn.name, equals('Atlético Norte FC'));
-      expect(atn.tournamentId, equals('tournament-seed-liga-clausura'));
-      expect(atn.eligibilityStatus, equals(TeamEligibilityStatus.eligible));
-      expect(atn.players.length, equals(18));
-
-      final rsc = teams.firstWhere((t) => t.shortCode == 'RSC');
-      expect(rsc.name, equals('Real Sabana Club'));
-      expect(rsc.tournamentId, equals('tournament-seed-liga-clausura'));
-      expect(rsc.eligibilityStatus, equals(TeamEligibilityStatus.eligible));
-      expect(rsc.players.length, equals(18));
-    });
+        final teams = await repository.loadTeams();
+        expect(teams, isEmpty);
+      },
+    );
 
     test(
       'returns empty list in production environment when storage is empty',
@@ -80,10 +71,26 @@ void main() {
         config: EnvironmentConfig.development(),
       );
 
-      final clausuraTeams = await repository.loadTeamsForTournament(
-        'tournament-seed-liga-clausura',
+      await repository.saveTeam(
+        TournamentTeam(
+          id: 'team-1',
+          tournamentId: 'tour-1',
+          name: 'Atlético Norte FC',
+          shortCode: 'ATN',
+        ),
       );
-      expect(clausuraTeams.length, equals(20));
+      await repository.saveTeam(
+        TournamentTeam(
+          id: 'team-2',
+          tournamentId: 'tour-2',
+          name: 'Real Sabana Club',
+          shortCode: 'RSC',
+        ),
+      );
+
+      final tour1Teams = await repository.loadTeamsForTournament('tour-1');
+      expect(tour1Teams.length, equals(1));
+      expect(tour1Teams.first.shortCode, equals('ATN'));
 
       final emptyTeams = await repository.loadTeamsForTournament(
         'non-existing-tournament',

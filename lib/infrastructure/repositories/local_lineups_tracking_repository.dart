@@ -6,8 +6,7 @@ import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/domain/repositories/lineups_tracking_repository.dart';
 
-/// Implementation of [LineupsTrackingRepository] utilizing [LocalStorageRepository],
-/// preloading seed tracking metrics and a suspended player in development.
+/// Implementation of [LineupsTrackingRepository] utilizing [LocalStorageRepository].
 class LocalLineupsTrackingRepository implements LineupsTrackingRepository {
   final LocalStorageRepository storage;
   final EnvironmentConfig config;
@@ -37,9 +36,6 @@ class LocalLineupsTrackingRepository implements LineupsTrackingRepository {
           }
         }
       } catch (_) {}
-    } else if (config.environment == AppEnvironment.development) {
-      trackingMap = _buildDevSeedTracking();
-      await _persistTracking(trackingMap.values.toList());
     }
 
     final results = <PlayerInternalTracking>[];
@@ -153,82 +149,5 @@ class LocalLineupsTrackingRepository implements LineupsTrackingRepository {
   Future<void> _persistTracking(List<PlayerInternalTracking> list) async {
     final serialized = jsonEncode(list.map((t) => t.toJson()).toList());
     await storage.writeString(trackingStorageKey, serialized);
-  }
-
-  Map<String, PlayerInternalTracking> _buildDevSeedTracking() {
-    return {
-      // Wilmar Barrios: Active red card suspension (1 match pending)
-      'p-seed-atn-8': const PlayerInternalTracking(
-        playerId: 'p-seed-atn-8',
-        teamId: 'team-seed-atletico-norte',
-        tournamentId: 'tournament-seed-liga-clausura',
-        matchesPlayed: 4,
-        goals: 0,
-        assists: 1,
-        yellowCards: 2,
-        redCards: 1,
-        pendingSuspensionMatches: 1,
-      ),
-      // Yerry Mina: Yellow card warning threshold (2 yellow cards, limit is 3)
-      'p-seed-atn-2': const PlayerInternalTracking(
-        playerId: 'p-seed-atn-2',
-        teamId: 'team-seed-atletico-norte',
-        tournamentId: 'tournament-seed-liga-clausura',
-        matchesPlayed: 5,
-        goals: 1,
-        assists: 0,
-        yellowCards: 2,
-        redCards: 0,
-        pendingSuspensionMatches: 0,
-      ),
-      // Falcao: Top scorer
-      'p-seed-atn-5': const PlayerInternalTracking(
-        playerId: 'p-seed-atn-5',
-        teamId: 'team-seed-atletico-norte',
-        tournamentId: 'tournament-seed-liga-clausura',
-        matchesPlayed: 5,
-        goals: 4,
-        assists: 1,
-        yellowCards: 0,
-        redCards: 0,
-        pendingSuspensionMatches: 0,
-      ),
-      // James Rodríguez: Top playmaker
-      'p-seed-atn-6': const PlayerInternalTracking(
-        playerId: 'p-seed-atn-6',
-        teamId: 'team-seed-atletico-norte',
-        tournamentId: 'tournament-seed-liga-clausura',
-        matchesPlayed: 5,
-        goals: 2,
-        assists: 5,
-        yellowCards: 1,
-        redCards: 0,
-        pendingSuspensionMatches: 0,
-      ),
-      // Luis Díaz: Key forward
-      'p-seed-atn-7': const PlayerInternalTracking(
-        playerId: 'p-seed-atn-7',
-        teamId: 'team-seed-atletico-norte',
-        tournamentId: 'tournament-seed-liga-clausura',
-        matchesPlayed: 5,
-        goals: 3,
-        assists: 2,
-        yellowCards: 0,
-        redCards: 0,
-        pendingSuspensionMatches: 0,
-      ),
-      // David Ospina: Goalkeeper
-      'p-seed-atn-1': const PlayerInternalTracking(
-        playerId: 'p-seed-atn-1',
-        teamId: 'team-seed-atletico-norte',
-        tournamentId: 'tournament-seed-liga-clausura',
-        matchesPlayed: 5,
-        goals: 0,
-        assists: 0,
-        yellowCards: 0,
-        redCards: 0,
-        pendingSuspensionMatches: 0,
-      ),
-    };
   }
 }

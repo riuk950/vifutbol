@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,6 +22,7 @@ import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/geo_coordinate.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
+import 'package:vifutbol/domain/entities/match_referee.dart';
 import 'package:vifutbol/domain/entities/sports_venue.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
@@ -122,6 +125,17 @@ void main() {
       matchesRepo = LocalTournamentMatchesRepository(
         storage: storage,
         config: devConfig,
+      );
+      await storage.writeString(
+        LocalTournamentMatchesRepository.refereesStorageKey,
+        jsonEncode([
+          const MatchReferee(
+            id: 'ref-test-1',
+            fullName: 'Wilmar Roldán',
+            certificationLevel: 'FIFA',
+            isActive: true,
+          ).toJson(),
+        ]),
       );
       await matchesRepo.loadOfficialReferees();
 
