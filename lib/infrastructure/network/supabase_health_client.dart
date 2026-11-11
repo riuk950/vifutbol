@@ -23,12 +23,22 @@ class SupabaseHealthClient {
     final normalizedUrl = config.url.endsWith('/')
         ? config.url.substring(0, config.url.length - 1)
         : config.url;
-    final probeUri = Uri.parse('$normalizedUrl/rest/v1/');
+    final usesIsolatedSchema = config.schema != 'public';
+    final probeUri = usesIsolatedSchema
+        ? Uri.parse('$normalizedUrl/rest/v1/tournaments?select=id&limit=1')
+        : Uri.parse('$normalizedUrl/rest/v1/');
 
-    final headers = {
-      'apikey': config.anonKey,
-      'Accept': 'application/openapi+json, application/json',
-    };
+    final headers = usesIsolatedSchema
+        ? {
+            'apikey': config.anonKey,
+            'Authorization': 'Bearer ${config.anonKey}',
+            'Accept-Profile': config.schema,
+            'Accept': 'application/json',
+          }
+        : {
+            'apikey': config.anonKey,
+            'Accept': 'application/openapi+json, application/json',
+          };
 
     final stopwatch = Stopwatch()..start();
     try {

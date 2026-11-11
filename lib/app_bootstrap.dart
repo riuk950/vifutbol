@@ -45,6 +45,9 @@ Future<ProviderContainer> bootstrapApp(
         url: config.supabase.url,
         // ignore: deprecated_member_use
         anonKey: config.supabase.anonKey,
+        postgrestOptions: PostgrestClientOptions(
+          schema: config.supabase.schema,
+        ),
       );
     } catch (e) {
       debugPrint(

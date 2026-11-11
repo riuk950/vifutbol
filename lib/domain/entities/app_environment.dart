@@ -8,11 +8,16 @@ enum AppEnvironment { development, production }
 class SupabaseConfig {
   final String url;
   final String anonKey;
+  final String schema;
 
-  const SupabaseConfig({required this.url, required this.anonKey});
+  const SupabaseConfig({
+    required this.url,
+    required this.anonKey,
+    this.schema = 'public',
+  });
 
   /// Unconfigured / local-only empty configuration.
-  const SupabaseConfig.empty() : url = '', anonKey = '';
+  const SupabaseConfig.empty() : url = '', anonKey = '', schema = 'public';
 
   /// Whether both the URL and anonKey are provided.
   bool get isConfigured => url.isNotEmpty && anonKey.isNotEmpty;
@@ -22,6 +27,7 @@ class SupabaseConfig {
     return {
       'url': url,
       'anonKey': anonKey.isEmpty ? '[EMPTY]' : '[REDACTED]',
+      'schema': schema,
       'isConfigured': isConfigured,
     };
   }
@@ -32,14 +38,15 @@ class SupabaseConfig {
       other is SupabaseConfig &&
           runtimeType == other.runtimeType &&
           url == other.url &&
-          anonKey == other.anonKey;
+          anonKey == other.anonKey &&
+          schema == other.schema;
 
   @override
-  int get hashCode => url.hashCode ^ anonKey.hashCode;
+  int get hashCode => Object.hash(url, anonKey, schema);
 
   @override
   String toString() {
-    return 'SupabaseConfig(url: $url, anonKey: ${anonKey.isEmpty ? "[EMPTY]" : "[REDACTED]"}, isConfigured: $isConfigured)';
+    return 'SupabaseConfig(url: $url, anonKey: ${anonKey.isEmpty ? "[EMPTY]" : "[REDACTED]"}, schema: $schema, isConfigured: $isConfigured)';
   }
 }
 
@@ -92,6 +99,10 @@ class EnvironmentConfig {
             defaultValue: 'https://supabase.artbusinesstechnology.com',
           ),
           anonKey: _resolveEnvVar('SUPABASE_ANON_KEY', defaultValue: ''),
+          schema: _resolveEnvVar(
+            'SUPABASE_SCHEMA',
+            defaultValue: 'vifutboldev',
+          ),
         );
     _validateSupabase(AppEnvironment.development, resolvedSupabase);
 
@@ -120,6 +131,7 @@ class EnvironmentConfig {
         SupabaseConfig(
           url: _resolveEnvVar('SUPABASE_URL', defaultValue: ''),
           anonKey: _resolveEnvVar('SUPABASE_ANON_KEY', defaultValue: ''),
+          schema: _resolveEnvVar('SUPABASE_SCHEMA', defaultValue: 'public'),
         );
     _validateSupabase(AppEnvironment.production, resolvedSupabase);
 
@@ -153,6 +165,12 @@ class EnvironmentConfig {
   }
 
   static void _validateSupabase(AppEnvironment env, SupabaseConfig config) {
+    if (config.schema.trim().isEmpty) {
+      throw const EnvironmentValidationFailure(
+        'Supabase schema cannot be empty.',
+      );
+    }
+
     if (config.url.isNotEmpty) {
       final uri = Uri.tryParse(config.url);
       if (uri == null || !uri.hasScheme || !uri.hasAuthority) {
@@ -160,6 +178,13 @@ class EnvironmentConfig {
           'Invalid Supabase URL: ${config.url}. Must be a valid absolute URI.',
         );
       }
+    }
+
+    if (env == AppEnvironment.production &&
+        config.schema.toLowerCase().contains('dev')) {
+      throw EnvironmentValidationFailure(
+        'Production configuration cannot use a development Supabase schema: ${config.schema}.',
+      );
     }
 
     if (env == AppEnvironment.production && config.isConfigured) {

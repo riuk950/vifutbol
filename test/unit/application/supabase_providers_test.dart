@@ -96,5 +96,31 @@ void main() {
         expect(client, equals(mockClient));
       },
     );
+
+    test(
+      'SupabaseConfig exposes schema with vifutboldev default in dev and public in prod',
+      () {
+        final devConfig = EnvironmentConfig.development();
+        final prodConfig = EnvironmentConfig.production();
+
+        expect(devConfig.supabase.schema, 'vifutboldev');
+        expect(prodConfig.supabase.schema, 'public');
+
+        const schemaDev = SupabaseConfig(
+          url: 'https://supabase.artbusinesstechnology.com',
+          anonKey: 'sample-anon-key',
+          schema: 'vifutboldev',
+        );
+        const schemaPublic = SupabaseConfig(
+          url: 'https://supabase.artbusinesstechnology.com',
+          anonKey: 'sample-anon-key',
+          schema: 'public',
+        );
+
+        expect(schemaDev, isNot(equals(schemaPublic)));
+        expect(schemaDev.toSafeDiagnosticMap()['schema'], 'vifutboldev');
+        expect(schemaDev.toSafeDiagnosticMap()['anonKey'], '[REDACTED]');
+      },
+    );
   });
 }

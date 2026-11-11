@@ -68,6 +68,46 @@ void main() {
       },
     );
 
+    test(
+      'probes /rest/v1/tournaments with Accept-Profile and Bearer headers when schema is vifutboldev',
+      () async {
+        const devSchemaConfig = SupabaseConfig(
+          url: 'https://supabase.artbusinesstechnology.com',
+          anonKey: 'valid-dev-anon-key',
+          schema: 'vifutboldev',
+        );
+
+        when(
+          () => mockHttpClient.get(
+            Uri.parse(
+              'https://supabase.artbusinesstechnology.com/rest/v1/tournaments?select=id&limit=1',
+            ),
+            headers: any(named: 'headers'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await healthClient.checkHealth(devSchemaConfig);
+
+        expect(result.status, BackendHealthStatus.healthy);
+        expect(result.isHealthy, isTrue);
+        expect(result.httpStatusCode, 200);
+
+        verify(
+          () => mockHttpClient.get(
+            Uri.parse(
+              'https://supabase.artbusinesstechnology.com/rest/v1/tournaments?select=id&limit=1',
+            ),
+            headers: {
+              'apikey': 'valid-dev-anon-key',
+              'Authorization': 'Bearer valid-dev-anon-key',
+              'Accept-Profile': 'vifutboldev',
+              'Accept': 'application/json',
+            },
+          ),
+        ).called(1);
+      },
+    );
+
     test('returns unreachable status on HTTP 401 Unauthorized', () async {
       when(
         () => mockHttpClient.get(any(), headers: any(named: 'headers')),
