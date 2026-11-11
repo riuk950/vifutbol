@@ -1,3 +1,5 @@
+import 'package:uuid/uuid.dart';
+import 'package:vifutbol/application/utils/search_utils.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
@@ -9,6 +11,22 @@ import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/failures/app_failure.dart';
 import 'package:vifutbol/domain/repositories/teams_repository.dart';
 import 'package:vifutbol/domain/repositories/tournament_matches_repository.dart';
+import 'package:vifutbol/domain/services/standings_calculator_service.dart';
+
+/// Structured result returned after enrolling an existing catalog club into a tournament.
+class EnrollExistingTeamResult {
+  final TournamentTeam enrolledTeam;
+  final int copiedPlayersCount;
+  final int skippedConflictingPlayersCount;
+  final String? assignedGroupName;
+
+  const EnrollExistingTeamResult({
+    required this.enrolledTeam,
+    required this.copiedPlayersCount,
+    required this.skippedConflictingPlayersCount,
+    this.assignedGroupName,
+  });
+}
 
 /// Use case that orchestrates team registration, player roster enrollment,
 /// sports integrity uniqueness checks (team name, shirt number, player document),
@@ -216,6 +234,108 @@ class ManageTeamsEligibilityUseCase {
     );
 
     return _repository.saveTeam(sanitizedTeam);
+  }
+
+  /// Enrolls an existing catalog club into a championship competition with
+  /// [TeamEligibilityStatus.pendingVerification], copying its identity and
+  /// non-conflicting base roster players (marked pending validation).
+  Future<EnrollExistingTeamResult> enrollExistingTeamFromCatalog({
+    required TournamentTeam sourceTeam,
+    required ChampionshipTournament tournament,
+    required UserRole actorRole,
+    String? generatedTeamId,
+  }) async {
+    _ensureTournamentManagementPermission(actorRole);
+    _ensureEditableTournament(tournament);
+
+    final trimmedName = sourceTeam.name.trim();
+    if (trimmedName.length < 3) {
+      throw const TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.invalidTeamName,
+        'El nombre del equipo debe tener al menos 3 caracteres',
+      );
+    }
+
+    final trimmedShortCode = sourceTeam.shortCode.trim();
+    if (trimmedShortCode.length < 2 || trimmedShortCode.length > 4) {
+      throw const TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.invalidShortCode,
+        'La sigla debe tener entre 2 y 4 caracteres',
+      );
+    }
+
+    final tournamentTeams = await _repository.loadTeamsForTournament(
+      tournament.id,
+    );
+
+    final targetNormalizedQueryName = normalizeSearchText(trimmedName);
+    final isDuplicate = tournamentTeams.any(
+      (t) =>
+          t.id == sourceTeam.id ||
+          t.normalizedName == sourceTeam.normalizedName ||
+          normalizeSearchText(t.name) == targetNormalizedQueryName,
+    );
+    if (isDuplicate) {
+      throw const TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.duplicateTeamNameInTournament,
+        'Ya existe un equipo con este nombre en este campeonato',
+      );
+    }
+
+    final assignedGroupName =
+        tournament.format == TournamentFormat.mixedGroupsAndKnockout
+        ? StandingsCalculatorService.resolveLeastPopulatedGroupName(
+            groupCount: tournament.rules.groupStageConfig.groupCount,
+            tournamentTeams: tournamentTeams,
+          )
+        : null;
+
+    const uuid = Uuid();
+    final newTeamId = generatedTeamId ?? 'team-${uuid.v4()}';
+    final existingDocs = tournamentTeams
+        .expand((t) => t.players.map((p) => p.normalizedDocumentId))
+        .toSet();
+
+    final copiedPlayers = <RegisteredPlayer>[];
+    var skippedConflictingCount = 0;
+    for (final player in sourceTeam.players) {
+      final normalizedDoc = player.normalizedDocumentId;
+      if (existingDocs.contains(normalizedDoc) ||
+          copiedPlayers.length >= tournament.rules.maxPlayersPerTeam) {
+        skippedConflictingCount++;
+        continue;
+      }
+      existingDocs.add(normalizedDoc);
+      copiedPlayers.add(
+        player.copyWith(
+          id: '$newTeamId-p-${copiedPlayers.length + 1}-${uuid.v4().substring(0, 8)}',
+          isEligible: false,
+        ),
+      );
+    }
+
+    final enrolledTeam = TournamentTeam(
+      id: newTeamId,
+      tournamentId: tournament.id,
+      name: trimmedName,
+      shortCode: trimmedShortCode.toUpperCase(),
+      crestShape: sourceTeam.crestShape,
+      primaryColorHex: sourceTeam.primaryColorHex,
+      secondaryColorHex: sourceTeam.secondaryColorHex,
+      eligibilityStatus: TeamEligibilityStatus.pendingVerification,
+      players: copiedPlayers,
+      groupName: assignedGroupName,
+      coachId: sourceTeam.coachId,
+      updatedAt: DateTime.now(),
+    );
+
+    final savedTeam = await _repository.saveTeam(enrolledTeam);
+    return EnrollExistingTeamResult(
+      enrolledTeam: savedTeam,
+      copiedPlayersCount: copiedPlayers.length,
+      skippedConflictingPlayersCount: skippedConflictingCount,
+      assignedGroupName: assignedGroupName,
+    );
   }
 
   /// Enrolls or updates a player in the roster of a team.

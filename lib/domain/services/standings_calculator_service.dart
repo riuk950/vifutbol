@@ -253,6 +253,37 @@ class StandingsCalculatorService {
     return validGroups[effectiveIndex % validGroups.length];
   }
 
+  /// Resolves the group name with the fewest currently enrolled teams
+  /// for balanced mixed-format team enrollment.
+  static String resolveLeastPopulatedGroupName({
+    required int groupCount,
+    required List<TournamentTeam> tournamentTeams,
+  }) {
+    final validGroups = buildValidGroupNames(groupCount);
+    final counts = <String, int>{for (final g in validGroups) g: 0};
+    for (final team in tournamentTeams) {
+      final group = resolveEffectiveGroupName(
+        team: team,
+        allTournamentTeams: tournamentTeams,
+        groupCount: groupCount,
+      );
+      if (counts.containsKey(group)) {
+        counts[group] = (counts[group] ?? 0) + 1;
+      }
+    }
+
+    var leastPopulatedGroup = validGroups.first;
+    var minCount = counts[leastPopulatedGroup] ?? 0;
+    for (final group in validGroups) {
+      final count = counts[group] ?? 0;
+      if (count < minCount) {
+        minCount = count;
+        leastPopulatedGroup = group;
+      }
+    }
+    return leastPopulatedGroup;
+  }
+
   /// Computes independent per-group [StandingsTable] instances for
   /// [TournamentFormat.mixedGroupsAndKnockout] (`FR-004`).
   List<StandingsTable> calculateGroupStageTables({

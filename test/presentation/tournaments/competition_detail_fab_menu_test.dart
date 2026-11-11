@@ -123,11 +123,11 @@ void main() {
     );
   }
 
-  group('CompetitionDetailScreen FAB Simplification Tests (US2)', () {
+  group('CompetitionDetailScreen Expandable FAB Menu Tests (HU 18.4 / US1)', () {
     testWidgets(
-      'displays direct competition_detail_fab_generate_fixture without speed dial or add team action',
+      'organizer sees expandable FAB menu that reveals Generar Fixture and Agregar Equipos within 150ms',
       (tester) async {
-        final editableTournamentWithoutFixture = ChampionshipTournament(
+        final tournament = ChampionshipTournament(
           id: 'tourn-no-fix',
           name: 'Torneo Apertura',
           category: 'Honor',
@@ -138,42 +138,56 @@ void main() {
           updatedAt: DateTime(2026, 6, 1),
         );
 
-        await tester.pumpWidget(
-          buildApp(tournament: editableTournamentWithoutFixture),
-        );
+        await tester.pumpWidget(buildApp(tournament: tournament));
         await tester.pumpAndSettle();
 
-        // 1. Direct single Generate Fixture FAB is visible immediately
-        final fixtureFab = find.byKey(
-          const Key('competition_detail_fab_generate_fixture'),
-        );
-        expect(fixtureFab, findsOneWidget);
+        final fabMenu = find.byKey(const Key('competition_detail_fab_menu'));
+        expect(fabMenu, findsOneWidget);
 
-        // 2. Speed dial menu button is completely removed
+        // Collapsed initially: sub-actions not visible
         expect(
-          find.byKey(const Key('competition_detail_fab_menu')),
+          find.byKey(const Key('competition_detail_fab_generate_fixture')),
           findsNothing,
         );
-
-        // 3. Team enrollment FAB action is completely removed
         expect(
           find.byKey(const Key('competition_detail_fab_add_team')),
           findsNothing,
         );
 
-        // 4. Tap directly opens confirmation dialog without needing to expand a speed dial
-        await tester.tap(fixtureFab);
+        // Expand within 150ms (SC-001)
+        await tester.tap(fabMenu);
+        await tester.pump(const Duration(milliseconds: 140));
+
+        expect(
+          find.byKey(const Key('competition_detail_fab_generate_fixture')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('competition_detail_fab_add_team')),
+          findsOneWidget,
+        );
+        expect(find.text('Generar Fixture'), findsOneWidget);
+        expect(find.text('Agregar Equipos'), findsOneWidget);
+
+        // Tapping Generar Fixture collapses menu and opens confirmation dialog
+        await tester.tap(
+          find.byKey(const Key('competition_detail_fab_generate_fixture')),
+        );
         await tester.pumpAndSettle();
 
         expect(
           find.byKey(const Key('confirm_generate_fixture_button')),
           findsOneWidget,
         );
+        expect(
+          find.byKey(const Key('competition_detail_fab_add_team')),
+          findsNothing,
+        );
       },
     );
 
     testWidgets(
-      'hides generate fixture FAB when tournament already has a fixture or is non-editable',
+      'keeps FAB menu with Agregar Equipos when editable tournament already has fixture',
       (tester) async {
         final tournamentWithFixture = ChampionshipTournament(
           id: 'tourn-with-fix',
@@ -200,14 +214,45 @@ void main() {
         );
         await tester.pumpAndSettle();
 
+        final fabMenu = find.byKey(const Key('competition_detail_fab_menu'));
+        expect(fabMenu, findsOneWidget);
+
+        await tester.tap(fabMenu);
+        await tester.pumpAndSettle();
+
         expect(
           find.byKey(const Key('competition_detail_fab_generate_fixture')),
           findsNothing,
         );
+        expect(
+          find.byKey(const Key('competition_detail_fab_add_team')),
+          findsOneWidget,
+        );
       },
     );
 
-    testWidgets('hides FAB for non-organizer roles', (tester) async {
+    testWidgets('hides FAB menu when tournament is finished', (tester) async {
+      final finishedTournament = ChampionshipTournament(
+        id: 'tourn-fin',
+        name: 'Torneo Finalizado',
+        category: 'Honor',
+        status: TournamentStatus.finished,
+        format: TournamentFormat.league,
+        startDate: DateTime(2025, 6, 1),
+        endDate: DateTime(2025, 12, 1),
+        updatedAt: DateTime(2025, 12, 1),
+      );
+
+      await tester.pumpWidget(buildApp(tournament: finishedTournament));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const Key('competition_detail_fab_menu')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('hides FAB menu for all non-organizer roles', (tester) async {
       final tournament = ChampionshipTournament(
         id: 'tourn-open',
         name: 'Torneo Abierto',
@@ -231,9 +276,9 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(
-          find.byKey(const Key('competition_detail_fab_generate_fixture')),
+          find.byKey(const Key('competition_detail_fab_menu')),
           findsNothing,
-          reason: '${role.name} must NOT see fixture generation FAB',
+          reason: '${role.name} must NOT see competition FAB menu',
         );
       }
     });

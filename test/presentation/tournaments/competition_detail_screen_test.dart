@@ -375,17 +375,21 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Direct Generate Fixture FAB is visible immediately
+      // Expandable FAB menu is visible immediately
+      final fabMenu = find.byKey(const Key('competition_detail_fab_menu'));
+      expect(fabMenu, findsOneWidget);
+
+      await tester.tap(fabMenu);
+      await tester.pumpAndSettle();
+
       final generateAction = find.byKey(
         const Key('competition_detail_fab_generate_fixture'),
       );
       expect(generateAction, findsOneWidget);
       expect(find.text('Generar Fixture'), findsOneWidget);
-
-      // Speed dial menu is absent
       expect(
-        find.byKey(const Key('competition_detail_fab_menu')),
-        findsNothing,
+        find.byKey(const Key('competition_detail_fab_add_team')),
+        findsOneWidget,
       );
 
       // Tap generate fixture action -> opens confirmation dialog
@@ -417,7 +421,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(
-          find.byKey(const Key('competition_detail_fab_generate_fixture')),
+          find.byKey(const Key('competition_detail_fab_menu')),
           findsNothing,
         );
       },
@@ -447,13 +451,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.byKey(const Key('competition_detail_fab_generate_fixture')),
+        find.byKey(const Key('competition_detail_fab_menu')),
         findsNothing,
       );
     });
 
     testWidgets(
-      'CompetitionDetailScreen direct FAB renders without RenderFlex overflow on compact screen (320x640 at 130% text scale)',
+      'CompetitionDetailScreen FAB menu renders without RenderFlex overflow on compact screen (320x640 at 130% text scale)',
       (tester) async {
         tester.view.physicalSize = const Size(320, 640);
         tester.view.devicePixelRatio = 1.0;
@@ -477,8 +481,17 @@ void main() {
         );
         await tester.pumpAndSettle();
 
+        final fabMenu = find.byKey(const Key('competition_detail_fab_menu'));
+        expect(fabMenu, findsOneWidget);
+        await tester.tap(fabMenu);
+        await tester.pumpAndSettle();
+
         expect(
           find.byKey(const Key('competition_detail_fab_generate_fixture')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('competition_detail_fab_add_team')),
           findsOneWidget,
         );
         expect(tester.takeException(), isNull);
@@ -486,9 +499,11 @@ void main() {
     );
 
     testWidgets(
-      'US2: speed dial menu and team enrollment FAB are completely removed for all roles',
+      'HU 18.4: non-organizer roles never see expandable FAB menu or its actions',
       (tester) async {
-        for (final role in UserRole.values) {
+        for (final role in UserRole.values.where(
+          (r) => r != UserRole.organizer,
+        )) {
           await tester.pumpWidget(
             createDetailTestApp(tournamentId: 't-detail', userRole: role),
           );

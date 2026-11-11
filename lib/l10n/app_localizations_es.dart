@@ -2968,4 +2968,75 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get venueNameDuplicate =>
       'Ya existe una sede con este nombre. Selecciónala de la lista o elige otro nombre.';
+
+  @override
+  String get competitionFabAddTeamsLabel => 'Agregar Equipos';
+
+  @override
+  String get addTeamsModalTitle => 'Agregar Equipos';
+
+  @override
+  String addTeamsModalSubtitle(String tournamentName) {
+    return 'Busca clubes registrados e inscríbelos en $tournamentName';
+  }
+
+  @override
+  String get addTeamsSearchHint => 'Buscar equipo por nombre o sigla...';
+
+  @override
+  String get addTeamsActionAdd => 'Agregar';
+
+  @override
+  String get addTeamsStatusEnrolledBadge => 'Inscrito';
+
+  @override
+  String get addTeamsEmptyCatalogTitle => 'Sin equipos en la plataforma';
+
+  @override
+  String get addTeamsEmptyCatalogMessage =>
+      'Aún no existen equipos registrados para agregar a esta competición.';
+
+  @override
+  String addTeamsEmptySearchMessage(String query) {
+    return 'No se encontraron equipos con \"$query\"';
+  }
+
+  @override
+  String get addTeamsClearSearchAction => 'Limpiar búsqueda';
+
+  @override
+  String addTeamsEnrollSuccess(String teamName) {
+    return '$teamName inscrito (Pendiente de verificación)';
+  }
+
+  @override
+  String addTeamsEnrollSuccessSkippedPlayers(
+    String teamName,
+    int skippedCount,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      skippedCount,
+      locale: localeName,
+      other:
+          'omitieron $skippedCount jugadores ya inscritos en otros clubes del torneo',
+      one: 'omitió 1 jugador ya inscrito en otro club del torneo',
+    );
+    return '$teamName inscrito. Se $_temp0.';
+  }
+
+  @override
+  String get addTeamsDuplicateError =>
+      'Este equipo ya se encuentra inscrito en la competición';
+
+  @override
+  String addTeamsPlayersCountMeta(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count jugadores en plantilla',
+      one: '1 jugador en plantilla',
+      zero: 'Sin plantilla registrada',
+    );
+    return '$_temp0';
+  }
 }

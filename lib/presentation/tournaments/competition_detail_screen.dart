@@ -13,6 +13,8 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dar
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
 import 'package:vifutbol/presentation/matches/dialogs/generate_fixture_confirmation_dialog.dart';
+import 'package:vifutbol/presentation/tournaments/widgets/add_teams_to_competition_modal.dart';
+import 'package:vifutbol/presentation/tournaments/widgets/competition_detail_fab_menu.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/competition_fixture_tab_view.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/competition_info_tab_view.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/competition_standings_tab_view.dart';
@@ -112,24 +114,12 @@ class _CompetitionDetailScreenState
     final hasFixture = matchesState.matches.any(
       (m) => m.tournamentId == tournament.id,
     );
-    if (hasFixture) {
-      return null;
-    }
 
-    return FloatingActionButton.extended(
-      key: const Key('competition_detail_fab_generate_fixture'),
-      heroTag: 'fab_action_generate_fixture',
-      backgroundColor: KickPulseColors.accentPrimary,
-      foregroundColor: KickPulseColors.surfaceBase,
-      icon: const Icon(Icons.alt_route, size: 20),
-      label: Text(
-        l10n.competitionFabGenerateFixtureLabel,
-        style: KickPulseTypography.captionMeta.copyWith(
-          fontWeight: FontWeight.bold,
-          color: KickPulseColors.surfaceBase,
-        ),
-      ),
-      onPressed: () => _handleGenerateFixture(tournament),
+    return CompetitionDetailFabMenu(
+      showGenerateFixture: !hasFixture,
+      onGenerateFixture: () => _handleGenerateFixture(tournament),
+      onAddTeams: () =>
+          AddTeamsToCompetitionModal.show(context, tournament: tournament),
     );
   }
 

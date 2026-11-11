@@ -5181,6 +5181,90 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Ya existe una sede con este nombre. Selecciónala de la lista o elige otro nombre.'**
   String get venueNameDuplicate;
+
+  /// Etiqueta de la acción del menú flotante para agregar equipos a la competición
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar Equipos'**
+  String get competitionFabAddTeamsLabel;
+
+  /// Título del modal para buscar e inscribir equipos en la competición
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar Equipos'**
+  String get addTeamsModalTitle;
+
+  /// Subtítulo descriptivo del modal de inscripción de equipos
+  ///
+  /// In es, this message translates to:
+  /// **'Busca clubes registrados e inscríbelos en {tournamentName}'**
+  String addTeamsModalSubtitle(String tournamentName);
+
+  /// Placeholder del campo de búsqueda en el modal de equipos
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar equipo por nombre o sigla...'**
+  String get addTeamsSearchHint;
+
+  /// Etiqueta del botón para inscribir un equipo disponible desde el modal
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar'**
+  String get addTeamsActionAdd;
+
+  /// Distintivo y etiqueta de botón deshabilitado cuando el equipo ya está inscrito
+  ///
+  /// In es, this message translates to:
+  /// **'Inscrito'**
+  String get addTeamsStatusEnrolledBadge;
+
+  /// Título del estado vacío cuando no hay equipos registrados en el catálogo global
+  ///
+  /// In es, this message translates to:
+  /// **'Sin equipos en la plataforma'**
+  String get addTeamsEmptyCatalogTitle;
+
+  /// Mensaje del estado vacío cuando el catálogo global de equipos está vacío
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no existen equipos registrados para agregar a esta competición.'**
+  String get addTeamsEmptyCatalogMessage;
+
+  /// Mensaje del estado vacío cuando la búsqueda no arroja coincidencias
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontraron equipos con \"{query}\"'**
+  String addTeamsEmptySearchMessage(String query);
+
+  /// Botón para restablecer la consulta de búsqueda en el modal de equipos
+  ///
+  /// In es, this message translates to:
+  /// **'Limpiar búsqueda'**
+  String get addTeamsClearSearchAction;
+
+  /// Confirmación visual tras inscribir un equipo desde el modal
+  ///
+  /// In es, this message translates to:
+  /// **'{teamName} inscrito (Pendiente de verificación)'**
+  String addTeamsEnrollSuccess(String teamName);
+
+  /// Aviso cuando un equipo se inscribe pero se omiten jugadores con documento repetido en otro club
+  ///
+  /// In es, this message translates to:
+  /// **'{teamName} inscrito. Se {skippedCount, plural, =1{omitió 1 jugador ya inscrito en otro club del torneo} other{omitieron {skippedCount} jugadores ya inscritos en otros clubes del torneo}}.'**
+  String addTeamsEnrollSuccessSkippedPlayers(String teamName, int skippedCount);
+
+  /// Mensaje de error al intentar inscribir un equipo duplicado
+  ///
+  /// In es, this message translates to:
+  /// **'Este equipo ya se encuentra inscrito en la competición'**
+  String get addTeamsDuplicateError;
+
+  /// Subtítulo con el conteo de jugadores de la plantilla base en el catálogo
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =0{Sin plantilla registrada} =1{1 jugador en plantilla} other{{count} jugadores en plantilla}}'**
+  String addTeamsPlayersCountMeta(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -45,6 +45,28 @@ void main() {
         expect(matchesSearchQuery('Deportivo Cali', 'dep'), isTrue);
         expect(matchesSearchQuery('Junior', 'millonarios'), isFalse);
         expect(matchesSearchQuery('Atlético Nacional', ''), isTrue);
+        expect(matchesSearchQuery('Atlético del Sur', 'atletico'), isTrue);
+        expect(matchesSearchQuery('Águilas FC', 'AGUILAS'), isTrue);
+        expect(
+          normalizeSearchText('São Paulo Ângelo Çelik'),
+          'sao paulo angelo celik',
+        );
+        expect(
+          matchesTeamQuery(name: 'Águilas FC', shortCode: 'AGU', query: 'agu'),
+          isTrue,
+        );
+        expect(
+          matchesTeamQuery(
+            name: 'Atlético del Sur',
+            shortCode: 'ADS',
+            query: 'atletico',
+          ),
+          isTrue,
+        );
+        expect(
+          matchesTeamQuery(name: 'Tigres FC', shortCode: 'TIG', query: 'xyz'),
+          isFalse,
+        );
       },
     );
   });

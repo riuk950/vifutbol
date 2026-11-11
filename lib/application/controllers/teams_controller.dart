@@ -155,6 +155,43 @@ class TeamsController extends StateNotifier<TeamsCatalogState> {
     }
   }
 
+  /// Enrolls an existing catalog club into a competition with single-flight protection,
+  /// returning structured enrollment counts (copied & skipped players).
+  Future<EnrollExistingTeamResult?> enrollExistingTeamFromCatalog({
+    required TournamentTeam sourceTeam,
+    required ChampionshipTournament tournament,
+    required UserRole actorRole,
+  }) async {
+    if (state.isSaving) return null;
+
+    state = state.copyWith(isSaving: true, clearLastFailure: true);
+
+    try {
+      final result = await manageTeamsEligibilityUseCase
+          .enrollExistingTeamFromCatalog(
+            sourceTeam: sourceTeam,
+            tournament: tournament,
+            actorRole: actorRole,
+          );
+
+      final updatedTeams = await teamsRepository.loadTeams();
+      state = state.copyWith(
+        teams: updatedTeams,
+        selectedTeamId: result.enrolledTeam.id,
+        isSaving: false,
+      );
+      return result;
+    } catch (e) {
+      final failure = e is AppFailure
+          ? e
+          : const TeamEligibilityValidationFailure(
+              TeamEligibilityErrorCode.invalidTeamName,
+            );
+      state = state.copyWith(isSaving: false, lastFailure: failure);
+      return null;
+    }
+  }
+
   /// Moves an enrolled team to a target group in the competition.
   Future<bool> moveTeamToGroup({
     required String teamId,

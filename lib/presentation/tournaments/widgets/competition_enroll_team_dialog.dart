@@ -56,34 +56,14 @@ class _CompetitionEnrollTeamDialogState
     _initialized = true;
 
     if (widget.tournament.format == TournamentFormat.mixedGroupsAndKnockout) {
-      final validGroups = StandingsCalculatorService.buildValidGroupNames(
-        widget.tournament.rules.groupStageConfig.groupCount,
-      );
       final tournamentTeams = allTeams
           .where((t) => t.tournamentId == widget.tournament.id)
           .toList();
-      final counts = <String, int>{for (final g in validGroups) g: 0};
-      for (final t in tournamentTeams) {
-        final g = StandingsCalculatorService.resolveEffectiveGroupName(
-          team: t,
-          allTournamentTeams: tournamentTeams,
-          groupCount: widget.tournament.rules.groupStageConfig.groupCount,
-        );
-        if (counts.containsKey(g)) {
-          counts[g] = (counts[g] ?? 0) + 1;
-        }
-      }
-
-      String leastPopulatedGroup = validGroups.first;
-      int minCount = counts[leastPopulatedGroup] ?? 0;
-      for (final g in validGroups) {
-        final c = counts[g] ?? 0;
-        if (c < minCount) {
-          minCount = c;
-          leastPopulatedGroup = g;
-        }
-      }
-      _selectedGroup = leastPopulatedGroup;
+      _selectedGroup =
+          StandingsCalculatorService.resolveLeastPopulatedGroupName(
+            groupCount: widget.tournament.rules.groupStageConfig.groupCount,
+            tournamentTeams: tournamentTeams,
+          );
     }
   }
 

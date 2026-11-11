@@ -3824,5 +3824,89 @@
   "venueNameDuplicate": "Ya existe una sede con este nombre. Selecciónala de la lista o elige otro nombre.",
   "@venueNameDuplicate": {
     "description": "Error de validación cuando ya existe una sede con el mismo nombre"
+  },
+  "competitionFabAddTeamsLabel": "Agregar Equipos",
+  "@competitionFabAddTeamsLabel": {
+    "description": "Etiqueta de la acción del menú flotante para agregar equipos a la competición"
+  },
+  "addTeamsModalTitle": "Agregar Equipos",
+  "@addTeamsModalTitle": {
+    "description": "Título del modal para buscar e inscribir equipos en la competición"
+  },
+  "addTeamsModalSubtitle": "Busca clubes registrados e inscríbelos en {tournamentName}",
+  "@addTeamsModalSubtitle": {
+    "description": "Subtítulo descriptivo del modal de inscripción de equipos",
+    "placeholders": {
+      "tournamentName": {
+        "type": "String"
+      }
+    }
+  },
+  "addTeamsSearchHint": "Buscar equipo por nombre o sigla...",
+  "@addTeamsSearchHint": {
+    "description": "Placeholder del campo de búsqueda en el modal de equipos"
+  },
+  "addTeamsActionAdd": "Agregar",
+  "@addTeamsActionAdd": {
+    "description": "Etiqueta del botón para inscribir un equipo disponible desde el modal"
+  },
+  "addTeamsStatusEnrolledBadge": "Inscrito",
+  "@addTeamsStatusEnrolledBadge": {
+    "description": "Distintivo y etiqueta de botón deshabilitado cuando el equipo ya está inscrito"
+  },
+  "addTeamsEmptyCatalogTitle": "Sin equipos en la plataforma",
+  "@addTeamsEmptyCatalogTitle": {
+    "description": "Título del estado vacío cuando no hay equipos registrados en el catálogo global"
+  },
+  "addTeamsEmptyCatalogMessage": "Aún no existen equipos registrados para agregar a esta competición.",
+  "@addTeamsEmptyCatalogMessage": {
+    "description": "Mensaje del estado vacío cuando el catálogo global de equipos está vacío"
+  },
+  "addTeamsEmptySearchMessage": "No se encontraron equipos con \"{query}\"",
+  "@addTeamsEmptySearchMessage": {
+    "description": "Mensaje del estado vacío cuando la búsqueda no arroja coincidencias",
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "addTeamsClearSearchAction": "Limpiar búsqueda",
+  "@addTeamsClearSearchAction": {
+    "description": "Botón para restablecer la consulta de búsqueda en el modal de equipos"
+  },
+  "addTeamsEnrollSuccess": "{teamName} inscrito (Pendiente de verificación)",
+  "@addTeamsEnrollSuccess": {
+    "description": "Confirmación visual tras inscribir un equipo desde el modal",
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      }
+    }
+  },
+  "addTeamsEnrollSuccessSkippedPlayers": "{teamName} inscrito. Se {skippedCount, plural, =1{omitió 1 jugador ya inscrito en otro club del torneo} other{omitieron {skippedCount} jugadores ya inscritos en otros clubes del torneo}}.",
+  "@addTeamsEnrollSuccessSkippedPlayers": {
+    "description": "Aviso cuando un equipo se inscribe pero se omiten jugadores con documento repetido en otro club",
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      },
+      "skippedCount": {
+        "type": "int"
+      }
+    }
+  },
+  "addTeamsDuplicateError": "Este equipo ya se encuentra inscrito en la competición",
+  "@addTeamsDuplicateError": {
+    "description": "Mensaje de error al intentar inscribir un equipo duplicado"
+  },
+  "addTeamsPlayersCountMeta": "{count, plural, =0{Sin plantilla registrada} =1{1 jugador en plantilla} other{{count} jugadores en plantilla}}",
+  "@addTeamsPlayersCountMeta": {
+    "description": "Subtítulo con el conteo de jugadores de la plantilla base en el catálogo",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }
