@@ -11,7 +11,11 @@ import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
+import 'package:vifutbol/application/controllers/auth_controller.dart';
+import 'package:vifutbol/domain/entities/auth_flow_state.dart';
+import 'package:vifutbol/domain/entities/auth_session.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
+import 'package:vifutbol/domain/entities/user_account.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/connectivity_status.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
@@ -88,10 +92,19 @@ class FakeMatchesCatalogController extends StateNotifier<MatchesCatalogState>
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
+class _FakeAuthController extends StateNotifier<AuthFlowState>
+    implements AuthController {
+  _FakeAuthController(super.initialState);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 Widget createOrganizerPanelApp({
   List<ChampionshipTournament>? tournaments,
   List<ChampionshipMatch>? matches,
   List<TournamentTeam>? teams,
+  AuthFlowState? authState,
 }) {
   final tourList =
       tournaments ??
@@ -164,6 +177,10 @@ Widget createOrganizerPanelApp({
         _FakeConnectivityRepository(),
       ),
       activeUserRoleProvider.overrideWith((ref) => UserRole.organizer),
+      if (authState != null)
+        authControllerProvider.overrideWith(
+          (_) => _FakeAuthController(authState),
+        ),
       tournamentsControllerProvider.overrideWith(
         (ref) => FakeTournamentsController(tournaments: tourList),
       ),
@@ -286,6 +303,113 @@ void main() {
           find.byKey(const Key('organizer_metric_unseeded_tournaments')),
           findsOneWidget,
         );
+      },
+    );
+
+    testWidgets(
+      'isolates panel metrics strictly to authenticated organizer user-123 and excludes other organizers',
+      (tester) async {
+        final tournaments = [
+          ChampionshipTournament(
+            id: 't-own-1',
+            organizerId: 'user-123',
+            name: 'Copa Propia',
+            category: 'Libre',
+            format: TournamentFormat.league,
+            status: TournamentStatus.inProgress,
+            startDate: DateTime(2026, 1, 1),
+            endDate: DateTime(2026, 6, 1),
+            updatedAt: DateTime(2026, 1, 1),
+          ),
+          ChampionshipTournament(
+            id: 't-other-1',
+            organizerId: 'other-org',
+            name: 'Copa Ajena 1',
+            category: 'Libre',
+            format: TournamentFormat.league,
+            status: TournamentStatus.inProgress,
+            startDate: DateTime(2026, 1, 1),
+            endDate: DateTime(2026, 6, 1),
+            updatedAt: DateTime(2026, 1, 1),
+          ),
+          ChampionshipTournament(
+            id: 't-seed-1',
+            organizerId: 'org-seed-1',
+            name: 'Copa Seed',
+            category: 'Libre',
+            format: TournamentFormat.league,
+            status: TournamentStatus.openRegistration,
+            startDate: DateTime(2026, 1, 1),
+            endDate: DateTime(2026, 6, 1),
+            updatedAt: DateTime(2026, 1, 1),
+          ),
+        ];
+
+        final matches = [
+          ChampionshipMatch(
+            id: 'm-other-1',
+            tournamentId: 't-other-1',
+            roundNumber: 1,
+            roundName: 'Jornada 1',
+            homeTeamId: 'team-a',
+            awayTeamId: 'team-b',
+          ),
+          ChampionshipMatch(
+            id: 'm-seed-1',
+            tournamentId: 't-seed-1',
+            roundNumber: 1,
+            roundName: 'Jornada 1',
+            homeTeamId: 'team-a',
+            awayTeamId: 'team-b',
+          ),
+        ];
+
+        await tester.pumpWidget(
+          createOrganizerPanelApp(
+            tournaments: tournaments,
+            matches: matches,
+            authState: AuthFlowState(
+              status: AuthStatus.authenticated,
+              session: AuthSession(
+                sessionId: 'sess-1',
+                user: UserAccount(
+                  id: 'user-123',
+                  fullName: 'Organizador 123',
+                  email: 'org123@vifutbol.com',
+                  activeRole: UserRole.organizer,
+                ),
+                sessionToken: 'token',
+                authenticatedAt: DateTime(2026, 11, 13),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.descendant(
+            of: find.byKey(const Key('organizer_metric_active_tournaments')),
+            matching: find.text('1'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: find.byKey(const Key('organizer_metric_pending_matches')),
+            matching: find.text('0'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: find.byKey(const Key('organizer_metric_unseeded_tournaments')),
+            matching: find.text('1'),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('Copa Propia'), findsOneWidget);
+        expect(find.text('Copa Ajena 1'), findsNothing);
+        expect(find.text('Copa Seed'), findsNothing);
       },
     );
   });

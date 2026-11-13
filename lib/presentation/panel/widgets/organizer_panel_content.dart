@@ -138,32 +138,11 @@ class OrganizerPanelContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final tournamentsState = ref.watch(tournamentsControllerProvider);
-    final matchesCatalogState = ref.watch(matchesCatalogControllerProvider);
+    final metrics = ref.watch(organizerPanelMetricsProvider);
 
-    final tournaments = tournamentsState.tournaments;
-    final matches = matchesCatalogState.matches;
-
-    final activeTournamentsCount = tournaments
-        .where(
-          (t) =>
-              t.status == TournamentStatus.inProgress ||
-              t.status == TournamentStatus.openRegistration,
-        )
-        .length;
-
-    final pendingScheduleMatchesCount = matches
-        .where((m) => m.scheduledStartTime == null)
-        .length;
-
-    final unseededTournamentsCount = tournaments
-        .where(
-          (t) =>
-              (t.status == TournamentStatus.openRegistration ||
-                  t.status == TournamentStatus.inProgress) &&
-              !matches.any((m) => m.tournamentId == t.id),
-        )
-        .length;
+    final activeTournamentsCount = metrics.activeTournamentsCount;
+    final pendingScheduleMatchesCount = metrics.pendingScheduleMatchesCount;
+    final unseededTournamentsCount = metrics.unseededTournamentsCount;
 
     return SingleChildScrollView(
       key: const Key('organizer_panel_content'),
