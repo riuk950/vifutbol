@@ -4,6 +4,7 @@ import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/player_directory_item.dart';
+import 'package:vifutbol/domain/entities/team_directory_item.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
@@ -99,6 +100,9 @@ class _FakeTeamsRepository implements TeamsRepository {
     );
     return items;
   }
+
+  @override
+  Future<List<TeamDirectoryItem>> loadAllTeams() async => [];
 }
 
 void main() {

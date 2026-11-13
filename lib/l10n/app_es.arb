@@ -4105,5 +4105,17 @@
   "playersDirectoryOfflineRefreshWarning": "Sin conexión a internet. Mostrando nómina local disponible.",
   "@playersDirectoryOfflineRefreshWarning": {
     "description": "Aviso informativo al intentar refrescar la lista de jugadores sin conectividad"
+  },
+  "teamsDirectoryOfflineRefreshWarning": "Sin conexión a internet. Mostrando equipos locales disponibles.",
+  "@teamsDirectoryOfflineRefreshWarning": {
+    "description": "Aviso informativo al intentar refrescar la lista de equipos sin conectividad"
+  },
+  "teamsDirectoryNoTournamentAssigned": "Sin torneo asignado",
+  "@teamsDirectoryNoTournamentAssigned": {
+    "description": "Etiqueta mostrada cuando un club aún no participa en ningún torneo"
+  },
+  "teamsDirectoryMultipleTournaments": "Múltiples torneos",
+  "@teamsDirectoryMultipleTournaments": {
+    "description": "Etiqueta mostrada cuando un club participa en más de un torneo"
   }
 }

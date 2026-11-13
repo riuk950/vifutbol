@@ -31,18 +31,13 @@ final teamsDirectoryControllerProvider =
       TeamsDirectoryController,
       TeamsDirectoryState
     >((ref) {
-      final tournaments = ref.watch(tournamentsControllerProvider).tournaments;
       final teamsRepository = ref.watch(teamsRepositoryProvider);
 
       final controller = TeamsDirectoryController(
-        availableTournaments: tournaments,
+        teamsRepository: teamsRepository,
       );
 
-      teamsRepository.loadTeams().then((teams) {
-        if (controller.mounted) {
-          controller.updateData(teams: teams, tournaments: tournaments);
-        }
-      });
+      controller.loadTeams();
 
       return controller;
     });

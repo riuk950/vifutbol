@@ -14,6 +14,7 @@ import 'package:vifutbol/domain/entities/connectivity_status.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/player_directory_item.dart';
+import 'package:vifutbol/domain/entities/team_directory_item.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_draft.dart';
@@ -150,6 +151,29 @@ class FakeTeamsRepository implements TeamsRepository {
       ),
     );
     return items;
+  }
+
+  @override
+  Future<List<TeamDirectoryItem>> loadAllTeams() async {
+    return teams
+        .map(
+          (t) => TeamDirectoryItem(
+            id: t.id,
+            name: t.name,
+            shortCode: t.shortCode,
+            crestShape: t.crestShape,
+            primaryColorHex: t.primaryColorHex,
+            secondaryColorHex: t.secondaryColorHex,
+            categoryLabel: t.groupName,
+            tournamentCount: t.tournamentId.trim().isEmpty ? 0 : 1,
+            playerCount: t.players.length,
+            eligibilityStatus: t.eligibilityStatus,
+            coachId: t.coachId,
+            updatedAt: t.updatedAt,
+          ),
+        )
+        .toList()
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
   }
 }
 

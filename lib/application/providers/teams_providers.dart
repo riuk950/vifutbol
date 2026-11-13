@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/controllers/teams_controller.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
+import 'package:vifutbol/application/providers/directory_providers.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/supabase_providers.dart';
@@ -65,18 +66,48 @@ final teamsControllerProvider =
       );
     });
 
+List<TournamentTeam> _resolveEffectiveTeams(Ref ref, String teamId) {
+  final teamsState = ref.watch(teamsControllerProvider);
+  if (teamsState.teams.any((t) => t.id == teamId)) {
+    return teamsState.teams;
+  }
+
+  final directoryState = ref.watch(teamsDirectoryControllerProvider);
+  final matchIndex = directoryState.allTeams.indexWhere((t) => t.id == teamId);
+  if (matchIndex < 0) {
+    return teamsState.teams;
+  }
+
+  final item = directoryState.allTeams[matchIndex];
+  return [
+    ...teamsState.teams,
+    TournamentTeam(
+      id: item.id,
+      tournamentId: '',
+      name: item.name,
+      shortCode: item.shortCode,
+      crestShape: item.crestShape,
+      primaryColorHex: item.primaryColorHex,
+      secondaryColorHex: item.secondaryColorHex,
+      eligibilityStatus: item.eligibilityStatus,
+      coachId: item.coachId,
+      updatedAt: item.updatedAt,
+    ),
+  ];
+}
+
 /// Family provider that reactively computes the [TeamMatchSummary] for a given [teamId].
 final teamMatchSummaryProvider = Provider.family<TeamMatchSummary, String>((
   ref,
   teamId,
 ) {
-  final teamsState = ref.watch(teamsControllerProvider);
+  final teams = _resolveEffectiveTeams(ref, teamId);
   final tournamentsState = ref.watch(tournamentsControllerProvider);
   final matchesState = ref.watch(matchesCatalogControllerProvider);
 
   return TeamMatchSummary.fromCatalog(
     teamId: teamId,
-    teams: teamsState.teams,
+    teams: teams,
     tournaments: tournamentsState.tournaments,
     matches: matchesState.matches,
   );
@@ -85,12 +116,12 @@ final teamMatchSummaryProvider = Provider.family<TeamMatchSummary, String>((
 /// Family provider that reactively computes the [TeamMatchesSchedule] for a given [teamId].
 final teamMatchesScheduleProvider =
     Provider.family<TeamMatchesSchedule, String>((ref, teamId) {
-      final teamsState = ref.watch(teamsControllerProvider);
+      final teams = _resolveEffectiveTeams(ref, teamId);
       final matchesState = ref.watch(matchesCatalogControllerProvider);
 
       return TeamMatchesSchedule.fromCatalog(
         teamId: teamId,
-        teams: teamsState.teams,
+        teams: teams,
         matches: matchesState.matches,
       );
     });
@@ -100,9 +131,9 @@ final teamSquadRosterProvider = Provider.family<TeamSquadRoster, String>((
   ref,
   teamId,
 ) {
-  final teamsState = ref.watch(teamsControllerProvider);
+  final teams = _resolveEffectiveTeams(ref, teamId);
 
-  return TeamSquadRoster.fromCatalog(teamId: teamId, teams: teamsState.teams);
+  return TeamSquadRoster.fromCatalog(teamId: teamId, teams: teams);
 });
 
 /// Provider that reactively filters teams belonging to the currently authenticated coach.

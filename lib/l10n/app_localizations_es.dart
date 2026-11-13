@@ -3215,4 +3215,14 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get playersDirectoryOfflineRefreshWarning =>
       'Sin conexión a internet. Mostrando nómina local disponible.';
+
+  @override
+  String get teamsDirectoryOfflineRefreshWarning =>
+      'Sin conexión a internet. Mostrando equipos locales disponibles.';
+
+  @override
+  String get teamsDirectoryNoTournamentAssigned => 'Sin torneo asignado';
+
+  @override
+  String get teamsDirectoryMultipleTournaments => 'Múltiples torneos';
 }

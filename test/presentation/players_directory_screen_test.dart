@@ -12,6 +12,7 @@ import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/connectivity_status.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/player_directory_item.dart';
+import 'package:vifutbol/domain/entities/team_directory_item.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_draft.dart';
@@ -142,6 +143,9 @@ class FakeTeamsRepository implements TeamsRepository {
     );
     return items;
   }
+
+  @override
+  Future<List<TeamDirectoryItem>> loadAllTeams() async => [];
 }
 
 Widget createPlayersTestApp({

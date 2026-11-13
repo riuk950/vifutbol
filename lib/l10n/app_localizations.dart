@@ -5523,6 +5523,24 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Sin conexión a internet. Mostrando nómina local disponible.'**
   String get playersDirectoryOfflineRefreshWarning;
+
+  /// Aviso informativo al intentar refrescar la lista de equipos sin conectividad
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión a internet. Mostrando equipos locales disponibles.'**
+  String get teamsDirectoryOfflineRefreshWarning;
+
+  /// Etiqueta mostrada cuando un club aún no participa en ningún torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Sin torneo asignado'**
+  String get teamsDirectoryNoTournamentAssigned;
+
+  /// Etiqueta mostrada cuando un club participa en más de un torneo
+  ///
+  /// In es, this message translates to:
+  /// **'Múltiples torneos'**
+  String get teamsDirectoryMultipleTournaments;
 }
 
 class _AppLocalizationsDelegate

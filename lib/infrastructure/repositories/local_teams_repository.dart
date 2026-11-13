@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/player_directory_item.dart';
+import 'package:vifutbol/domain/entities/team_directory_item.dart';
+import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/domain/repositories/teams_repository.dart';
@@ -13,6 +15,7 @@ class LocalTeamsRepository implements TeamsRepository {
   final EnvironmentConfig config;
 
   static const String catalogStorageKey = 'vifutbol.teams.catalog.v1';
+  static const String directoryStorageKey = 'vifutbol.teams.directory.v1';
 
   @override
   Future<List<TournamentTeam>> loadTeams() async {
@@ -102,6 +105,85 @@ class LocalTeamsRepository implements TeamsRepository {
         b.player.fullName.toLowerCase(),
       ),
     );
+    return items;
+  }
+
+  /// Replaces the cached global teams directory items in local storage.
+  Future<void> cacheDirectoryTeams(List<TeamDirectoryItem> teams) async {
+    final sorted = [...teams]
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    final serialized = jsonEncode(sorted.map((t) => t.toJson()).toList());
+    await storage.writeString(directoryStorageKey, serialized);
+  }
+
+  @override
+  Future<List<TeamDirectoryItem>> loadAllTeams() async {
+    final raw = await storage.readString(directoryStorageKey);
+    if (raw != null && raw.trim().isNotEmpty) {
+      try {
+        final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;
+        final items =
+            decoded
+                .whereType<Map<String, dynamic>>()
+                .map(TeamDirectoryItem.fromJson)
+                .toList()
+              ..sort(
+                (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+              );
+        return items;
+      } catch (_) {}
+    }
+
+    // Fallback: derive unique clubs from legacy catalogStorageKey if directory cache is empty.
+    final legacyTeams = await loadTeams();
+    final Map<String, TeamDirectoryItem> byKey = {};
+    for (final team in legacyTeams) {
+      final key = team.normalizedName;
+      final existing = byKey[key];
+      if (existing == null) {
+        byKey[key] = TeamDirectoryItem(
+          id: team.id,
+          name: team.name,
+          shortCode: team.shortCode,
+          crestShape: team.crestShape,
+          primaryColorHex: team.primaryColorHex,
+          secondaryColorHex: team.secondaryColorHex,
+          categoryLabel: team.groupName,
+          tournamentCount: team.tournamentId.trim().isEmpty ? 0 : 1,
+          playerCount: team.players.length,
+          eligibilityStatus: team.eligibilityStatus,
+          coachId: team.coachId,
+          updatedAt: team.updatedAt,
+        );
+      } else {
+        final updatedStatus =
+            (existing.eligibilityStatus == TeamEligibilityStatus.eligible ||
+                team.eligibilityStatus == TeamEligibilityStatus.eligible)
+            ? TeamEligibilityStatus.eligible
+            : TeamEligibilityStatus.pendingVerification;
+        byKey[key] = TeamDirectoryItem(
+          id: existing.id,
+          name: existing.name,
+          shortCode: existing.shortCode,
+          crestShape: existing.crestShape,
+          primaryColorHex: existing.primaryColorHex,
+          secondaryColorHex: existing.secondaryColorHex,
+          categoryLabel: existing.categoryLabel ?? team.groupName,
+          tournamentCount:
+              existing.tournamentCount +
+              (team.tournamentId.trim().isEmpty ? 0 : 1),
+          playerCount: existing.playerCount + team.players.length,
+          eligibilityStatus: updatedStatus,
+          coachId: existing.coachId ?? team.coachId,
+          updatedAt: team.updatedAt.isAfter(existing.updatedAt)
+              ? team.updatedAt
+              : existing.updatedAt,
+        );
+      }
+    }
+
+    final items = byKey.values.toList()
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     return items;
   }
 

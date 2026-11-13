@@ -3,6 +3,7 @@ import 'package:vifutbol/domain/entities/player_directory_item.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/sync_outbox_item.dart';
 import 'package:vifutbol/domain/entities/sync_status.dart';
+import 'package:vifutbol/domain/entities/team_directory_item.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/repositories/teams_repository.dart';
@@ -20,6 +21,7 @@ abstract interface class TeamsRemoteDataSource {
   );
   Future<void> deleteById(String teamId);
   Future<List<PlayerDirectoryItem>> fetchAllPlayers();
+  Future<List<TeamDirectoryItem>> fetchAllTeams();
 }
 
 /// PostgREST implementation targeting `vifutboldev.teams`, `tournament_teams`, and `players`.
@@ -323,6 +325,93 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
       return items;
     }
   }
+
+  @override
+  Future<List<TeamDirectoryItem>> fetchAllTeams() async {
+    final rows = await client
+        .schema(schema)
+        .from('teams')
+        .select(
+          'id, coach_id, name, short_code, crest_shape, primary_color_hex, secondary_color_hex, updated_at, '
+          'tournament_teams(id, tournament_id, eligibility_status, tournaments(name, category), players(id))',
+        )
+        .order('name', ascending: true);
+
+    final List<TeamDirectoryItem> items = [];
+    for (final raw in (rows as List<dynamic>)) {
+      final row = Map<String, dynamic>.from(raw as Map);
+      final enrollments = (row['tournament_teams'] as List<dynamic>? ?? [])
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+
+      int totalPlayers = 0;
+      bool hasEligible = false;
+      String? singleCategory;
+      final Set<String> distinctTournamentIds = {};
+
+      for (final enrollment in enrollments) {
+        final tId = enrollment['tournament_id'] as String?;
+        if (tId != null && tId.isNotEmpty) {
+          distinctTournamentIds.add(tId);
+        }
+        final status = TeamEligibilityStatus.fromJson(
+          enrollment['eligibility_status'] as String? ?? 'pendingVerification',
+        );
+        if (status == TeamEligibilityStatus.eligible) {
+          hasEligible = true;
+        }
+        final playersList = enrollment['players'] as List<dynamic>? ?? [];
+        totalPlayers += playersList.length;
+
+        if (enrollments.length == 1) {
+          final tournamentMap = enrollment['tournaments'] is Map
+              ? Map<String, dynamic>.from(enrollment['tournaments'] as Map)
+              : const <String, dynamic>{};
+          final category = tournamentMap['category'] as String?;
+          final tName = tournamentMap['name'] as String?;
+          singleCategory = (category != null && category.trim().isNotEmpty)
+              ? category
+              : tName;
+        }
+      }
+
+      final tournamentCount = distinctTournamentIds.isNotEmpty
+          ? distinctTournamentIds.length
+          : enrollments.length;
+
+      items.add(
+        TeamDirectoryItem(
+          id: row['id'] as String,
+          name: row['name'] as String? ?? 'Equipo',
+          shortCode: row['short_code'] as String? ?? 'EQ',
+          crestShape: TeamCrestShape.values.firstWhere(
+            (s) => s.name == row['crest_shape'],
+            orElse: () => TeamCrestShape.shield,
+          ),
+          primaryColorHex:
+              (row['primary_color_hex'] as num?)?.toInt() ?? 0xFF00E676,
+          secondaryColorHex:
+              (row['secondary_color_hex'] as num?)?.toInt() ?? 0xFF0A0E17,
+          categoryLabel: tournamentCount == 1 ? singleCategory : null,
+          tournamentCount: tournamentCount,
+          playerCount: totalPlayers,
+          eligibilityStatus: hasEligible
+              ? TeamEligibilityStatus.eligible
+              : TeamEligibilityStatus.pendingVerification,
+          coachId: row['coach_id'] as String?,
+          updatedAt:
+              DateTime.tryParse(
+                row['updated_at'] as String? ?? '',
+              )?.toLocal() ??
+              DateTime.now(),
+        ),
+      );
+    }
+
+    items.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    return items;
+  }
 }
 
 /// Offline-first hybrid [TeamsRepository] coordinating local cache, Supabase, and FIFO outbox.
@@ -358,6 +447,15 @@ class HybridTeamsRepository implements TeamsRepository {
       },
       cacheUpdate: (_) async {},
       localFallback: local.loadAllPlayers,
+    );
+  }
+
+  @override
+  Future<List<TeamDirectoryItem>> loadAllTeams() {
+    return support.executeRead(
+      remoteFetch: remote.fetchAllTeams,
+      cacheUpdate: local.cacheDirectoryTeams,
+      localFallback: local.loadAllTeams,
     );
   }
 

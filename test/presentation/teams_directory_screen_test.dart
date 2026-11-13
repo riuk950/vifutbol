@@ -13,6 +13,7 @@ import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/connectivity_status.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/player_directory_item.dart';
+import 'package:vifutbol/domain/entities/team_directory_item.dart';
 import 'package:vifutbol/domain/entities/tournament_draft.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
@@ -89,6 +90,7 @@ class FakeTournamentsRepository implements TournamentsRepository {
 
 class FakeTeamsRepository implements TeamsRepository {
   final List<TournamentTeam> teams;
+  bool shouldFailLoadAllTeams = false;
 
   FakeTeamsRepository(this.teams);
 
@@ -140,13 +142,41 @@ class FakeTeamsRepository implements TeamsRepository {
     );
     return items;
   }
+
+  @override
+  Future<List<TeamDirectoryItem>> loadAllTeams() async {
+    if (shouldFailLoadAllTeams) {
+      throw Exception('Offline');
+    }
+    return teams
+        .map(
+          (t) => TeamDirectoryItem(
+            id: t.id,
+            name: t.name,
+            shortCode: t.shortCode,
+            crestShape: t.crestShape,
+            primaryColorHex: t.primaryColorHex,
+            secondaryColorHex: t.secondaryColorHex,
+            categoryLabel: t.groupName,
+            tournamentCount: t.tournamentId.trim().isEmpty ? 0 : 1,
+            playerCount: t.players.length,
+            eligibilityStatus: t.eligibilityStatus,
+            coachId: t.coachId,
+            updatedAt: t.updatedAt,
+          ),
+        )
+        .toList()
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  }
 }
 
 Widget createTeamsTestApp({
   required List<ChampionshipTournament> tournaments,
   required List<TournamentTeam> teams,
+  FakeTeamsRepository? customRepository,
   UserRole role = UserRole.fan,
 }) {
+  final repo = customRepository ?? FakeTeamsRepository(teams);
   return ProviderScope(
     key: UniqueKey(),
     overrides: [
@@ -160,7 +190,7 @@ Widget createTeamsTestApp({
         FakeConnectivityRepository(),
       ),
       activeUserRoleProvider.overrideWith((ref) => role),
-      teamsRepositoryProvider.overrideWithValue(FakeTeamsRepository(teams)),
+      teamsRepositoryProvider.overrideWithValue(repo),
       tournamentsControllerProvider.overrideWith((ref) {
         return TournamentsController(
           tournamentsRepository: FakeTournamentsRepository(tournaments),
@@ -169,7 +199,7 @@ Widget createTeamsTestApp({
       }),
       teamsControllerProvider.overrideWith((ref) {
         return TeamsController(
-          teamsRepository: FakeTeamsRepository(teams),
+          teamsRepository: repo,
           manageTeamsEligibilityUseCase: ref.watch(
             manageTeamsEligibilityUseCaseProvider,
           ),
@@ -236,7 +266,7 @@ void main() {
 
   group('TeamsDirectoryScreen Widget Tests', () {
     testWidgets(
-      'renders teams across tournaments and horizontal filter chips',
+      'renders teams and confirms tournament filter chips are completely removed',
       (tester) async {
         await tester.pumpWidget(
           createTeamsTestApp(
@@ -252,49 +282,85 @@ void main() {
         expect(find.byKey(const Key('team_item_team-2')), findsOneWidget);
         expect(find.byKey(const Key('team_item_team-3')), findsOneWidget);
 
-        // Chips displayed
+        // Search bar present, tournament selector and ChoiceChips completely removed
+        expect(find.byKey(const Key('teams_search_bar')), findsOneWidget);
         expect(
-          find.byKey(const Key('teams_tournament_chip_all')),
-          findsOneWidget,
+          find.byKey(const Key('teams_tournament_selector')),
+          findsNothing,
         );
-        expect(
-          find.byKey(const Key('teams_tournament_chip_t-1')),
-          findsOneWidget,
+        expect(find.byType(ChoiceChip), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'pull-to-refresh offline preserves cached teams and shows SnackBar warning',
+      (tester) async {
+        final repo = FakeTeamsRepository([team1, team2]);
+        await tester.pumpWidget(
+          createTeamsTestApp(
+            tournaments: [tournament1],
+            teams: [team1, team2],
+            customRepository: repo,
+            role: UserRole.fan,
+          ),
         );
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(const Key('team_item_team-1')), findsOneWidget);
+        expect(find.byKey(const Key('team_item_team-2')), findsOneWidget);
+
+        // Simulate offline failure on pull-to-refresh
+        repo.shouldFailLoadAllTeams = true;
+        await tester.fling(
+          find.byKey(const Key('teams_directory_list')),
+          const Offset(0, 300),
+          1000,
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(const Key('team_item_team-1')), findsOneWidget);
+        expect(find.byKey(const Key('team_item_team-2')), findsOneWidget);
         expect(
-          find.byKey(const Key('teams_tournament_chip_t-2')),
+          find.text(
+            'Sin conexión a internet. Mostrando equipos locales disponibles.',
+          ),
           findsOneWidget,
         );
       },
     );
 
     testWidgets(
-      'filters teams when selecting tournament chip and resets with "Todos"',
+      'un-enrolled club displays fallback label and opens TeamDetailScreen safely',
       (tester) async {
+        final unEnrolledTeam = TournamentTeam(
+          id: 'team-free',
+          tournamentId: '',
+          name: 'Club Independiente',
+          shortCode: 'IND',
+        );
         await tester.pumpWidget(
           createTeamsTestApp(
-            tournaments: [tournament1, tournament2],
-            teams: [team1, team2, team3],
+            tournaments: const [],
+            teams: [unEnrolledTeam],
             role: UserRole.fan,
           ),
         );
         await tester.pumpAndSettle();
 
-        // Select t-2 chip (Copa Élite Verano)
-        await tester.tap(find.byKey(const Key('teams_tournament_chip_t-2')));
+        expect(find.byKey(const Key('team_item_team-free')), findsOneWidget);
+        expect(
+          find.text('Sin torneo asignado • 0 jugadores inscritos'),
+          findsOneWidget,
+        );
+
+        await tester.tap(find.byKey(const Key('team_item_team-free')));
         await tester.pumpAndSettle();
 
-        expect(find.byKey(const Key('team_item_team-1')), findsNothing);
-        expect(find.byKey(const Key('team_item_team-2')), findsNothing);
-        expect(find.byKey(const Key('team_item_team-3')), findsOneWidget);
-
-        // Select 'Todos' chip
-        await tester.tap(find.byKey(const Key('teams_tournament_chip_all')));
-        await tester.pumpAndSettle();
-
-        expect(find.byKey(const Key('team_item_team-1')), findsOneWidget);
-        expect(find.byKey(const Key('team_item_team-2')), findsOneWidget);
-        expect(find.byKey(const Key('team_item_team-3')), findsOneWidget);
+        expect(find.byKey(const Key('team_detail_screen')), findsOneWidget);
+        expect(
+          find.byKey(const Key('team_detail_not_found_state')),
+          findsNothing,
+        );
       },
     );
 
