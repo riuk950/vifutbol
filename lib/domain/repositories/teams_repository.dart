@@ -1,3 +1,4 @@
+import '../entities/player_directory_item.dart';
 import '../entities/tournament_team.dart';
 
 /// Contract for teams data persistence and retrieval.
@@ -20,4 +21,8 @@ abstract interface class TeamsRepository {
 
   /// Deletes a team by its [teamId] from storage.
   Future<void> deleteTeam(String teamId);
+
+  /// Loads all registered players across all teams and tournaments,
+  /// ordered alphabetically by full name.
+  Future<List<PlayerDirectoryItem>> loadAllPlayers();
 }

@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vifutbol/application/controllers/teams_controller.dart';
 import 'package:vifutbol/application/use_cases/manage_teams_eligibility_use_case.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/player_directory_item.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
@@ -47,6 +48,31 @@ class _FakeTeamsRepository implements TeamsRepository {
   @override
   Future<void> deleteTeam(String teamId) async {
     _teams.removeWhere((t) => t.id == teamId);
+  }
+
+  @override
+  Future<List<PlayerDirectoryItem>> loadAllPlayers() async {
+    final List<PlayerDirectoryItem> items = [];
+    for (final team in _teams) {
+      for (final p in team.players) {
+        items.add(
+          PlayerDirectoryItem(
+            player: p,
+            teamId: team.id,
+            teamName: team.name,
+            teamShortCode: team.shortCode,
+            tournamentId: team.tournamentId,
+            tournamentName: '',
+          ),
+        );
+      }
+    }
+    items.sort(
+      (a, b) => a.player.fullName.toLowerCase().compareTo(
+        b.player.fullName.toLowerCase(),
+      ),
+    );
+    return items;
   }
 }
 

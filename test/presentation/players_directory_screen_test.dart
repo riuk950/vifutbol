@@ -11,6 +11,7 @@ import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/connectivity_status.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
+import 'package:vifutbol/domain/entities/player_directory_item.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_draft.dart';
@@ -115,6 +116,31 @@ class FakeTeamsRepository implements TeamsRepository {
   @override
   Future<void> deleteTeam(String teamId) async {
     teams.removeWhere((t) => t.id == teamId);
+  }
+
+  @override
+  Future<List<PlayerDirectoryItem>> loadAllPlayers() async {
+    final List<PlayerDirectoryItem> items = [];
+    for (final team in teams) {
+      for (final p in team.players) {
+        items.add(
+          PlayerDirectoryItem(
+            player: p,
+            teamId: team.id,
+            teamName: team.name,
+            teamShortCode: team.shortCode,
+            tournamentId: team.tournamentId,
+            tournamentName: '',
+          ),
+        );
+      }
+    }
+    items.sort(
+      (a, b) => a.player.fullName.toLowerCase().compareTo(
+        b.player.fullName.toLowerCase(),
+      ),
+    );
+    return items;
   }
 }
 
@@ -242,41 +268,8 @@ void main() {
   );
 
   group('PlayersDirectoryScreen Widget Tests', () {
-    testWidgets('renders all players and tournament filter chips', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        createPlayersTestApp(
-          tournaments: [tournament1, tournament2],
-          teams: [team1, team2, team3],
-          role: UserRole.fan,
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // All 4 players displayed
-      expect(find.byKey(const Key('player_item_p-1')), findsOneWidget);
-      expect(find.byKey(const Key('player_item_p-2')), findsOneWidget);
-      expect(find.byKey(const Key('player_item_p-3')), findsOneWidget);
-      expect(find.byKey(const Key('player_item_p-4')), findsOneWidget);
-
-      // Chips displayed
-      expect(
-        find.byKey(const Key('players_tournament_chip_all')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const Key('players_tournament_chip_t-1')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const Key('players_tournament_chip_t-2')),
-        findsOneWidget,
-      );
-    });
-
     testWidgets(
-      'filters players by tournament chip and restores with "Todos"',
+      'renders all players and confirms tournament filter chips are completely removed',
       (tester) async {
         await tester.pumpWidget(
           createPlayersTestApp(
@@ -287,23 +280,67 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Select t-2 chip (Copa Élite Verano)
-        await tester.tap(find.byKey(const Key('players_tournament_chip_t-2')));
-        await tester.pumpAndSettle();
-
-        expect(find.byKey(const Key('player_item_p-1')), findsNothing);
-        expect(find.byKey(const Key('player_item_p-2')), findsNothing);
-        expect(find.byKey(const Key('player_item_p-3')), findsNothing);
-        expect(find.byKey(const Key('player_item_p-4')), findsOneWidget);
-
-        // Select 'Todos' chip
-        await tester.tap(find.byKey(const Key('players_tournament_chip_all')));
-        await tester.pumpAndSettle();
-
+        // All 4 players displayed across tournaments
         expect(find.byKey(const Key('player_item_p-1')), findsOneWidget);
         expect(find.byKey(const Key('player_item_p-2')), findsOneWidget);
         expect(find.byKey(const Key('player_item_p-3')), findsOneWidget);
         expect(find.byKey(const Key('player_item_p-4')), findsOneWidget);
+
+        // Persistent top search bar present
+        expect(find.byKey(const Key('players_search_bar')), findsOneWidget);
+
+        // Tournament filter chips and horizontal selector are completely removed
+        expect(
+          find.byKey(const Key('players_tournament_selector')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('players_tournament_chip_all')),
+          findsNothing,
+        );
+        expect(find.byType(ChoiceChip), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'displays centralized list combining players across all tournaments without segmentation',
+      (tester) async {
+        await tester.pumpWidget(
+          createPlayersTestApp(
+            tournaments: [tournament1, tournament2],
+            teams: [team1, team2, team3],
+            role: UserRole.fan,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Players from tournament 1 and tournament 2 are both visible without filter chips
+        expect(find.byKey(const Key('player_item_p-1')), findsOneWidget);
+        expect(find.byKey(const Key('player_item_p-4')), findsOneWidget);
+        expect(find.byType(ChoiceChip), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'pull to refresh triggers reload without destroying existing player list',
+      (tester) async {
+        await tester.pumpWidget(
+          createPlayersTestApp(
+            tournaments: [tournament1],
+            teams: [team1],
+            role: UserRole.fan,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byType(RefreshIndicator), findsOneWidget);
+
+        // Perform pull to refresh gesture
+        await tester.fling(find.byType(ListView), const Offset(0, 300), 1000);
+        await tester.pumpAndSettle();
+
+        // Existing player list remains rendered
+        expect(find.byKey(const Key('player_item_p-1')), findsOneWidget);
       },
     );
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:vifutbol/domain/entities/app_environment.dart';
+import 'package:vifutbol/domain/entities/player_directory_item.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/domain/repositories/teams_repository.dart';
@@ -76,6 +77,32 @@ class LocalTeamsRepository implements TeamsRepository {
   /// Replaces the local teams cache across tournaments with fresh remote data.
   Future<void> replaceAllCache(List<TournamentTeam> teams) {
     return _persistTeams(teams);
+  }
+
+  @override
+  Future<List<PlayerDirectoryItem>> loadAllPlayers() async {
+    final teams = await loadTeams();
+    final List<PlayerDirectoryItem> items = [];
+    for (final team in teams) {
+      for (final player in team.players) {
+        items.add(
+          PlayerDirectoryItem(
+            player: player,
+            teamId: team.id,
+            teamName: team.name,
+            teamShortCode: team.shortCode,
+            tournamentId: team.tournamentId,
+            tournamentName: '',
+          ),
+        );
+      }
+    }
+    items.sort(
+      (a, b) => a.player.fullName.toLowerCase().compareTo(
+        b.player.fullName.toLowerCase(),
+      ),
+    );
+    return items;
   }
 
   Future<void> _persistTeams(List<TournamentTeam> teams) async {

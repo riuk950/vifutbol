@@ -306,12 +306,7 @@ class ManageTeamsEligibilityUseCase {
         continue;
       }
       existingDocs.add(normalizedDoc);
-      copiedPlayers.add(
-        player.copyWith(
-          id: uuid.v4(),
-          isEligible: false,
-        ),
-      );
+      copiedPlayers.add(player.copyWith(id: uuid.v4(), isEligible: false));
     }
 
     final enrolledTeam = TournamentTeam(

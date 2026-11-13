@@ -86,7 +86,6 @@ class _PlayersDirectoryScreenState
     );
 
     final visiblePlayers = directoryState.filteredPlayers;
-    final tournaments = directoryState.availableTournaments;
 
     return Scaffold(
       backgroundColor: KickPulseColors.canvasBackground,
@@ -123,188 +122,152 @@ class _PlayersDirectoryScreenState
               },
             ),
           ),
-          if (tournaments.isNotEmpty)
-            SingleChildScrollView(
-              key: const Key('players_tournament_selector'),
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(
-                horizontal: KickPulseRadiiSpacing.spaceMd,
-                vertical: KickPulseRadiiSpacing.spaceXs,
-              ),
-              child: Row(
-                children: [
-                  ChoiceChip(
-                    key: const Key('players_tournament_chip_all'),
-                    label: Text(l10n.filterAllTournaments),
-                    selected: directoryState.selectedTournamentId == null,
-                    onSelected: (selected) {
-                      if (selected) {
-                        directoryController.selectTournament(null);
-                      }
-                    },
-                    selectedColor: KickPulseColors.accentPrimary.withValues(
-                      alpha: 0.2,
-                    ),
-                    labelStyle: TextStyle(
-                      color: directoryState.selectedTournamentId == null
-                          ? KickPulseColors.accentPrimary
-                          : KickPulseColors.textSecondary,
-                      fontWeight: directoryState.selectedTournamentId == null
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
-                  ),
-                  const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
-                  ...tournaments.map((tournament) {
-                    final isSelected =
-                        directoryState.selectedTournamentId == tournament.id;
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                        right: KickPulseRadiiSpacing.spaceSm,
-                      ),
-                      child: ChoiceChip(
-                        key: Key('players_tournament_chip_${tournament.id}'),
-                        label: Text(tournament.name),
-                        selected: isSelected,
-                        onSelected: (selected) {
-                          directoryController.selectTournament(
-                            selected ? tournament.id : null,
-                          );
-                        },
-                        selectedColor: KickPulseColors.accentPrimary.withValues(
-                          alpha: 0.2,
-                        ),
-                        labelStyle: TextStyle(
-                          color: isSelected
-                              ? KickPulseColors.accentPrimary
-                              : KickPulseColors.textSecondary,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                        ),
-                      ),
-                    );
-                  }),
-                ],
-              ),
-            ),
-          const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
           Expanded(
-            child: visiblePlayers.isEmpty
-                ? KickPulseStateView<List<PlayerDirectoryItem>>(
-                    key: const Key('players_empty_state'),
-                    state: UiEmptyState<List<PlayerDirectoryItem>>(
-                      message: l10n.noPlayersFound,
+            child: RefreshIndicator(
+              key: const Key('players_refresh_indicator'),
+              onRefresh: () async {
+                final success = await directoryController.refreshPlayers();
+                if (!success && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(l10n.playersDirectoryOfflineRefreshWarning),
+                      duration: const Duration(seconds: 3),
                     ),
-                  )
-                : ListView.separated(
-                    key: const Key('players_directory_list'),
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    padding: const EdgeInsets.all(
-                      KickPulseRadiiSpacing.spaceMd,
-                    ),
-                    itemCount: visiblePlayers.length,
-                    separatorBuilder: (_, _) =>
-                        const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
-                    itemBuilder: (context, index) {
-                      final item = visiblePlayers[index];
-                      final p = item.player;
+                  );
+                }
+              },
+              child: visiblePlayers.isEmpty
+                  ? CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: KickPulseStateView<List<PlayerDirectoryItem>>(
+                            key: const Key('players_empty_state'),
+                            state: UiEmptyState<List<PlayerDirectoryItem>>(
+                              message: l10n.noPlayersFound,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : ListView.separated(
+                      key: const Key('players_directory_list'),
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      padding: const EdgeInsets.all(
+                        KickPulseRadiiSpacing.spaceMd,
+                      ),
+                      itemCount: visiblePlayers.length,
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+                      itemBuilder: (context, index) {
+                        final item = visiblePlayers[index];
+                        final p = item.player;
 
-                      return KickPulseCard(
-                        key: Key('player_item_${p.id}'),
-                        onTap: () => _onPlayerTapped(context, item),
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundColor: KickPulseColors.surfaceElevated,
-                              child: Text(
-                                '#${p.shirtNumber}',
-                                style: const TextStyle(
-                                  color: KickPulseColors.accentElectric,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 15,
+                        return KickPulseCard(
+                          key: Key('player_item_${p.id}'),
+                          onTap: () => _onPlayerTapped(context, item),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 20,
+                                backgroundColor:
+                                    KickPulseColors.surfaceElevated,
+                                child: Text(
+                                  '#${p.shirtNumber}',
+                                  style: const TextStyle(
+                                    color: KickPulseColors.accentElectric,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 15,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(
-                              width: KickPulseRadiiSpacing.spaceMd,
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          p.fullName,
-                                          style: KickPulseTypography.bodyPrimary
-                                              .copyWith(
-                                                color:
-                                                    KickPulseColors.textPrimary,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: KickPulseRadiiSpacing.spaceXs,
-                                      ),
-                                      KickPulseBadge(
-                                        label: _positionLabel(l10n, p.position),
-                                        variant: KickPulseBadgeVariant.neutral,
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: KickPulseRadiiSpacing.spaceXs,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          '${item.teamName} (${item.teamShortCode})',
-                                          style: KickPulseTypography.captionMeta
-                                              .copyWith(
-                                                color: KickPulseColors
-                                                    .textSecondary,
-                                              ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: KickPulseRadiiSpacing.spaceXs,
-                                      ),
-                                      KickPulseBadge(
-                                        label: p.isEligible
-                                            ? 'Elegible'
-                                            : 'Inactivo',
-                                        variant: p.isEligible
-                                            ? KickPulseBadgeVariant.live
-                                            : KickPulseBadgeVariant.neutral,
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                              const SizedBox(
+                                width: KickPulseRadiiSpacing.spaceMd,
                               ),
-                            ),
-                            const SizedBox(
-                              width: KickPulseRadiiSpacing.spaceXs,
-                            ),
-                            const Icon(
-                              Icons.chevron_right,
-                              color: KickPulseColors.textSecondary,
-                              size: 20,
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            p.fullName,
+                                            style: KickPulseTypography
+                                                .bodyPrimary
+                                                .copyWith(
+                                                  color: KickPulseColors
+                                                      .textPrimary,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: KickPulseRadiiSpacing.spaceXs,
+                                        ),
+                                        KickPulseBadge(
+                                          label: _positionLabel(
+                                            l10n,
+                                            p.position,
+                                          ),
+                                          variant:
+                                              KickPulseBadgeVariant.neutral,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: KickPulseRadiiSpacing.spaceXs,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            '${item.teamName} (${item.teamShortCode})',
+                                            style: KickPulseTypography
+                                                .captionMeta
+                                                .copyWith(
+                                                  color: KickPulseColors
+                                                      .textSecondary,
+                                                ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: KickPulseRadiiSpacing.spaceXs,
+                                        ),
+                                        KickPulseBadge(
+                                          label: p.isEligible
+                                              ? 'Elegible'
+                                              : 'Inactivo',
+                                          variant: p.isEligible
+                                              ? KickPulseBadgeVariant.live
+                                              : KickPulseBadgeVariant.neutral,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                width: KickPulseRadiiSpacing.spaceXs,
+                              ),
+                              const Icon(
+                                Icons.chevron_right,
+                                color: KickPulseColors.textSecondary,
+                                size: 20,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+            ),
           ),
         ],
       ),

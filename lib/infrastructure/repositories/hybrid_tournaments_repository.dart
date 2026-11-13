@@ -106,11 +106,7 @@ class PostgrestTournamentsRemoteDataSource
       tournamentId,
       'tournament',
     );
-    await client
-        .schema(schema)
-        .from('tournaments')
-        .delete()
-        .eq('id', targetId);
+    await client.schema(schema).from('tournaments').delete().eq('id', targetId);
   }
 
   ChampionshipTournament _fromRow(Map<String, dynamic> row) {

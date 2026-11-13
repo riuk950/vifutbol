@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart' show SupabaseClient;
+import 'package:vifutbol/domain/entities/player_directory_item.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/sync_outbox_item.dart';
 import 'package:vifutbol/domain/entities/sync_status.dart';
@@ -18,6 +19,7 @@ abstract interface class TeamsRemoteDataSource {
     List<TournamentTeam> teams,
   );
   Future<void> deleteById(String teamId);
+  Future<List<PlayerDirectoryItem>> fetchAllPlayers();
 }
 
 /// PostgREST implementation targeting `vifutboldev.teams`, `tournament_teams`, and `players`.
@@ -91,7 +93,8 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
         .eq('id', safeTeamId)
         .maybeSingle();
 
-    final masterTeamId = (existingEnrollment?['team_id'] as String?) ??
+    final masterTeamId =
+        (existingEnrollment?['team_id'] as String?) ??
         HybridRepositorySupport.ensureUuid(team.id, 'team');
 
     // 1. Upsert parent club in `teams`
@@ -239,6 +242,87 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
       updatedAt: DateTime.parse(row['updated_at'] as String).toLocal(),
     );
   }
+
+  @override
+  Future<List<PlayerDirectoryItem>> fetchAllPlayers() async {
+    try {
+      final rows = await client
+          .schema(schema)
+          .from('players')
+          .select(
+            '*, tournament_teams(id, tournament_id, team_id, teams(id, name, short_code)), tournaments(id, name)',
+          )
+          .order('full_name', ascending: true);
+
+      final List<PlayerDirectoryItem> items = [];
+      for (final raw in (rows as List<dynamic>)) {
+        final row = Map<String, dynamic>.from(raw as Map);
+        final tournamentTeamMap = row['tournament_teams'] is Map
+            ? Map<String, dynamic>.from(row['tournament_teams'] as Map)
+            : const <String, dynamic>{};
+        final teamMap = tournamentTeamMap['teams'] is Map
+            ? Map<String, dynamic>.from(tournamentTeamMap['teams'] as Map)
+            : const <String, dynamic>{};
+        final tournamentMap = row['tournaments'] is Map
+            ? Map<String, dynamic>.from(row['tournaments'] as Map)
+            : const <String, dynamic>{};
+
+        final player = RegisteredPlayer(
+          id: row['id'] as String,
+          fullName: row['full_name'] as String,
+          documentId: row['document_id'] as String,
+          shirtNumber: (row['shirt_number'] as num).toInt(),
+          position: PlayerPosition.values.firstWhere(
+            (pos) => pos.name == row['position'],
+            orElse: () => PlayerPosition.midfielder,
+          ),
+          isEligible: row['is_eligible'] as bool? ?? false,
+        );
+
+        items.add(
+          PlayerDirectoryItem(
+            player: player,
+            teamId:
+                tournamentTeamMap['id'] as String? ??
+                (row['tournament_team_id'] as String? ?? ''),
+            teamName: teamMap['name'] as String? ?? 'Equipo',
+            teamShortCode: teamMap['short_code'] as String? ?? 'EQ',
+            tournamentId: row['tournament_id'] as String? ?? '',
+            tournamentName: tournamentMap['name'] as String? ?? '',
+          ),
+        );
+      }
+      items.sort(
+        (a, b) => a.player.fullName.toLowerCase().compareTo(
+          b.player.fullName.toLowerCase(),
+        ),
+      );
+      return items;
+    } catch (_) {
+      final teams = await fetchAll();
+      final List<PlayerDirectoryItem> items = [];
+      for (final team in teams) {
+        for (final p in team.players) {
+          items.add(
+            PlayerDirectoryItem(
+              player: p,
+              teamId: team.id,
+              teamName: team.name,
+              teamShortCode: team.shortCode,
+              tournamentId: team.tournamentId,
+              tournamentName: '',
+            ),
+          );
+        }
+      }
+      items.sort(
+        (a, b) => a.player.fullName.toLowerCase().compareTo(
+          b.player.fullName.toLowerCase(),
+        ),
+      );
+      return items;
+    }
+  }
 }
 
 /// Offline-first hybrid [TeamsRepository] coordinating local cache, Supabase, and FIFO outbox.
@@ -259,6 +343,21 @@ class HybridTeamsRepository implements TeamsRepository {
       remoteFetch: remote.fetchAll,
       cacheUpdate: local.replaceAllCache,
       localFallback: local.loadTeams,
+    );
+  }
+
+  @override
+  Future<List<PlayerDirectoryItem>> loadAllPlayers() {
+    return support.executeRead(
+      remoteFetch: () async {
+        try {
+          final teams = await remote.fetchAll();
+          await local.replaceAllCache(teams);
+        } catch (_) {}
+        return remote.fetchAllPlayers();
+      },
+      cacheUpdate: (_) async {},
+      localFallback: local.loadAllPlayers,
     );
   }
 

@@ -4101,5 +4101,9 @@
   "capViewCloudSyncIndicator": "Indicador de sincronización en la nube",
   "@capViewCloudSyncIndicator": {
     "description": "Permiso RBAC para visualizar el estado de sincronización en el AppBar"
+  },
+  "playersDirectoryOfflineRefreshWarning": "Sin conexión a internet. Mostrando nómina local disponible.",
+  "@playersDirectoryOfflineRefreshWarning": {
+    "description": "Aviso informativo al intentar refrescar la lista de jugadores sin conectividad"
   }
 }

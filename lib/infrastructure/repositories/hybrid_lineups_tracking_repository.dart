@@ -118,9 +118,7 @@ class PostgrestLineupsTrackingRemoteDataSource
       'tournament',
     );
     await client.schema(schema).from('player_internal_trackings').upsert({
-      'id': support.deterministicUuid(
-        'tracking|$safePlayerId|$safeTeamId',
-      ),
+      'id': support.deterministicUuid('tracking|$safePlayerId|$safeTeamId'),
       'player_id': safePlayerId,
       'tournament_team_id': safeTeamId,
       'tournament_id': safeTournamentId,

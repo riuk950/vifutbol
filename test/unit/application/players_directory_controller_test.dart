@@ -1,41 +1,23 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:vifutbol/application/controllers/players_directory_controller.dart';
-import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
-import 'package:vifutbol/domain/entities/tournament_enums.dart';
+import 'package:vifutbol/domain/entities/ui_view_state.dart';
+import 'package:vifutbol/domain/repositories/teams_repository.dart';
+
+class _MockTeamsRepository extends Mock implements TeamsRepository {}
 
 void main() {
   group('PlayersDirectoryController & State', () {
-    late ChampionshipTournament tournament1;
-    late ChampionshipTournament tournament2;
+    late _MockTeamsRepository teamsRepository;
     late PlayerDirectoryItem player1;
     late PlayerDirectoryItem player2;
     late PlayerDirectoryItem player3;
     late PlayerDirectoryItem player4;
 
     setUp(() {
-      tournament1 = ChampionshipTournament(
-        id: 'tourn-1',
-        name: 'Liga Premier Apertura',
-        category: 'Libre',
-        format: TournamentFormat.league,
-        status: TournamentStatus.inProgress,
-        startDate: DateTime(2026, 3, 1),
-        endDate: DateTime(2026, 6, 30),
-        updatedAt: DateTime(2026, 3, 1),
-      );
-
-      tournament2 = ChampionshipTournament(
-        id: 'tourn-2',
-        name: 'Copa Élite',
-        category: 'Sub-20',
-        format: TournamentFormat.knockoutCup,
-        status: TournamentStatus.openRegistration,
-        startDate: DateTime(2026, 7, 1),
-        endDate: DateTime(2026, 8, 15),
-        updatedAt: DateTime(2026, 7, 1),
-      );
+      teamsRepository = _MockTeamsRepository();
 
       player1 = const PlayerDirectoryItem(
         player: RegisteredPlayer(
@@ -102,37 +84,125 @@ void main() {
       );
     });
 
-    test('initial state contains all players and null tournament filter', () {
+    test(
+      'initial state sorts players alphabetically A-Z by fullName without tournament fields',
+      () {
+        final controller = PlayersDirectoryController(
+          initialPlayers: [player1, player2, player3, player4],
+        );
+
+        expect(controller.state.allPlayers.length, 4);
+        expect(controller.state.filteredPlayers.length, 4);
+        expect(controller.state.searchQuery, isEmpty);
+
+        // Alphabetical check: Andrés (p-2) -> Carlos (p-1) -> Mateo (p-3) -> Sebastián (p-4)
+        expect(
+          controller.state.filteredPlayers[0].player.fullName,
+          'Andrés Álvarez',
+        );
+        expect(
+          controller.state.filteredPlayers[1].player.fullName,
+          'Carlos Gómez',
+        );
+        expect(
+          controller.state.filteredPlayers[2].player.fullName,
+          'Mateo Fernández',
+        );
+        expect(
+          controller.state.filteredPlayers[3].player.fullName,
+          'Sebastián Peña',
+        );
+      },
+    );
+
+    test(
+      'loadPlayers fetches from TeamsRepository and updates state',
+      () async {
+        when(
+          () => teamsRepository.loadAllPlayers(),
+        ).thenAnswer((_) async => [player1, player2]);
+
+        final controller = PlayersDirectoryController(
+          teamsRepository: teamsRepository,
+        );
+
+        expect(controller.state.allPlayers, isEmpty);
+        await controller.loadPlayers();
+
+        expect(controller.state.allPlayers.length, 2);
+        expect(
+          controller.state.viewState,
+          isA<UiContentState<List<PlayerDirectoryItem>>>(),
+        );
+        expect(
+          controller.state.filteredPlayers[0].player.fullName,
+          'Andrés Álvarez',
+        );
+        verify(() => teamsRepository.loadAllPlayers()).called(1);
+      },
+    );
+
+    test(
+      'loadPlayers sets UiErrorState when empty and repository throws exception',
+      () async {
+        when(
+          () => teamsRepository.loadAllPlayers(),
+        ).thenThrow(Exception('DB error'));
+
+        final controller = PlayersDirectoryController(
+          teamsRepository: teamsRepository,
+        );
+
+        await controller.loadPlayers();
+
+        expect(controller.state.allPlayers, isEmpty);
+        expect(
+          controller.state.viewState,
+          isA<UiErrorState<List<PlayerDirectoryItem>>>(),
+        );
+      },
+    );
+
+    test('refreshPlayers returns true on success and updates data', () async {
+      when(
+        () => teamsRepository.loadAllPlayers(),
+      ).thenAnswer((_) async => [player1, player2, player3]);
+
       final controller = PlayersDirectoryController(
-        initialPlayers: [player1, player2, player3, player4],
-        availableTournaments: [tournament1, tournament2],
+        teamsRepository: teamsRepository,
+        initialPlayers: [player1],
       );
 
-      expect(controller.state.allPlayers.length, 4);
-      expect(controller.state.filteredPlayers.length, 4);
-      expect(controller.state.selectedTournamentId, isNull);
-      expect(controller.state.searchQuery, isEmpty);
+      final result = await controller.refreshPlayers();
+
+      expect(result, isTrue);
+      expect(controller.state.allPlayers.length, 3);
     });
 
-    test('filters players by selected tournament', () {
-      final controller = PlayersDirectoryController(
-        initialPlayers: [player1, player2, player3, player4],
-        availableTournaments: [tournament1, tournament2],
-      );
+    test(
+      'refreshPlayers returns false on exception and preserves existing state',
+      () async {
+        when(
+          () => teamsRepository.loadAllPlayers(),
+        ).thenThrow(Exception('Network error'));
 
-      controller.selectTournament('tourn-2');
-      expect(controller.state.filteredPlayers.length, 1);
-      expect(controller.state.filteredPlayers.first.player.id, 'p-4');
+        final controller = PlayersDirectoryController(
+          teamsRepository: teamsRepository,
+          initialPlayers: [player1, player2],
+        );
 
-      // Clear tournament filter by passing null
-      controller.selectTournament(null);
-      expect(controller.state.filteredPlayers.length, 4);
-    });
+        final result = await controller.refreshPlayers();
+
+        expect(result, isFalse);
+        // Existing players preserved
+        expect(controller.state.allPlayers.length, 2);
+        expect(controller.state.filteredPlayers.length, 2);
+      },
+    );
 
     test('filters players by full name (case and accent insensitive)', () {
       final controller = PlayersDirectoryController(
         initialPlayers: [player1, player2, player3, player4],
-        availableTournaments: [tournament1, tournament2],
       );
 
       // Search 'alvarez' should match 'Andrés Álvarez'
@@ -149,7 +219,6 @@ void main() {
     test('filters players by shirt number', () {
       final controller = PlayersDirectoryController(
         initialPlayers: [player1, player2, player3, player4],
-        availableTournaments: [tournament1, tournament2],
       );
 
       controller.updateSearchQuery('10');
@@ -160,7 +229,6 @@ void main() {
     test('filters players by position name and localized Spanish position', () {
       final controller = PlayersDirectoryController(
         initialPlayers: [player1, player2, player3, player4],
-        availableTournaments: [tournament1, tournament2],
       );
 
       // Spanish position: 'portero'
@@ -177,7 +245,6 @@ void main() {
     test('filters players by team name or team shortCode', () {
       final controller = PlayersDirectoryController(
         initialPlayers: [player1, player2, player3, player4],
-        availableTournaments: [tournament1, tournament2],
       );
 
       // Search by team shortCode 'AGU'
@@ -191,26 +258,9 @@ void main() {
       expect(controller.state.filteredPlayers.first.player.id, 'p-3');
     });
 
-    test('combines tournament filter and search query correctly', () {
-      final controller = PlayersDirectoryController(
-        initialPlayers: [player1, player2, player3, player4],
-        availableTournaments: [tournament1, tournament2],
-      );
-
-      controller.selectTournament('tourn-1');
-      controller.updateSearchQuery('Carlos');
-      expect(controller.state.filteredPlayers.length, 1);
-      expect(controller.state.filteredPlayers.first.player.id, 'p-1');
-
-      // 'Peña' belongs to tourn-2, so with tourn-1 filter it should yield empty
-      controller.updateSearchQuery('Peña');
-      expect(controller.state.filteredPlayers, isEmpty);
-    });
-
     test('clearSearchQuery resets the query', () {
       final controller = PlayersDirectoryController(
         initialPlayers: [player1, player2],
-        availableTournaments: [tournament1],
       );
 
       controller.updateSearchQuery('Carlos');

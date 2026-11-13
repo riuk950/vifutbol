@@ -3211,4 +3211,8 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get capViewCloudSyncIndicator =>
       'Indicador de sincronización en la nube';
+
+  @override
+  String get playersDirectoryOfflineRefreshWarning =>
+      'Sin conexión a internet. Mostrando nómina local disponible.';
 }

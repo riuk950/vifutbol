@@ -380,13 +380,7 @@ void main() {
 
         // Schedule Match A on Pitch 1 from 14:00 (future date)
         final now = DateTime.now();
-        final scheduledTime = DateTime(
-          now.year + 1,
-          6,
-          1,
-          14,
-          0,
-        );
+        final scheduledTime = DateTime(now.year + 1, 6, 1, 14, 0);
         await fixtureUseCase.scheduleMatch(
           matchId: matchA.id,
           tournament: testTournament,

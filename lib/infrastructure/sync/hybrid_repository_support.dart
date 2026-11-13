@@ -44,7 +44,10 @@ class HybridRepositorySupport {
   static String ensureUuid(String id, [String namespacePrefix = 'entity']) {
     final valid = uuidOrNull(id);
     if (valid != null) return valid;
-    return const Uuid().v5(Namespace.url.value, '$namespacePrefix|${id.trim()}');
+    return const Uuid().v5(
+      Namespace.url.value,
+      '$namespacePrefix|${id.trim()}',
+    );
   }
 
   /// Returns [id] converted to a deterministic UUID v5 if non-null and not empty;

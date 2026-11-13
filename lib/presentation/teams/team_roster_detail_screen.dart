@@ -768,8 +768,7 @@ class _PlayerEnrollmentDialogState
 
   Future<void> _submit() async {
     final parsedShirt = int.tryParse(_shirtNumberController.text.trim()) ?? 0;
-    final playerId =
-        widget.existingPlayer?.id ?? const Uuid().v4();
+    final playerId = widget.existingPlayer?.id ?? const Uuid().v4();
 
     final player = RegisteredPlayer(
       id: playerId,

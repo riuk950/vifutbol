@@ -13,6 +13,7 @@ import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/connectivity_status.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
+import 'package:vifutbol/domain/entities/player_directory_item.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_draft.dart';
@@ -124,6 +125,31 @@ class FakeTeamsRepository implements TeamsRepository {
   @override
   Future<void> deleteTeam(String teamId) async {
     teams.removeWhere((t) => t.id == teamId);
+  }
+
+  @override
+  Future<List<PlayerDirectoryItem>> loadAllPlayers() async {
+    final List<PlayerDirectoryItem> items = [];
+    for (final team in teams) {
+      for (final p in team.players) {
+        items.add(
+          PlayerDirectoryItem(
+            player: p,
+            teamId: team.id,
+            teamName: team.name,
+            teamShortCode: team.shortCode,
+            tournamentId: team.tournamentId,
+            tournamentName: '',
+          ),
+        );
+      }
+    }
+    items.sort(
+      (a, b) => a.player.fullName.toLowerCase().compareTo(
+        b.player.fullName.toLowerCase(),
+      ),
+    );
+    return items;
   }
 }
 

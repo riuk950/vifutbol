@@ -1,87 +1,55 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/utils/search_utils.dart';
-import 'package:vifutbol/domain/entities/championship_tournament.dart';
-import 'package:vifutbol/domain/entities/player_performance_profile.dart';
-import 'package:vifutbol/domain/entities/registered_player.dart';
+import 'package:vifutbol/domain/entities/player_directory_item.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/ui_view_state.dart';
+import 'package:vifutbol/domain/failures/app_failure.dart';
+import 'package:vifutbol/domain/repositories/teams_repository.dart';
 
-/// Presentation projection representing an enrolled player in the directory.
-class PlayerDirectoryItem {
-  final RegisteredPlayer player;
-  final String teamId;
-  final String teamName;
-  final String teamShortCode;
-  final String tournamentId;
-  final String tournamentName;
-
-  const PlayerDirectoryItem({
-    required this.player,
-    required this.teamId,
-    required this.teamName,
-    required this.teamShortCode,
-    required this.tournamentId,
-    required this.tournamentName,
-  });
-
-  /// Converts this directory item into a [PlayerPerformanceProfile] for performance modals.
-  PlayerPerformanceProfile toPerformanceProfile() {
-    return PlayerPerformanceProfile(
-      playerId: player.id,
-      tournamentId: tournamentId,
-      fullName: player.fullName,
-      shirtNumber: player.shirtNumber,
-      position: player.position,
-      teamId: teamId,
-      teamName: teamName,
-      teamShortCode: teamShortCode,
-      isSuspended: !player.isEligible,
-    );
-  }
-}
+export 'package:vifutbol/domain/entities/player_directory_item.dart';
 
 /// State representation for the Players Directory screen.
 class PlayersDirectoryState {
   final List<PlayerDirectoryItem> allPlayers;
-  final List<ChampionshipTournament> availableTournaments;
-  final String? selectedTournamentId;
   final String searchQuery;
   final UiViewState<List<PlayerDirectoryItem>> viewState;
 
   const PlayersDirectoryState({
     required this.allPlayers,
-    required this.availableTournaments,
-    required this.selectedTournamentId,
     required this.searchQuery,
     required this.viewState,
   });
 
   factory PlayersDirectoryState.initial({
     List<PlayerDirectoryItem> initialPlayers = const [],
-    List<ChampionshipTournament> availableTournaments = const [],
-    String? selectedTournamentId,
   }) {
+    final sorted = List<PlayerDirectoryItem>.from(initialPlayers)
+      ..sort(
+        (a, b) => a.player.fullName.toLowerCase().compareTo(
+          b.player.fullName.toLowerCase(),
+        ),
+      );
+
     return PlayersDirectoryState(
-      allPlayers: initialPlayers,
-      availableTournaments: availableTournaments,
-      selectedTournamentId: selectedTournamentId,
+      allPlayers: sorted,
       searchQuery: '',
-      viewState: initialPlayers.isEmpty
+      viewState: sorted.isEmpty
           ? const UiEmptyState<List<PlayerDirectoryItem>>()
-          : UiContentState<List<PlayerDirectoryItem>>(initialPlayers),
+          : UiContentState<List<PlayerDirectoryItem>>(sorted),
     );
   }
 
-  /// Filtered players matching tournament filter and multi-field search query.
+  /// Filtered players matching multi-field search query, sorted alphabetically A-Z.
   List<PlayerDirectoryItem> get filteredPlayers {
-    var items = allPlayers;
-    if (selectedTournamentId != null) {
-      items = items
-          .where((p) => p.tournamentId == selectedTournamentId)
-          .toList();
-    }
-
     final trimmedQuery = searchQuery.trim();
+    final items = List<PlayerDirectoryItem>.from(allPlayers);
+
+    items.sort(
+      (a, b) => a.player.fullName.toLowerCase().compareTo(
+        b.player.fullName.toLowerCase(),
+      ),
+    );
+
     if (trimmedQuery.isEmpty) return items;
 
     return items.where((item) {
@@ -121,37 +89,64 @@ class PlayersDirectoryState {
 
   PlayersDirectoryState copyWith({
     List<PlayerDirectoryItem>? allPlayers,
-    List<ChampionshipTournament>? availableTournaments,
-    String? selectedTournamentId,
-    bool clearTournamentSelection = false,
     String? searchQuery,
     UiViewState<List<PlayerDirectoryItem>>? viewState,
   }) {
     return PlayersDirectoryState(
       allPlayers: allPlayers ?? this.allPlayers,
-      availableTournaments: availableTournaments ?? this.availableTournaments,
-      selectedTournamentId: clearTournamentSelection
-          ? null
-          : (selectedTournamentId ?? this.selectedTournamentId),
       searchQuery: searchQuery ?? this.searchQuery,
       viewState: viewState ?? this.viewState,
     );
   }
 }
 
-/// StateNotifier controlling player filtering and search state for the Players Directory.
+/// StateNotifier controlling player loading, refresh, and search for the Players Directory.
 class PlayersDirectoryController extends StateNotifier<PlayersDirectoryState> {
   PlayersDirectoryController({
+    this.teamsRepository,
     List<PlayerDirectoryItem> initialPlayers = const [],
-    List<ChampionshipTournament> availableTournaments = const [],
-    String? initialTournamentId,
-  }) : super(
-         PlayersDirectoryState.initial(
-           initialPlayers: initialPlayers,
-           availableTournaments: availableTournaments,
-           selectedTournamentId: initialTournamentId,
-         ),
-       );
+  }) : super(PlayersDirectoryState.initial(initialPlayers: initialPlayers));
+
+  final TeamsRepository? teamsRepository;
+
+  /// Loads players from [TeamsRepository] (Supabase cloud or local Hive cache).
+  Future<void> loadPlayers() async {
+    if (teamsRepository == null) return;
+
+    if (state.allPlayers.isEmpty) {
+      state = state.copyWith(
+        viewState: const UiLoadingState<List<PlayerDirectoryItem>>(),
+      );
+    }
+
+    try {
+      final players = await teamsRepository!.loadAllPlayers();
+      updateData(players: players);
+    } catch (e) {
+      if (state.allPlayers.isEmpty) {
+        state = state.copyWith(
+          viewState: UiErrorState<List<PlayerDirectoryItem>>(
+            DataLoadFailure(e.toString(), e),
+          ),
+        );
+      }
+    }
+  }
+
+  /// Triggers a pull-to-refresh reload from the cloud.
+  /// Returns `true` if reload succeeded, or `false` on failure (e.g. offline).
+  Future<bool> refreshPlayers() async {
+    if (teamsRepository == null) return true;
+
+    try {
+      final players = await teamsRepository!.loadAllPlayers();
+      updateData(players: players);
+      return true;
+    } catch (_) {
+      // Preserve existing data on failure and signal caller
+      return false;
+    }
+  }
 
   /// Updates the real-time search query.
   void updateSearchQuery(String query) {
@@ -163,25 +158,20 @@ class PlayersDirectoryController extends StateNotifier<PlayersDirectoryState> {
     state = state.copyWith(searchQuery: '');
   }
 
-  /// Sets or clears the active tournament filter.
-  void selectTournament(String? tournamentId) {
-    state = state.copyWith(
-      selectedTournamentId: tournamentId,
-      clearTournamentSelection: tournamentId == null,
-    );
-  }
+  /// Updates the directory players list.
+  void updateData({required List<PlayerDirectoryItem> players}) {
+    final sorted = List<PlayerDirectoryItem>.from(players)
+      ..sort(
+        (a, b) => a.player.fullName.toLowerCase().compareTo(
+          b.player.fullName.toLowerCase(),
+        ),
+      );
 
-  /// Updates the raw players and tournaments data.
-  void updateData({
-    required List<PlayerDirectoryItem> players,
-    required List<ChampionshipTournament> tournaments,
-  }) {
     state = state.copyWith(
-      allPlayers: players,
-      availableTournaments: tournaments,
-      viewState: players.isEmpty
+      allPlayers: sorted,
+      viewState: sorted.isEmpty
           ? const UiEmptyState<List<PlayerDirectoryItem>>()
-          : UiContentState<List<PlayerDirectoryItem>>(players),
+          : UiContentState<List<PlayerDirectoryItem>>(sorted),
     );
   }
 }

@@ -5517,6 +5517,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Indicador de sincronización en la nube'**
   String get capViewCloudSyncIndicator;
+
+  /// Aviso informativo al intentar refrescar la lista de jugadores sin conectividad
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión a internet. Mostrando nómina local disponible.'**
+  String get playersDirectoryOfflineRefreshWarning;
 }
 
 class _AppLocalizationsDelegate

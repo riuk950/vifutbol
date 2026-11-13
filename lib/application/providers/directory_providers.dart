@@ -53,35 +53,13 @@ final playersDirectoryControllerProvider =
       PlayersDirectoryController,
       PlayersDirectoryState
     >((ref) {
-      final tournaments = ref.watch(tournamentsControllerProvider).tournaments;
       final teamsRepository = ref.watch(teamsRepositoryProvider);
 
       final controller = PlayersDirectoryController(
-        availableTournaments: tournaments,
+        teamsRepository: teamsRepository,
       );
 
-      teamsRepository.loadTeams().then((teams) {
-        if (controller.mounted) {
-          final tournamentMap = {for (final t in tournaments) t.id: t.name};
-          final List<PlayerDirectoryItem> items = [];
-          for (final team in teams) {
-            final tName = tournamentMap[team.tournamentId] ?? '';
-            for (final player in team.players) {
-              items.add(
-                PlayerDirectoryItem(
-                  player: player,
-                  teamId: team.id,
-                  teamName: team.name,
-                  teamShortCode: team.shortCode,
-                  tournamentId: team.tournamentId,
-                  tournamentName: tName,
-                ),
-              );
-            }
-          }
-          controller.updateData(players: items, tournaments: tournaments);
-        }
-      });
+      controller.loadPlayers();
 
       return controller;
     });
