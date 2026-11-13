@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/tournament_news_category.dart';
 import 'package:vifutbol/domain/entities/tournament_news_item.dart';
@@ -74,7 +75,7 @@ class _CreateNewsDialogState extends State<CreateNewsDialog> {
     if (_formKey.currentState?.validate() != true) return;
 
     final item = TournamentNewsItem(
-      id: 'news-${DateTime.now().millisecondsSinceEpoch}',
+      id: const Uuid().v4(),
       tournamentId: _selectedTournamentId,
       title: _titleController.text.trim(),
       body: _bodyController.text.trim(),

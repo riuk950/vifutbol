@@ -90,6 +90,11 @@ class LocalMatchAlertsRepository implements MatchAlertsRepository {
     await _persist([]);
   }
 
+  /// Replaces local alerts cache and broadcasts updates to tray watchers.
+  Future<void> replaceAllCache(List<MatchLiveAlert> alerts) {
+    return _persist(alerts);
+  }
+
   void _sortAlerts(List<MatchLiveAlert> list) {
     list.sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }

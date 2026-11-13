@@ -1,20 +1,44 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/controllers/venues_controller.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
+import 'package:vifutbol/application/providers/supabase_providers.dart';
+import 'package:vifutbol/application/providers/sync_providers.dart';
 import 'package:vifutbol/application/use_cases/manage_venues_use_case.dart';
 import 'package:vifutbol/application/use_cases/query_venues_geolocation_use_case.dart';
+import 'package:vifutbol/domain/entities/sync_status.dart';
 import 'package:vifutbol/domain/entities/venues_catalog_state.dart';
 import 'package:vifutbol/domain/repositories/location_permission_repository.dart';
 import 'package:vifutbol/domain/repositories/venues_repository.dart';
 import 'package:vifutbol/infrastructure/location/device_location_permission_repository.dart';
+import 'package:vifutbol/infrastructure/venues/hybrid_venues_repository.dart';
 import 'package:vifutbol/infrastructure/venues/local_venues_repository.dart';
 
 /// Provider exposing the concrete [VenuesRepository] implementation.
 final venuesRepositoryProvider = Provider<VenuesRepository>((ref) {
   final storage = ref.watch(localStorageRepositoryProvider);
   final config = ref.watch(environmentConfigProvider);
+  final local = LocalVenuesRepository(storage: storage, config: config);
 
-  return LocalVenuesRepository(storage: storage, config: config);
+  final useRemote = ref.watch(isRemoteCloudSyncEnabledProvider);
+  final client = ref.watch(supabaseClientProvider);
+  if (!useRemote || client == null) {
+    return local;
+  }
+
+  final support = ref.watch(hybridRepositorySupportProvider);
+  final remote = PostgrestVenuesRemoteDataSource(
+    client: client,
+    schema: config.supabase.schema,
+  );
+  final hybrid = HybridVenuesRepository(
+    local: local,
+    remote: remote,
+    support: support,
+  );
+  ref
+      .read(supabaseCloudSyncServiceProvider)
+      .registerHandler(SyncOutboxEntityType.venue, hybrid.replayOutboxItem);
+  return hybrid;
 });
 
 /// Provider exposing the [LocationPermissionRepository] implementation.

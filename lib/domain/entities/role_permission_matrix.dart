@@ -31,6 +31,9 @@ enum RoleCapability {
 
   /// Browse public tournament standings, fixtures, results, and venues.
   viewPublicContent,
+
+  /// View the persistent cloud sync indicator and outbox summary drawer in the AppBar.
+  viewCloudSyncIndicator,
 }
 
 /// Pure domain matrix defining access control rules and role capabilities.
@@ -47,18 +50,21 @@ class RolePermissionMatrix {
       RoleCapability.closeMatchReport,
       RoleCapability.viewPersonalStats,
       RoleCapability.viewPublicContent,
+      RoleCapability.viewCloudSyncIndicator,
     },
     UserRole.coach: {
       RoleCapability.manageTeamRoster,
       RoleCapability.manageLineups,
       RoleCapability.viewPersonalStats,
       RoleCapability.viewPublicContent,
+      RoleCapability.viewCloudSyncIndicator,
     },
     UserRole.referee: {
       RoleCapability.recordMatchEvents,
       RoleCapability.closeMatchReport,
       RoleCapability.viewPersonalStats,
       RoleCapability.viewPublicContent,
+      RoleCapability.viewCloudSyncIndicator,
     },
     UserRole.player: {
       RoleCapability.viewPersonalStats,

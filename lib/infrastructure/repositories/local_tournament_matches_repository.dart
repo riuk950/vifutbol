@@ -125,6 +125,17 @@ class LocalTournamentMatchesRepository implements TournamentMatchesRepository {
     return const <ChampionshipMatch>[];
   }
 
+  /// Replaces the full local matches cache with fresh remote data and notifies listeners.
+  Future<void> replaceAllMatchesCache(List<ChampionshipMatch> matches) {
+    return _persistMatches(matches);
+  }
+
+  /// Replaces cached official referees with fresh remote data.
+  Future<void> replaceOfficialRefereesCache(List<MatchReferee> referees) async {
+    final serialized = jsonEncode(referees.map((r) => r.toJson()).toList());
+    await storage.writeString(refereesStorageKey, serialized);
+  }
+
   Future<void> _persistMatches(List<ChampionshipMatch> matches) async {
     final jsonList = matches.map((m) => m.toJson()).toList();
     await storage.writeString(matchesStorageKey, jsonEncode(jsonList));

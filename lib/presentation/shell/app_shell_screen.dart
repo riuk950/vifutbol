@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/controllers/app_shell_controller.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
+import 'package:vifutbol/application/providers/sync_bootstrap_provider.dart';
 import 'package:vifutbol/domain/entities/app_shell_section.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/alerts/widgets/fan_alerts_bell_action.dart';
@@ -15,6 +16,7 @@ import 'package:vifutbol/presentation/shell/tabs/news_tab_view.dart';
 import 'package:vifutbol/presentation/shell/tabs/profile_tab_view.dart';
 import 'package:vifutbol/presentation/shell/widgets/app_navigation_drawer.dart';
 import 'package:vifutbol/presentation/shell/widgets/connectivity_banner.dart';
+import 'package:vifutbol/presentation/sync/sync_status_app_bar_action.dart';
 
 /// Root App Shell container with 4-tab bottom navigation, environment badge,
 /// and reactive connectivity banner.
@@ -91,6 +93,11 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
 
   @override
   Widget build(BuildContext context) {
+    try {
+      ref.watch(cloudSyncBootstrapProvider);
+    } catch (_) {
+      // Safe fallback in minimal widget tests without Supabase overrides.
+    }
     final shellState = ref.watch(appShellControllerProvider);
     final envConfig = ref.watch(environmentConfigProvider);
     final l10n = AppLocalizations.of(context);
@@ -149,6 +156,7 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
               tooltip: l10n.newsFilterMenuTooltip,
               onPressed: () => NewsFilterBottomSheet.show(context),
             ),
+          const SyncStatusAppBarAction(),
           const FanAlertsBellAction(userId: 'user-active-current'),
         ],
       ),

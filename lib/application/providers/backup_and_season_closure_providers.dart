@@ -4,13 +4,17 @@ import 'package:vifutbol/application/controllers/standings_and_rankings_controll
 import 'package:vifutbol/application/providers/digital_match_report_providers.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
+import 'package:vifutbol/application/providers/supabase_providers.dart';
+import 'package:vifutbol/application/providers/sync_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournament_news_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/application/use_cases/close_tournament_season_use_case.dart';
 import 'package:vifutbol/application/use_cases/tournament_backup_use_cases.dart';
 import 'package:vifutbol/domain/entities/season_honor_roll.dart';
+import 'package:vifutbol/domain/entities/sync_status.dart';
 import 'package:vifutbol/domain/repositories/season_honor_roll_repository.dart';
+import 'package:vifutbol/infrastructure/repositories/hybrid_season_honor_roll_repository.dart';
 import 'package:vifutbol/infrastructure/repositories/local_season_honor_roll_repository.dart';
 
 final seasonHonorRollRepositoryProvider = Provider<SeasonHonorRollRepository>((
@@ -18,7 +22,32 @@ final seasonHonorRollRepositoryProvider = Provider<SeasonHonorRollRepository>((
 ) {
   final storage = ref.watch(localStorageRepositoryProvider);
   final env = ref.watch(environmentConfigProvider);
-  return LocalSeasonHonorRollRepository(storage: storage, config: env);
+  final local = LocalSeasonHonorRollRepository(storage: storage, config: env);
+
+  final useRemote = ref.watch(isRemoteCloudSyncEnabledProvider);
+  final client = ref.watch(supabaseClientProvider);
+  if (!useRemote || client == null) {
+    return local;
+  }
+
+  final support = ref.watch(hybridRepositorySupportProvider);
+  final remote = PostgrestSeasonHonorRollRemoteDataSource(
+    client: client,
+    schema: env.supabase.schema,
+    support: support,
+  );
+  final hybrid = HybridSeasonHonorRollRepository(
+    local: local,
+    remote: remote,
+    support: support,
+  );
+  ref
+      .read(supabaseCloudSyncServiceProvider)
+      .registerHandler(
+        SyncOutboxEntityType.seasonHonorRoll,
+        hybrid.replayOutboxItem,
+      );
+  return hybrid;
 });
 
 final validateTournamentBackupUseCaseProvider =

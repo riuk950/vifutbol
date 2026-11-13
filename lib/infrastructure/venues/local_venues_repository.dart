@@ -95,6 +95,11 @@ class LocalVenuesRepository implements VenuesRepository {
     return <SportsVenue>[];
   }
 
+  /// Replaces the local venues cache with fresh remote data.
+  Future<void> replaceAllCache(List<SportsVenue> venues) {
+    return _persistVenues(venues);
+  }
+
   Future<void> _persistVenues(List<SportsVenue> venues) async {
     final jsonList = venues.map((v) => v.toJson()).toList();
     await storage.writeString(storageKey, jsonEncode(jsonList));

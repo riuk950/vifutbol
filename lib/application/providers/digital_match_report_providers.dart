@@ -1,12 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/digital_match_report_state.dart';
+import '../../domain/entities/sync_status.dart';
 import '../../domain/repositories/match_reports_repository.dart';
+import '../../infrastructure/repositories/hybrid_match_reports_repository.dart';
 import '../../infrastructure/repositories/local_match_reports_repository.dart';
 import '../controllers/digital_match_report_controller.dart';
 import '../use_cases/manage_digital_match_report_use_case.dart';
 import 'foundation_providers.dart';
 import 'lineups_tracking_providers.dart';
 import 'matches_catalog_providers.dart';
+import 'supabase_providers.dart';
+import 'sync_providers.dart';
 import 'teams_providers.dart';
 import 'tournaments_providers.dart';
 
@@ -14,7 +18,32 @@ import 'tournaments_providers.dart';
 final matchReportsRepositoryProvider = Provider<MatchReportsRepository>((ref) {
   final storage = ref.watch(localStorageRepositoryProvider);
   final config = ref.watch(environmentConfigProvider);
-  return LocalMatchReportsRepository(storage: storage, config: config);
+  final local = LocalMatchReportsRepository(storage: storage, config: config);
+
+  final useRemote = ref.watch(isRemoteCloudSyncEnabledProvider);
+  final client = ref.watch(supabaseClientProvider);
+  if (!useRemote || client == null) {
+    return local;
+  }
+
+  final support = ref.watch(hybridRepositorySupportProvider);
+  final remote = PostgrestMatchReportsRemoteDataSource(
+    client: client,
+    schema: config.supabase.schema,
+    support: support,
+  );
+  final hybrid = HybridMatchReportsRepository(
+    local: local,
+    remote: remote,
+    support: support,
+  );
+  ref
+      .read(supabaseCloudSyncServiceProvider)
+      .registerHandler(
+        SyncOutboxEntityType.matchReport,
+        hybrid.replayOutboxItem,
+      );
+  return hybrid;
 });
 
 /// Provider exposing [ManageDigitalMatchReportUseCase].

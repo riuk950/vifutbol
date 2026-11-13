@@ -98,6 +98,19 @@ class LocalFanFavoritesRepository implements FanFavoritesRepository {
     }
   }
 
+  /// Replaces cached favorites for a specific [userId] and [tournamentId] scope.
+  Future<void> replaceFavoritesForTournament(
+    String userId,
+    String tournamentId,
+    List<FanFavoriteTeam> favorites,
+  ) async {
+    final all = await _loadAll();
+    final others = all
+        .where((f) => !(f.userId == userId && f.tournamentId == tournamentId))
+        .toList();
+    await _persist([...others, ...favorites]);
+  }
+
   Future<List<FanFavoriteTeam>> _loadAll() async {
     try {
       final dynamic future = storage.readString(favoritesStorageKey);

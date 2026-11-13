@@ -73,6 +73,11 @@ class LocalTeamsRepository implements TeamsRepository {
     await _persistTeams(updated);
   }
 
+  /// Replaces the local teams cache across tournaments with fresh remote data.
+  Future<void> replaceAllCache(List<TournamentTeam> teams) {
+    return _persistTeams(teams);
+  }
+
   Future<void> _persistTeams(List<TournamentTeam> teams) async {
     final serialized = jsonEncode(teams.map((t) => t.toJson()).toList());
     await storage.writeString(catalogStorageKey, serialized);

@@ -3912,5 +3912,194 @@
         "type": "int"
       }
     }
+  },
+  "syncStatusSyncedTooltip": "Datos sincronizados en la nube",
+  "@syncStatusSyncedTooltip": {
+    "description": "Tooltip accesible del AppBar cuando no hay cambios pendientes"
+  },
+  "syncStatusPendingTooltip": "{count, plural, =1{1 cambio pendiente por sincronizar} other{{count} cambios pendientes por sincronizar}}",
+  "@syncStatusPendingTooltip": {
+    "description": "Tooltip accesible del AppBar cuando existen operaciones pendientes en cola",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncStatusSyncingTooltip": "Sincronizando cambios con la nube",
+  "@syncStatusSyncingTooltip": {
+    "description": "Tooltip accesible del AppBar mientras la sincronización está en progreso"
+  },
+  "syncStatusOfflineOrErrorTooltip": "Sin conexión o error de sincronización",
+  "@syncStatusOfflineOrErrorTooltip": {
+    "description": "Tooltip accesible del AppBar cuando el dispositivo está sin red o hay errores"
+  },
+  "syncSheetTitle": "Estado de sincronización",
+  "@syncSheetTitle": {
+    "description": "Título del panel resumen de sincronización"
+  },
+  "syncConnectionOnline": "En línea",
+  "@syncConnectionOnline": {
+    "description": "Indicador de conectividad activa"
+  },
+  "syncConnectionOffline": "Sin conexión",
+  "@syncConnectionOffline": {
+    "description": "Indicador de falta de conectividad"
+  },
+  "syncStateSyncedTitle": "Todos los datos están al día",
+  "@syncStateSyncedTitle": {
+    "description": "Encabezado de estado sincronizado en el panel"
+  },
+  "syncStatePendingTitle": "{count, plural, =1{1 operación pendiente} other{{count} operaciones pendientes}}",
+  "@syncStatePendingTitle": {
+    "description": "Encabezado de estado pendiente en el panel",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncStateSyncingTitle": "Sincronizando con KickPulse...",
+  "@syncStateSyncingTitle": {
+    "description": "Encabezado mientras el envío a la nube está en curso"
+  },
+  "syncStateErrorTitle": "{errorCount, plural, =1{1 operación requiere revisión} other{{errorCount} operaciones requieren revisión}}",
+  "@syncStateErrorTitle": {
+    "description": "Encabezado cuando existen ítems rechazados por el servidor",
+    "placeholders": {
+      "errorCount": {
+        "type": "int"
+      }
+    }
+  },
+  "syncLastSyncedNever": "Última sincronización: aún sin registrar",
+  "@syncLastSyncedNever": {
+    "description": "Texto cuando no hay fecha previa de sincronización"
+  },
+  "syncLastSyncedAt": "Última sincronización: {formattedDate}",
+  "@syncLastSyncedAt": {
+    "description": "Texto con la fecha/hora formateada de la última sincronización exitosa",
+    "placeholders": {
+      "formattedDate": {
+        "type": "String"
+      }
+    }
+  },
+  "syncQueueEmptyMessage": "No hay cambios locales pendientes de respaldo en la nube.",
+  "@syncQueueEmptyMessage": {
+    "description": "Mensaje vacío cuando la cola de sincronización está limpia"
+  },
+  "syncItemStatusQueued": "En cola",
+  "@syncItemStatusQueued": {
+    "description": "Estado de tarea en espera FIFO"
+  },
+  "syncItemStatusRetrying": "Reintentando",
+  "@syncItemStatusRetrying": {
+    "description": "Estado de tarea tras falla transitoria de red"
+  },
+  "syncItemStatusError": "Error",
+  "@syncItemStatusError": {
+    "description": "Estado de tarea con rechazo no transitorio"
+  },
+  "syncEntityTournament": "Competición",
+  "@syncEntityTournament": {
+    "description": "Etiqueta de entidad competición"
+  },
+  "syncEntityVenue": "Sede deportiva",
+  "@syncEntityVenue": {
+    "description": "Etiqueta de entidad sede"
+  },
+  "syncEntityTeam": "Equipo",
+  "@syncEntityTeam": {
+    "description": "Etiqueta de entidad equipo"
+  },
+  "syncEntityMatch": "Partido",
+  "@syncEntityMatch": {
+    "description": "Etiqueta de entidad partido"
+  },
+  "syncEntityLineup": "Alineación",
+  "@syncEntityLineup": {
+    "description": "Etiqueta de entidad convocatoria o seguimiento"
+  },
+  "syncEntityMatchReport": "Acta arbitral",
+  "@syncEntityMatchReport": {
+    "description": "Etiqueta de entidad acta arbitral"
+  },
+  "syncEntityMatchAlert": "Alerta en vivo",
+  "@syncEntityMatchAlert": {
+    "description": "Etiqueta de entidad alerta"
+  },
+  "syncEntityNews": "Noticia",
+  "@syncEntityNews": {
+    "description": "Etiqueta de entidad noticia"
+  },
+  "syncEntityHonorRoll": "Cuadro de honor",
+  "@syncEntityHonorRoll": {
+    "description": "Etiqueta de entidad cuadro de honor"
+  },
+  "syncEntityFavorite": "Favorito",
+  "@syncEntityFavorite": {
+    "description": "Etiqueta de entidad equipo favorito"
+  },
+  "syncActionNow": "Sincronizar ahora",
+  "@syncActionNow": {
+    "description": "Botón principal para disparar sincronización manual"
+  },
+  "syncActionRetry": "Reintentar",
+  "@syncActionRetry": {
+    "description": "Botón por ítem para reintentar envío fallido"
+  },
+  "syncActionDiscard": "Descartar",
+  "@syncActionDiscard": {
+    "description": "Botón por ítem para descartar operación fallida de la cola"
+  },
+  "syncErrorPermissionDenied": "No tienes permisos para modificar este recurso en el servidor.",
+  "@syncErrorPermissionDenied": {
+    "description": "Mensaje localizado por rechazo RLS o 401/403"
+  },
+  "syncErrorConstraintViolation": "Conflicto o duplicado con los datos actuales del torneo.",
+  "@syncErrorConstraintViolation": {
+    "description": "Mensaje localizado por violación de unicidad o llave foránea"
+  },
+  "syncErrorValidationFailed": "El servidor rechazó los datos por validación de reglas.",
+  "@syncErrorValidationFailed": {
+    "description": "Mensaje localizado por error 400 o 422"
+  },
+  "syncErrorNotFound": "El registro asociado ya no existe en la nube.",
+  "@syncErrorNotFound": {
+    "description": "Mensaje localizado por registro no encontrado"
+  },
+  "syncErrorUnknown": "El servidor rechazó la operación y requiere revisión.",
+  "@syncErrorUnknown": {
+    "description": "Mensaje localizado genérico para rechazo no transitorio"
+  },
+  "syncLogoutGuardTitle": "Cambios pendientes sin sincronizar",
+  "@syncLogoutGuardTitle": {
+    "description": "Título del diálogo al cerrar sesión con tareas pendientes"
+  },
+  "syncLogoutGuardMessage": "{count, plural, =1{Tienes 1 cambio guardado localmente que aún no se ha respaldado en la nube.} other{Tienes {count} cambios guardados localmente que aún no se han respaldado en la nube.}} ¿Cómo deseas continuar?",
+  "@syncLogoutGuardMessage": {
+    "description": "Mensaje del diálogo de protección de cierre de sesión",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncLogoutActionSyncAndExit": "Sincronizar y salir",
+  "@syncLogoutActionSyncAndExit": {
+    "description": "Opción para sincronizar antes de cerrar sesión"
+  },
+  "syncLogoutActionKeepPending": "Salir conservando pendientes",
+  "@syncLogoutActionKeepPending": {
+    "description": "Opción para cerrar sesión manteniendo los ítems ligados al usuario"
+  },
+  "syncLogoutSyncFailedNotice": "No se pudieron sincronizar todos los cambios. Revisa tu conexión o inténtalo desde el panel de estado.",
+  "@syncLogoutSyncFailedNotice": {
+    "description": "Aviso si falla la sincronización previa al cierre de sesión"
+  },
+  "capViewCloudSyncIndicator": "Indicador de sincronización en la nube",
+  "@capViewCloudSyncIndicator": {
+    "description": "Permiso RBAC para visualizar el estado de sincronización en el AppBar"
   }
 }

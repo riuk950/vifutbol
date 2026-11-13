@@ -5271,6 +5271,252 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'{count, plural, =0{Sin plantilla registrada} =1{1 jugador en plantilla} other{{count} jugadores en plantilla}}'**
   String addTeamsPlayersCountMeta(int count);
+
+  /// Tooltip accesible del AppBar cuando no hay cambios pendientes
+  ///
+  /// In es, this message translates to:
+  /// **'Datos sincronizados en la nube'**
+  String get syncStatusSyncedTooltip;
+
+  /// Tooltip accesible del AppBar cuando existen operaciones pendientes en cola
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 cambio pendiente por sincronizar} other{{count} cambios pendientes por sincronizar}}'**
+  String syncStatusPendingTooltip(int count);
+
+  /// Tooltip accesible del AppBar mientras la sincronización está en progreso
+  ///
+  /// In es, this message translates to:
+  /// **'Sincronizando cambios con la nube'**
+  String get syncStatusSyncingTooltip;
+
+  /// Tooltip accesible del AppBar cuando el dispositivo está sin red o hay errores
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión o error de sincronización'**
+  String get syncStatusOfflineOrErrorTooltip;
+
+  /// Título del panel resumen de sincronización
+  ///
+  /// In es, this message translates to:
+  /// **'Estado de sincronización'**
+  String get syncSheetTitle;
+
+  /// Indicador de conectividad activa
+  ///
+  /// In es, this message translates to:
+  /// **'En línea'**
+  String get syncConnectionOnline;
+
+  /// Indicador de falta de conectividad
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión'**
+  String get syncConnectionOffline;
+
+  /// Encabezado de estado sincronizado en el panel
+  ///
+  /// In es, this message translates to:
+  /// **'Todos los datos están al día'**
+  String get syncStateSyncedTitle;
+
+  /// Encabezado de estado pendiente en el panel
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 operación pendiente} other{{count} operaciones pendientes}}'**
+  String syncStatePendingTitle(int count);
+
+  /// Encabezado mientras el envío a la nube está en curso
+  ///
+  /// In es, this message translates to:
+  /// **'Sincronizando con KickPulse...'**
+  String get syncStateSyncingTitle;
+
+  /// Encabezado cuando existen ítems rechazados por el servidor
+  ///
+  /// In es, this message translates to:
+  /// **'{errorCount, plural, =1{1 operación requiere revisión} other{{errorCount} operaciones requieren revisión}}'**
+  String syncStateErrorTitle(int errorCount);
+
+  /// Texto cuando no hay fecha previa de sincronización
+  ///
+  /// In es, this message translates to:
+  /// **'Última sincronización: aún sin registrar'**
+  String get syncLastSyncedNever;
+
+  /// Texto con la fecha/hora formateada de la última sincronización exitosa
+  ///
+  /// In es, this message translates to:
+  /// **'Última sincronización: {formattedDate}'**
+  String syncLastSyncedAt(String formattedDate);
+
+  /// Mensaje vacío cuando la cola de sincronización está limpia
+  ///
+  /// In es, this message translates to:
+  /// **'No hay cambios locales pendientes de respaldo en la nube.'**
+  String get syncQueueEmptyMessage;
+
+  /// Estado de tarea en espera FIFO
+  ///
+  /// In es, this message translates to:
+  /// **'En cola'**
+  String get syncItemStatusQueued;
+
+  /// Estado de tarea tras falla transitoria de red
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentando'**
+  String get syncItemStatusRetrying;
+
+  /// Estado de tarea con rechazo no transitorio
+  ///
+  /// In es, this message translates to:
+  /// **'Error'**
+  String get syncItemStatusError;
+
+  /// Etiqueta de entidad competición
+  ///
+  /// In es, this message translates to:
+  /// **'Competición'**
+  String get syncEntityTournament;
+
+  /// Etiqueta de entidad sede
+  ///
+  /// In es, this message translates to:
+  /// **'Sede deportiva'**
+  String get syncEntityVenue;
+
+  /// Etiqueta de entidad equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Equipo'**
+  String get syncEntityTeam;
+
+  /// Etiqueta de entidad partido
+  ///
+  /// In es, this message translates to:
+  /// **'Partido'**
+  String get syncEntityMatch;
+
+  /// Etiqueta de entidad convocatoria o seguimiento
+  ///
+  /// In es, this message translates to:
+  /// **'Alineación'**
+  String get syncEntityLineup;
+
+  /// Etiqueta de entidad acta arbitral
+  ///
+  /// In es, this message translates to:
+  /// **'Acta arbitral'**
+  String get syncEntityMatchReport;
+
+  /// Etiqueta de entidad alerta
+  ///
+  /// In es, this message translates to:
+  /// **'Alerta en vivo'**
+  String get syncEntityMatchAlert;
+
+  /// Etiqueta de entidad noticia
+  ///
+  /// In es, this message translates to:
+  /// **'Noticia'**
+  String get syncEntityNews;
+
+  /// Etiqueta de entidad cuadro de honor
+  ///
+  /// In es, this message translates to:
+  /// **'Cuadro de honor'**
+  String get syncEntityHonorRoll;
+
+  /// Etiqueta de entidad equipo favorito
+  ///
+  /// In es, this message translates to:
+  /// **'Favorito'**
+  String get syncEntityFavorite;
+
+  /// Botón principal para disparar sincronización manual
+  ///
+  /// In es, this message translates to:
+  /// **'Sincronizar ahora'**
+  String get syncActionNow;
+
+  /// Botón por ítem para reintentar envío fallido
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar'**
+  String get syncActionRetry;
+
+  /// Botón por ítem para descartar operación fallida de la cola
+  ///
+  /// In es, this message translates to:
+  /// **'Descartar'**
+  String get syncActionDiscard;
+
+  /// Mensaje localizado por rechazo RLS o 401/403
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes permisos para modificar este recurso en el servidor.'**
+  String get syncErrorPermissionDenied;
+
+  /// Mensaje localizado por violación de unicidad o llave foránea
+  ///
+  /// In es, this message translates to:
+  /// **'Conflicto o duplicado con los datos actuales del torneo.'**
+  String get syncErrorConstraintViolation;
+
+  /// Mensaje localizado por error 400 o 422
+  ///
+  /// In es, this message translates to:
+  /// **'El servidor rechazó los datos por validación de reglas.'**
+  String get syncErrorValidationFailed;
+
+  /// Mensaje localizado por registro no encontrado
+  ///
+  /// In es, this message translates to:
+  /// **'El registro asociado ya no existe en la nube.'**
+  String get syncErrorNotFound;
+
+  /// Mensaje localizado genérico para rechazo no transitorio
+  ///
+  /// In es, this message translates to:
+  /// **'El servidor rechazó la operación y requiere revisión.'**
+  String get syncErrorUnknown;
+
+  /// Título del diálogo al cerrar sesión con tareas pendientes
+  ///
+  /// In es, this message translates to:
+  /// **'Cambios pendientes sin sincronizar'**
+  String get syncLogoutGuardTitle;
+
+  /// Mensaje del diálogo de protección de cierre de sesión
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{Tienes 1 cambio guardado localmente que aún no se ha respaldado en la nube.} other{Tienes {count} cambios guardados localmente que aún no se han respaldado en la nube.}} ¿Cómo deseas continuar?'**
+  String syncLogoutGuardMessage(int count);
+
+  /// Opción para sincronizar antes de cerrar sesión
+  ///
+  /// In es, this message translates to:
+  /// **'Sincronizar y salir'**
+  String get syncLogoutActionSyncAndExit;
+
+  /// Opción para cerrar sesión manteniendo los ítems ligados al usuario
+  ///
+  /// In es, this message translates to:
+  /// **'Salir conservando pendientes'**
+  String get syncLogoutActionKeepPending;
+
+  /// Aviso si falla la sincronización previa al cierre de sesión
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudieron sincronizar todos los cambios. Revisa tu conexión o inténtalo desde el panel de estado.'**
+  String get syncLogoutSyncFailedNotice;
+
+  /// Permiso RBAC para visualizar el estado de sincronización en el AppBar
+  ///
+  /// In es, this message translates to:
+  /// **'Indicador de sincronización en la nube'**
+  String get capViewCloudSyncIndicator;
 }
 
 class _AppLocalizationsDelegate

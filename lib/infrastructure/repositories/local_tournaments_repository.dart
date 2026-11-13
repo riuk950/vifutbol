@@ -85,6 +85,11 @@ class LocalTournamentsRepository implements TournamentsRepository {
     await storage.writeString(draftStorageKey, '');
   }
 
+  /// Replaces the full local tournaments cache with fresh remote data.
+  Future<void> replaceAllCache(List<ChampionshipTournament> tournaments) {
+    return _persistTournaments(tournaments);
+  }
+
   Future<void> _persistTournaments(
     List<ChampionshipTournament> tournaments,
   ) async {

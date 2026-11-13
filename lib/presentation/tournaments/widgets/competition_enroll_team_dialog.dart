@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
@@ -93,7 +94,7 @@ class _CompetitionEnrollTeamDialogState
     final userRole = ref.read(activeUserRoleProvider);
 
     final newTeam = TournamentTeam(
-      id: 'team-${DateTime.now().millisecondsSinceEpoch}',
+      id: const Uuid().v4(),
       tournamentId: widget.tournament.id,
       name: name,
       shortCode: shortCode,

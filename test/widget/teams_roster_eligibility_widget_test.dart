@@ -173,12 +173,12 @@ void main() {
 
   group('Tournament Teams & Roster Widget Tests', () {
     testWidgets(
-      'displays teams section in StandingsTabView and registers a new team as organizer',
+      'displays teams section in StandingsTabView and registers a new team as coach',
       (tester) async {
         await tester.binding.setSurfaceSize(const Size(430, 932));
         addTearDown(() => tester.binding.setSurfaceSize(null));
 
-        await tester.pumpWidget(buildTestApp(role: UserRole.organizer));
+        await tester.pumpWidget(buildTestApp(role: UserRole.coach));
         await tester.pumpAndSettle();
 
         expect(find.text('Equipos Inscritos'), findsOneWidget);

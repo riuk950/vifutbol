@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/application/providers/venues_providers.dart';
@@ -228,7 +229,7 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
     }
 
     return ChampionshipTournament(
-      id: existing?.id ?? 'tournament-${DateTime.now().millisecondsSinceEpoch}',
+      id: existing?.id ?? const Uuid().v4(),
       name: _nameController.text.trim(),
       category: _categoryController.text.trim(),
       startDate: _startDate,

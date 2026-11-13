@@ -3043,4 +3043,172 @@ class AppLocalizationsEs extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get syncStatusSyncedTooltip => 'Datos sincronizados en la nube';
+
+  @override
+  String syncStatusPendingTooltip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cambios pendientes por sincronizar',
+      one: '1 cambio pendiente por sincronizar',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get syncStatusSyncingTooltip => 'Sincronizando cambios con la nube';
+
+  @override
+  String get syncStatusOfflineOrErrorTooltip =>
+      'Sin conexión o error de sincronización';
+
+  @override
+  String get syncSheetTitle => 'Estado de sincronización';
+
+  @override
+  String get syncConnectionOnline => 'En línea';
+
+  @override
+  String get syncConnectionOffline => 'Sin conexión';
+
+  @override
+  String get syncStateSyncedTitle => 'Todos los datos están al día';
+
+  @override
+  String syncStatePendingTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count operaciones pendientes',
+      one: '1 operación pendiente',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get syncStateSyncingTitle => 'Sincronizando con KickPulse...';
+
+  @override
+  String syncStateErrorTitle(int errorCount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      errorCount,
+      locale: localeName,
+      other: '$errorCount operaciones requieren revisión',
+      one: '1 operación requiere revisión',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get syncLastSyncedNever => 'Última sincronización: aún sin registrar';
+
+  @override
+  String syncLastSyncedAt(String formattedDate) {
+    return 'Última sincronización: $formattedDate';
+  }
+
+  @override
+  String get syncQueueEmptyMessage =>
+      'No hay cambios locales pendientes de respaldo en la nube.';
+
+  @override
+  String get syncItemStatusQueued => 'En cola';
+
+  @override
+  String get syncItemStatusRetrying => 'Reintentando';
+
+  @override
+  String get syncItemStatusError => 'Error';
+
+  @override
+  String get syncEntityTournament => 'Competición';
+
+  @override
+  String get syncEntityVenue => 'Sede deportiva';
+
+  @override
+  String get syncEntityTeam => 'Equipo';
+
+  @override
+  String get syncEntityMatch => 'Partido';
+
+  @override
+  String get syncEntityLineup => 'Alineación';
+
+  @override
+  String get syncEntityMatchReport => 'Acta arbitral';
+
+  @override
+  String get syncEntityMatchAlert => 'Alerta en vivo';
+
+  @override
+  String get syncEntityNews => 'Noticia';
+
+  @override
+  String get syncEntityHonorRoll => 'Cuadro de honor';
+
+  @override
+  String get syncEntityFavorite => 'Favorito';
+
+  @override
+  String get syncActionNow => 'Sincronizar ahora';
+
+  @override
+  String get syncActionRetry => 'Reintentar';
+
+  @override
+  String get syncActionDiscard => 'Descartar';
+
+  @override
+  String get syncErrorPermissionDenied =>
+      'No tienes permisos para modificar este recurso en el servidor.';
+
+  @override
+  String get syncErrorConstraintViolation =>
+      'Conflicto o duplicado con los datos actuales del torneo.';
+
+  @override
+  String get syncErrorValidationFailed =>
+      'El servidor rechazó los datos por validación de reglas.';
+
+  @override
+  String get syncErrorNotFound =>
+      'El registro asociado ya no existe en la nube.';
+
+  @override
+  String get syncErrorUnknown =>
+      'El servidor rechazó la operación y requiere revisión.';
+
+  @override
+  String get syncLogoutGuardTitle => 'Cambios pendientes sin sincronizar';
+
+  @override
+  String syncLogoutGuardMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Tienes $count cambios guardados localmente que aún no se han respaldado en la nube.',
+      one:
+          'Tienes 1 cambio guardado localmente que aún no se ha respaldado en la nube.',
+    );
+    return '$_temp0 ¿Cómo deseas continuar?';
+  }
+
+  @override
+  String get syncLogoutActionSyncAndExit => 'Sincronizar y salir';
+
+  @override
+  String get syncLogoutActionKeepPending => 'Salir conservando pendientes';
+
+  @override
+  String get syncLogoutSyncFailedNotice =>
+      'No se pudieron sincronizar todos los cambios. Revisa tu conexión o inténtalo desde el panel de estado.';
+
+  @override
+  String get capViewCloudSyncIndicator =>
+      'Indicador de sincronización en la nube';
 }

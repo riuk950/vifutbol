@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
@@ -768,8 +769,7 @@ class _PlayerEnrollmentDialogState
   Future<void> _submit() async {
     final parsedShirt = int.tryParse(_shirtNumberController.text.trim()) ?? 0;
     final playerId =
-        widget.existingPlayer?.id ??
-        'p-${DateTime.now().millisecondsSinceEpoch}';
+        widget.existingPlayer?.id ?? const Uuid().v4();
 
     final player = RegisteredPlayer(
       id: playerId,

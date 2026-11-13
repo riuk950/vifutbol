@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../application/providers/auth_providers.dart';
 import '../../../application/providers/foundation_providers.dart';
+import '../../../application/providers/sync_providers.dart';
 import '../../../domain/entities/app_environment.dart';
 import '../../../domain/entities/role_permission_matrix.dart';
 import '../../../domain/entities/user_role.dart';
@@ -13,6 +14,7 @@ import '../../design_system/kick_pulse_typography.dart';
 import '../../design_system/widgets/kick_pulse_badge.dart';
 import '../../design_system/widgets/kick_pulse_button.dart';
 import '../../design_system/widgets/kick_pulse_card.dart';
+import '../../sync/sign_out_pending_sync_dialog.dart';
 
 /// Profile screen displaying identity, active sports role, role switching,
 /// full RBAC permissions matrix, and secure session termination.
@@ -20,6 +22,31 @@ class ProfileTabView extends ConsumerWidget {
   const ProfileTabView({super.key});
 
   Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
+    final user = ref.read(authControllerProvider).session?.user;
+    final isGuest = user?.isGuestFan ?? true;
+    var pendingCount = 0;
+    if (!isGuest) {
+      try {
+        pendingCount = ref
+            .read(syncStatusControllerProvider)
+            .totalAttentionCount;
+      } catch (_) {
+        pendingCount = 0;
+      }
+    }
+
+    if (pendingCount > 0) {
+      final decision = await SignOutPendingSyncDialog.show(
+        context,
+        pendingCount: pendingCount,
+      );
+      if (decision == SignOutGuardDecision.syncedAndExit ||
+          decision == SignOutGuardDecision.keepPendingAndExit) {
+        await ref.read(authControllerProvider.notifier).signOut();
+      }
+      return;
+    }
+
     final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
@@ -316,5 +343,6 @@ class ProfileTabView extends ConsumerWidget {
         RoleCapability.closeMatchReport => l10n.capCloseMatchReport,
         RoleCapability.viewPersonalStats => l10n.capViewPersonalStats,
         RoleCapability.viewPublicContent => l10n.capViewPublicContent,
+        RoleCapability.viewCloudSyncIndicator => l10n.capViewCloudSyncIndicator,
       };
 }

@@ -291,7 +291,7 @@ class ManageTeamsEligibilityUseCase {
         : null;
 
     const uuid = Uuid();
-    final newTeamId = generatedTeamId ?? 'team-${uuid.v4()}';
+    final newTeamId = generatedTeamId ?? uuid.v4();
     final existingDocs = tournamentTeams
         .expand((t) => t.players.map((p) => p.normalizedDocumentId))
         .toSet();
@@ -308,7 +308,7 @@ class ManageTeamsEligibilityUseCase {
       existingDocs.add(normalizedDoc);
       copiedPlayers.add(
         player.copyWith(
-          id: '$newTeamId-p-${copiedPlayers.length + 1}-${uuid.v4().substring(0, 8)}',
+          id: uuid.v4(),
           isEligible: false,
         ),
       );
@@ -484,9 +484,7 @@ class ManageTeamsEligibilityUseCase {
     TeamEligibilityStatus newStatus = targetTeam.eligibilityStatus;
     List<RegisteredPlayer> finalPlayers = updatedPlayers;
 
-    final minRequired = tournament.rules.minPlayersPerTeam < 11
-        ? 11
-        : tournament.rules.minPlayersPerTeam;
+    final minRequired = tournament.rules.minPlayersPerTeam;
 
     if (updatedPlayers.length < minRequired) {
       newStatus = TeamEligibilityStatus.pendingVerification;
@@ -544,14 +542,12 @@ class ManageTeamsEligibilityUseCase {
 
     final targetTeam = tournamentTeams[teamIndex];
     final playerCount = targetTeam.players.length;
-    final minRequired = tournament.rules.minPlayersPerTeam < 11
-        ? 11
-        : tournament.rules.minPlayersPerTeam;
+    final minRequired = tournament.rules.minPlayersPerTeam;
 
     if (playerCount < minRequired) {
       throw TeamEligibilityValidationFailure(
         TeamEligibilityErrorCode.insufficientPlayersForApproval,
-        'El equipo no cumple la cuota reglamentaria mínima (mínimo 11 jugadores requeridos, actual: $playerCount)',
+        'El equipo no cumple la cuota reglamentaria mínima (mínimo $minRequired jugadores requeridos, actual: $playerCount)',
       );
     }
 

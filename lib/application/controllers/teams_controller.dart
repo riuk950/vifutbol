@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vifutbol/application/use_cases/manage_teams_eligibility_use_case.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
@@ -89,7 +90,7 @@ class TeamsController extends StateNotifier<TeamsCatalogState> {
 
     try {
       final team = TournamentTeam(
-        id: 'team-${DateTime.now().millisecondsSinceEpoch}',
+        id: const Uuid().v4(),
         tournamentId: tournament?.id ?? '',
         name: name,
         shortCode: shortCode,

@@ -1,3 +1,4 @@
+import 'package:uuid/uuid.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/fan_favorite_team.dart';
 import 'package:vifutbol/domain/entities/match_alert_type.dart';
@@ -45,7 +46,7 @@ class DispatchMatchLiveAlertsUseCase {
 
     if (isFavorite) {
       final alert = MatchLiveAlert(
-        id: 'alert-${DateTime.now().millisecondsSinceEpoch}',
+        id: const Uuid().v4(),
         matchId: match.id,
         tournamentId: match.tournamentId,
         type: eventType,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/role_permission_matrix.dart';
@@ -506,7 +507,7 @@ class _RegisterTeamDialogState extends ConsumerState<_RegisterTeamDialog> {
   }
 
   Future<void> _submit() async {
-    final teamId = 'team-${DateTime.now().millisecondsSinceEpoch}';
+    final teamId = const Uuid().v4();
     final team = TournamentTeam(
       id: teamId,
       tournamentId: widget.tournament.id,
