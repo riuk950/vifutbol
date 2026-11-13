@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/auth_flow_state.dart';
 import '../../domain/entities/auth_session.dart';
+import '../../domain/entities/role_profile_data.dart';
 import '../../domain/entities/user_role.dart';
 import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -330,6 +331,49 @@ class AuthController extends StateNotifier<AuthFlowState> {
       state = state.copyWith(
         lastFailure: () =>
             const UnauthorizedRoleFailure('Error al cambiar de rol deportivo.'),
+      );
+      return false;
+    }
+  }
+
+  /// Updates personal contact/document data and role-specific profile fields.
+  Future<bool> updateRoleProfile({
+    required UserRole role,
+    String? phone,
+    String? documentId,
+    RoleProfileData? roleProfile,
+  }) async {
+    final currentSession = state.session;
+    if (currentSession == null) return false;
+    if (state.isSubmitting) return false;
+
+    state = state.copyWith(isSubmitting: true, lastFailure: () => null);
+
+    try {
+      final updatedUser = await authRepository.updateRoleProfile(
+        userId: currentSession.user.id,
+        role: role,
+        phone: phone,
+        documentId: documentId,
+        roleProfile: roleProfile,
+      );
+
+      final updatedSession = currentSession.copyWith(user: updatedUser);
+      state = state.copyWith(
+        session: () => updatedSession,
+        isSubmitting: false,
+        lastFailure: () => null,
+      );
+      return true;
+    } on AppFailure catch (e) {
+      state = state.copyWith(isSubmitting: false, lastFailure: () => e);
+      return false;
+    } catch (_) {
+      state = state.copyWith(
+        isSubmitting: false,
+        lastFailure: () => const OfflineAuthOperationFailure(
+          'No se pudo guardar tu perfil. Intenta nuevamente.',
+        ),
       );
       return false;
     }

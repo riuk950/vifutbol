@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' as gotrue show User;
 
 import '../../domain/entities/app_environment.dart';
 import '../../domain/entities/auth_session.dart';
+import '../../domain/entities/role_profile_data.dart';
 import '../../domain/entities/user_account.dart';
 import '../../domain/entities/user_role.dart';
 import '../../domain/failures/app_failure.dart';
@@ -32,6 +33,21 @@ abstract class SupabaseUserProfileDataSource {
     required List<String> authorizedRoles,
     required bool onboardingCompleted,
   });
+
+  /// Atomically persists active/authorized roles, personal contact/document
+  /// fields, and role-specific profile or player/referee document linking.
+  Future<Map<String, dynamic>> completeRoleProfile({
+    required String activeRole,
+    required List<String> authorizedRoles,
+    required bool onboardingCompleted,
+    String? fullName,
+    String? phone,
+    String? documentId,
+    RoleProfileData? roleProfile,
+  });
+
+  /// Fetches hydrated role-specific satellite profile attributes for [userAccountId].
+  Future<Map<String, dynamic>?> fetchRoleProfileDetails(String userAccountId);
 }
 
 class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
@@ -78,6 +94,102 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
         .eq('auth_user_id', authUserId)
         .select()
         .single();
+  }
+
+  @override
+  Future<Map<String, dynamic>> completeRoleProfile({
+    required String activeRole,
+    required List<String> authorizedRoles,
+    required bool onboardingCompleted,
+    String? fullName,
+    String? phone,
+    String? documentId,
+    RoleProfileData? roleProfile,
+  }) async {
+    final result = await client.schema(schema).rpc(
+      'complete_role_profile',
+      params: {
+        'p_active_role': activeRole,
+        'p_authorized_roles': authorizedRoles,
+        'p_onboarding_completed': onboardingCompleted,
+        'p_full_name': fullName,
+        'p_phone': phone,
+        'p_document_id': documentId,
+        'p_club_name': roleProfile?.clubName,
+        'p_license_level': roleProfile?.licenseLevel,
+        'p_organization_name': roleProfile?.organizationName,
+        'p_base_city': roleProfile?.baseCity,
+        'p_city': roleProfile?.city,
+        'p_preferences': roleProfile?.preferences,
+        'p_certification_level': roleProfile?.certificationLevel,
+      },
+    );
+    if (result is Map<String, dynamic>) {
+      return result;
+    }
+    return Map<String, dynamic>.from(result as Map);
+  }
+
+  @override
+  Future<Map<String, dynamic>?> fetchRoleProfileDetails(
+    String userAccountId,
+  ) async {
+    try {
+      final results = await Future.wait<Map<String, dynamic>?>([
+        client
+            .schema(schema)
+            .from('coach_profiles')
+            .select('club_name, license_level')
+            .eq('user_account_id', userAccountId)
+            .maybeSingle(),
+        client
+            .schema(schema)
+            .from('organizer_profiles')
+            .select('organization_name, base_city')
+            .eq('user_account_id', userAccountId)
+            .maybeSingle(),
+        client
+            .schema(schema)
+            .from('fan_profiles')
+            .select('city, preferences')
+            .eq('user_account_id', userAccountId)
+            .maybeSingle(),
+        client
+            .schema(schema)
+            .from('players')
+            .select('id')
+            .eq('user_account_id', userAccountId)
+            .limit(1)
+            .maybeSingle(),
+        client
+            .schema(schema)
+            .from('match_referees')
+            .select('id, certification_level')
+            .eq('user_account_id', userAccountId)
+            .limit(1)
+            .maybeSingle(),
+      ]);
+
+      final coach = results[0];
+      final organizer = results[1];
+      final fan = results[2];
+      final player = results[3];
+      final referee = results[4];
+
+      final merged = <String, dynamic>{
+        ...?coach,
+        ...?organizer,
+        ...?fan,
+        if (player != null) 'linked_player_id': player['id'],
+        if (referee != null) ...{
+          'linked_referee_id': referee['id'],
+          'certification_level': referee['certification_level'],
+        },
+      };
+      return merged.isEmpty ? null : merged;
+    } catch (_) {
+      return null;
+    }
   }
 }
 
@@ -126,6 +238,16 @@ class SupabaseAuthRepository implements AuthRepository {
     final rawName = (row['full_name'] as String?)?.trim() ?? '';
     final email = (row['email'] as String? ?? '').trim().toLowerCase();
     final id = (row['id'] ?? row['auth_user_id'] ?? '').toString();
+    final phone = (row['phone'] as String?)?.trim();
+    final documentId = (row['document_id'] as String?)?.trim();
+    final rawRoleProfile = row['role_profile'];
+    final roleProfile = rawRoleProfile is Map<String, dynamic>
+        ? RoleProfileData.fromJson(rawRoleProfile)
+        : (rawRoleProfile is Map
+              ? RoleProfileData.fromJson(
+                  Map<String, dynamic>.from(rawRoleProfile),
+                )
+              : null);
 
     return UserAccount(
       id: id,
@@ -135,6 +257,9 @@ class SupabaseAuthRepository implements AuthRepository {
       authorizedRoles: authorizedRoles,
       isGuestFan: row['is_guest_fan'] as bool? ?? false,
       onboardingCompleted: row['onboarding_completed'] as bool? ?? false,
+      phone: phone?.isEmpty == true ? null : phone,
+      documentId: documentId?.isEmpty == true ? null : documentId,
+      roleProfile: roleProfile,
     );
   }
 
@@ -231,7 +356,15 @@ class SupabaseAuthRepository implements AuthRepository {
   }) async {
     final existing = await _profileDataSource.fetchByAuthUserId(user.id);
     if (existing != null) {
-      return mapRowToUserAccount(existing);
+      final accountId = (existing['id'] ?? existing['auth_user_id'] ?? user.id)
+          .toString();
+      final roleProfile =
+          await _profileDataSource.fetchRoleProfileDetails(accountId);
+      final enriched = <String, dynamic>{
+        ...existing,
+        'role_profile': ?roleProfile,
+      };
+      return mapRowToUserAccount(enriched);
     }
 
     final payload = buildInitialProfilePayload(
@@ -258,6 +391,9 @@ class SupabaseAuthRepository implements AuthRepository {
       return _mapAuthException(error);
     }
     if (error is PostgrestException) {
+      if (error.message.contains('DOCUMENT_ALREADY_LINKED')) {
+        return const DocumentAlreadyLinkedFailure();
+      }
       if (error.code == '42501' || error.code == 'PGRST301') {
         return const UnauthorizedRoleFailure(
           'No cuentas con permisos para completar esta operación.',
@@ -521,11 +657,14 @@ class SupabaseAuthRepository implements AuthRepository {
         ..add(selectedRole)
         ..add(UserRole.fan);
 
-      final updatedRow = await _profileDataSource.updateRoleState(
-        authUserId: session.user.id,
+      final updatedRow = await _profileDataSource.completeRoleProfile(
         activeRole: selectedRole.name,
         authorizedRoles: updatedRoles.map((r) => r.name).toList(),
         onboardingCompleted: true,
+        fullName: currentAccount.fullName,
+        phone: currentAccount.phone,
+        documentId: currentAccount.documentId,
+        roleProfile: currentAccount.roleProfile,
       );
 
       final updatedAccount = mapRowToUserAccount(updatedRow);
@@ -578,13 +717,63 @@ class SupabaseAuthRepository implements AuthRepository {
         onboardingCompleted: currentAccount.onboardingCompleted,
       );
 
-      final updatedAccount = mapRowToUserAccount(updatedRow);
+      final updatedAccount = mapRowToUserAccount(updatedRow).copyWith(
+        roleProfile: currentAccount.roleProfile,
+      );
       await _saveSessionToCache(_buildAuthSession(session, updatedAccount));
       return updatedAccount;
     } catch (error) {
       throw _translateError(
         error,
         fallbackMessage: 'No se pudo cambiar el rol activo.',
+      );
+    }
+  }
+
+  @override
+  Future<UserAccount> updateRoleProfile({
+    required String userId,
+    required UserRole role,
+    String? phone,
+    String? documentId,
+    RoleProfileData? roleProfile,
+  }) async {
+    final session = client.auth.currentSession;
+    if (session == null) {
+      throw const InvalidCredentialsFailure('Sesión no encontrada.');
+    }
+
+    await _ensureConnectivity(
+      'Se requiere conexión a internet para guardar tu perfil.',
+    );
+
+    try {
+      final currentAccount = await _ensureProfileForUser(session.user);
+      if (currentAccount.id != userId && session.user.id != userId) {
+        throw const InvalidCredentialsFailure('Sesión no encontrada.');
+      }
+
+      final updatedRoles = Set<UserRole>.from(currentAccount.authorizedRoles)
+        ..add(role)
+        ..add(UserRole.fan);
+
+      final updatedRow = await _profileDataSource.completeRoleProfile(
+        activeRole: role.name,
+        authorizedRoles: updatedRoles.map((r) => r.name).toList(),
+        onboardingCompleted: true,
+        fullName: currentAccount.fullName,
+        phone: phone,
+        documentId: documentId,
+        roleProfile: roleProfile,
+      );
+
+      final updatedAccount = mapRowToUserAccount(updatedRow);
+      await _saveSessionToCache(_buildAuthSession(session, updatedAccount));
+      return updatedAccount;
+    } catch (error) {
+      throw _translateError(
+        error,
+        fallbackMessage: 'No se pudo guardar tu perfil. Intenta nuevamente.',
       );
     }
   }

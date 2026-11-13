@@ -4117,5 +4117,89 @@
   "teamsDirectoryMultipleTournaments": "Múltiples torneos",
   "@teamsDirectoryMultipleTournaments": {
     "description": "Etiqueta mostrada cuando un club participa en más de un torneo"
+  },
+  "profileIncompleteBadge": "Datos incompletos",
+  "@profileIncompleteBadge": {
+    "description": "Distintivo ámbar cuando faltan datos obligatorios en el perfil del usuario"
+  },
+  "profileCompleteBadge": "Perfil completo",
+  "@profileCompleteBadge": {
+    "description": "Distintivo verde cuando los datos obligatorios del perfil están completos"
+  },
+  "profileIncompleteBannerTitle": "Completa tu ficha personal",
+  "@profileIncompleteBannerTitle": {
+    "description": "Título del banner de perfil incompleto"
+  },
+  "profileIncompleteBannerSubtitle": "Agrega tu información de contacto y datos de rol para mantener tu ficha al día.",
+  "@profileIncompleteBannerSubtitle": {
+    "description": "Subtítulo del banner de perfil incompleto"
+  },
+  "profileCompleteAction": "Completar mi perfil",
+  "@profileCompleteAction": {
+    "description": "Botón de acción para abrir el formulario de completar perfil"
+  },
+  "completeProfileDialogTitle": "Completar mi perfil",
+  "@completeProfileDialogTitle": {
+    "description": "Título del modal adaptativo de perfil"
+  },
+  "completeProfilePhoneLabel": "Teléfono de contacto",
+  "@completeProfilePhoneLabel": {
+    "description": "Etiqueta del campo de teléfono"
+  },
+  "completeProfileDocumentLabel": "Documento de identidad",
+  "@completeProfileDocumentLabel": {
+    "description": "Etiqueta del campo de documento de identidad"
+  },
+  "completeProfileClubLabel": "Club o escuela",
+  "@completeProfileClubLabel": {
+    "description": "Etiqueta del campo de club o escuela para entrenador"
+  },
+  "completeProfileLicenseLabel": "Nivel de licencia",
+  "@completeProfileLicenseLabel": {
+    "description": "Etiqueta del campo de nivel de licencia para entrenador"
+  },
+  "completeProfileOrganizationLabel": "Entidad organizadora",
+  "@completeProfileOrganizationLabel": {
+    "description": "Etiqueta del campo de entidad organizadora"
+  },
+  "completeProfileBaseCityLabel": "Ciudad base",
+  "@completeProfileBaseCityLabel": {
+    "description": "Etiqueta del campo de ciudad base para organizador"
+  },
+  "completeProfileCityLabel": "Ciudad",
+  "@completeProfileCityLabel": {
+    "description": "Etiqueta del campo de ciudad para aficionado"
+  },
+  "completeProfilePreferencesLabel": "Preferencias (opcional)",
+  "@completeProfilePreferencesLabel": {
+    "description": "Etiqueta del campo de preferencias para aficionado"
+  },
+  "completeProfileSaveAction": "Guardar perfil",
+  "@completeProfileSaveAction": {
+    "description": "Botón para guardar el formulario de completar perfil"
+  },
+  "completeProfileSuccessMessage": "Perfil actualizado y sincronizado en la nube.",
+  "@completeProfileSuccessMessage": {
+    "description": "Mensaje de confirmación tras guardar el perfil"
+  },
+  "completeProfileOfflineError": "Se requiere conexión a internet para guardar tu perfil.",
+  "@completeProfileOfflineError": {
+    "description": "Error cuando se intenta guardar el perfil sin conexión"
+  },
+  "completeProfileDocumentConflictError": "El documento ingresado ya está vinculado a otra cuenta de usuario.",
+  "@completeProfileDocumentConflictError": {
+    "description": "Error cuando el documento ingresado pertenece a otra cuenta"
+  },
+  "completeProfileRequiredFieldError": "Este campo es obligatorio.",
+  "@completeProfileRequiredFieldError": {
+    "description": "Error de validación para campo obligatorio vacío"
+  },
+  "completeProfileInvalidPhoneError": "Ingresa un teléfono válido (mínimo 7 dígitos).",
+  "@completeProfileInvalidPhoneError": {
+    "description": "Error de validación para teléfono inválido"
+  },
+  "completeProfileInvalidDocumentError": "Ingresa un documento válido (mínimo 5 caracteres).",
+  "@completeProfileInvalidDocumentError": {
+    "description": "Error de validación para documento inválido"
   }
 }

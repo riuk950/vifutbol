@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import '../../domain/entities/app_environment.dart';
 import '../../domain/entities/auth_session.dart';
+import '../../domain/entities/role_profile_data.dart';
 import '../../domain/entities/user_account.dart';
 import '../../domain/entities/user_role.dart';
 import '../../domain/failures/app_failure.dart';
@@ -230,6 +231,68 @@ class LocalAuthRepository implements AuthRepository {
     final updatedUser = currentUser.copyWith(
       activeRole: targetRole,
       authorizedRoles: updatedRoles,
+    );
+
+    final updatedSession = currentSession.copyWith(user: updatedUser);
+    await storage.writeString(_sessionKey, jsonEncode(updatedSession.toJson()));
+
+    if (!updatedUser.isGuestFan && updatedUser.email.isNotEmpty) {
+      final accounts = await _getStoredAccounts();
+      accounts[updatedUser.email] = updatedUser;
+      await _saveAccounts(accounts);
+    }
+
+    return updatedUser;
+  }
+
+  @override
+  Future<UserAccount> updateRoleProfile({
+    required String userId,
+    required UserRole role,
+    String? phone,
+    String? documentId,
+    RoleProfileData? roleProfile,
+  }) async {
+    final conn = await connectivity.checkConnectivity();
+    if (conn.isDisconnected) {
+      throw const OfflineAuthOperationFailure(
+        'Se requiere conexión a internet para guardar tu perfil.',
+      );
+    }
+
+    final currentSession = await restoreSession();
+    if (currentSession == null || currentSession.user.id != userId) {
+      throw const InvalidCredentialsFailure('Sesión no encontrada.');
+    }
+
+    final currentUser = currentSession.user;
+    final mergedProfile = RoleProfileData(
+      clubName: roleProfile?.clubName ?? currentUser.roleProfile?.clubName,
+      licenseLevel:
+          roleProfile?.licenseLevel ?? currentUser.roleProfile?.licenseLevel,
+      organizationName: roleProfile?.organizationName ??
+          currentUser.roleProfile?.organizationName,
+      baseCity: roleProfile?.baseCity ?? currentUser.roleProfile?.baseCity,
+      city: roleProfile?.city ?? currentUser.roleProfile?.city,
+      preferences:
+          roleProfile?.preferences ?? currentUser.roleProfile?.preferences,
+      certificationLevel: roleProfile?.certificationLevel ??
+          currentUser.roleProfile?.certificationLevel,
+      linkedPlayerId: roleProfile?.linkedPlayerId ??
+          currentUser.roleProfile?.linkedPlayerId,
+      linkedRefereeId: roleProfile?.linkedRefereeId ??
+          currentUser.roleProfile?.linkedRefereeId,
+    );
+
+    final updatedUser = currentUser.copyWith(
+      activeRole: role,
+      phone: phone?.trim().isNotEmpty == true
+          ? phone!.trim()
+          : currentUser.phone,
+      documentId: documentId?.trim().isNotEmpty == true
+          ? documentId!.trim()
+          : currentUser.documentId,
+      roleProfile: mergedProfile,
     );
 
     final updatedSession = currentSession.copyWith(user: updatedUser);

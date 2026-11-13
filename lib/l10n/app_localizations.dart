@@ -5541,6 +5541,132 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Múltiples torneos'**
   String get teamsDirectoryMultipleTournaments;
+
+  /// Distintivo ámbar cuando faltan datos obligatorios en el perfil del usuario
+  ///
+  /// In es, this message translates to:
+  /// **'Datos incompletos'**
+  String get profileIncompleteBadge;
+
+  /// Distintivo verde cuando los datos obligatorios del perfil están completos
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil completo'**
+  String get profileCompleteBadge;
+
+  /// Título del banner de perfil incompleto
+  ///
+  /// In es, this message translates to:
+  /// **'Completa tu ficha personal'**
+  String get profileIncompleteBannerTitle;
+
+  /// Subtítulo del banner de perfil incompleto
+  ///
+  /// In es, this message translates to:
+  /// **'Agrega tu información de contacto y datos de rol para mantener tu ficha al día.'**
+  String get profileIncompleteBannerSubtitle;
+
+  /// Botón de acción para abrir el formulario de completar perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Completar mi perfil'**
+  String get profileCompleteAction;
+
+  /// Título del modal adaptativo de perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Completar mi perfil'**
+  String get completeProfileDialogTitle;
+
+  /// Etiqueta del campo de teléfono
+  ///
+  /// In es, this message translates to:
+  /// **'Teléfono de contacto'**
+  String get completeProfilePhoneLabel;
+
+  /// Etiqueta del campo de documento de identidad
+  ///
+  /// In es, this message translates to:
+  /// **'Documento de identidad'**
+  String get completeProfileDocumentLabel;
+
+  /// Etiqueta del campo de club o escuela para entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Club o escuela'**
+  String get completeProfileClubLabel;
+
+  /// Etiqueta del campo de nivel de licencia para entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Nivel de licencia'**
+  String get completeProfileLicenseLabel;
+
+  /// Etiqueta del campo de entidad organizadora
+  ///
+  /// In es, this message translates to:
+  /// **'Entidad organizadora'**
+  String get completeProfileOrganizationLabel;
+
+  /// Etiqueta del campo de ciudad base para organizador
+  ///
+  /// In es, this message translates to:
+  /// **'Ciudad base'**
+  String get completeProfileBaseCityLabel;
+
+  /// Etiqueta del campo de ciudad para aficionado
+  ///
+  /// In es, this message translates to:
+  /// **'Ciudad'**
+  String get completeProfileCityLabel;
+
+  /// Etiqueta del campo de preferencias para aficionado
+  ///
+  /// In es, this message translates to:
+  /// **'Preferencias (opcional)'**
+  String get completeProfilePreferencesLabel;
+
+  /// Botón para guardar el formulario de completar perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar perfil'**
+  String get completeProfileSaveAction;
+
+  /// Mensaje de confirmación tras guardar el perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil actualizado y sincronizado en la nube.'**
+  String get completeProfileSuccessMessage;
+
+  /// Error cuando se intenta guardar el perfil sin conexión
+  ///
+  /// In es, this message translates to:
+  /// **'Se requiere conexión a internet para guardar tu perfil.'**
+  String get completeProfileOfflineError;
+
+  /// Error cuando el documento ingresado pertenece a otra cuenta
+  ///
+  /// In es, this message translates to:
+  /// **'El documento ingresado ya está vinculado a otra cuenta de usuario.'**
+  String get completeProfileDocumentConflictError;
+
+  /// Error de validación para campo obligatorio vacío
+  ///
+  /// In es, this message translates to:
+  /// **'Este campo es obligatorio.'**
+  String get completeProfileRequiredFieldError;
+
+  /// Error de validación para teléfono inválido
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa un teléfono válido (mínimo 7 dígitos).'**
+  String get completeProfileInvalidPhoneError;
+
+  /// Error de validación para documento inválido
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa un documento válido (mínimo 5 caracteres).'**
+  String get completeProfileInvalidDocumentError;
 }
 
 class _AppLocalizationsDelegate

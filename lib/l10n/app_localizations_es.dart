@@ -3225,4 +3225,73 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get teamsDirectoryMultipleTournaments => 'Múltiples torneos';
+
+  @override
+  String get profileIncompleteBadge => 'Datos incompletos';
+
+  @override
+  String get profileCompleteBadge => 'Perfil completo';
+
+  @override
+  String get profileIncompleteBannerTitle => 'Completa tu ficha personal';
+
+  @override
+  String get profileIncompleteBannerSubtitle =>
+      'Agrega tu información de contacto y datos de rol para mantener tu ficha al día.';
+
+  @override
+  String get profileCompleteAction => 'Completar mi perfil';
+
+  @override
+  String get completeProfileDialogTitle => 'Completar mi perfil';
+
+  @override
+  String get completeProfilePhoneLabel => 'Teléfono de contacto';
+
+  @override
+  String get completeProfileDocumentLabel => 'Documento de identidad';
+
+  @override
+  String get completeProfileClubLabel => 'Club o escuela';
+
+  @override
+  String get completeProfileLicenseLabel => 'Nivel de licencia';
+
+  @override
+  String get completeProfileOrganizationLabel => 'Entidad organizadora';
+
+  @override
+  String get completeProfileBaseCityLabel => 'Ciudad base';
+
+  @override
+  String get completeProfileCityLabel => 'Ciudad';
+
+  @override
+  String get completeProfilePreferencesLabel => 'Preferencias (opcional)';
+
+  @override
+  String get completeProfileSaveAction => 'Guardar perfil';
+
+  @override
+  String get completeProfileSuccessMessage =>
+      'Perfil actualizado y sincronizado en la nube.';
+
+  @override
+  String get completeProfileOfflineError =>
+      'Se requiere conexión a internet para guardar tu perfil.';
+
+  @override
+  String get completeProfileDocumentConflictError =>
+      'El documento ingresado ya está vinculado a otra cuenta de usuario.';
+
+  @override
+  String get completeProfileRequiredFieldError => 'Este campo es obligatorio.';
+
+  @override
+  String get completeProfileInvalidPhoneError =>
+      'Ingresa un teléfono válido (mínimo 7 dígitos).';
+
+  @override
+  String get completeProfileInvalidDocumentError =>
+      'Ingresa un documento válido (mínimo 5 caracteres).';
 }

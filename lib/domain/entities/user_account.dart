@@ -1,3 +1,4 @@
+import 'package:vifutbol/domain/entities/role_profile_data.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 
 /// User account representation within vifutbol championships.
@@ -9,6 +10,9 @@ class UserAccount {
   final Set<UserRole> authorizedRoles;
   final bool isGuestFan;
   final bool onboardingCompleted;
+  final String? phone;
+  final String? documentId;
+  final RoleProfileData? roleProfile;
 
   UserAccount({
     required this.id,
@@ -18,8 +22,40 @@ class UserAccount {
     Set<UserRole>? authorizedRoles,
     this.isGuestFan = false,
     this.onboardingCompleted = false,
+    this.phone,
+    this.documentId,
+    this.roleProfile,
   }) : email = email.trim().toLowerCase(),
        authorizedRoles = {...?authorizedRoles, activeRole, UserRole.fan};
+
+  static bool _hasText(String? value) =>
+      value != null && value.trim().isNotEmpty;
+
+  /// Evaluates whether the account has all mandatory profile data for its
+  /// [activeRole]. Guest fan sessions are always treated as exempt.
+  bool get isProfileCompleteForActiveRole {
+    if (isGuestFan) return true;
+    final hasPhone = _hasText(phone);
+    final hasDoc = _hasText(documentId);
+
+    switch (activeRole) {
+      case UserRole.player:
+      case UserRole.referee:
+        return hasPhone && hasDoc;
+      case UserRole.coach:
+        return hasPhone &&
+            hasDoc &&
+            _hasText(roleProfile?.clubName) &&
+            _hasText(roleProfile?.licenseLevel);
+      case UserRole.organizer:
+        return hasPhone &&
+            hasDoc &&
+            _hasText(roleProfile?.organizationName) &&
+            _hasText(roleProfile?.baseCity);
+      case UserRole.fan:
+        return hasPhone && _hasText(roleProfile?.city);
+    }
+  }
 
   /// Factory for creating an anonymous guest fan session.
   factory UserAccount.guestFan({required String id}) {
@@ -42,6 +78,9 @@ class UserAccount {
     Set<UserRole>? authorizedRoles,
     bool? isGuestFan,
     bool? onboardingCompleted,
+    String? phone,
+    String? documentId,
+    RoleProfileData? roleProfile,
   }) {
     return UserAccount(
       id: id ?? this.id,
@@ -51,6 +90,9 @@ class UserAccount {
       authorizedRoles: authorizedRoles ?? this.authorizedRoles,
       isGuestFan: isGuestFan ?? this.isGuestFan,
       onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+      phone: phone ?? this.phone,
+      documentId: documentId ?? this.documentId,
+      roleProfile: roleProfile ?? this.roleProfile,
     );
   }
 
@@ -63,6 +105,9 @@ class UserAccount {
       'authorizedRoles': authorizedRoles.map((r) => r.name).toList(),
       'isGuestFan': isGuestFan,
       'onboardingCompleted': onboardingCompleted,
+      if (phone != null) 'phone': phone,
+      if (documentId != null) 'documentId': documentId,
+      if (roleProfile != null) 'roleProfile': roleProfile!.toJson(),
     };
   }
 
@@ -72,6 +117,7 @@ class UserAccount {
     final authorizedRoles = rawRoles
         .map((r) => UserRole.values.byName(r as String))
         .toSet();
+    final rawRoleProfile = json['roleProfile'];
 
     return UserAccount(
       id: json['id'] as String,
@@ -81,6 +127,15 @@ class UserAccount {
       authorizedRoles: authorizedRoles,
       isGuestFan: json['isGuestFan'] as bool? ?? false,
       onboardingCompleted: json['onboardingCompleted'] as bool? ?? false,
+      phone: json['phone'] as String?,
+      documentId: json['documentId'] as String?,
+      roleProfile: rawRoleProfile is Map<String, dynamic>
+          ? RoleProfileData.fromJson(rawRoleProfile)
+          : (rawRoleProfile is Map
+                ? RoleProfileData.fromJson(
+                    Map<String, dynamic>.from(rawRoleProfile),
+                  )
+                : null),
     );
   }
 
@@ -91,10 +146,20 @@ class UserAccount {
           runtimeType == other.runtimeType &&
           id == other.id &&
           activeRole == other.activeRole &&
-          onboardingCompleted == other.onboardingCompleted;
+          onboardingCompleted == other.onboardingCompleted &&
+          phone == other.phone &&
+          documentId == other.documentId &&
+          roleProfile == other.roleProfile;
 
   @override
-  int get hashCode => Object.hash(id, activeRole, onboardingCompleted);
+  int get hashCode => Object.hash(
+        id,
+        activeRole,
+        onboardingCompleted,
+        phone,
+        documentId,
+        roleProfile,
+      );
 
   @override
   String toString() =>

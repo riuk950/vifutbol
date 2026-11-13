@@ -235,3 +235,13 @@ class MatchReportValidationFailure extends AppFailure {
     super.cause,
   ]);
 }
+
+/// Emitted when a player or referee attempts to link an identity document
+/// that is already claimed by a different user account.
+class DocumentAlreadyLinkedFailure extends AppFailure {
+  const DocumentAlreadyLinkedFailure([
+    super.message =
+        'El documento ingresado ya está vinculado a otra cuenta de usuario.',
+    super.cause,
+  ]);
+}

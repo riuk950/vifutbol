@@ -1,4 +1,5 @@
 import '../entities/auth_session.dart';
+import '../entities/role_profile_data.dart';
 import '../entities/user_account.dart';
 import '../entities/user_role.dart';
 
@@ -39,6 +40,16 @@ abstract class AuthRepository {
   Future<UserAccount> switchActiveRole({
     required String userId,
     required UserRole targetRole,
+  });
+
+  /// Updates personal contact/document data and role-specific profile attributes
+  /// in the cloud, linking existing athlete or referee records by document when applicable.
+  Future<UserAccount> updateRoleProfile({
+    required String userId,
+    required UserRole role,
+    String? phone,
+    String? documentId,
+    RoleProfileData? roleProfile,
   });
 
   /// Clears stored authentication session and returns the user to unauthenticated state.

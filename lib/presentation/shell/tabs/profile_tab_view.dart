@@ -15,6 +15,7 @@ import '../../design_system/widgets/kick_pulse_badge.dart';
 import '../../design_system/widgets/kick_pulse_button.dart';
 import '../../design_system/widgets/kick_pulse_card.dart';
 import '../../sync/sign_out_pending_sync_dialog.dart';
+import 'complete_profile_dialog.dart';
 
 /// Profile screen displaying identity, active sports role, role switching,
 /// full RBAC permissions matrix, and secure session termination.
@@ -146,12 +147,62 @@ class ProfileTabView extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    KickPulseBadge(
-                      label: _roleName(l10n, activeRole),
-                      variant: _roleBadgeVariant(activeRole),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        KickPulseBadge(
+                          label: _roleName(l10n, activeRole),
+                          variant: _roleBadgeVariant(activeRole),
+                        ),
+                        if (!isGuest && user != null) ...[
+                          const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
+                          KickPulseBadge(
+                            key: const ValueKey('profile_completeness_badge'),
+                            label: user.isProfileCompleteForActiveRole
+                                ? l10n.profileCompleteBadge
+                                : l10n.profileIncompleteBadge,
+                            variant: user.isProfileCompleteForActiveRole
+                                ? KickPulseBadgeVariant.success
+                                : KickPulseBadgeVariant.warning,
+                          ),
+                        ],
+                      ],
                     ),
                   ],
                 ),
+                if (!isGuest &&
+                    user != null &&
+                    !user.isProfileCompleteForActiveRole) ...[
+                  const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+                  const Divider(color: KickPulseColors.borderSubtle),
+                  const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+                  Text(
+                    l10n.profileIncompleteBannerTitle,
+                    style: const TextStyle(
+                      color: KickPulseColors.accentWarning,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
+                  Text(
+                    l10n.profileIncompleteBannerSubtitle,
+                    style: const TextStyle(
+                      color: KickPulseColors.textMuted,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+                  KickPulseButton(
+                    key: const ValueKey('profile_complete_action_button'),
+                    label: l10n.profileCompleteAction,
+                    variant: KickPulseButtonVariant.primary,
+                    isFullWidth: true,
+                    onPressed: () async {
+                      CompleteProfileDialog.show(context, user: user);
+                    },
+                  ),
+                ],
                 if (isGuest) ...[
                   const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
                   const Divider(color: KickPulseColors.borderSubtle),
