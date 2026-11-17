@@ -3739,4 +3739,107 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get playerDocumentUploadError =>
       'Error al subir las imágenes de la cédula. Inténtalo nuevamente.';
+
+  @override
+  String get playerProfilePhotoSectionTitle => 'Foto de Perfil';
+
+  @override
+  String get playerProfilePhotoSectionSubtitle =>
+      'Tómate una foto o selecciónala de tu galería para tu carnet digital';
+
+  @override
+  String get playerProfilePhotoAction => 'Tomar Foto de Perfil';
+
+  @override
+  String get playerProfilePhotoChangeAction => 'Cambiar Foto';
+
+  @override
+  String get playerProfilePhotoCameraOption => 'Tomar con la cámara';
+
+  @override
+  String get playerProfilePhotoGalleryOption => 'Elegir de la galería';
+
+  @override
+  String get playerProfilePhotoPermissionDenied =>
+      'Se requiere permiso de cámara o galería para tu foto de perfil.';
+
+  @override
+  String get playerProfilePhotoUploadError =>
+      'Error al subir la fotografía de perfil. Inténtalo nuevamente.';
+
+  @override
+  String get playerPersonalDataSummaryTitle => 'Datos Personales';
+
+  @override
+  String get playerPersonalDataEditAction => 'Editar Datos';
+
+  @override
+  String playerSummaryAgeFormat(int age) {
+    return '$age años';
+  }
+
+  @override
+  String get playerSummaryAgeUnknown => 'Edad no registrada';
+
+  @override
+  String get playerSummaryDemographicsTitle => 'Información Demográfica';
+
+  @override
+  String get playerSummaryDemographicsSubtitle =>
+      'Datos personales y lugar de residencia';
+
+  @override
+  String get playerSummarySexLabel => 'Sexo';
+
+  @override
+  String get playerSummaryBirthDateLabel => 'Fecha de Nacimiento';
+
+  @override
+  String get playerSummaryBloodTypeLabel => 'Tipo de Sangre';
+
+  @override
+  String get playerSummaryDepartmentLabel => 'Departamento';
+
+  @override
+  String get playerSummaryMunicipalityLabel => 'Municipio';
+
+  @override
+  String get playerSummaryTacticalTitle => 'Perfil Táctico';
+
+  @override
+  String get playerSummaryTacticalSubtitle =>
+      'Posiciones registradas en el terreno de juego';
+
+  @override
+  String get playerSummaryPrimaryPositionLabel => 'Posición Principal';
+
+  @override
+  String get playerSummarySecondaryPositionsLabel => 'Posiciones Secundarias';
+
+  @override
+  String get playerSummaryNoSecondaryPositions =>
+      'Sin posiciones secundarias registradas';
+
+  @override
+  String get playerSummaryDocumentationTitle => 'Documento de Identidad';
+
+  @override
+  String get playerSummaryDocumentationSubtitle =>
+      'Cédula de ciudadanía por ambas caras';
+
+  @override
+  String get playerSummaryFrontDocLabel => 'Cara Frontal';
+
+  @override
+  String get playerSummaryBackDocLabel => 'Cara Posterior';
+
+  @override
+  String get playerSummaryDocNotCaptured => 'No capturada';
+
+  @override
+  String get playerSummaryViewerCloseAction => 'Cerrar';
+
+  @override
+  String get playerPersonalDataSummarySubtitle =>
+      'Consulta tu carnet, ficha demográfica y táctica';
 }

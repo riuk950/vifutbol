@@ -137,6 +137,7 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
         'p_secondary_positions': roleProfile?.secondaryPositions,
         'p_document_front_url': roleProfile?.documentFrontUrl,
         'p_document_back_url': roleProfile?.documentBackUrl,
+        'p_photo_url': roleProfile?.photoUrl,
       },
     );
     if (result is Map<String, dynamic>) {
@@ -173,7 +174,7 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
             .schema(schema)
             .from('players')
             .select(
-              'id, first_name, second_name, first_surname, second_surname, sex, birth_date, blood_type, department, municipality, position, secondary_positions, document_front_url, document_back_url',
+              'id, first_name, second_name, first_surname, second_surname, sex, birth_date, blood_type, department, municipality, position, secondary_positions, document_front_url, document_back_url, photo_url',
             )
             .eq('user_account_id', userAccountId)
             .limit(1)
@@ -212,6 +213,7 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
           'secondary_positions': player['secondary_positions'],
           'document_front_url': player['document_front_url'],
           'document_back_url': player['document_back_url'],
+          'photo_url': player['photo_url'],
         },
         if (referee != null) ...{
           'linked_referee_id': referee['id'],
@@ -280,6 +282,13 @@ class SupabaseAuthRepository implements AuthRepository {
                   Map<String, dynamic>.from(rawRoleProfile),
                 )
               : null);
+    final topLevelPhotoUrl = (row['photo_url'] as String?)?.trim();
+    final resolvedRoleProfile = (roleProfile?.photoUrl == null &&
+            topLevelPhotoUrl != null &&
+            topLevelPhotoUrl.isNotEmpty)
+        ? (roleProfile?.copyWith(photoUrl: topLevelPhotoUrl) ??
+            RoleProfileData(photoUrl: topLevelPhotoUrl))
+        : roleProfile;
 
     return UserAccount(
       id: id,
@@ -291,7 +300,7 @@ class SupabaseAuthRepository implements AuthRepository {
       onboardingCompleted: row['onboarding_completed'] as bool? ?? false,
       phone: phone?.isEmpty == true ? null : phone,
       documentId: documentId?.isEmpty == true ? null : documentId,
-      roleProfile: roleProfile,
+      roleProfile: resolvedRoleProfile,
     );
   }
 

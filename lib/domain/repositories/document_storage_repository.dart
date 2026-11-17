@@ -14,4 +14,21 @@ abstract class DocumentStorageRepository {
     String? existingFrontUrl,
     String? existingBackUrl,
   });
+
+  /// Uploads a player's profile photograph to the `player-avatars` storage bucket
+  /// and returns the public URL to display the avatar.
+  ///
+  /// Throws [DocumentUploadFailure] or [OfflineAuthOperationFailure] if upload fails.
+  Future<String> uploadPlayerAvatar({
+    required String userId,
+    required String localPath,
+    String? existingPhotoUrl,
+  });
+
+  /// Generates a signed, temporary URL for displaying private documents from `player-documents`.
+  /// Returns `null` if the path is invalid or offline.
+  Future<String?> getSignedDocumentUrl({
+    required String storagePath,
+    int expiresInSeconds = 300,
+  });
 }

@@ -9,15 +9,17 @@ import '../../domain/repositories/document_storage_repository.dart';
 /// Concrete [DocumentStorageRepository] adapter uploading identity document photos
 /// to the private Supabase Storage bucket `player-documents` with owner-scoped RLS.
 class SupabaseDocumentStorageRepository implements DocumentStorageRepository {
+  final SupabaseClient client;
+  final ConnectivityRepository connectivity;
+  final String bucketName;
+  final String avatarBucketName;
+
   SupabaseDocumentStorageRepository({
     required this.client,
     required this.connectivity,
     this.bucketName = 'player-documents',
+    this.avatarBucketName = 'player-avatars',
   });
-
-  final SupabaseClient client;
-  final ConnectivityRepository connectivity;
-  final String bucketName;
 
   @override
   Future<({String frontUrl, String backUrl})> uploadPlayerIdDocuments({
@@ -81,6 +83,73 @@ class SupabaseDocumentStorageRepository implements DocumentStorageRepository {
       );
     }
   }
+
+  @override
+  Future<String> uploadPlayerAvatar({
+    required String userId,
+    required String localPath,
+    String? existingPhotoUrl,
+  }) async {
+    final conn = await connectivity.checkConnectivity();
+    if (conn.isDisconnected) {
+      throw const OfflineAuthOperationFailure(
+        'Se requiere conexión a internet para subir la foto de perfil.',
+      );
+    }
+
+    try {
+      final file = File(localPath);
+      if (!await file.exists()) {
+        return existingPhotoUrl ?? '';
+      }
+
+      final storage = client.storage.from(avatarBucketName);
+      final avatarPath = '$userId/avatar.jpg';
+      await storage.upload(
+        avatarPath,
+        file,
+        fileOptions: const FileOptions(
+          upsert: true,
+          contentType: 'image/jpeg',
+        ),
+      );
+
+      final basePublicUrl = storage.getPublicUrl(avatarPath);
+      final cacheBuster = DateTime.now().millisecondsSinceEpoch;
+      return '$basePublicUrl?t=$cacheBuster';
+    } catch (e) {
+      if (e is AppFailure) rethrow;
+      throw DocumentUploadFailure(
+        'Error al subir la fotografía de perfil. Inténtalo nuevamente.',
+        e,
+      );
+    }
+  }
+
+  @override
+  Future<String?> getSignedDocumentUrl({
+    required String storagePath,
+    int expiresInSeconds = 300,
+  }) async {
+    if (storagePath.trim().isEmpty) return null;
+    if (storagePath.startsWith('http://') || storagePath.startsWith('https://')) {
+      return storagePath;
+    }
+
+    try {
+      final conn = await connectivity.checkConnectivity();
+      if (conn.isDisconnected) return null;
+
+      final storage = client.storage.from(bucketName);
+      final signedUrl = await storage.createSignedUrl(
+        storagePath,
+        expiresInSeconds,
+      );
+      return signedUrl;
+    } catch (_) {
+      return null;
+    }
+  }
 }
 
 /// Local fallback [DocumentStorageRepository] for testing or offline-first development.
@@ -99,5 +168,22 @@ class LocalDocumentStorageRepository implements DocumentStorageRepository {
       frontUrl: frontLocalPath ?? existingFrontUrl ?? '',
       backUrl: backLocalPath ?? existingBackUrl ?? '',
     );
+  }
+
+  @override
+  Future<String> uploadPlayerAvatar({
+    required String userId,
+    required String localPath,
+    String? existingPhotoUrl,
+  }) async {
+    return localPath.isNotEmpty ? localPath : (existingPhotoUrl ?? '');
+  }
+
+  @override
+  Future<String?> getSignedDocumentUrl({
+    required String storagePath,
+    int expiresInSeconds = 300,
+  }) async {
+    return storagePath.isNotEmpty ? storagePath : null;
   }
 }

@@ -14,6 +14,9 @@ class UserAccount {
   final String? documentId;
   final RoleProfileData? roleProfile;
 
+  /// Convenience getter for player or account photo avatar URL.
+  String? get photoUrl => roleProfile?.photoUrl;
+
   UserAccount({
     required this.id,
     required this.fullName,
@@ -51,7 +54,8 @@ class UserAccount {
             _hasText(roleProfile?.municipality) &&
             (roleProfile?.secondaryPositions.isNotEmpty ?? false) &&
             _hasText(roleProfile?.documentFrontUrl) &&
-            _hasText(roleProfile?.documentBackUrl);
+            _hasText(roleProfile?.documentBackUrl) &&
+            _hasText(roleProfile?.photoUrl);
       case UserRole.referee:
         return hasPhone && hasDoc;
       case UserRole.coach:

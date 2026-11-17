@@ -55,9 +55,17 @@ void main() {
       );
       expect(missingBackImage.isProfileCompleteForActiveRole, isFalse);
 
-      final complete = missingBackImage.copyWith(
+      final missingPhoto = missingBackImage.copyWith(
         roleProfile: missingBackImage.roleProfile!.copyWith(
           documentBackUrl: 'path/to/back.jpg',
+        ),
+      );
+      // Fails because profile photoUrl is missing (HU 21.3)
+      expect(missingPhoto.isProfileCompleteForActiveRole, isFalse);
+
+      final complete = missingPhoto.copyWith(
+        roleProfile: missingPhoto.roleProfile!.copyWith(
+          photoUrl: 'path/to/avatar.jpg',
         ),
       );
       expect(complete.isProfileCompleteForActiveRole, isTrue);
@@ -188,6 +196,7 @@ void main() {
           linkedPlayerId: 'player-uuid-123',
           documentFrontUrl: 'https://storage/front.jpg',
           documentBackUrl: 'https://storage/back.jpg',
+          photoUrl: 'https://storage/avatar.jpg',
         ),
       );
 
@@ -207,7 +216,21 @@ void main() {
       expect(restored.roleProfile?.secondaryPositions, equals(['DFC', 'LD']));
       expect(restored.roleProfile?.documentFrontUrl, 'https://storage/front.jpg');
       expect(restored.roleProfile?.documentBackUrl, 'https://storage/back.jpg');
+      expect(restored.roleProfile?.photoUrl, 'https://storage/avatar.jpg');
+      expect(restored.photoUrl, 'https://storage/avatar.jpg');
       expect(restored.isProfileCompleteForActiveRole, isTrue);
+    });
+
+    test('RoleProfileData serialization handles photoUrl and snake_case aliases', () {
+      const data = RoleProfileData(photoUrl: 'https://avatars/pic.jpg');
+      final json = data.toJson();
+      expect(json['photoUrl'], 'https://avatars/pic.jpg');
+
+      final fromCamel = RoleProfileData.fromJson({'photoUrl': 'https://avatars/pic.jpg'});
+      expect(fromCamel.photoUrl, 'https://avatars/pic.jpg');
+
+      final fromSnake = RoleProfileData.fromJson({'photo_url': 'https://avatars/pic.jpg'});
+      expect(fromSnake.photoUrl, 'https://avatars/pic.jpg');
     });
   });
 }

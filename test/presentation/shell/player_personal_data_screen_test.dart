@@ -1346,5 +1346,192 @@ void main() {
       expect(find.text('10203040'), findsOneWidget);
       expect(find.text('Mateo'), findsOneWidget);
     });
+
+    testWidgets(
+        'HU 21.3: renders circular profile photo section and opens bottom sheet options',
+        (tester) async {
+      final user = UserAccount(
+        id: 'u-1',
+        fullName: 'Mateo Gómez',
+        email: 'mateo@test.com',
+        activeRole: UserRole.player,
+      );
+      final controller = _TestAuthController(
+        authRepository: authRepository,
+        initialState: AuthFlowState(
+          status: AuthStatus.authenticated,
+          session: AuthSession(
+            sessionId: 's-1',
+            user: user,
+            sessionToken: 't-1',
+            authenticatedAt: DateTime.now(),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(
+        buildApp(controller: controller, home: const PlayerPersonalDataScreen()),
+      );
+      await tester.pumpAndSettle();
+
+      // Profile avatar and button exist
+      expect(find.byKey(const Key('player_form_profile_avatar')), findsOneWidget);
+      final photoBtn = find.byKey(const Key('player_profile_photo_action'));
+      expect(photoBtn, findsOneWidget);
+      expect(find.text('Tomar Foto de Perfil'), findsOneWidget);
+
+      // Tap opens modal bottom sheet
+      await tester.tap(photoBtn);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('player_photo_source_camera')), findsOneWidget);
+      expect(find.byKey(const Key('player_photo_source_gallery')), findsOneWidget);
+      expect(find.text('Tomar con la cámara'), findsOneWidget);
+      expect(find.text('Elegir de la galería'), findsOneWidget);
+    });
+
+    testWidgets(
+        'HU 21.3: allows saving form when profile photo is not provided (optional on save)',
+        (tester) async {
+      final user = UserAccount(
+        id: 'u-1',
+        fullName: 'Mateo Gómez',
+        email: 'mateo@test.com',
+        activeRole: UserRole.player,
+      );
+      final controller = _TestAuthController(
+        authRepository: authRepository,
+        initialState: AuthFlowState(
+          status: AuthStatus.authenticated,
+          session: AuthSession(
+            sessionId: 's-1',
+            user: user,
+            sessionToken: 't-1',
+            authenticatedAt: DateTime.now(),
+          ),
+        ),
+      );
+
+      when(
+        () => authRepository.updateRoleProfile(
+          userId: any(named: 'userId'),
+          role: any(named: 'role'),
+          fullName: any(named: 'fullName'),
+          phone: any(named: 'phone'),
+          documentId: any(named: 'documentId'),
+          roleProfile: any(named: 'roleProfile'),
+        ),
+      ).thenAnswer((_) async => user);
+
+      final mockStorage = _MockDocumentStorageRepository();
+      when(
+        () => mockStorage.uploadPlayerIdDocuments(
+          userId: any(named: 'userId'),
+          frontLocalPath: any(named: 'frontLocalPath'),
+          backLocalPath: any(named: 'backLocalPath'),
+          existingFrontUrl: any(named: 'existingFrontUrl'),
+          existingBackUrl: any(named: 'existingBackUrl'),
+        ),
+      ).thenAnswer(
+        (_) async => (
+          frontUrl: 'uploaded_front.jpg',
+          backUrl: 'uploaded_back.jpg',
+        ),
+      );
+
+      final mockScanner = _MockScannerService();
+      when(() => mockScanner.captureDocumentPhoto(isFront: true))
+          .thenAnswer((_) async => 'fake_front.jpg');
+      when(() => mockScanner.captureDocumentPhoto(isFront: false))
+          .thenAnswer((_) async => 'fake_back.jpg');
+
+      await tester.pumpWidget(
+        buildApp(
+          controller: controller,
+          home: const PlayerPersonalDataScreen(),
+          scannerService: mockScanner,
+          storageRepository: mockStorage,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Capture documents via scan button
+      final scanBtn = find.byKey(const Key('player_form_scan_id_button'));
+      await tester.ensureVisible(scanBtn);
+      await tester.tap(scanBtn);
+      await tester.pumpAndSettle();
+
+      // Enter required fields
+      await tester.enterText(
+        find.byKey(const Key('player_form_document_field')),
+        '10203040',
+      );
+      await tester.enterText(
+        find.byKey(const Key('player_form_phone_field')),
+        '3001234567',
+      );
+      await tester.enterText(
+        find.byKey(const Key('player_form_first_name_field')),
+        'Mateo',
+      );
+      await tester.enterText(
+        find.byKey(const Key('player_form_first_surname_field')),
+        'Gómez',
+      );
+
+      final state = tester.state<PlayerPersonalDataScreenState>(
+        find.byType(PlayerPersonalDataScreen),
+      );
+      state.applyDocumentScanData(
+        sex: PlayerSex.male,
+        birthDate: DateTime(1995, 5, 20),
+        bloodType: BloodType.oPositive,
+      );
+      await tester.pumpAndSettle();
+
+      final depFinder = find.byKey(const Key('player_form_department_selector'));
+      await tester.ensureVisible(depFinder);
+      await tester.tap(depFinder);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Antioquia'));
+      await tester.pumpAndSettle();
+
+      final munFinder =
+          find.byKey(const Key('player_form_municipality_selector'));
+      await tester.ensureVisible(munFinder);
+      await tester.tap(munFinder);
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const Key('location_picker_search_field')),
+        'medellin',
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Medellín'));
+      await tester.pumpAndSettle();
+
+      final ldChip = find.byKey(const Key('player_form_position_chip_LD'));
+      await tester.ensureVisible(ldChip);
+      await tester.tap(ldChip);
+      await tester.pumpAndSettle();
+
+      // Do NOT pick a profile photo -> save directly
+      final saveBtn = find.byKey(const Key('player_form_save_button'));
+      await tester.ensureVisible(saveBtn);
+      await tester.tap(saveBtn);
+      await tester.pumpAndSettle();
+
+      // Save was invoked successfully without error banner
+      expect(find.byKey(const Key('player_personal_data_error_banner')), findsNothing);
+      verify(
+        () => authRepository.updateRoleProfile(
+          userId: any(named: 'userId'),
+          role: UserRole.player,
+          fullName: 'Mateo Gómez',
+          phone: '3001234567',
+          documentId: '10203040',
+          roleProfile: any(named: 'roleProfile'),
+        ),
+      ).called(1);
+    });
   });
 }

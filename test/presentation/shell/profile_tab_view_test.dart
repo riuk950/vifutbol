@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,6 +13,7 @@ import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/auth_flow_state.dart';
 import 'package:vifutbol/domain/entities/auth_session.dart';
 import 'package:vifutbol/domain/entities/role_profile_data.dart';
+import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/user_account.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/repositories/auth_repository.dart';
@@ -38,6 +41,7 @@ Widget _wrapWithApp(
   Widget child, {
   required _TestAuthController controller,
   required EnvironmentConfig config,
+  Map<String, WidgetBuilder>? routes,
 }) {
   return ProviderScope(
     overrides: [
@@ -49,6 +53,7 @@ Widget _wrapWithApp(
       locale: const Locale('es'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      routes: routes ?? const {},
       home: Scaffold(body: child),
     ),
   );
@@ -180,5 +185,252 @@ void main() {
     expect(find.text('Datos incompletos'), findsNothing);
     expect(find.text('Perfil completo'), findsNothing);
     expect(find.text('Completar mi perfil'), findsNothing);
+  });
+
+  testWidgets('renders NetworkImage when user photoUrl starts with http',
+      (tester) async {
+    final user = UserAccount(
+      id: 'u4',
+      fullName: 'Carlos Ruiz',
+      email: 'carlos@test.com',
+      activeRole: UserRole.player,
+      authorizedRoles: {UserRole.player, UserRole.fan},
+      roleProfile: const RoleProfileData(
+        photoUrl: 'https://images.example.com/avatar.jpg',
+      ),
+    );
+    final controller = _TestAuthController(
+      authRepository: authRepository,
+      initialState: AuthFlowState(
+        status: AuthStatus.authenticated,
+        session: AuthSession(
+          sessionId: 's4',
+          user: user,
+          sessionToken: 't4',
+          authenticatedAt: DateTime(2026, 11, 13),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _wrapWithApp(
+        const ProfileTabView(),
+        controller: controller,
+        config: config,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final avatar = tester.widget<CircleAvatar>(
+      find.byKey(const ValueKey('profile_identity_avatar')),
+    );
+    expect(avatar.backgroundImage, isA<NetworkImage>());
+    expect(
+      (avatar.backgroundImage as NetworkImage).url,
+      'https://images.example.com/avatar.jpg',
+    );
+    expect(avatar.child, isNull);
+  });
+
+  testWidgets('renders FileImage when user photoUrl points to existing local file',
+      (tester) async {
+    final tempDir = Directory.systemTemp.createTempSync('avatar_test');
+    final tempFile = File('${tempDir.path}/local_avatar.png')
+      ..writeAsBytesSync([1, 2, 3]);
+
+    final user = UserAccount(
+      id: 'u5',
+      fullName: 'Carlos Ruiz',
+      email: 'carlos@test.com',
+      activeRole: UserRole.player,
+      authorizedRoles: {UserRole.player, UserRole.fan},
+      roleProfile: RoleProfileData(
+        photoUrl: tempFile.path,
+      ),
+    );
+    final controller = _TestAuthController(
+      authRepository: authRepository,
+      initialState: AuthFlowState(
+        status: AuthStatus.authenticated,
+        session: AuthSession(
+          sessionId: 's5',
+          user: user,
+          sessionToken: 't5',
+          authenticatedAt: DateTime(2026, 11, 13),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _wrapWithApp(
+        const ProfileTabView(),
+        controller: controller,
+        config: config,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final avatar = tester.widget<CircleAvatar>(
+      find.byKey(const ValueKey('profile_identity_avatar')),
+    );
+    expect(avatar.backgroundImage, isA<FileImage>());
+    expect(
+      (avatar.backgroundImage as FileImage).file.path,
+      tempFile.path,
+    );
+    expect(avatar.child, isNull);
+
+    tempDir.deleteSync(recursive: true);
+  });
+
+  testWidgets('renders default fallback icon when user has no photoUrl',
+      (tester) async {
+    final user = UserAccount(
+      id: 'u6',
+      fullName: 'Carlos Ruiz',
+      email: 'carlos@test.com',
+      activeRole: UserRole.player,
+      authorizedRoles: {UserRole.player, UserRole.fan},
+    );
+    final controller = _TestAuthController(
+      authRepository: authRepository,
+      initialState: AuthFlowState(
+        status: AuthStatus.authenticated,
+        session: AuthSession(
+          sessionId: 's6',
+          user: user,
+          sessionToken: 't6',
+          authenticatedAt: DateTime(2026, 11, 13),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _wrapWithApp(
+        const ProfileTabView(),
+        controller: controller,
+        config: config,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final avatar = tester.widget<CircleAvatar>(
+      find.byKey(const ValueKey('profile_identity_avatar')),
+    );
+    expect(avatar.backgroundImage, isNull);
+    expect(avatar.child, isA<Icon>());
+    final icon = avatar.child as Icon;
+    expect(icon.icon, Icons.sports_soccer);
+  });
+
+  testWidgets(
+      'navigates to /profile/personal-data when profile is incomplete and tile is tapped',
+      (tester) async {
+    final user = UserAccount(
+      id: 'u7',
+      fullName: 'Carlos Ruiz',
+      email: 'carlos@test.com',
+      activeRole: UserRole.player,
+      authorizedRoles: {UserRole.player, UserRole.fan},
+      onboardingCompleted: true,
+      // Incomplete profile
+    );
+    final controller = _TestAuthController(
+      authRepository: authRepository,
+      initialState: AuthFlowState(
+        status: AuthStatus.authenticated,
+        session: AuthSession(
+          sessionId: 's7',
+          user: user,
+          sessionToken: 't7',
+          authenticatedAt: DateTime(2026, 11, 13),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _wrapWithApp(
+        const ProfileTabView(),
+        controller: controller,
+        config: config,
+        routes: {
+          '/profile/personal-data': (context) =>
+              const Scaffold(body: Text('Personal Data Form Screen')),
+          '/profile/personal-data/summary': (context) =>
+              const Scaffold(body: Text('Personal Data Summary Screen')),
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final tile = find.byKey(const Key('profile_personal_data_tile'));
+    await tester.ensureVisible(tile);
+    await tester.tap(tile);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Personal Data Form Screen'), findsOneWidget);
+  });
+
+  testWidgets(
+      'navigates to /profile/personal-data/summary when profile is complete and tile is tapped',
+      (tester) async {
+    final user = UserAccount(
+      id: 'u8',
+      fullName: 'Carlos Ruiz',
+      email: 'carlos@test.com',
+      activeRole: UserRole.player,
+      authorizedRoles: {UserRole.player, UserRole.fan},
+      onboardingCompleted: true,
+      phone: '3001234567',
+      documentId: '1098765432',
+      roleProfile: RoleProfileData(
+        firstName: 'Carlos',
+        firstSurname: 'Ruiz',
+        sex: 'M',
+        birthDate: DateTime(1998, 5, 15),
+        bloodType: 'O+',
+        department: 'Santander',
+        municipality: 'Bucaramanga',
+        primaryPosition: PlayerPosition.forward,
+        secondaryPositions: const ['midfielder'],
+        documentFrontUrl: 'https://example.com/front.jpg',
+        documentBackUrl: 'https://example.com/back.jpg',
+        photoUrl: 'https://example.com/carlos.jpg',
+      ),
+    );
+    final controller = _TestAuthController(
+      authRepository: authRepository,
+      initialState: AuthFlowState(
+        status: AuthStatus.authenticated,
+        session: AuthSession(
+          sessionId: 's8',
+          user: user,
+          sessionToken: 't8',
+          authenticatedAt: DateTime(2026, 11, 13),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _wrapWithApp(
+        const ProfileTabView(),
+        controller: controller,
+        config: config,
+        routes: {
+          '/profile/personal-data': (context) =>
+              const Scaffold(body: Text('Personal Data Form Screen')),
+          '/profile/personal-data/summary': (context) =>
+              const Scaffold(body: Text('Personal Data Summary Screen')),
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final tile = find.byKey(const Key('profile_personal_data_tile'));
+    await tester.ensureVisible(tile);
+    await tester.tap(tile);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Personal Data Summary Screen'), findsOneWidget);
   });
 }

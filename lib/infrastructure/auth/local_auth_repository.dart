@@ -306,6 +306,7 @@ class LocalAuthRepository implements AuthRepository {
           currentUser.roleProfile?.documentFrontUrl,
       documentBackUrl: roleProfile?.documentBackUrl ??
           currentUser.roleProfile?.documentBackUrl,
+      photoUrl: roleProfile?.photoUrl ?? currentUser.roleProfile?.photoUrl,
     );
 
     final updatedUser = currentUser.copyWith(

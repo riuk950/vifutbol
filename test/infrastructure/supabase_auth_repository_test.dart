@@ -140,6 +140,28 @@ void main() {
 
     when(() => mockClient.auth).thenReturn(mockAuth);
     when(
+      () => mockProfileDataSource.fetchRoleProfileDetails(any()),
+    ).thenAnswer((_) async => null);
+    when(
+      () => mockProfileDataSource.completeRoleProfile(
+        activeRole: any(named: 'activeRole'),
+        authorizedRoles: any(named: 'authorizedRoles'),
+        onboardingCompleted: any(named: 'onboardingCompleted'),
+        fullName: any(named: 'fullName'),
+        phone: any(named: 'phone'),
+        documentId: any(named: 'documentId'),
+        roleProfile: any(named: 'roleProfile'),
+      ),
+    ).thenAnswer((inv) async => buildRow(
+          activeRole: inv.namedArguments[#activeRole] as String? ?? 'fan',
+          authorizedRoles:
+              (inv.namedArguments[#authorizedRoles] as List<dynamic>?)
+                      ?.cast<String>() ??
+                  const ['fan'],
+          onboardingCompleted:
+              inv.namedArguments[#onboardingCompleted] as bool? ?? false,
+        ));
+    when(
       () => mockAuth.onAuthStateChange,
     ).thenAnswer((_) => authStateController.stream);
     when(

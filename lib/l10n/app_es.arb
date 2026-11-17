@@ -4759,5 +4759,134 @@
   "playerDocumentUploadError": "Error al subir las imágenes de la cédula. Inténtalo nuevamente.",
   "@playerDocumentUploadError": {
     "description": "Error al fallar la subida de fotos a almacenamiento"
+  },
+  "playerProfilePhotoSectionTitle": "Foto de Perfil",
+  "@playerProfilePhotoSectionTitle": {
+    "description": "Título de la sección de foto de carnet en el formulario del jugador"
+  },
+  "playerProfilePhotoSectionSubtitle": "Tómate una foto o selecciónala de tu galería para tu carnet digital",
+  "@playerProfilePhotoSectionSubtitle": {
+    "description": "Subtítulo instructivo para la foto de perfil del carnet"
+  },
+  "playerProfilePhotoAction": "Tomar Foto de Perfil",
+  "@playerProfilePhotoAction": {
+    "description": "Botón para tomar o seleccionar la foto de perfil"
+  },
+  "playerProfilePhotoChangeAction": "Cambiar Foto",
+  "@playerProfilePhotoChangeAction": {
+    "description": "Botón para reemplazar la foto de perfil ya capturada"
+  },
+  "playerProfilePhotoCameraOption": "Tomar con la cámara",
+  "@playerProfilePhotoCameraOption": {
+    "description": "Opción para abrir la cámara"
+  },
+  "playerProfilePhotoGalleryOption": "Elegir de la galería",
+  "@playerProfilePhotoGalleryOption": {
+    "description": "Opción para elegir foto de la galería"
+  },
+  "playerProfilePhotoPermissionDenied": "Se requiere permiso de cámara o galería para tu foto de perfil.",
+  "@playerProfilePhotoPermissionDenied": {
+    "description": "Alerta cuando se deniegan permisos para la foto de perfil"
+  },
+  "playerProfilePhotoUploadError": "Error al subir la fotografía de perfil. Inténtalo nuevamente.",
+  "@playerProfilePhotoUploadError": {
+    "description": "Error al fallar la subida de la foto de perfil"
+  },
+  "playerPersonalDataSummaryTitle": "Datos Personales",
+  "@playerPersonalDataSummaryTitle": {
+    "description": "Título de la pantalla de resumen de datos personales"
+  },
+  "playerPersonalDataEditAction": "Editar Datos",
+  "@playerPersonalDataEditAction": {
+    "description": "Botón en AppBar para editar los datos personales"
+  },
+  "playerSummaryAgeFormat": "{age} años",
+  "@playerSummaryAgeFormat": {
+    "description": "Formato de edad calculada en años",
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "playerSummaryAgeUnknown": "Edad no registrada",
+  "@playerSummaryAgeUnknown": {
+    "description": "Texto cuando la fecha de nacimiento no está disponible"
+  },
+  "playerSummaryDemographicsTitle": "Información Demográfica",
+  "@playerSummaryDemographicsTitle": {
+    "description": "Título de sección de datos demográficos"
+  },
+  "playerSummaryDemographicsSubtitle": "Datos personales y lugar de residencia",
+  "@playerSummaryDemographicsSubtitle": {
+    "description": "Subtítulo de sección de datos demográficos"
+  },
+  "playerSummarySexLabel": "Sexo",
+  "@playerSummarySexLabel": {
+    "description": "Etiqueta para el sexo del jugador"
+  },
+  "playerSummaryBirthDateLabel": "Fecha de Nacimiento",
+  "@playerSummaryBirthDateLabel": {
+    "description": "Etiqueta para fecha de nacimiento"
+  },
+  "playerSummaryBloodTypeLabel": "Tipo de Sangre",
+  "@playerSummaryBloodTypeLabel": {
+    "description": "Etiqueta para grupo sanguíneo y RH"
+  },
+  "playerSummaryDepartmentLabel": "Departamento",
+  "@playerSummaryDepartmentLabel": {
+    "description": "Etiqueta para departamento"
+  },
+  "playerSummaryMunicipalityLabel": "Municipio",
+  "@playerSummaryMunicipalityLabel": {
+    "description": "Etiqueta para municipio"
+  },
+  "playerSummaryTacticalTitle": "Perfil Táctico",
+  "@playerSummaryTacticalTitle": {
+    "description": "Título de sección de posiciones de juego"
+  },
+  "playerSummaryTacticalSubtitle": "Posiciones registradas en el terreno de juego",
+  "@playerSummaryTacticalSubtitle": {
+    "description": "Subtítulo de sección táctica"
+  },
+  "playerSummaryPrimaryPositionLabel": "Posición Principal",
+  "@playerSummaryPrimaryPositionLabel": {
+    "description": "Etiqueta de posición principal"
+  },
+  "playerSummarySecondaryPositionsLabel": "Posiciones Secundarias",
+  "@playerSummarySecondaryPositionsLabel": {
+    "description": "Etiqueta de posiciones secundarias"
+  },
+  "playerSummaryNoSecondaryPositions": "Sin posiciones secundarias registradas",
+  "@playerSummaryNoSecondaryPositions": {
+    "description": "Texto cuando no hay posiciones secundarias"
+  },
+  "playerSummaryDocumentationTitle": "Documento de Identidad",
+  "@playerSummaryDocumentationTitle": {
+    "description": "Título de sección de fotos de la cédula"
+  },
+  "playerSummaryDocumentationSubtitle": "Cédula de ciudadanía por ambas caras",
+  "@playerSummaryDocumentationSubtitle": {
+    "description": "Subtítulo de sección de documentos"
+  },
+  "playerSummaryFrontDocLabel": "Cara Frontal",
+  "@playerSummaryFrontDocLabel": {
+    "description": "Etiqueta de la cara frontal de la cédula"
+  },
+  "playerSummaryBackDocLabel": "Cara Posterior",
+  "@playerSummaryBackDocLabel": {
+    "description": "Etiqueta de la cara posterior de la cédula"
+  },
+  "playerSummaryDocNotCaptured": "No capturada",
+  "@playerSummaryDocNotCaptured": {
+    "description": "Texto cuando una cara de la cédula no fue capturada"
+  },
+  "playerSummaryViewerCloseAction": "Cerrar",
+  "@playerSummaryViewerCloseAction": {
+    "description": "Botón para cerrar el visor interactivo de la cédula"
+  },
+  "playerPersonalDataSummarySubtitle": "Consulta tu carnet, ficha demográfica y táctica",
+  "@playerPersonalDataSummarySubtitle": {
+    "description": "Subtítulo del botón de datos personales en perfil"
   }
 }

@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../application/providers/auth_providers.dart';
 import '../../../application/providers/document_scanner_providers.dart';
@@ -62,6 +66,10 @@ class PlayerPersonalDataScreenState
   String? _documentImagesError;
   String? _scanFeedback;
 
+  // HU 21.3 Player Profile Photo / Avatar State
+  String? _photoLocalPath;
+  String? _photoRemoteUrl;
+
   @override
   void initState() {
     super.initState();
@@ -71,6 +79,12 @@ class PlayerPersonalDataScreenState
     _phoneController = TextEditingController(text: user?.phone ?? '');
 
     final profile = user?.roleProfile;
+    _photoRemoteUrl = profile?.photoUrl;
+    if (_photoRemoteUrl != null &&
+        !_photoRemoteUrl!.startsWith('http://') &&
+        !_photoRemoteUrl!.startsWith('https://')) {
+      _photoLocalPath = _photoRemoteUrl;
+    }
     _documentCapture = PlayerDocumentCapture(
       frontRemoteUrl: profile?.documentFrontUrl,
       backRemoteUrl: profile?.documentBackUrl,
@@ -405,6 +419,104 @@ class PlayerPersonalDataScreenState
     }
   }
 
+  void _showPhotoSourceBottomSheet() {
+    final l10n = AppLocalizations.of(context);
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: KickPulseColors.surfaceBase,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(KickPulseRadiiSpacing.cardRadius),
+        ),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  l10n.playerProfilePhotoSectionTitle,
+                  style: KickPulseTypography.sectionHeader,
+                ),
+                const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+                ListTile(
+                  key: const Key('player_photo_source_camera'),
+                  leading: const Icon(
+                    Icons.camera_alt,
+                    color: KickPulseColors.accentPrimary,
+                  ),
+                  title: Text(
+                    l10n.playerProfilePhotoCameraOption,
+                    style: KickPulseTypography.bodyPrimary,
+                  ),
+                  onTap: () {
+                    Navigator.of(ctx).pop();
+                    _handlePickProfilePhoto(ImageSource.camera);
+                  },
+                ),
+                ListTile(
+                  key: const Key('player_photo_source_gallery'),
+                  leading: const Icon(
+                    Icons.photo_library,
+                    color: KickPulseColors.accentElectric,
+                  ),
+                  title: Text(
+                    l10n.playerProfilePhotoGalleryOption,
+                    style: KickPulseTypography.bodyPrimary,
+                  ),
+                  onTap: () {
+                    Navigator.of(ctx).pop();
+                    _handlePickProfilePhoto(ImageSource.gallery);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _handlePickProfilePhoto(ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+      if (picked != null && mounted) {
+        setState(() {
+          _photoLocalPath = picked.path;
+          _isDirty = true;
+        });
+      }
+    } on PlatformException catch (_) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.playerProfilePhotoPermissionDenied),
+            backgroundColor: KickPulseColors.accentWarning,
+          ),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.playerProfilePhotoUploadError),
+            backgroundColor: KickPulseColors.accentLive,
+          ),
+        );
+      }
+    }
+  }
+
   Future<bool> _onWillPop() async {
     if (!_isDirty || _isSaving) return true;
 
@@ -478,6 +590,22 @@ class PlayerPersonalDataScreenState
         existingBackUrl: _documentCapture.backRemoteUrl,
       );
 
+      String? resolvedPhotoUrl = _photoRemoteUrl;
+      if (_photoLocalPath != null && _photoLocalPath!.isNotEmpty) {
+        try {
+          final uploadedAvatarUrl = await storageRepo.uploadPlayerAvatar(
+            userId: userId,
+            localPath: _photoLocalPath!,
+            existingPhotoUrl: _photoRemoteUrl,
+          );
+          resolvedPhotoUrl = uploadedAvatarUrl;
+        } on OfflineAuthOperationFailure {
+          resolvedPhotoUrl = _photoLocalPath;
+        } catch (_) {
+          resolvedPhotoUrl = _photoLocalPath;
+        }
+      }
+
       final positionsList = _selectedPositions
           .map((code) => DetailedFootballPosition.fromCode(code))
           .whereType<DetailedFootballPosition>()
@@ -511,6 +639,7 @@ class PlayerPersonalDataScreenState
         secondaryPositions: _selectedPositions.toList()..sort(),
         documentFrontUrl: uploadResult.frontUrl,
         documentBackUrl: uploadResult.backUrl,
+        photoUrl: resolvedPhotoUrl,
       );
 
       final success = await ref
@@ -644,6 +773,10 @@ class PlayerPersonalDataScreenState
                     ),
                     const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
                   ],
+
+                  // Profile Photo Avatar Section
+                  _buildProfilePhotoSection(l10n),
+                  const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
 
                   // Section 1: Identification & Contact
                   _buildSectionCard(
@@ -1041,6 +1174,95 @@ class PlayerPersonalDataScreenState
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildProfilePhotoSection(AppLocalizations l10n) {
+    ImageProvider? imageProvider;
+    if (_photoLocalPath != null && _photoLocalPath!.isNotEmpty) {
+      final file = File(_photoLocalPath!);
+      if (file.existsSync()) {
+        imageProvider = FileImage(file);
+      }
+    } else if (_photoRemoteUrl != null && _photoRemoteUrl!.isNotEmpty) {
+      if (_photoRemoteUrl!.startsWith('http://') ||
+          _photoRemoteUrl!.startsWith('https://')) {
+        imageProvider = NetworkImage(_photoRemoteUrl!);
+      } else {
+        final localFile = File(_photoRemoteUrl!);
+        if (localFile.existsSync()) {
+          imageProvider = FileImage(localFile);
+        }
+      }
+    }
+
+    final hasPhoto = imageProvider != null;
+
+    return _buildSectionCard(
+      title: l10n.playerProfilePhotoSectionTitle,
+      children: [
+        Text(
+          l10n.playerProfilePhotoSectionSubtitle,
+          style: KickPulseTypography.bodyPrimary.copyWith(
+            color: KickPulseColors.textSecondary,
+            fontSize: 13,
+          ),
+        ),
+        const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+        Center(
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: hasPhoto
+                    ? KickPulseColors.accentPrimary
+                    : KickPulseColors.borderSubtle,
+                width: 3,
+              ),
+              boxShadow: hasPhoto
+                  ? [
+                      BoxShadow(
+                        color: KickPulseColors.accentPrimary.withAlpha(50),
+                        blurRadius: 12,
+                        spreadRadius: 2,
+                      ),
+                    ]
+                  : null,
+            ),
+            child: CircleAvatar(
+              key: const Key('player_form_profile_avatar'),
+              radius: 48,
+              backgroundColor: KickPulseColors.surfaceBase,
+              backgroundImage: imageProvider,
+              child: !hasPhoto
+                  ? const Icon(
+                      Icons.person_outline,
+                      size: 48,
+                      color: KickPulseColors.textMuted,
+                    )
+                  : null,
+            ),
+          ),
+        ),
+        const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+        Center(
+          child: KickPulseButton(
+            key: const Key('player_profile_photo_action'),
+            label: hasPhoto
+                ? l10n.playerProfilePhotoChangeAction
+                : l10n.playerProfilePhotoAction,
+            variant: hasPhoto
+                ? KickPulseButtonVariant.outline
+                : KickPulseButtonVariant.primary,
+            icon: const Icon(Icons.camera_alt_outlined, size: 18),
+            onPressed: _isSaving
+                ? null
+                : () async {
+                    _showPhotoSourceBottomSheet();
+                  },
+          ),
+        ),
+      ],
     );
   }
 

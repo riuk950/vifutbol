@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,6 +9,7 @@ import '../../../application/providers/sync_providers.dart';
 import '../../../application/providers/team_join_requests_providers.dart';
 import '../../../domain/entities/app_environment.dart';
 import '../../../domain/entities/role_permission_matrix.dart';
+import '../../../domain/entities/user_account.dart';
 import '../../../domain/entities/user_role.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../design_system/kick_pulse_colors.dart';
@@ -119,15 +122,7 @@ class ProfileTabView extends ConsumerWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CircleAvatar(
-                      radius: 28,
-                      backgroundColor: KickPulseColors.surfaceSubtle,
-                      child: Icon(
-                        isGuest ? Icons.person_outline : Icons.sports_soccer,
-                        color: KickPulseColors.accentPrimary,
-                        size: 32,
-                      ),
-                    ),
+                    _buildUserAvatar(user, isGuest, activeRole),
                     const SizedBox(width: KickPulseRadiiSpacing.spaceMd),
                     Expanded(
                       child: Column(
@@ -303,7 +298,13 @@ class ProfileTabView extends ConsumerWidget {
               child: InkWell(
                 key: const Key('profile_personal_data_tile'),
                 onTap: () {
-                  Navigator.of(context).pushNamed('/profile/personal-data');
+                  final isComplete =
+                      user?.isProfileCompleteForActiveRole ?? false;
+                  Navigator.of(context).pushNamed(
+                    isComplete
+                        ? '/profile/personal-data/summary'
+                        : '/profile/personal-data',
+                  );
                 },
                 borderRadius: BorderRadius.circular(
                   KickPulseRadiiSpacing.cardRadius,
@@ -333,7 +334,9 @@ class ProfileTabView extends ConsumerWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              l10n.profilePersonalDataSubtitle,
+                              (user?.isProfileCompleteForActiveRole ?? false)
+                                  ? l10n.playerPersonalDataSummarySubtitle
+                                  : l10n.profilePersonalDataSubtitle,
                               style: const TextStyle(
                                 color: KickPulseColors.textSecondary,
                                 fontSize: 12,
@@ -522,4 +525,41 @@ class ProfileTabView extends ConsumerWidget {
         RoleCapability.viewPublicContent => l10n.capViewPublicContent,
         RoleCapability.viewCloudSyncIndicator => l10n.capViewCloudSyncIndicator,
       };
+
+  Widget _buildUserAvatar(
+    UserAccount? user,
+    bool isGuest,
+    UserRole activeRole,
+  ) {
+    ImageProvider? imageProvider;
+    final photo = user?.photoUrl;
+    if (photo != null && photo.trim().isNotEmpty) {
+      if (photo.startsWith('http://') || photo.startsWith('https://')) {
+        imageProvider = NetworkImage(photo);
+      } else {
+        final localFile = File(photo);
+        if (localFile.existsSync()) {
+          imageProvider = FileImage(localFile);
+        }
+      }
+    }
+
+    final hasPhoto = imageProvider != null;
+
+    return CircleAvatar(
+      key: const ValueKey('profile_identity_avatar'),
+      radius: 28,
+      backgroundColor: KickPulseColors.surfaceSubtle,
+      backgroundImage: imageProvider,
+      onBackgroundImageError:
+          imageProvider != null ? (exception, stackTrace) {} : null,
+      child: !hasPhoto
+          ? Icon(
+              isGuest ? Icons.person_outline : Icons.sports_soccer,
+              color: KickPulseColors.accentPrimary,
+              size: 32,
+            )
+          : null,
+    );
+  }
 }

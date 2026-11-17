@@ -6435,6 +6435,192 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Error al subir las imágenes de la cédula. Inténtalo nuevamente.'**
   String get playerDocumentUploadError;
+
+  /// Título de la sección de foto de carnet en el formulario del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Foto de Perfil'**
+  String get playerProfilePhotoSectionTitle;
+
+  /// Subtítulo instructivo para la foto de perfil del carnet
+  ///
+  /// In es, this message translates to:
+  /// **'Tómate una foto o selecciónala de tu galería para tu carnet digital'**
+  String get playerProfilePhotoSectionSubtitle;
+
+  /// Botón para tomar o seleccionar la foto de perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Tomar Foto de Perfil'**
+  String get playerProfilePhotoAction;
+
+  /// Botón para reemplazar la foto de perfil ya capturada
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar Foto'**
+  String get playerProfilePhotoChangeAction;
+
+  /// Opción para abrir la cámara
+  ///
+  /// In es, this message translates to:
+  /// **'Tomar con la cámara'**
+  String get playerProfilePhotoCameraOption;
+
+  /// Opción para elegir foto de la galería
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir de la galería'**
+  String get playerProfilePhotoGalleryOption;
+
+  /// Alerta cuando se deniegan permisos para la foto de perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Se requiere permiso de cámara o galería para tu foto de perfil.'**
+  String get playerProfilePhotoPermissionDenied;
+
+  /// Error al fallar la subida de la foto de perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Error al subir la fotografía de perfil. Inténtalo nuevamente.'**
+  String get playerProfilePhotoUploadError;
+
+  /// Título de la pantalla de resumen de datos personales
+  ///
+  /// In es, this message translates to:
+  /// **'Datos Personales'**
+  String get playerPersonalDataSummaryTitle;
+
+  /// Botón en AppBar para editar los datos personales
+  ///
+  /// In es, this message translates to:
+  /// **'Editar Datos'**
+  String get playerPersonalDataEditAction;
+
+  /// Formato de edad calculada en años
+  ///
+  /// In es, this message translates to:
+  /// **'{age} años'**
+  String playerSummaryAgeFormat(int age);
+
+  /// Texto cuando la fecha de nacimiento no está disponible
+  ///
+  /// In es, this message translates to:
+  /// **'Edad no registrada'**
+  String get playerSummaryAgeUnknown;
+
+  /// Título de sección de datos demográficos
+  ///
+  /// In es, this message translates to:
+  /// **'Información Demográfica'**
+  String get playerSummaryDemographicsTitle;
+
+  /// Subtítulo de sección de datos demográficos
+  ///
+  /// In es, this message translates to:
+  /// **'Datos personales y lugar de residencia'**
+  String get playerSummaryDemographicsSubtitle;
+
+  /// Etiqueta para el sexo del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Sexo'**
+  String get playerSummarySexLabel;
+
+  /// Etiqueta para fecha de nacimiento
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha de Nacimiento'**
+  String get playerSummaryBirthDateLabel;
+
+  /// Etiqueta para grupo sanguíneo y RH
+  ///
+  /// In es, this message translates to:
+  /// **'Tipo de Sangre'**
+  String get playerSummaryBloodTypeLabel;
+
+  /// Etiqueta para departamento
+  ///
+  /// In es, this message translates to:
+  /// **'Departamento'**
+  String get playerSummaryDepartmentLabel;
+
+  /// Etiqueta para municipio
+  ///
+  /// In es, this message translates to:
+  /// **'Municipio'**
+  String get playerSummaryMunicipalityLabel;
+
+  /// Título de sección de posiciones de juego
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil Táctico'**
+  String get playerSummaryTacticalTitle;
+
+  /// Subtítulo de sección táctica
+  ///
+  /// In es, this message translates to:
+  /// **'Posiciones registradas en el terreno de juego'**
+  String get playerSummaryTacticalSubtitle;
+
+  /// Etiqueta de posición principal
+  ///
+  /// In es, this message translates to:
+  /// **'Posición Principal'**
+  String get playerSummaryPrimaryPositionLabel;
+
+  /// Etiqueta de posiciones secundarias
+  ///
+  /// In es, this message translates to:
+  /// **'Posiciones Secundarias'**
+  String get playerSummarySecondaryPositionsLabel;
+
+  /// Texto cuando no hay posiciones secundarias
+  ///
+  /// In es, this message translates to:
+  /// **'Sin posiciones secundarias registradas'**
+  String get playerSummaryNoSecondaryPositions;
+
+  /// Título de sección de fotos de la cédula
+  ///
+  /// In es, this message translates to:
+  /// **'Documento de Identidad'**
+  String get playerSummaryDocumentationTitle;
+
+  /// Subtítulo de sección de documentos
+  ///
+  /// In es, this message translates to:
+  /// **'Cédula de ciudadanía por ambas caras'**
+  String get playerSummaryDocumentationSubtitle;
+
+  /// Etiqueta de la cara frontal de la cédula
+  ///
+  /// In es, this message translates to:
+  /// **'Cara Frontal'**
+  String get playerSummaryFrontDocLabel;
+
+  /// Etiqueta de la cara posterior de la cédula
+  ///
+  /// In es, this message translates to:
+  /// **'Cara Posterior'**
+  String get playerSummaryBackDocLabel;
+
+  /// Texto cuando una cara de la cédula no fue capturada
+  ///
+  /// In es, this message translates to:
+  /// **'No capturada'**
+  String get playerSummaryDocNotCaptured;
+
+  /// Botón para cerrar el visor interactivo de la cédula
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar'**
+  String get playerSummaryViewerCloseAction;
+
+  /// Subtítulo del botón de datos personales en perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Consulta tu carnet, ficha demográfica y táctica'**
+  String get playerPersonalDataSummarySubtitle;
 }
 
 class _AppLocalizationsDelegate

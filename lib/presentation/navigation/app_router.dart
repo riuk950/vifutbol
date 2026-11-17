@@ -14,6 +14,7 @@ import 'package:vifutbol/presentation/matches/digital_match_report_screen.dart';
 import 'package:vifutbol/presentation/panel/panel_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/player_personal_data_screen.dart';
+import 'package:vifutbol/presentation/shell/tabs/player_personal_data_summary_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/player_team_requests_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/venues_tab_view.dart';
 import 'package:vifutbol/presentation/teams/coach_lineup_tracking_screen.dart';
@@ -174,6 +175,12 @@ class AppRouter {
       },
     );
 
+    final playerPersonalDataSummaryHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const PlayerPersonalDataSummaryScreen();
+      },
+    );
+
     router.define(
       '/',
       handler: rootHandler,
@@ -292,6 +299,11 @@ class AppRouter {
     router.define(
       '/profile/personal-data',
       handler: playerPersonalDataHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/profile/personal-data/summary',
+      handler: playerPersonalDataSummaryHandler,
       transitionType: TransitionType.fadeIn,
     );
   }

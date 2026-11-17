@@ -185,6 +185,7 @@ void main() {
             'secondary_positions': ['LD', 'CAD'],
             'document_front_url': 'players/auth-1/front.jpg',
             'document_back_url': 'players/auth-1/back.jpg',
+            'photo_url': 'players/auth-1/avatar.jpg',
           },
         },
       );
@@ -209,6 +210,7 @@ void main() {
           secondaryPositions: const ['LD', 'CAD'],
           documentFrontUrl: 'players/auth-1/front.jpg',
           documentBackUrl: 'players/auth-1/back.jpg',
+          photoUrl: 'players/auth-1/avatar.jpg',
         ),
       );
 
@@ -339,6 +341,7 @@ void main() {
           'secondary_positions': ['LD'],
           'document_front_url': 'auth-1/document_front.jpg',
           'document_back_url': 'auth-1/document_back.jpg',
+          'photo_url': 'auth-1/avatar.jpg',
         },
       );
 

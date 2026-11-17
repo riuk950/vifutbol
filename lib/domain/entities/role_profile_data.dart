@@ -32,6 +32,9 @@ class RoleProfileData {
   final String? documentFrontUrl;
   final String? documentBackUrl;
 
+  // HU 21.3 Player Photo / Avatar Fields
+  final String? photoUrl;
+
   const RoleProfileData({
     this.clubName,
     this.licenseLevel,
@@ -55,6 +58,7 @@ class RoleProfileData {
     this.secondaryPositions = const [],
     this.documentFrontUrl,
     this.documentBackUrl,
+    this.photoUrl,
   });
 
   RoleProfileData copyWith({
@@ -80,6 +84,7 @@ class RoleProfileData {
     List<String>? secondaryPositions,
     String? documentFrontUrl,
     String? documentBackUrl,
+    String? photoUrl,
   }) {
     return RoleProfileData(
       clubName: clubName ?? this.clubName,
@@ -104,6 +109,7 @@ class RoleProfileData {
       secondaryPositions: secondaryPositions ?? this.secondaryPositions,
       documentFrontUrl: documentFrontUrl ?? this.documentFrontUrl,
       documentBackUrl: documentBackUrl ?? this.documentBackUrl,
+      photoUrl: photoUrl ?? this.photoUrl,
     );
   }
 
@@ -134,6 +140,7 @@ class RoleProfileData {
         'secondaryPositions': secondaryPositions,
       if (documentFrontUrl != null) 'documentFrontUrl': documentFrontUrl,
       if (documentBackUrl != null) 'documentBackUrl': documentBackUrl,
+      if (photoUrl != null) 'photoUrl': photoUrl,
     };
   }
 
@@ -201,6 +208,7 @@ class RoleProfileData {
       secondaryPositions: readList('secondaryPositions', 'secondary_positions'),
       documentFrontUrl: readStr('documentFrontUrl', 'document_front_url'),
       documentBackUrl: readStr('documentBackUrl', 'document_back_url'),
+      photoUrl: readStr('photoUrl', 'photo_url'),
     );
   }
 
@@ -230,7 +238,8 @@ class RoleProfileData {
           primaryPosition == other.primaryPosition &&
           _listEquals(secondaryPositions, other.secondaryPositions) &&
           documentFrontUrl == other.documentFrontUrl &&
-          documentBackUrl == other.documentBackUrl;
+          documentBackUrl == other.documentBackUrl &&
+          photoUrl == other.photoUrl;
 
   @override
   int get hashCode => Object.hashAll([
@@ -256,6 +265,7 @@ class RoleProfileData {
         Object.hashAll(secondaryPositions),
         documentFrontUrl,
         documentBackUrl,
+        photoUrl,
       ]);
 
   static bool _listEquals(List<String> a, List<String> b) {
