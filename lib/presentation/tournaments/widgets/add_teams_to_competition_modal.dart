@@ -74,6 +74,21 @@ List<CatalogTeamEntry> buildGlobalCatalogEntries({
       representative = sortedCandidates.first;
     }
 
+    final resolvedCoachName = candidates
+        .map((t) => t.coachName)
+        .firstWhere((c) => c != null && c.trim().isNotEmpty, orElse: () => null);
+    final resolvedCategoryLabel = candidates
+        .map((t) => t.categoryLabel)
+        .firstWhere((c) => c != null && c.trim().isNotEmpty, orElse: () => null);
+
+    if (representative.coachName != resolvedCoachName ||
+        representative.categoryLabel != resolvedCategoryLabel) {
+      representative = representative.copyWith(
+        coachName: resolvedCoachName,
+        categoryLabel: resolvedCategoryLabel,
+      );
+    }
+
     entries.add(
       CatalogTeamEntry(
         sourceTeam: representative,
@@ -130,6 +145,16 @@ class _AddTeamsToCompetitionModalState
   String _searchQuery = '';
   String? _feedbackMessage;
   bool _feedbackIsError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      if (mounted) {
+        ref.read(teamsControllerProvider.notifier).loadTeams();
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -497,13 +522,27 @@ class _AddTeamsToCompetitionModalState
                     ),
                     const SizedBox(height: 2.0),
                     Text(
-                      '${team.shortCode} · ${l10n.addTeamsPlayersCountMeta(team.players.length)}',
+                      '${team.shortCode} · ${(team.categoryLabel != null && team.categoryLabel!.trim().isNotEmpty) ? team.categoryLabel!.trim() : l10n.addTeamsDefaultCategoryLabel} · ${l10n.addTeamsPlayersCountMeta(team.players.length)}',
+                      key: Key('add_teams_meta_${team.id}'),
                       style: KickPulseTypography.captionMeta.copyWith(
                         color: KickPulseColors.textSecondary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    if (team.coachName != null &&
+                        team.coachName!.trim().isNotEmpty) ...[
+                      const SizedBox(height: 2.0),
+                      Text(
+                        l10n.addTeamsCoachMeta(team.coachName!.trim()),
+                        key: Key('add_teams_coach_meta_${team.id}'),
+                        style: KickPulseTypography.captionMeta.copyWith(
+                          color: KickPulseColors.textSecondary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                     if (isEnrolled) ...[
                       const SizedBox(height: 6.0),
                       KickPulseBadge(

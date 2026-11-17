@@ -15,7 +15,7 @@ import 'package:vifutbol/presentation/panel/widgets/competition_delete_dialog.da
 import 'package:vifutbol/presentation/panel/widgets/competition_edit_dialog.dart';
 import 'package:vifutbol/presentation/panel/widgets/competition_lifecycle_dialog.dart';
 import 'package:vifutbol/presentation/panel/widgets/organizer_competitions_section.dart';
-import 'package:vifutbol/presentation/tournaments/widgets/competition_enroll_team_dialog.dart';
+import 'package:vifutbol/presentation/tournaments/widgets/add_teams_to_competition_modal.dart';
 
 /// Dynamic panel content for [UserRole.organizer].
 class OrganizerPanelContent extends ConsumerWidget {
@@ -91,7 +91,7 @@ class OrganizerPanelContent extends ConsumerWidget {
       enrolledTeamsCount: tournamentTeams.length,
       hasGeneratedFixture: hasFixture,
       onEnrollTeamsRequested: () async {
-        await CompetitionEnrollTeamDialog.show(context, tournament: tournament);
+        await AddTeamsToCompetitionModal.show(context, tournament: tournament);
       },
       onGenerateFixtureRequested: () {
         Navigator.of(context).pushNamed('/competitions/${tournament.id}');

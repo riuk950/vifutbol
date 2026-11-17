@@ -5233,8 +5233,20 @@ abstract class AppLocalizations {
   /// Mensaje del estado vacío cuando el catálogo global de equipos está vacío
   ///
   /// In es, this message translates to:
-  /// **'Aún no existen equipos registrados para agregar a esta competición.'**
+  /// **'No hay equipos registrados en la plataforma. Los entrenadores deben registrar sus clubes antes de poder inscribirlos en el campeonato.'**
   String get addTeamsEmptyCatalogMessage;
+
+  /// Etiqueta por defecto cuando el equipo no tiene categoría asignada en el catálogo
+  ///
+  /// In es, this message translates to:
+  /// **'Categoría libre'**
+  String get addTeamsDefaultCategoryLabel;
+
+  /// Metadato con el nombre del entrenador del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'DT: {coachName}'**
+  String addTeamsCoachMeta(String coachName);
 
   /// Mensaje del estado vacío cuando la búsqueda no arroja coincidencias
   ///

@@ -241,4 +241,93 @@ void main() {
       },
     );
   });
+
+  group('HybridTeamsRepository.loadTeams() (Global Catalog HU 18.5)', () {
+    test(
+      'merges enrolled tournament teams with standalone catalog clubs preserving coachName and categoryLabel',
+      () async {
+        final enrolledClub = TournamentTeam(
+          id: 'enrolled-1',
+          tournamentId: 't-100',
+          name: 'Águilas Doradas',
+          shortCode: 'AGU',
+          categoryLabel: 'Sub-20',
+          coachName: 'Leonel Álvarez',
+          players: [
+            RegisteredPlayer(
+              id: 'p-1',
+              fullName: 'Carlos Sanchez',
+              documentId: 'CC-101',
+              shirtNumber: 5,
+              position: PlayerPosition.midfielder,
+            ),
+          ],
+          updatedAt: DateTime(2026, 11, 14),
+        );
+
+        final standaloneClub = TournamentTeam(
+          id: 'standalone-1',
+          tournamentId: '',
+          name: 'Deportivo Independiente',
+          shortCode: 'DIM',
+          categoryLabel: null,
+          coachName: 'David González',
+          players: const [],
+          updatedAt: DateTime(2026, 11, 15),
+        );
+
+        when(
+          () => connectivity.checkConnectivity(),
+        ).thenAnswer((_) async => NetworkConnectionStatus.connected);
+        when(
+          () => remote.fetchAll(),
+        ).thenAnswer((_) async => [enrolledClub, standaloneClub]);
+
+        final result = await hybrid.loadTeams();
+
+        expect(result.length, 2);
+        expect(result.first.name, 'Águilas Doradas');
+        expect(result.first.categoryLabel, 'Sub-20');
+        expect(result.first.coachName, 'Leonel Álvarez');
+        expect(result.first.players.length, 1);
+
+        expect(result.last.name, 'Deportivo Independiente');
+        expect(result.last.tournamentId, '');
+        expect(result.last.categoryLabel, isNull);
+        expect(result.last.coachName, 'David González');
+        expect(result.last.players, isEmpty);
+
+        verify(() => remote.fetchAll()).called(1);
+        verify(
+          () => storage.writeString(
+            LocalTeamsRepository.catalogStorageKey,
+            any(),
+          ),
+        ).called(1);
+      },
+    );
+
+    test('TournamentTeam toJson and fromJson preserve categoryLabel and coachName', () {
+      final team = TournamentTeam(
+        id: 'tt-1',
+        tournamentId: 't-1',
+        name: 'Club Atlético',
+        shortCode: 'CAT',
+        categoryLabel: 'Veteranos',
+        coachName: 'Marcelo Bielsa',
+      );
+
+      final json = team.toJson();
+      expect(json['categoryLabel'], 'Veteranos');
+      expect(json['coachName'], 'Marcelo Bielsa');
+
+      final deserialized = TournamentTeam.fromJson(json);
+      expect(deserialized.categoryLabel, 'Veteranos');
+      expect(deserialized.coachName, 'Marcelo Bielsa');
+
+      final copied = team.copyWith(clearCoachName: true);
+      expect(copied.coachName, isNull);
+      expect(copied.categoryLabel, 'Veteranos');
+    });
+  });
 }

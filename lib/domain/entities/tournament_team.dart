@@ -15,6 +15,8 @@ class TournamentTeam {
   final String? groupName;
   final DateTime updatedAt;
   final String? coachId;
+  final String? coachName;
+  final String? categoryLabel;
 
   TournamentTeam({
     required this.id,
@@ -29,6 +31,8 @@ class TournamentTeam {
     this.groupName,
     DateTime? updatedAt,
     this.coachId = 'coach-seed-1',
+    this.coachName,
+    this.categoryLabel,
   }) : players = List.unmodifiable(
          [...players]..sort((a, b) => a.shirtNumber.compareTo(b.shirtNumber)),
        ),
@@ -60,6 +64,10 @@ class TournamentTeam {
     bool clearGroupName = false,
     DateTime? updatedAt,
     String? coachId,
+    String? coachName,
+    bool clearCoachName = false,
+    String? categoryLabel,
+    bool clearCategoryLabel = false,
   }) {
     return TournamentTeam(
       id: id ?? this.id,
@@ -74,6 +82,9 @@ class TournamentTeam {
       groupName: clearGroupName ? null : (groupName ?? this.groupName),
       updatedAt: updatedAt ?? this.updatedAt,
       coachId: coachId ?? this.coachId,
+      coachName: clearCoachName ? null : (coachName ?? this.coachName),
+      categoryLabel:
+          clearCategoryLabel ? null : (categoryLabel ?? this.categoryLabel),
     );
   }
 
@@ -91,6 +102,8 @@ class TournamentTeam {
       'groupName': groupName,
       'updatedAt': updatedAt.toIso8601String(),
       'coachId': coachId,
+      'coachName': coachName,
+      'categoryLabel': categoryLabel,
     };
   }
 
@@ -120,6 +133,8 @@ class TournamentTeam {
           ? DateTime.parse(json['updatedAt'] as String)
           : DateTime.now(),
       coachId: json['coachId'] as String? ?? 'coach-seed-1',
+      coachName: json['coachName'] as String?,
+      categoryLabel: json['categoryLabel'] as String?,
     );
   }
 

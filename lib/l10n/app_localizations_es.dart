@@ -2998,7 +2998,15 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get addTeamsEmptyCatalogMessage =>
-      'Aún no existen equipos registrados para agregar a esta competición.';
+      'No hay equipos registrados en la plataforma. Los entrenadores deben registrar sus clubes antes de poder inscribirlos en el campeonato.';
+
+  @override
+  String get addTeamsDefaultCategoryLabel => 'Categoría libre';
+
+  @override
+  String addTeamsCoachMeta(String coachName) {
+    return 'DT: $coachName';
+  }
 
   @override
   String addTeamsEmptySearchMessage(String query) {

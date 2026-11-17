@@ -49,15 +49,69 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
 
   @override
   Future<List<TournamentTeam>> fetchAll() async {
-    final rows = await client
-        .schema(schema)
-        .from('tournament_teams')
-        .select('*, teams(*), players(*)')
-        .order('updated_at', ascending: false);
+    List<dynamic> enrollmentRows;
+    try {
+      final res = await client
+          .schema(schema)
+          .from('tournament_teams')
+          .select(
+            '*, teams(*, user_accounts(full_name)), players(*), tournaments(name, category)',
+          )
+          .order('updated_at', ascending: false);
+      enrollmentRows = res as List<dynamic>;
+    } catch (_) {
+      final res = await client
+          .schema(schema)
+          .from('tournament_teams')
+          .select('*, teams(*), players(*)')
+          .order('updated_at', ascending: false);
+      enrollmentRows = res as List<dynamic>;
+    }
 
-    return (rows as List<dynamic>)
-        .map((r) => _fromEnrollmentRow(Map<String, dynamic>.from(r as Map)))
-        .toList();
+    final enrolledTeams = <TournamentTeam>[];
+    final enrolledMasterTeamIds = <String>{};
+
+    for (final r in enrollmentRows) {
+      final rowMap = Map<String, dynamic>.from(r as Map);
+      enrolledTeams.add(_fromEnrollmentRow(rowMap));
+      final masterId = rowMap['team_id'] as String? ??
+          (rowMap['teams'] is Map ? (rowMap['teams'] as Map)['id'] as String? : null);
+      if (masterId != null && masterId.isNotEmpty) {
+        enrolledMasterTeamIds.add(masterId);
+      }
+    }
+
+    List<dynamic> allTeamsRows;
+    try {
+      final res = await client
+          .schema(schema)
+          .from('teams')
+          .select('*, user_accounts(full_name)')
+          .order('updated_at', ascending: false);
+      allTeamsRows = res as List<dynamic>;
+    } catch (_) {
+      try {
+        final res = await client
+            .schema(schema)
+            .from('teams')
+            .select('*')
+            .order('updated_at', ascending: false);
+        allTeamsRows = res as List<dynamic>;
+      } catch (_) {
+        allTeamsRows = const [];
+      }
+    }
+
+    final standaloneTeams = <TournamentTeam>[];
+    for (final rawTeam in allTeamsRows) {
+      final teamMap = Map<String, dynamic>.from(rawTeam as Map);
+      final teamId = teamMap['id'] as String?;
+      if (teamId != null && !enrolledMasterTeamIds.contains(teamId)) {
+        standaloneTeams.add(_fromStandaloneTeamRow(teamMap));
+      }
+    }
+
+    return [...enrolledTeams, ...standaloneTeams];
   }
 
   @override
@@ -66,14 +120,28 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
       tournamentId,
       'tournament',
     );
-    final rows = await client
-        .schema(schema)
-        .from('tournament_teams')
-        .select('*, teams(*), players(*)')
-        .eq('tournament_id', safeTournamentId)
-        .order('updated_at', ascending: false);
+    List<dynamic> rows;
+    try {
+      final res = await client
+          .schema(schema)
+          .from('tournament_teams')
+          .select(
+            '*, teams(*, user_accounts(full_name)), players(*), tournaments(name, category)',
+          )
+          .eq('tournament_id', safeTournamentId)
+          .order('updated_at', ascending: false);
+      rows = res as List<dynamic>;
+    } catch (_) {
+      final res = await client
+          .schema(schema)
+          .from('tournament_teams')
+          .select('*, teams(*), players(*)')
+          .eq('tournament_id', safeTournamentId)
+          .order('updated_at', ascending: false);
+      rows = res as List<dynamic>;
+    }
 
-    return (rows as List<dynamic>)
+    return rows
         .map((r) => _fromEnrollmentRow(Map<String, dynamic>.from(r as Map)))
         .toList();
   }
@@ -202,6 +270,13 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
     final teamMap = row['teams'] is Map
         ? Map<String, dynamic>.from(row['teams'] as Map)
         : const <String, dynamic>{};
+    final tournamentMap = row['tournaments'] is Map
+        ? Map<String, dynamic>.from(row['tournaments'] as Map)
+        : const <String, dynamic>{};
+    final userAccountsMap = teamMap['user_accounts'] is Map
+        ? Map<String, dynamic>.from(teamMap['user_accounts'] as Map)
+        : const <String, dynamic>{};
+
     final rawPlayers = (row['players'] as List<dynamic>?) ?? const [];
 
     final players = rawPlayers
@@ -222,6 +297,11 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
         )
         .toList();
 
+    final coachName = userAccountsMap['full_name'] as String? ??
+        (row['coach_name'] as String?);
+    final categoryLabel = tournamentMap['category'] as String? ??
+        (row['category_label'] as String?);
+
     return TournamentTeam(
       id: row['id'] as String,
       tournamentId: row['tournament_id'] as String? ?? '',
@@ -241,7 +321,47 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
       players: players,
       groupName: row['group_name'] as String?,
       coachId: teamMap['coach_id'] as String?,
+      coachName: (coachName != null && coachName.trim().isNotEmpty)
+          ? coachName.trim()
+          : null,
+      categoryLabel: (categoryLabel != null && categoryLabel.trim().isNotEmpty)
+          ? categoryLabel.trim()
+          : null,
       updatedAt: DateTime.parse(row['updated_at'] as String).toLocal(),
+    );
+  }
+
+  TournamentTeam _fromStandaloneTeamRow(Map<String, dynamic> teamMap) {
+    final userAccountsMap = teamMap['user_accounts'] is Map
+        ? Map<String, dynamic>.from(teamMap['user_accounts'] as Map)
+        : const <String, dynamic>{};
+    final coachName = userAccountsMap['full_name'] as String? ??
+        (teamMap['coach_name'] as String?);
+
+    return TournamentTeam(
+      id: teamMap['id'] as String,
+      tournamentId: '',
+      name: teamMap['name'] as String? ?? 'Equipo',
+      shortCode: teamMap['short_code'] as String? ?? 'EQ',
+      crestShape: TeamCrestShape.values.firstWhere(
+        (s) => s.name == teamMap['crest_shape'],
+        orElse: () => TeamCrestShape.shield,
+      ),
+      primaryColorHex:
+          (teamMap['primary_color_hex'] as num?)?.toInt() ?? 0xFF00E676,
+      secondaryColorHex:
+          (teamMap['secondary_color_hex'] as num?)?.toInt() ?? 0xFF0A0E17,
+      eligibilityStatus: TeamEligibilityStatus.pendingVerification,
+      players: const [],
+      groupName: null,
+      coachId: teamMap['coach_id'] as String?,
+      coachName: (coachName != null && coachName.trim().isNotEmpty)
+          ? coachName.trim()
+          : null,
+      categoryLabel: null,
+      updatedAt: teamMap['updated_at'] != null
+          ? DateTime.parse(teamMap['updated_at'] as String).toLocal()
+          : DateTime.now(),
     );
   }
 

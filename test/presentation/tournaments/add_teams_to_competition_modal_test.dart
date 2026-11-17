@@ -62,13 +62,16 @@ class _InMemoryTeamsRepository implements TeamsRepository {
   final List<TournamentTeam> _teams;
   Completer<void>? saveBlocker;
   int saveCalls = 0;
+  int loadCalls = 0;
 
   _InMemoryTeamsRepository(List<TournamentTeam> initialTeams)
     : _teams = List<TournamentTeam>.from(initialTeams);
 
   @override
-  Future<List<TournamentTeam>> loadTeams() async =>
-      List<TournamentTeam>.unmodifiable(_teams);
+  Future<List<TournamentTeam>> loadTeams() async {
+    loadCalls++;
+    return List<TournamentTeam>.unmodifiable(_teams);
+  }
 
   @override
   Future<List<TournamentTeam>> loadTeamsForTournament(
@@ -329,28 +332,136 @@ void main() {
       },
     );
 
-    testWidgets('shows empty catalog state when platform has zero teams', (
-      tester,
-    ) async {
-      final tournament = _createTournament();
-      final teamsRepo = _InMemoryTeamsRepository(const []);
+    testWidgets(
+      'shows empty catalog state with exact governance copy and zero creation buttons (US2)',
+      (tester) async {
+        final tournament = _createTournament();
+        final teamsRepo = _InMemoryTeamsRepository(const []);
 
-      await tester.pumpWidget(
-        _buildTestHost(
-          tournament: tournament,
-          teamsRepo: teamsRepo,
-          home: Scaffold(
-            body: AddTeamsToCompetitionModal(tournament: tournament),
+        await tester.pumpWidget(
+          _buildTestHost(
+            tournament: tournament,
+            teamsRepo: teamsRepo,
+            home: Scaffold(
+              body: AddTeamsToCompetitionModal(tournament: tournament),
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(
-        find.byKey(const Key('add_teams_empty_catalog_state')),
-        findsOneWidget,
-      );
-    });
+        expect(
+          find.byKey(const Key('add_teams_empty_catalog_state')),
+          findsOneWidget,
+        );
+        expect(
+          find.text(
+            'No hay equipos registrados en la plataforma. Los entrenadores deben registrar sus clubes antes de poder inscribirlos en el campeonato.',
+          ),
+          findsOneWidget,
+        );
+
+        // Strictly verify absence of any team creation/registration buttons or forms
+        expect(find.textContaining('Crear'), findsNothing);
+        expect(find.textContaining('Registrar'), findsNothing);
+        expect(find.byIcon(Icons.add), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'triggers loadTeams() on open, lists standalone clubs, renders category with fallback and conditional coach (US1)',
+      (tester) async {
+        final tournament = _createTournament();
+        final teamsRepo = _InMemoryTeamsRepository([
+          TournamentTeam(
+            id: 'standalone-millos',
+            tournamentId: '',
+            name: 'Millonarios FC',
+            shortCode: 'MFC',
+            categoryLabel: null,
+            coachName: 'Alberto Gamero',
+            updatedAt: DateTime(2026, 11, 1),
+          ),
+          TournamentTeam(
+            id: 'other-santafe',
+            tournamentId: 'other-tourn-99',
+            name: 'Independiente Santa Fe',
+            shortCode: 'ISF',
+            categoryLabel: 'Sub-20',
+            coachName: null,
+            updatedAt: DateTime(2026, 11, 2),
+          ),
+        ]);
+
+        await tester.pumpWidget(
+          _buildTestHost(
+            tournament: tournament,
+            teamsRepo: teamsRepo,
+            home: Scaffold(
+              body: AddTeamsToCompetitionModal(tournament: tournament),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // 1. Verify loadTeams was triggered on open
+        expect(teamsRepo.loadCalls, greaterThanOrEqualTo(1));
+
+        // 2. Verify standalone club Millonarios FC is listed
+        expect(find.text('Millonarios FC'), findsOneWidget);
+        // Has category fallback: "Categoría libre"
+        expect(find.textContaining('Categoría libre'), findsOneWidget);
+        // Has coach line: "DT: Alberto Gamero"
+        expect(
+          find.byKey(const Key('add_teams_coach_meta_standalone-millos')),
+          findsOneWidget,
+        );
+        expect(find.text('DT: Alberto Gamero'), findsOneWidget);
+
+        // 3. Verify cross-tournament club Santa Fe is listed
+        expect(find.text('Independiente Santa Fe'), findsOneWidget);
+        // Has assigned category: "Sub-20"
+        expect(find.textContaining('Sub-20'), findsOneWidget);
+        // Coach is null -> coach line MUST be omitted completely
+        expect(
+          find.byKey(const Key('add_teams_coach_meta_other-santafe')),
+          findsNothing,
+        );
+
+        // 4. Enroll standalone club
+        final enrollBtnFinder = find.byKey(
+          const Key('add_teams_action_button_standalone-millos'),
+        );
+        await tester.tap(enrollBtnFinder);
+        await tester.pumpAndSettle();
+
+        // Modal stays open
+        expect(find.byKey(const Key('add_teams_modal')), findsOneWidget);
+
+        // Verify newly enrolled in repository is in pendingVerification
+        final tournamentTeams = await teamsRepo.loadTeamsForTournament(
+          tournament.id,
+        );
+        expect(tournamentTeams.length, 1);
+        final newlyEnrolled = tournamentTeams.firstWhere(
+          (t) => t.name == 'Millonarios FC',
+        );
+        expect(
+          newlyEnrolled.eligibilityStatus,
+          TeamEligibilityStatus.pendingVerification,
+        );
+        expect(newlyEnrolled.coachName, 'Alberto Gamero');
+
+        // Button transitions to Inscrito (disabled)
+        expect(
+          find.byKey(Key('add_teams_enrolled_badge_${newlyEnrolled.id}')),
+          findsOneWidget,
+        );
+        final enrolledBtn = tester.widget<Widget>(
+          find.byKey(Key('add_teams_action_button_${newlyEnrolled.id}')),
+        );
+        expect((enrolledBtn as dynamic).onPressed, isNull);
+      },
+    );
   });
 
   group('AddTeamsToCompetitionModal Enrollment & Integrity Tests (US3)', () {

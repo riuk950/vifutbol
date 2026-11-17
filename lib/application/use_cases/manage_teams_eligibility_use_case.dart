@@ -321,6 +321,8 @@ class ManageTeamsEligibilityUseCase {
       players: copiedPlayers,
       groupName: assignedGroupName,
       coachId: sourceTeam.coachId,
+      coachName: sourceTeam.coachName,
+      categoryLabel: tournament.category,
       updatedAt: DateTime.now(),
     );
 

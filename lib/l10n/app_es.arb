@@ -3862,9 +3862,22 @@
   "@addTeamsEmptyCatalogTitle": {
     "description": "Título del estado vacío cuando no hay equipos registrados en el catálogo global"
   },
-  "addTeamsEmptyCatalogMessage": "Aún no existen equipos registrados para agregar a esta competición.",
+  "addTeamsEmptyCatalogMessage": "No hay equipos registrados en la plataforma. Los entrenadores deben registrar sus clubes antes de poder inscribirlos en el campeonato.",
   "@addTeamsEmptyCatalogMessage": {
     "description": "Mensaje del estado vacío cuando el catálogo global de equipos está vacío"
+  },
+  "addTeamsDefaultCategoryLabel": "Categoría libre",
+  "@addTeamsDefaultCategoryLabel": {
+    "description": "Etiqueta por defecto cuando el equipo no tiene categoría asignada en el catálogo"
+  },
+  "addTeamsCoachMeta": "DT: {coachName}",
+  "@addTeamsCoachMeta": {
+    "description": "Metadato con el nombre del entrenador del equipo",
+    "placeholders": {
+      "coachName": {
+        "type": "String"
+      }
+    }
   },
   "addTeamsEmptySearchMessage": "No se encontraron equipos con \"{query}\"",
   "@addTeamsEmptySearchMessage": {
