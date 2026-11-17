@@ -183,6 +183,8 @@ void main() {
             'municipality': 'Medellín',
             'primary_position': 'defender',
             'secondary_positions': ['LD', 'CAD'],
+            'document_front_url': 'players/auth-1/front.jpg',
+            'document_back_url': 'players/auth-1/back.jpg',
           },
         },
       );
@@ -205,6 +207,8 @@ void main() {
           municipality: 'Medellín',
           primaryPosition: PlayerPosition.defender,
           secondaryPositions: const ['LD', 'CAD'],
+          documentFrontUrl: 'players/auth-1/front.jpg',
+          documentBackUrl: 'players/auth-1/back.jpg',
         ),
       );
 
@@ -215,6 +219,8 @@ void main() {
       expect(updated.roleProfile?.firstName, 'Carlos');
       expect(updated.roleProfile?.municipality, 'Medellín');
       expect(updated.roleProfile?.secondaryPositions, equals(['LD', 'CAD']));
+      expect(updated.roleProfile?.documentFrontUrl, 'players/auth-1/front.jpg');
+      expect(updated.roleProfile?.documentBackUrl, 'players/auth-1/back.jpg');
       expect(updated.isProfileCompleteForActiveRole, isTrue);
     });
 
@@ -303,6 +309,45 @@ void main() {
 
       expect(restored?.user.roleProfile?.clubName, 'Club Norte');
       expect(restored?.user.roleProfile?.licenseLevel, 'PRO');
+      expect(restored?.user.isProfileCompleteForActiveRole, isTrue);
+    });
+
+    test('hydrates player document URLs via fetchRoleProfileDetails', () async {
+      when(() => dataSource.fetchByAuthUserId('auth-1')).thenAnswer(
+        (_) async => {
+          'id': 'auth-1',
+          'auth_user_id': 'auth-1',
+          'full_name': 'Carlos Ruiz',
+          'email': 'carlos@test.com',
+          'active_role': 'player',
+          'authorized_roles': ['fan', 'player'],
+          'is_guest_fan': false,
+          'onboarding_completed': true,
+          'phone': '3001234567',
+          'document_id': '10203040',
+        },
+      );
+      when(() => dataSource.fetchRoleProfileDetails('auth-1')).thenAnswer(
+        (_) async => {
+          'first_name': 'Carlos',
+          'first_surname': 'Ruiz',
+          'sex': 'male',
+          'birth_date': '1998-05-20',
+          'blood_type': 'O+',
+          'department': 'Antioquia',
+          'municipality': 'Medellín',
+          'secondary_positions': ['LD'],
+          'document_front_url': 'auth-1/document_front.jpg',
+          'document_back_url': 'auth-1/document_back.jpg',
+        },
+      );
+
+      final restored = await repository.restoreSession();
+
+      expect(restored?.user.roleProfile?.documentFrontUrl,
+          'auth-1/document_front.jpg');
+      expect(restored?.user.roleProfile?.documentBackUrl,
+          'auth-1/document_back.jpg');
       expect(restored?.user.isProfileCompleteForActiveRole, isTrue);
     });
   });

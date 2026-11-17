@@ -4,12 +4,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:vifutbol/application/controllers/auth_controller.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
+import 'package:vifutbol/application/providers/document_scanner_providers.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/application/providers/team_join_requests_providers.dart';
 import 'package:vifutbol/application/use_cases/authenticate_user_use_case.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/auth_flow_state.dart';
 import 'package:vifutbol/domain/entities/auth_session.dart';
+import 'package:vifutbol/domain/entities/colombian_id_scan_result.dart';
 import 'package:vifutbol/domain/entities/detailed_football_position.dart';
 import 'package:vifutbol/domain/entities/player_personal_enums.dart';
 import 'package:vifutbol/domain/entities/role_profile_data.dart';
@@ -18,6 +20,9 @@ import 'package:vifutbol/domain/entities/user_account.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/failures/app_failure.dart';
 import 'package:vifutbol/domain/repositories/auth_repository.dart';
+import 'package:vifutbol/domain/repositories/colombian_id_scanner_service.dart';
+import 'package:vifutbol/domain/repositories/document_storage_repository.dart';
+import 'package:vifutbol/infrastructure/storage/supabase_document_storage_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/navigation/app_router.dart';
 import 'package:vifutbol/presentation/shell/tabs/player_personal_data_screen.dart';
@@ -29,6 +34,11 @@ class _MockAuthenticateUserUseCase extends Mock
     implements AuthenticateUserUseCase {}
 
 class _MockEnvironmentConfig extends Mock implements EnvironmentConfig {}
+
+class _MockScannerService extends Mock implements ColombianIdScannerService {}
+
+class _MockDocumentStorageRepository extends Mock
+    implements DocumentStorageRepository {}
 
 class _TestAuthController extends AuthController {
   _TestAuthController({
@@ -52,6 +62,13 @@ void main() {
     authRepository = _MockAuthRepository();
     config = _MockEnvironmentConfig();
     when(() => config.environment).thenReturn(AppEnvironment.development);
+    when(() => config.supabase).thenReturn(
+      const SupabaseConfig(
+        url: '',
+        anonKey: '',
+        schema: 'vifutboldev',
+      ),
+    );
     AppRouter.setupRouter();
   });
 
@@ -60,12 +77,20 @@ void main() {
     Widget? home,
     double textScaleFactor = 1.0,
     Size surfaceSize = const Size(390, 844),
+    ColombianIdScannerService? scannerService,
+    DocumentStorageRepository? storageRepository,
   }) {
     return ProviderScope(
       overrides: [
         authControllerProvider.overrideWith((_) => controller),
         environmentConfigProvider.overrideWithValue(config),
         playerPendingRequestsCountProvider.overrideWith((ref) => 0),
+        documentStorageRepositoryProvider.overrideWithValue(
+          storageRepository ?? const LocalDocumentStorageRepository(),
+        ),
+        if (scannerService != null)
+          colombianIdScannerServiceProvider
+              .overrideWithValue(scannerService),
       ],
       child: MaterialApp(
         locale: const Locale('es'),
@@ -97,6 +122,10 @@ void main() {
         activeRole: UserRole.player,
         authorizedRoles: {UserRole.player, UserRole.fan},
         onboardingCompleted: true,
+        roleProfile: const RoleProfileData(
+          documentFrontUrl: 'https://storage/front.jpg',
+          documentBackUrl: 'https://storage/back.jpg',
+        ),
       );
 
       final controller = _TestAuthController(
@@ -191,6 +220,10 @@ void main() {
         activeRole: UserRole.player,
         authorizedRoles: {UserRole.player, UserRole.fan},
         onboardingCompleted: true,
+        roleProfile: const RoleProfileData(
+          documentFrontUrl: 'https://storage/front.jpg',
+          documentBackUrl: 'https://storage/back.jpg',
+        ),
       );
 
       final controller = _TestAuthController(
@@ -296,6 +329,10 @@ void main() {
         activeRole: UserRole.player,
         authorizedRoles: {UserRole.player, UserRole.fan},
         onboardingCompleted: true,
+        roleProfile: const RoleProfileData(
+          documentFrontUrl: 'https://storage/front.jpg',
+          documentBackUrl: 'https://storage/back.jpg',
+        ),
       );
 
       final controller = _TestAuthController(
@@ -382,6 +419,10 @@ void main() {
         activeRole: UserRole.player,
         authorizedRoles: {UserRole.player, UserRole.fan},
         onboardingCompleted: true,
+        roleProfile: const RoleProfileData(
+          documentFrontUrl: 'https://storage/front.jpg',
+          documentBackUrl: 'https://storage/back.jpg',
+        ),
       );
 
       RoleProfileData? savedProfile;
@@ -515,6 +556,10 @@ void main() {
         activeRole: UserRole.player,
         authorizedRoles: {UserRole.player, UserRole.fan},
         onboardingCompleted: true,
+        roleProfile: const RoleProfileData(
+          documentFrontUrl: 'https://storage/front.jpg',
+          documentBackUrl: 'https://storage/back.jpg',
+        ),
       );
 
       when(
@@ -630,6 +675,10 @@ void main() {
         activeRole: UserRole.player,
         authorizedRoles: {UserRole.player, UserRole.fan},
         onboardingCompleted: true,
+        roleProfile: const RoleProfileData(
+          documentFrontUrl: 'https://storage/front.jpg',
+          documentBackUrl: 'https://storage/back.jpg',
+        ),
       );
 
       final controller = _TestAuthController(
@@ -680,6 +729,10 @@ void main() {
         activeRole: UserRole.player,
         authorizedRoles: {UserRole.player, UserRole.fan},
         onboardingCompleted: true,
+        roleProfile: const RoleProfileData(
+          documentFrontUrl: 'https://storage/front.jpg',
+          documentBackUrl: 'https://storage/back.jpg',
+        ),
       );
 
       final controller = _TestAuthController(
@@ -722,6 +775,10 @@ void main() {
         activeRole: UserRole.player,
         authorizedRoles: {UserRole.player, UserRole.fan},
         onboardingCompleted: true,
+        roleProfile: const RoleProfileData(
+          documentFrontUrl: 'https://storage/front.jpg',
+          documentBackUrl: 'https://storage/back.jpg',
+        ),
       );
 
       final controller = _TestAuthController(
@@ -764,6 +821,530 @@ void main() {
         find.byKey(const Key('player_personal_data_screen')),
         findsOneWidget,
       );
+    });
+
+    testWidgets('captures front and back ID photos sequentially via scan button',
+        (tester) async {
+      final user = UserAccount(
+        id: 'u-scan',
+        fullName: 'Test Player',
+        email: 'test@vifutbol.com',
+        activeRole: UserRole.player,
+        authorizedRoles: {UserRole.player, UserRole.fan},
+        onboardingCompleted: true,
+      );
+
+      final scanner = _MockScannerService();
+      when(() => scanner.captureDocumentPhoto(isFront: true))
+          .thenAnswer((_) async => '/tmp/doc_front.jpg');
+      when(() => scanner.captureDocumentPhoto(isFront: false))
+          .thenAnswer((_) async => '/tmp/doc_back.jpg');
+      when(
+        () => scanner.scanDocumentImages(
+          frontImagePath: any(named: 'frontImagePath'),
+          backImagePath: any(named: 'backImagePath'),
+        ),
+      ).thenAnswer(
+        (_) async => const ColombianIdScanResult(
+          documentId: '10203040',
+          firstName: 'Juan',
+          firstSurname: 'Pérez',
+          source: ColombianIdScanSource.pdf417,
+        ),
+      );
+
+      final controller = _TestAuthController(
+        authRepository: authRepository,
+        initialState: AuthFlowState(
+          status: AuthStatus.authenticated,
+          session: AuthSession(
+            sessionId: 's-scan',
+            user: user,
+            sessionToken: 'token-1',
+            authenticatedAt: DateTime.now(),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(
+        buildApp(controller: controller, scannerService: scanner),
+      );
+      await tester.pumpAndSettle();
+
+      final scanBtn = find.byKey(const Key('player_form_scan_id_button'));
+      await tester.ensureVisible(scanBtn);
+      await tester.tap(scanBtn);
+      await tester.pumpAndSettle();
+
+      verify(() => scanner.captureDocumentPhoto(isFront: true)).called(1);
+      verify(() => scanner.captureDocumentPhoto(isFront: false)).called(1);
+      verify(
+        () => scanner.scanDocumentImages(
+          frontImagePath: '/tmp/doc_front.jpg',
+          backImagePath: '/tmp/doc_back.jpg',
+        ),
+      ).called(1);
+
+      // Verifies fields were autocompleted
+      expect(find.text('10203040'), findsOneWidget);
+      expect(find.text('Juan'), findsOneWidget);
+      expect(find.text('Pérez'), findsOneWidget);
+    });
+
+    testWidgets(
+        'displays camera permission banner and open settings button when denied',
+        (tester) async {
+      final user = UserAccount(
+        id: 'u-perm',
+        fullName: 'Test Player',
+        email: 'perm@vifutbol.com',
+        activeRole: UserRole.player,
+        authorizedRoles: {UserRole.player, UserRole.fan},
+        onboardingCompleted: true,
+      );
+
+      final scanner = _MockScannerService();
+      when(() => scanner.captureDocumentPhoto(isFront: any(named: 'isFront')))
+          .thenThrow(
+        const CameraPermissionDeniedFailure(
+          'Se requiere permiso de cámara para capturar la cédula.',
+          true,
+        ),
+      );
+      when(() => scanner.openCameraSettings()).thenAnswer((_) async {});
+
+      final controller = _TestAuthController(
+        authRepository: authRepository,
+        initialState: AuthFlowState(
+          status: AuthStatus.authenticated,
+          session: AuthSession(
+            sessionId: 's-perm',
+            user: user,
+            sessionToken: 'token-1',
+            authenticatedAt: DateTime.now(),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(
+        buildApp(controller: controller, scannerService: scanner),
+      );
+      await tester.pumpAndSettle();
+
+      final scanBtn = find.byKey(const Key('player_form_scan_id_button'));
+      await tester.ensureVisible(scanBtn);
+      await tester.tap(scanBtn);
+      await tester.pumpAndSettle();
+
+      // Banner and open settings button are visible
+      expect(
+        find.byKey(const Key('player_form_camera_permission_banner')),
+        findsOneWidget,
+      );
+      final settingsBtn =
+          find.byKey(const Key('player_form_open_settings_button'));
+      expect(settingsBtn, findsOneWidget);
+
+      await tester.tap(settingsBtn);
+      await tester.pumpAndSettle();
+      verify(() => scanner.openCameraSettings()).called(1);
+
+      // Manual input fields remain completely editable
+      final docField = find.byKey(const Key('player_form_document_field'));
+      await tester.enterText(docField, '12345678');
+      expect(find.text('12345678'), findsOneWidget);
+    });
+
+    testWidgets(
+        'requires both document front and back photos before saving and displays error',
+        (tester) async {
+      final user = UserAccount(
+        id: 'u-missing-photos',
+        fullName: 'Mateo Gómez',
+        email: 'mateo@vifutbol.com',
+        activeRole: UserRole.player,
+        authorizedRoles: {UserRole.player, UserRole.fan},
+        onboardingCompleted: true,
+        // No documentFrontUrl or documentBackUrl
+      );
+
+      final controller = _TestAuthController(
+        authRepository: authRepository,
+        initialState: AuthFlowState(
+          status: AuthStatus.authenticated,
+          session: AuthSession(
+            sessionId: 's-no-photos',
+            user: user,
+            sessionToken: 'token-1',
+            authenticatedAt: DateTime.now(),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(buildApp(controller: controller));
+      await tester.pumpAndSettle();
+
+      // Fill in text fields
+      await tester.enterText(
+        find.byKey(const Key('player_form_document_field')),
+        '10203040',
+      );
+      await tester.enterText(
+        find.byKey(const Key('player_form_phone_field')),
+        '3001234567',
+      );
+      await tester.enterText(
+        find.byKey(const Key('player_form_first_name_field')),
+        'Mateo',
+      );
+      await tester.enterText(
+        find.byKey(const Key('player_form_first_surname_field')),
+        'Gómez',
+      );
+
+      final state = tester.state<PlayerPersonalDataScreenState>(
+        find.byType(PlayerPersonalDataScreen),
+      );
+      state.applyDocumentScanData(
+        sex: PlayerSex.male,
+        birthDate: DateTime(1995, 5, 20),
+        bloodType: BloodType.oPositive,
+      );
+      await tester.pumpAndSettle();
+
+      // Pick department & municipality
+      final depFinder = find.byKey(const Key('player_form_department_selector'));
+      await tester.ensureVisible(depFinder);
+      await tester.tap(depFinder);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Antioquia'));
+      await tester.pumpAndSettle();
+
+      final munFinder =
+          find.byKey(const Key('player_form_municipality_selector'));
+      await tester.ensureVisible(munFinder);
+      await tester.tap(munFinder);
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const Key('location_picker_search_field')),
+        'medellin',
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Medellín'));
+      await tester.pumpAndSettle();
+
+      // Select position chip
+      final ldChip = find.byKey(const Key('player_form_position_chip_LD'));
+      await tester.ensureVisible(ldChip);
+      await tester.tap(ldChip);
+      await tester.pumpAndSettle();
+
+      // Attempt save without photos
+      final saveBtn = find.byKey(const Key('player_form_save_button'));
+      await tester.ensureVisible(saveBtn);
+      await tester.tap(saveBtn);
+      await tester.pumpAndSettle();
+
+      // Validation error displayed
+      expect(
+        find.byKey(const Key('player_form_id_images_error')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          'Debes capturar ambas caras de tu cédula (frente y reverso) para continuar',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets(
+        'upload-before-save uploads local photos to storage and persists URLs',
+        (tester) async {
+      final user = UserAccount(
+        id: 'u-upload',
+        fullName: 'Mateo Gómez',
+        email: 'mateo@vifutbol.com',
+        activeRole: UserRole.player,
+        authorizedRoles: {UserRole.player, UserRole.fan},
+        onboardingCompleted: true,
+      );
+
+      final storage = _MockDocumentStorageRepository();
+      when(
+        () => storage.uploadPlayerIdDocuments(
+          userId: any(named: 'userId'),
+          frontLocalPath: any(named: 'frontLocalPath'),
+          backLocalPath: any(named: 'backLocalPath'),
+          existingFrontUrl: any(named: 'existingFrontUrl'),
+          existingBackUrl: any(named: 'existingBackUrl'),
+        ),
+      ).thenAnswer(
+        (_) async => (
+          frontUrl: 'u-upload/document_front.jpg',
+          backUrl: 'u-upload/document_back.jpg',
+        ),
+      );
+
+      when(
+        () => authRepository.updateRoleProfile(
+          userId: any(named: 'userId'),
+          role: any(named: 'role'),
+          fullName: any(named: 'fullName'),
+          phone: any(named: 'phone'),
+          documentId: any(named: 'documentId'),
+          roleProfile: any(named: 'roleProfile'),
+        ),
+      ).thenAnswer((invocation) async {
+        final profile = invocation.namedArguments[#roleProfile] as RoleProfileData?;
+        return user.copyWith(roleProfile: profile);
+      });
+
+      final scanner = _MockScannerService();
+      when(() => scanner.captureDocumentPhoto(isFront: true))
+          .thenAnswer((_) async => '/local/front.jpg');
+      when(() => scanner.captureDocumentPhoto(isFront: false))
+          .thenAnswer((_) async => '/local/back.jpg');
+      when(() => scanner.scanDocumentImages(
+            frontImagePath: any(named: 'frontImagePath'),
+            backImagePath: any(named: 'backImagePath'),
+          )).thenAnswer((_) async => ColombianIdScanResult.empty);
+
+      final controller = _TestAuthController(
+        authRepository: authRepository,
+        initialState: AuthFlowState(
+          status: AuthStatus.authenticated,
+          session: AuthSession(
+            sessionId: 's-upload',
+            user: user,
+            sessionToken: 'token-1',
+            authenticatedAt: DateTime.now(),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(
+        buildApp(
+          controller: controller,
+          scannerService: scanner,
+          storageRepository: storage,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final scanBtn = find.byKey(const Key('player_form_scan_id_button'));
+      await tester.ensureVisible(scanBtn);
+      await tester.tap(scanBtn);
+      await tester.pumpAndSettle();
+
+      // Fill in text fields
+      await tester.enterText(
+        find.byKey(const Key('player_form_document_field')),
+        '10203040',
+      );
+      await tester.enterText(
+        find.byKey(const Key('player_form_phone_field')),
+        '3001234567',
+      );
+      await tester.enterText(
+        find.byKey(const Key('player_form_first_name_field')),
+        'Mateo',
+      );
+      await tester.enterText(
+        find.byKey(const Key('player_form_first_surname_field')),
+        'Gómez',
+      );
+
+      final state = tester.state<PlayerPersonalDataScreenState>(
+        find.byType(PlayerPersonalDataScreen),
+      );
+      state.applyDocumentScanData(
+        sex: PlayerSex.male,
+        birthDate: DateTime(1995, 5, 20),
+        bloodType: BloodType.oPositive,
+      );
+      await tester.pumpAndSettle();
+
+      // Pick department & municipality
+      final depFinder = find.byKey(const Key('player_form_department_selector'));
+      await tester.ensureVisible(depFinder);
+      await tester.tap(depFinder);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Antioquia'));
+      await tester.pumpAndSettle();
+
+      final munFinder =
+          find.byKey(const Key('player_form_municipality_selector'));
+      await tester.ensureVisible(munFinder);
+      await tester.tap(munFinder);
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const Key('location_picker_search_field')),
+        'medellin',
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Medellín'));
+      await tester.pumpAndSettle();
+
+      // Select position chip
+      final ldChip = find.byKey(const Key('player_form_position_chip_LD'));
+      await tester.ensureVisible(ldChip);
+      await tester.tap(ldChip);
+      await tester.pumpAndSettle();
+
+      // Tap save
+      final saveBtn = find.byKey(const Key('player_form_save_button'));
+      await tester.ensureVisible(saveBtn);
+      await tester.tap(saveBtn);
+      await tester.pumpAndSettle();
+
+      verify(() => storage.uploadPlayerIdDocuments(
+            userId: 'u-upload',
+            frontLocalPath: '/local/front.jpg',
+            backLocalPath: '/local/back.jpg',
+            existingFrontUrl: null,
+            existingBackUrl: null,
+          )).called(1);
+
+      verify(() => authRepository.updateRoleProfile(
+            userId: any(named: 'userId'),
+            role: UserRole.player,
+            fullName: any(named: 'fullName'),
+            phone: any(named: 'phone'),
+            documentId: any(named: 'documentId'),
+            roleProfile: any(named: 'roleProfile'),
+          )).called(1);
+    });
+
+    testWidgets(
+        'preserves local photos and inputs when storage upload fails',
+        (tester) async {
+      final user = UserAccount(
+        id: 'u-upload-fail',
+        fullName: 'Mateo Gómez',
+        email: 'mateo@vifutbol.com',
+        activeRole: UserRole.player,
+        authorizedRoles: {UserRole.player, UserRole.fan},
+        onboardingCompleted: true,
+      );
+
+      final storage = _MockDocumentStorageRepository();
+      when(
+        () => storage.uploadPlayerIdDocuments(
+          userId: any(named: 'userId'),
+          frontLocalPath: any(named: 'frontLocalPath'),
+          backLocalPath: any(named: 'backLocalPath'),
+          existingFrontUrl: any(named: 'existingFrontUrl'),
+          existingBackUrl: any(named: 'existingBackUrl'),
+        ),
+      ).thenThrow(
+        const DocumentUploadFailure(
+          'Error al subir las imágenes de la cédula. Inténtalo nuevamente.',
+        ),
+      );
+
+      final scanner = _MockScannerService();
+      when(() => scanner.captureDocumentPhoto(isFront: true))
+          .thenAnswer((_) async => '/local/front.jpg');
+      when(() => scanner.captureDocumentPhoto(isFront: false))
+          .thenAnswer((_) async => '/local/back.jpg');
+      when(() => scanner.scanDocumentImages(
+            frontImagePath: any(named: 'frontImagePath'),
+            backImagePath: any(named: 'backImagePath'),
+          )).thenAnswer((_) async => ColombianIdScanResult.empty);
+
+      final controller = _TestAuthController(
+        authRepository: authRepository,
+        initialState: AuthFlowState(
+          status: AuthStatus.authenticated,
+          session: AuthSession(
+            sessionId: 's-fail',
+            user: user,
+            sessionToken: 'token-1',
+            authenticatedAt: DateTime.now(),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(
+        buildApp(
+          controller: controller,
+          scannerService: scanner,
+          storageRepository: storage,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final scanBtn = find.byKey(const Key('player_form_scan_id_button'));
+      await tester.ensureVisible(scanBtn);
+      await tester.tap(scanBtn);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(
+        find.byKey(const Key('player_form_document_field')),
+        '10203040',
+      );
+      await tester.enterText(
+        find.byKey(const Key('player_form_phone_field')),
+        '3001234567',
+      );
+      await tester.enterText(
+        find.byKey(const Key('player_form_first_name_field')),
+        'Mateo',
+      );
+      await tester.enterText(
+        find.byKey(const Key('player_form_first_surname_field')),
+        'Gómez',
+      );
+
+      final state = tester.state<PlayerPersonalDataScreenState>(
+        find.byType(PlayerPersonalDataScreen),
+      );
+      state.applyDocumentScanData(
+        sex: PlayerSex.male,
+        birthDate: DateTime(1995, 5, 20),
+        bloodType: BloodType.oPositive,
+      );
+      await tester.pumpAndSettle();
+
+      final depFinder = find.byKey(const Key('player_form_department_selector'));
+      await tester.ensureVisible(depFinder);
+      await tester.tap(depFinder);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Antioquia'));
+      await tester.pumpAndSettle();
+
+      final munFinder =
+          find.byKey(const Key('player_form_municipality_selector'));
+      await tester.ensureVisible(munFinder);
+      await tester.tap(munFinder);
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const Key('location_picker_search_field')),
+        'medellin',
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Medellín'));
+      await tester.pumpAndSettle();
+
+      final ldChip = find.byKey(const Key('player_form_position_chip_LD'));
+      await tester.ensureVisible(ldChip);
+      await tester.tap(ldChip);
+      await tester.pumpAndSettle();
+
+      final saveBtn = find.byKey(const Key('player_form_save_button'));
+      await tester.ensureVisible(saveBtn);
+      await tester.tap(saveBtn);
+      await tester.pumpAndSettle();
+
+      // Displays upload error banner
+      expect(
+        find.text('Error al subir las imágenes de la cédula. Inténtalo nuevamente.'),
+        findsOneWidget,
+      );
+      // Preserves entered text
+      expect(find.text('10203040'), findsOneWidget);
+      expect(find.text('Mateo'), findsOneWidget);
     });
   });
 }

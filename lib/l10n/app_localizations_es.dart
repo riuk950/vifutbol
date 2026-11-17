@@ -3683,4 +3683,60 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get locationPickerSelectMunicipalityTitle => 'Seleccionar Municipio';
+
+  @override
+  String get playerDocumentScanButton => 'Escanear / Capturar Cédula';
+
+  @override
+  String get playerDocumentCardTitle => 'Fotos de la Cédula';
+
+  @override
+  String get playerDocumentCardSubtitle =>
+      'Captura el frente y reverso de tu cédula colombiana para completar tu ficha';
+
+  @override
+  String get playerDocumentFrontSideLabel => 'Frente (Cara frontal)';
+
+  @override
+  String get playerDocumentBackSideLabel => 'Reverso (Cara posterior)';
+
+  @override
+  String get playerDocumentCaptureFrontButton => 'Capturar frente';
+
+  @override
+  String get playerDocumentCaptureBackButton => 'Capturar reverso';
+
+  @override
+  String get playerDocumentRecaptureButton => 'Repetir foto';
+
+  @override
+  String get playerDocumentScanningIndicator => 'Procesando documento...';
+
+  @override
+  String get playerDocumentScanSuccessFeedback =>
+      'Datos leídos automáticamente de la cédula';
+
+  @override
+  String get playerDocumentScanPartialFeedback =>
+      'Se completaron algunos datos de la cédula. Por favor verifica y completa los campos faltantes.';
+
+  @override
+  String get playerDocumentScanEmptyFeedback =>
+      'No se detectaron datos legibles. Puedes ingresar tus datos manualmente.';
+
+  @override
+  String get playerDocumentCameraPermissionDenied =>
+      'Se requiere permiso de cámara para capturar la cédula.';
+
+  @override
+  String get playerDocumentCameraPermissionOpenSettings =>
+      'Abrir configuración';
+
+  @override
+  String get playerDocumentImagesRequiredError =>
+      'Debes capturar ambas caras de tu cédula (frente y reverso) para continuar';
+
+  @override
+  String get playerDocumentUploadError =>
+      'Error al subir las imágenes de la cédula. Inténtalo nuevamente.';
 }

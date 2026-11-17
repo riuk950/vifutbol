@@ -12,7 +12,7 @@ void main() {
     });
 
     test(
-        'player requires phone, documentId, and all mandatory HU 21.1 personal/tactical fields',
+        'player requires phone, documentId, and all mandatory HU 21.1 and HU 21.2 fields including front/back document URLs',
         () {
       final incomplete = UserAccount(
         id: 'u1',
@@ -39,10 +39,25 @@ void main() {
       );
       expect(partialProfile.isProfileCompleteForActiveRole, isFalse);
 
-      final complete = partialProfile.copyWith(
+      final missingImages = partialProfile.copyWith(
         roleProfile: partialProfile.roleProfile!.copyWith(
           secondaryPositions: ['LD', 'CAD'],
           primaryPosition: PlayerPosition.defender,
+        ),
+      );
+      // Fails because front/back document URLs are missing
+      expect(missingImages.isProfileCompleteForActiveRole, isFalse);
+
+      final missingBackImage = missingImages.copyWith(
+        roleProfile: missingImages.roleProfile!.copyWith(
+          documentFrontUrl: 'path/to/front.jpg',
+        ),
+      );
+      expect(missingBackImage.isProfileCompleteForActiveRole, isFalse);
+
+      final complete = missingBackImage.copyWith(
+        roleProfile: missingBackImage.roleProfile!.copyWith(
+          documentBackUrl: 'path/to/back.jpg',
         ),
       );
       expect(complete.isProfileCompleteForActiveRole, isTrue);
@@ -171,6 +186,8 @@ void main() {
           primaryPosition: PlayerPosition.defender,
           secondaryPositions: const ['DFC', 'LD'],
           linkedPlayerId: 'player-uuid-123',
+          documentFrontUrl: 'https://storage/front.jpg',
+          documentBackUrl: 'https://storage/back.jpg',
         ),
       );
 
@@ -188,6 +205,8 @@ void main() {
       expect(restored.roleProfile?.municipality, 'Medellín');
       expect(restored.roleProfile?.primaryPosition, PlayerPosition.defender);
       expect(restored.roleProfile?.secondaryPositions, equals(['DFC', 'LD']));
+      expect(restored.roleProfile?.documentFrontUrl, 'https://storage/front.jpg');
+      expect(restored.roleProfile?.documentBackUrl, 'https://storage/back.jpg');
       expect(restored.isProfileCompleteForActiveRole, isTrue);
     });
   });

@@ -302,6 +302,10 @@ class LocalAuthRepository implements AuthRepository {
       secondaryPositions: roleProfile?.secondaryPositions.isNotEmpty == true
           ? roleProfile!.secondaryPositions
           : (currentUser.roleProfile?.secondaryPositions ?? const []),
+      documentFrontUrl: roleProfile?.documentFrontUrl ??
+          currentUser.roleProfile?.documentFrontUrl,
+      documentBackUrl: roleProfile?.documentBackUrl ??
+          currentUser.roleProfile?.documentBackUrl,
     );
 
     final updatedUser = currentUser.copyWith(

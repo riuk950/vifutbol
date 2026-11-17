@@ -49,7 +49,9 @@ class UserAccount {
             _hasText(roleProfile?.bloodType) &&
             _hasText(roleProfile?.department) &&
             _hasText(roleProfile?.municipality) &&
-            (roleProfile?.secondaryPositions.isNotEmpty ?? false);
+            (roleProfile?.secondaryPositions.isNotEmpty ?? false) &&
+            _hasText(roleProfile?.documentFrontUrl) &&
+            _hasText(roleProfile?.documentBackUrl);
       case UserRole.referee:
         return hasPhone && hasDoc;
       case UserRole.coach:

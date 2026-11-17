@@ -4695,5 +4695,69 @@
   "locationPickerSelectMunicipalityTitle": "Seleccionar Municipio",
   "@locationPickerSelectMunicipalityTitle": {
     "description": "Título del modal para seleccionar municipio"
+  },
+  "playerDocumentScanButton": "Escanear / Capturar Cédula",
+  "@playerDocumentScanButton": {
+    "description": "Texto del botón principal para escanear y capturar la cédula"
+  },
+  "playerDocumentCardTitle": "Fotos de la Cédula",
+  "@playerDocumentCardTitle": {
+    "description": "Título de la tarjeta de captura de imágenes de la cédula"
+  },
+  "playerDocumentCardSubtitle": "Captura el frente y reverso de tu cédula colombiana para completar tu ficha",
+  "@playerDocumentCardSubtitle": {
+    "description": "Subtítulo de la tarjeta de captura de imágenes de la cédula"
+  },
+  "playerDocumentFrontSideLabel": "Frente (Cara frontal)",
+  "@playerDocumentFrontSideLabel": {
+    "description": "Etiqueta para la cara frontal de la cédula"
+  },
+  "playerDocumentBackSideLabel": "Reverso (Cara posterior)",
+  "@playerDocumentBackSideLabel": {
+    "description": "Etiqueta para la cara posterior de la cédula"
+  },
+  "playerDocumentCaptureFrontButton": "Capturar frente",
+  "@playerDocumentCaptureFrontButton": {
+    "description": "Botón para iniciar la captura de la cara frontal"
+  },
+  "playerDocumentCaptureBackButton": "Capturar reverso",
+  "@playerDocumentCaptureBackButton": {
+    "description": "Botón para iniciar la captura de la cara posterior"
+  },
+  "playerDocumentRecaptureButton": "Repetir foto",
+  "@playerDocumentRecaptureButton": {
+    "description": "Botón para repetir la foto de una cara ya capturada"
+  },
+  "playerDocumentScanningIndicator": "Procesando documento...",
+  "@playerDocumentScanningIndicator": {
+    "description": "Mensaje mientras ML Kit procesa las imágenes de la cédula"
+  },
+  "playerDocumentScanSuccessFeedback": "Datos leídos automáticamente de la cédula",
+  "@playerDocumentScanSuccessFeedback": {
+    "description": "Mensaje de éxito al extraer datos completos de la cédula"
+  },
+  "playerDocumentScanPartialFeedback": "Se completaron algunos datos de la cédula. Por favor verifica y completa los campos faltantes.",
+  "@playerDocumentScanPartialFeedback": {
+    "description": "Mensaje cuando se obtuvieron datos parciales del documento"
+  },
+  "playerDocumentScanEmptyFeedback": "No se detectaron datos legibles. Puedes ingresar tus datos manualmente.",
+  "@playerDocumentScanEmptyFeedback": {
+    "description": "Mensaje cuando no se pudieron extraer datos del documento"
+  },
+  "playerDocumentCameraPermissionDenied": "Se requiere permiso de cámara para capturar la cédula.",
+  "@playerDocumentCameraPermissionDenied": {
+    "description": "Alerta cuando el usuario deniega el permiso de cámara"
+  },
+  "playerDocumentCameraPermissionOpenSettings": "Abrir configuración",
+  "@playerDocumentCameraPermissionOpenSettings": {
+    "description": "Botón para ir a los ajustes del sistema tras denegación de cámara"
+  },
+  "playerDocumentImagesRequiredError": "Debes capturar ambas caras de tu cédula (frente y reverso) para continuar",
+  "@playerDocumentImagesRequiredError": {
+    "description": "Error al intentar guardar la ficha sin tener capturadas ambas fotos de la cédula"
+  },
+  "playerDocumentUploadError": "Error al subir las imágenes de la cédula. Inténtalo nuevamente.",
+  "@playerDocumentUploadError": {
+    "description": "Error al fallar la subida de fotos a almacenamiento"
   }
 }

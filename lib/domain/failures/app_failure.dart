@@ -248,3 +248,24 @@ class DocumentAlreadyLinkedFailure extends AppFailure {
     super.cause,
   ]);
 }
+
+/// Emitted when camera access is denied by the user or restricted by the OS.
+class CameraPermissionDeniedFailure extends AppFailure {
+  final bool isPermanentlyDenied;
+
+  const CameraPermissionDeniedFailure([
+    super.message = 'Se requiere permiso de cámara para capturar la cédula.',
+    this.isPermanentlyDenied = false,
+    super.cause,
+  ]);
+}
+
+/// Emitted when uploading document photos to private storage fails.
+class DocumentUploadFailure extends AppFailure {
+  const DocumentUploadFailure([
+    super.message =
+        'Error al subir las imágenes de la cédula. Inténtalo nuevamente.',
+    super.cause,
+  ]);
+}
+

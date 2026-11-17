@@ -6339,6 +6339,102 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Seleccionar Municipio'**
   String get locationPickerSelectMunicipalityTitle;
+
+  /// Texto del botón principal para escanear y capturar la cédula
+  ///
+  /// In es, this message translates to:
+  /// **'Escanear / Capturar Cédula'**
+  String get playerDocumentScanButton;
+
+  /// Título de la tarjeta de captura de imágenes de la cédula
+  ///
+  /// In es, this message translates to:
+  /// **'Fotos de la Cédula'**
+  String get playerDocumentCardTitle;
+
+  /// Subtítulo de la tarjeta de captura de imágenes de la cédula
+  ///
+  /// In es, this message translates to:
+  /// **'Captura el frente y reverso de tu cédula colombiana para completar tu ficha'**
+  String get playerDocumentCardSubtitle;
+
+  /// Etiqueta para la cara frontal de la cédula
+  ///
+  /// In es, this message translates to:
+  /// **'Frente (Cara frontal)'**
+  String get playerDocumentFrontSideLabel;
+
+  /// Etiqueta para la cara posterior de la cédula
+  ///
+  /// In es, this message translates to:
+  /// **'Reverso (Cara posterior)'**
+  String get playerDocumentBackSideLabel;
+
+  /// Botón para iniciar la captura de la cara frontal
+  ///
+  /// In es, this message translates to:
+  /// **'Capturar frente'**
+  String get playerDocumentCaptureFrontButton;
+
+  /// Botón para iniciar la captura de la cara posterior
+  ///
+  /// In es, this message translates to:
+  /// **'Capturar reverso'**
+  String get playerDocumentCaptureBackButton;
+
+  /// Botón para repetir la foto de una cara ya capturada
+  ///
+  /// In es, this message translates to:
+  /// **'Repetir foto'**
+  String get playerDocumentRecaptureButton;
+
+  /// Mensaje mientras ML Kit procesa las imágenes de la cédula
+  ///
+  /// In es, this message translates to:
+  /// **'Procesando documento...'**
+  String get playerDocumentScanningIndicator;
+
+  /// Mensaje de éxito al extraer datos completos de la cédula
+  ///
+  /// In es, this message translates to:
+  /// **'Datos leídos automáticamente de la cédula'**
+  String get playerDocumentScanSuccessFeedback;
+
+  /// Mensaje cuando se obtuvieron datos parciales del documento
+  ///
+  /// In es, this message translates to:
+  /// **'Se completaron algunos datos de la cédula. Por favor verifica y completa los campos faltantes.'**
+  String get playerDocumentScanPartialFeedback;
+
+  /// Mensaje cuando no se pudieron extraer datos del documento
+  ///
+  /// In es, this message translates to:
+  /// **'No se detectaron datos legibles. Puedes ingresar tus datos manualmente.'**
+  String get playerDocumentScanEmptyFeedback;
+
+  /// Alerta cuando el usuario deniega el permiso de cámara
+  ///
+  /// In es, this message translates to:
+  /// **'Se requiere permiso de cámara para capturar la cédula.'**
+  String get playerDocumentCameraPermissionDenied;
+
+  /// Botón para ir a los ajustes del sistema tras denegación de cámara
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir configuración'**
+  String get playerDocumentCameraPermissionOpenSettings;
+
+  /// Error al intentar guardar la ficha sin tener capturadas ambas fotos de la cédula
+  ///
+  /// In es, this message translates to:
+  /// **'Debes capturar ambas caras de tu cédula (frente y reverso) para continuar'**
+  String get playerDocumentImagesRequiredError;
+
+  /// Error al fallar la subida de fotos a almacenamiento
+  ///
+  /// In es, this message translates to:
+  /// **'Error al subir las imágenes de la cédula. Inténtalo nuevamente.'**
+  String get playerDocumentUploadError;
 }
 
 class _AppLocalizationsDelegate

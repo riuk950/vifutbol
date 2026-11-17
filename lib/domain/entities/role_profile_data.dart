@@ -28,6 +28,10 @@ class RoleProfileData {
   final PlayerPosition? primaryPosition;
   final List<String> secondaryPositions;
 
+  // HU 21.2 Document Capture Fields
+  final String? documentFrontUrl;
+  final String? documentBackUrl;
+
   const RoleProfileData({
     this.clubName,
     this.licenseLevel,
@@ -49,6 +53,8 @@ class RoleProfileData {
     this.municipality,
     this.primaryPosition,
     this.secondaryPositions = const [],
+    this.documentFrontUrl,
+    this.documentBackUrl,
   });
 
   RoleProfileData copyWith({
@@ -72,6 +78,8 @@ class RoleProfileData {
     String? municipality,
     PlayerPosition? primaryPosition,
     List<String>? secondaryPositions,
+    String? documentFrontUrl,
+    String? documentBackUrl,
   }) {
     return RoleProfileData(
       clubName: clubName ?? this.clubName,
@@ -94,6 +102,8 @@ class RoleProfileData {
       municipality: municipality ?? this.municipality,
       primaryPosition: primaryPosition ?? this.primaryPosition,
       secondaryPositions: secondaryPositions ?? this.secondaryPositions,
+      documentFrontUrl: documentFrontUrl ?? this.documentFrontUrl,
+      documentBackUrl: documentBackUrl ?? this.documentBackUrl,
     );
   }
 
@@ -122,6 +132,8 @@ class RoleProfileData {
       if (primaryPosition != null) 'primaryPosition': primaryPosition!.name,
       if (secondaryPositions.isNotEmpty)
         'secondaryPositions': secondaryPositions,
+      if (documentFrontUrl != null) 'documentFrontUrl': documentFrontUrl,
+      if (documentBackUrl != null) 'documentBackUrl': documentBackUrl,
     };
   }
 
@@ -187,6 +199,8 @@ class RoleProfileData {
       municipality: readStr('municipality', 'municipality'),
       primaryPosition: readPosition('primaryPosition', 'primary_position', 'position'),
       secondaryPositions: readList('secondaryPositions', 'secondary_positions'),
+      documentFrontUrl: readStr('documentFrontUrl', 'document_front_url'),
+      documentBackUrl: readStr('documentBackUrl', 'document_back_url'),
     );
   }
 
@@ -214,7 +228,9 @@ class RoleProfileData {
           department == other.department &&
           municipality == other.municipality &&
           primaryPosition == other.primaryPosition &&
-          _listEquals(secondaryPositions, other.secondaryPositions);
+          _listEquals(secondaryPositions, other.secondaryPositions) &&
+          documentFrontUrl == other.documentFrontUrl &&
+          documentBackUrl == other.documentBackUrl;
 
   @override
   int get hashCode => Object.hashAll([
@@ -238,6 +254,8 @@ class RoleProfileData {
         municipality,
         primaryPosition,
         Object.hashAll(secondaryPositions),
+        documentFrontUrl,
+        documentBackUrl,
       ]);
 
   static bool _listEquals(List<String> a, List<String> b) {

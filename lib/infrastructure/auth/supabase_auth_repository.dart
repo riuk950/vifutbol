@@ -135,6 +135,8 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
         'p_municipality': roleProfile?.municipality,
         'p_primary_position': roleProfile?.primaryPosition?.name,
         'p_secondary_positions': roleProfile?.secondaryPositions,
+        'p_document_front_url': roleProfile?.documentFrontUrl,
+        'p_document_back_url': roleProfile?.documentBackUrl,
       },
     );
     if (result is Map<String, dynamic>) {
@@ -171,7 +173,7 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
             .schema(schema)
             .from('players')
             .select(
-              'id, first_name, second_name, first_surname, second_surname, sex, birth_date, blood_type, department, municipality, position, secondary_positions',
+              'id, first_name, second_name, first_surname, second_surname, sex, birth_date, blood_type, department, municipality, position, secondary_positions, document_front_url, document_back_url',
             )
             .eq('user_account_id', userAccountId)
             .limit(1)
@@ -208,6 +210,8 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
           'municipality': player['municipality'],
           'primary_position': player['position'],
           'secondary_positions': player['secondary_positions'],
+          'document_front_url': player['document_front_url'],
+          'document_back_url': player['document_back_url'],
         },
         if (referee != null) ...{
           'linked_referee_id': referee['id'],

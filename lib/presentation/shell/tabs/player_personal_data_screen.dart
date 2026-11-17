@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../application/providers/auth_providers.dart';
+import '../../../application/providers/document_scanner_providers.dart';
 import '../../../domain/entities/colombia_location_catalog.dart';
+import '../../../domain/entities/colombian_id_scan_result.dart';
 import '../../../domain/entities/detailed_football_position.dart';
 import '../../../domain/entities/player_personal_enums.dart';
 import '../../../domain/entities/role_profile_data.dart';
@@ -15,6 +17,7 @@ import '../../design_system/kick_pulse_colors.dart';
 import '../../design_system/kick_pulse_radii_spacing.dart';
 import '../../design_system/kick_pulse_typography.dart';
 import '../../design_system/widgets/kick_pulse_button.dart';
+import '../widgets/id_document_capture_card.dart';
 import '../widgets/searchable_location_picker_sheet.dart';
 
 /// Dedicated full-screen form for capturing and updating player personal data,
@@ -51,6 +54,14 @@ class PlayerPersonalDataScreenState
   bool _showPositionsError = false;
   bool _isDirty = false;
 
+  // HU 21.2 Colombian ID Dual Scan & Capture State
+  late PlayerDocumentCapture _documentCapture;
+  bool _isCapturing = false;
+  bool _isScanning = false;
+  bool _cameraPermissionDenied = false;
+  String? _documentImagesError;
+  String? _scanFeedback;
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +71,10 @@ class PlayerPersonalDataScreenState
     _phoneController = TextEditingController(text: user?.phone ?? '');
 
     final profile = user?.roleProfile;
+    _documentCapture = PlayerDocumentCapture(
+      frontRemoteUrl: profile?.documentFrontUrl,
+      backRemoteUrl: profile?.documentBackUrl,
+    );
     _firstNameController = TextEditingController(text: profile?.firstName ?? '');
     _secondNameController =
         TextEditingController(text: profile?.secondName ?? '');
@@ -132,6 +147,185 @@ class PlayerPersonalDataScreenState
       if (bloodType != null) _selectedBloodType = bloodType.value;
       _isDirty = true;
     });
+  }
+
+  Future<void> _handleScanAll() async {
+    if (_isCapturing || _isScanning) return;
+    setState(() {
+      _isCapturing = true;
+      _cameraPermissionDenied = false;
+      _scanFeedback = null;
+      _documentImagesError = null;
+    });
+
+    final scanner = ref.read(colombianIdScannerServiceProvider);
+    try {
+      final frontPath = await scanner.captureDocumentPhoto(isFront: true);
+      if (frontPath != null && mounted) {
+        setState(() {
+          _documentCapture =
+              _documentCapture.copyWith(frontImagePath: frontPath);
+          _isDirty = true;
+        });
+      }
+
+      if (mounted) {
+        final backPath = await scanner.captureDocumentPhoto(isFront: false);
+        if (backPath != null && mounted) {
+          setState(() {
+            _documentCapture =
+                _documentCapture.copyWith(backImagePath: backPath);
+            _isDirty = true;
+          });
+        }
+      }
+
+      if (mounted) {
+        await _runScan();
+      }
+    } on CameraPermissionDeniedFailure {
+      if (mounted) {
+        setState(() => _cameraPermissionDenied = true);
+      }
+    } catch (_) {
+      // Ignore general capture errors
+    } finally {
+      if (mounted) {
+        setState(() => _isCapturing = false);
+      }
+    }
+  }
+
+  Future<void> _handleCaptureFront() async {
+    if (_isCapturing || _isScanning) return;
+    setState(() {
+      _isCapturing = true;
+      _cameraPermissionDenied = false;
+      _scanFeedback = null;
+      _documentImagesError = null;
+    });
+
+    final scanner = ref.read(colombianIdScannerServiceProvider);
+    try {
+      final frontPath = await scanner.captureDocumentPhoto(isFront: true);
+      if (frontPath != null && mounted) {
+        setState(() {
+          _documentCapture =
+              _documentCapture.copyWith(frontImagePath: frontPath);
+          _isDirty = true;
+        });
+        await _runScan();
+      }
+    } on CameraPermissionDeniedFailure {
+      if (mounted) {
+        setState(() => _cameraPermissionDenied = true);
+      }
+    } catch (_) {
+      // Ignore
+    } finally {
+      if (mounted) {
+        setState(() => _isCapturing = false);
+      }
+    }
+  }
+
+  Future<void> _handleCaptureBack() async {
+    if (_isCapturing || _isScanning) return;
+    setState(() {
+      _isCapturing = true;
+      _cameraPermissionDenied = false;
+      _scanFeedback = null;
+      _documentImagesError = null;
+    });
+
+    final scanner = ref.read(colombianIdScannerServiceProvider);
+    try {
+      final backPath = await scanner.captureDocumentPhoto(isFront: false);
+      if (backPath != null && mounted) {
+        setState(() {
+          _documentCapture =
+              _documentCapture.copyWith(backImagePath: backPath);
+          _isDirty = true;
+        });
+        await _runScan();
+      }
+    } on CameraPermissionDeniedFailure {
+      if (mounted) {
+        setState(() => _cameraPermissionDenied = true);
+      }
+    } catch (_) {
+      // Ignore
+    } finally {
+      if (mounted) {
+        setState(() => _isCapturing = false);
+      }
+    }
+  }
+
+  Future<void> _runScan() async {
+    final front = _documentCapture.frontImagePath;
+    final back = _documentCapture.backImagePath;
+    if ((front == null || front.isEmpty) && (back == null || back.isEmpty)) {
+      return;
+    }
+
+    setState(() => _isScanning = true);
+    final scanner = ref.read(colombianIdScannerServiceProvider);
+    final l10n = AppLocalizations.of(context);
+
+    try {
+      final scanResult = await scanner.scanDocumentImages(
+        frontImagePath: front,
+        backImagePath: back,
+      );
+
+      if (!mounted) return;
+
+      if (scanResult.hasAnyField) {
+        applyDocumentScanData(
+          documentId: scanResult.documentId,
+          firstName: scanResult.firstName,
+          secondName: scanResult.secondName,
+          firstSurname: scanResult.firstSurname,
+          secondSurname: scanResult.secondSurname,
+          sex: scanResult.sex,
+          birthDate: scanResult.birthDate,
+          bloodType: scanResult.bloodType,
+        );
+
+        final isFullRead = scanResult.documentId != null &&
+            scanResult.firstName != null &&
+            scanResult.firstSurname != null &&
+            scanResult.birthDate != null &&
+            scanResult.sex != null &&
+            scanResult.bloodType != null;
+
+        setState(() {
+          _scanFeedback = isFullRead
+              ? l10n.playerDocumentScanSuccessFeedback
+              : l10n.playerDocumentScanPartialFeedback;
+        });
+      } else {
+        setState(() {
+          _scanFeedback = l10n.playerDocumentScanEmptyFeedback;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _scanFeedback = l10n.playerDocumentScanEmptyFeedback;
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isScanning = false);
+      }
+    }
+  }
+
+  Future<void> _handleOpenSettings() async {
+    final scanner = ref.read(colombianIdScannerServiceProvider);
+    await scanner.openCameraSettings();
   }
 
   Future<void> _pickBirthDate(BuildContext context) async {
@@ -249,9 +443,12 @@ class PlayerPersonalDataScreenState
 
   Future<void> _handleSave() async {
     final l10n = AppLocalizations.of(context);
+    final hasImages = _documentCapture.isComplete;
     setState(() {
       _errorMessage = null;
       _showPositionsError = _selectedPositions.isEmpty;
+      _documentImagesError =
+          hasImages ? null : l10n.playerDocumentImagesRequiredError;
     });
 
     final formValid = _formKey.currentState?.validate() ?? false;
@@ -262,74 +459,103 @@ class PlayerPersonalDataScreenState
         _selectedMunicipality != null &&
         _selectedPositions.isNotEmpty;
 
-    if (!formValid || !validCustomFields) {
+    if (!formValid || !validCustomFields || !hasImages) {
       return;
     }
 
     setState(() => _isSaving = true);
 
-    final positionsList = _selectedPositions
-        .map((code) => DetailedFootballPosition.fromCode(code))
-        .whereType<DetailedFootballPosition>()
-        .toList(growable: false);
+    try {
+      final user = ref.read(authControllerProvider).session?.user;
+      final userId = user?.id ?? '';
 
-    final primaryTacticalLine =
-        PlayerPersonalDataUtils.derivePrimaryPosition(positionsList);
-
-    final harmonizedFullName = PlayerPersonalDataUtils.composeFullName(
-      firstName: _firstNameController.text,
-      secondName: _secondNameController.text,
-      firstSurname: _firstSurnameController.text,
-      secondSurname: _secondSurnameController.text,
-    );
-
-    final roleProfilePayload = RoleProfileData(
-      firstName: _firstNameController.text.trim(),
-      secondName: _secondNameController.text.trim().isEmpty
-          ? null
-          : _secondNameController.text.trim(),
-      firstSurname: _firstSurnameController.text.trim(),
-      secondSurname: _secondSurnameController.text.trim().isEmpty
-          ? null
-          : _secondSurnameController.text.trim(),
-      sex: _selectedSex?.value,
-      birthDate: _selectedBirthDate,
-      bloodType: _selectedBloodType,
-      department: _selectedDepartment,
-      municipality: _selectedMunicipality,
-      primaryPosition: primaryTacticalLine,
-      secondaryPositions: _selectedPositions.toList()..sort(),
-    );
-
-    final success = await ref
-        .read(authControllerProvider.notifier)
-        .updateRoleProfile(
-          role: UserRole.player,
-          fullName: harmonizedFullName,
-          phone: _phoneController.text.trim(),
-          documentId: _documentController.text.trim(),
-          roleProfile: roleProfilePayload,
-        );
-
-    if (!mounted) return;
-
-    if (success) {
-      _isDirty = false;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.playerPersonalDataSaveSuccess),
-          backgroundColor: KickPulseColors.accentPrimary,
-        ),
+      final storageRepo = ref.read(documentStorageRepositoryProvider);
+      final uploadResult = await storageRepo.uploadPlayerIdDocuments(
+        userId: userId,
+        frontLocalPath: _documentCapture.frontImagePath,
+        backLocalPath: _documentCapture.backImagePath,
+        existingFrontUrl: _documentCapture.frontRemoteUrl,
+        existingBackUrl: _documentCapture.backRemoteUrl,
       );
-      Navigator.of(context).pop(true);
-    } else {
-      final failure = ref.read(authControllerProvider).lastFailure;
-      String message = l10n.playerPersonalDataErrorBanner;
 
-      if (failure is DocumentAlreadyLinkedFailure) {
-        message = l10n.playerPersonalDataDocumentAlreadyLinked;
-      } else if (failure is OfflineAuthOperationFailure) {
+      final positionsList = _selectedPositions
+          .map((code) => DetailedFootballPosition.fromCode(code))
+          .whereType<DetailedFootballPosition>()
+          .toList(growable: false);
+
+      final primaryTacticalLine =
+          PlayerPersonalDataUtils.derivePrimaryPosition(positionsList);
+
+      final harmonizedFullName = PlayerPersonalDataUtils.composeFullName(
+        firstName: _firstNameController.text,
+        secondName: _secondNameController.text,
+        firstSurname: _firstSurnameController.text,
+        secondSurname: _secondSurnameController.text,
+      );
+
+      final roleProfilePayload = RoleProfileData(
+        firstName: _firstNameController.text.trim(),
+        secondName: _secondNameController.text.trim().isEmpty
+            ? null
+            : _secondNameController.text.trim(),
+        firstSurname: _firstSurnameController.text.trim(),
+        secondSurname: _secondSurnameController.text.trim().isEmpty
+            ? null
+            : _secondSurnameController.text.trim(),
+        sex: _selectedSex?.value,
+        birthDate: _selectedBirthDate,
+        bloodType: _selectedBloodType,
+        department: _selectedDepartment,
+        municipality: _selectedMunicipality,
+        primaryPosition: primaryTacticalLine,
+        secondaryPositions: _selectedPositions.toList()..sort(),
+        documentFrontUrl: uploadResult.frontUrl,
+        documentBackUrl: uploadResult.backUrl,
+      );
+
+      final success = await ref
+          .read(authControllerProvider.notifier)
+          .updateRoleProfile(
+            role: UserRole.player,
+            fullName: harmonizedFullName,
+            phone: _phoneController.text.trim(),
+            documentId: _documentController.text.trim(),
+            roleProfile: roleProfilePayload,
+          );
+
+      if (!mounted) return;
+
+      if (success) {
+        _isDirty = false;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.playerPersonalDataSaveSuccess),
+            backgroundColor: KickPulseColors.accentPrimary,
+          ),
+        );
+        Navigator.of(context).pop(true);
+      } else {
+        final failure = ref.read(authControllerProvider).lastFailure;
+        String message = l10n.playerPersonalDataErrorBanner;
+
+        if (failure is DocumentAlreadyLinkedFailure) {
+          message = l10n.playerPersonalDataDocumentAlreadyLinked;
+        } else if (failure is OfflineAuthOperationFailure) {
+          message = l10n.playerPersonalDataOfflineError;
+        }
+
+        setState(() {
+          _isSaving = false;
+          _errorMessage = message;
+        });
+      }
+    } catch (error) {
+      if (!mounted) return;
+      String message = l10n.playerPersonalDataErrorBanner;
+      if (error is OfflineAuthOperationFailure) {
         message = l10n.playerPersonalDataOfflineError;
+      } else if (error is DocumentUploadFailure) {
+        message = l10n.playerDocumentUploadError;
       }
 
       setState(() {
@@ -423,6 +649,19 @@ class PlayerPersonalDataScreenState
                   _buildSectionCard(
                     title: 'Identificación y Contacto',
                     children: [
+                      IdDocumentCaptureCard(
+                        capture: _documentCapture,
+                        isScanning: _isScanning,
+                        isCapturing: _isCapturing,
+                        permissionDenied: _cameraPermissionDenied,
+                        validationError: _documentImagesError,
+                        scanFeedback: _scanFeedback,
+                        onScanAll: _handleScanAll,
+                        onCaptureFront: _handleCaptureFront,
+                        onCaptureBack: _handleCaptureBack,
+                        onOpenSettings: _handleOpenSettings,
+                      ),
+                      const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
                       TextFormField(
                         key: const Key('player_form_document_field'),
                         controller: _documentController,
