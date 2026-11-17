@@ -5811,6 +5811,66 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Invitación de {teamName} rechazada.'**
   String profileTeamRequestRejectedMessage(String teamName);
+
+  /// Título de la sección de plantilla agrupada por posición en el panel técnico
+  ///
+  /// In es, this message translates to:
+  /// **'Plantilla por Posición'**
+  String get coachRosterSectionTitle;
+
+  /// Encabezado genérico para una línea táctica con conteo de jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'{position} ({count})'**
+  String coachRosterPositionHeader(String position, int count);
+
+  /// Encabezado del grupo de porteros con conteo de jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'Porteros ({count})'**
+  String coachRosterPositionGoalkeepers(int count);
+
+  /// Encabezado del grupo de defensas con conteo de jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'Defensas ({count})'**
+  String coachRosterPositionDefenders(int count);
+
+  /// Encabezado del grupo de mediocampistas con conteo de jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'Mediocampistas ({count})'**
+  String coachRosterPositionMidfielders(int count);
+
+  /// Encabezado del grupo de delanteros con conteo de jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'Delanteros ({count})'**
+  String coachRosterPositionForwards(int count);
+
+  /// Badge de estado para jugadores disponibles y elegibles
+  ///
+  /// In es, this message translates to:
+  /// **'Elegible'**
+  String get coachRosterPlayerEligible;
+
+  /// Badge de estado para jugadores no disponibles o inactivos
+  ///
+  /// In es, this message translates to:
+  /// **'Inactivo / Sancionado'**
+  String get coachRosterPlayerInactive;
+
+  /// Estado vacío sutil mostrado cuando una línea táctica no tiene jugadores registrados
+  ///
+  /// In es, this message translates to:
+  /// **'Sin jugadores en esta posición'**
+  String get coachRosterEmptyPosition;
+
+  /// Alerta preventiva mostrada cuando el equipo no cuenta con ningún arquero
+  ///
+  /// In es, this message translates to:
+  /// **'Alerta táctica: El equipo no tiene porteros registrados.'**
+  String get coachRosterNoGoalkeeperAlert;
 }
 
 class _AppLocalizationsDelegate

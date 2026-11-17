@@ -10,6 +10,7 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_button.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
+import 'package:vifutbol/presentation/panel/widgets/coach_positional_roster_section.dart';
 import 'package:vifutbol/presentation/teams/dialogs/create_team_dialog.dart';
 
 /// Dynamic panel content for [UserRole.coach].
@@ -292,6 +293,10 @@ class CoachPanelContent extends ConsumerWidget {
               ],
             ),
           ),
+          const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
+
+          // Positional Roster Section (HU 20.2)
+          CoachPositionalRosterSection(teamId: team.id),
         ],
       ),
     );

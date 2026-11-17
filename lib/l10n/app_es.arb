@@ -4324,5 +4324,61 @@
     "placeholders": {
       "teamName": { "type": "String" }
     }
+  },
+  "coachRosterSectionTitle": "Plantilla por Posición",
+  "@coachRosterSectionTitle": {
+    "description": "Título de la sección de plantilla agrupada por posición en el panel técnico"
+  },
+  "coachRosterPositionHeader": "{position} ({count})",
+  "@coachRosterPositionHeader": {
+    "description": "Encabezado genérico para una línea táctica con conteo de jugadores",
+    "placeholders": {
+      "position": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "coachRosterPositionGoalkeepers": "Porteros ({count})",
+  "@coachRosterPositionGoalkeepers": {
+    "description": "Encabezado del grupo de porteros con conteo de jugadores",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "coachRosterPositionDefenders": "Defensas ({count})",
+  "@coachRosterPositionDefenders": {
+    "description": "Encabezado del grupo de defensas con conteo de jugadores",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "coachRosterPositionMidfielders": "Mediocampistas ({count})",
+  "@coachRosterPositionMidfielders": {
+    "description": "Encabezado del grupo de mediocampistas con conteo de jugadores",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "coachRosterPositionForwards": "Delanteros ({count})",
+  "@coachRosterPositionForwards": {
+    "description": "Encabezado del grupo de delanteros con conteo de jugadores",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "coachRosterPlayerEligible": "Elegible",
+  "@coachRosterPlayerEligible": {
+    "description": "Badge de estado para jugadores disponibles y elegibles"
+  },
+  "coachRosterPlayerInactive": "Inactivo / Sancionado",
+  "@coachRosterPlayerInactive": {
+    "description": "Badge de estado para jugadores no disponibles o inactivos"
+  },
+  "coachRosterEmptyPosition": "Sin jugadores en esta posición",
+  "@coachRosterEmptyPosition": {
+    "description": "Estado vacío sutil mostrado cuando una línea táctica no tiene jugadores registrados"
+  },
+  "coachRosterNoGoalkeeperAlert": "Alerta táctica: El equipo no tiene porteros registrados.",
+  "@coachRosterNoGoalkeeperAlert": {
+    "description": "Alerta preventiva mostrada cuando el equipo no cuenta con ningún arquero"
   }
 }

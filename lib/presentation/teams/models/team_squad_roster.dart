@@ -136,12 +136,16 @@ class TeamSquadRoster {
     final forwards = <TeamSquadPlayerItem>[];
     final allProfiles = <PlayerPerformanceProfile>[];
 
+    final effectiveTournamentId = team.tournamentId.trim().isNotEmpty
+        ? team.tournamentId
+        : 'tournament_${team.id}';
+
     for (final player in sortedPlayers) {
       final profile =
           playerProfilesById[player.id] ??
           PlayerPerformanceProfile(
             playerId: player.id,
-            tournamentId: team.tournamentId,
+            tournamentId: effectiveTournamentId,
             fullName: player.fullName,
             shirtNumber: player.shirtNumber,
             position: player.position,
@@ -158,7 +162,7 @@ class TeamSquadRoster {
         teamId: team.id,
         teamName: team.name,
         teamShortCode: team.shortCode,
-        tournamentId: team.tournamentId,
+        tournamentId: effectiveTournamentId,
         performanceProfile: profile,
       );
 

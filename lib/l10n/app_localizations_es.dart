@@ -3386,4 +3386,45 @@ class AppLocalizationsEs extends AppLocalizations {
   String profileTeamRequestRejectedMessage(String teamName) {
     return 'Invitación de $teamName rechazada.';
   }
+
+  @override
+  String get coachRosterSectionTitle => 'Plantilla por Posición';
+
+  @override
+  String coachRosterPositionHeader(String position, int count) {
+    return '$position ($count)';
+  }
+
+  @override
+  String coachRosterPositionGoalkeepers(int count) {
+    return 'Porteros ($count)';
+  }
+
+  @override
+  String coachRosterPositionDefenders(int count) {
+    return 'Defensas ($count)';
+  }
+
+  @override
+  String coachRosterPositionMidfielders(int count) {
+    return 'Mediocampistas ($count)';
+  }
+
+  @override
+  String coachRosterPositionForwards(int count) {
+    return 'Delanteros ($count)';
+  }
+
+  @override
+  String get coachRosterPlayerEligible => 'Elegible';
+
+  @override
+  String get coachRosterPlayerInactive => 'Inactivo / Sancionado';
+
+  @override
+  String get coachRosterEmptyPosition => 'Sin jugadores en esta posición';
+
+  @override
+  String get coachRosterNoGoalkeeperAlert =>
+      'Alerta táctica: El equipo no tiene porteros registrados.';
 }
