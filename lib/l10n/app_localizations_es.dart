@@ -3302,4 +3302,88 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get completeProfileInvalidDocumentError =>
       'Ingresa un documento válido (mínimo 5 caracteres).';
+
+  @override
+  String get teamRosterIneligibleIndicator => 'No elegible / Faltan jugadores';
+
+  @override
+  String teamRosterQuotaProgress(int current, int min) {
+    return '$current/$min jugadores mínimos';
+  }
+
+  @override
+  String get teamRosterEnableCompetitionAction =>
+      'Habilitar para Competiciones';
+
+  @override
+  String get teamRosterEnableSuccessMessage =>
+      'Equipo habilitado oficialmente para competir.';
+
+  @override
+  String teamRosterPendingRequestsHeader(int count) {
+    return 'Solicitudes enviadas ($count)';
+  }
+
+  @override
+  String get teamRosterCancelRequestAction => 'Cancelar invitación';
+
+  @override
+  String get teamInvitePlayerModalTitle => 'Invitar Jugador a la Plantilla';
+
+  @override
+  String get teamInviteSearchHint => 'Buscar jugador por nombre o documento...';
+
+  @override
+  String get teamInviteShirtNumberLabel => 'Dorsal propuesto (1-99)';
+
+  @override
+  String get teamInvitePositionLabel => 'Posición táctica';
+
+  @override
+  String get teamInviteSendAction => 'Enviar Solicitud';
+
+  @override
+  String teamInviteSuccessMessage(String playerName) {
+    return 'Solicitud enviada a $playerName.';
+  }
+
+  @override
+  String teamInviteDuplicateShirtError(int shirt) {
+    return 'El dorsal $shirt ya está ocupado en la plantilla o en una solicitud pendiente.';
+  }
+
+  @override
+  String get teamInviteDuplicatePlayerError =>
+      'Este jugador ya pertenece al equipo o tiene una invitación pendiente.';
+
+  @override
+  String teamInviteEmptySearchMessage(String query) {
+    return 'No se encontraron jugadores registrados con \"$query\"';
+  }
+
+  @override
+  String get profileTeamRequestsTile => 'Solicitudes de Equipos';
+
+  @override
+  String get profileTeamRequestsTitle => 'Invitaciones de Equipos';
+
+  @override
+  String get profileTeamRequestsEmpty =>
+      'No tienes solicitudes de equipos pendientes.';
+
+  @override
+  String get profileTeamRequestAcceptAction => 'Aceptar';
+
+  @override
+  String get profileTeamRequestRejectAction => 'Rechazar';
+
+  @override
+  String profileTeamRequestAcceptedMessage(String teamName) {
+    return 'Te has unido exitosamente a $teamName.';
+  }
+
+  @override
+  String profileTeamRequestRejectedMessage(String teamName) {
+    return 'Invitación de $teamName rechazada.';
+  }
 }

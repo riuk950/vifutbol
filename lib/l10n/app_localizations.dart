@@ -5679,6 +5679,138 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Ingresa un documento válido (mínimo 5 caracteres).'**
   String get completeProfileInvalidDocumentError;
+
+  /// Indicador cuando el equipo no alcanza los 11 jugadores reglamentarios
+  ///
+  /// In es, this message translates to:
+  /// **'No elegible / Faltan jugadores'**
+  String get teamRosterIneligibleIndicator;
+
+  /// Texto del progreso de cuota mínima de jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'{current}/{min} jugadores mínimos'**
+  String teamRosterQuotaProgress(int current, int min);
+
+  /// Acción para habilitar un equipo a estado eligible
+  ///
+  /// In es, this message translates to:
+  /// **'Habilitar para Competiciones'**
+  String get teamRosterEnableCompetitionAction;
+
+  /// Mensaje tras habilitar el equipo con éxito
+  ///
+  /// In es, this message translates to:
+  /// **'Equipo habilitado oficialmente para competir.'**
+  String get teamRosterEnableSuccessMessage;
+
+  /// Encabezado de invitaciones pendientes enviadas por el equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitudes enviadas ({count})'**
+  String teamRosterPendingRequestsHeader(int count);
+
+  /// Botón para cancelar una solicitud pendiente enviada a un jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar invitación'**
+  String get teamRosterCancelRequestAction;
+
+  /// Título del modal para buscar e invitar jugadores a un club
+  ///
+  /// In es, this message translates to:
+  /// **'Invitar Jugador a la Plantilla'**
+  String get teamInvitePlayerModalTitle;
+
+  /// Placeholder del buscador de jugadores registrados
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar jugador por nombre o documento...'**
+  String get teamInviteSearchHint;
+
+  /// Etiqueta para ingresar el número de dorsal
+  ///
+  /// In es, this message translates to:
+  /// **'Dorsal propuesto (1-99)'**
+  String get teamInviteShirtNumberLabel;
+
+  /// Etiqueta para seleccionar la posición
+  ///
+  /// In es, this message translates to:
+  /// **'Posición táctica'**
+  String get teamInvitePositionLabel;
+
+  /// Botón para enviar la solicitud de incorporación
+  ///
+  /// In es, this message translates to:
+  /// **'Enviar Solicitud'**
+  String get teamInviteSendAction;
+
+  /// Mensaje de éxito al enviar solicitud de incorporación
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitud enviada a {playerName}.'**
+  String teamInviteSuccessMessage(String playerName);
+
+  /// Error al elegir un dorsal ya asignado
+  ///
+  /// In es, this message translates to:
+  /// **'El dorsal {shirt} ya está ocupado en la plantilla o en una solicitud pendiente.'**
+  String teamInviteDuplicateShirtError(int shirt);
+
+  /// Error si el jugador ya está invitado o en plantilla
+  ///
+  /// In es, this message translates to:
+  /// **'Este jugador ya pertenece al equipo o tiene una invitación pendiente.'**
+  String get teamInviteDuplicatePlayerError;
+
+  /// Mensaje de búsqueda vacía en catálogo de jugadores
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontraron jugadores registrados con \"{query}\"'**
+  String teamInviteEmptySearchMessage(String query);
+
+  /// Opción en el perfil para revisar invitaciones de clubes
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitudes de Equipos'**
+  String get profileTeamRequestsTile;
+
+  /// Título de la pantalla de solicitudes recibidas
+  ///
+  /// In es, this message translates to:
+  /// **'Invitaciones de Equipos'**
+  String get profileTeamRequestsTitle;
+
+  /// Estado vacío en bandeja de invitaciones de equipos
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes solicitudes de equipos pendientes.'**
+  String get profileTeamRequestsEmpty;
+
+  /// Botón para aceptar solicitud de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Aceptar'**
+  String get profileTeamRequestAcceptAction;
+
+  /// Botón para rechazar solicitud de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazar'**
+  String get profileTeamRequestRejectAction;
+
+  /// Confirmación tras aceptar invitación
+  ///
+  /// In es, this message translates to:
+  /// **'Te has unido exitosamente a {teamName}.'**
+  String profileTeamRequestAcceptedMessage(String teamName);
+
+  /// Confirmación tras rechazar invitación
+  ///
+  /// In es, this message translates to:
+  /// **'Invitación de {teamName} rechazada.'**
+  String profileTeamRequestRejectedMessage(String teamName);
 }
 
 class _AppLocalizationsDelegate

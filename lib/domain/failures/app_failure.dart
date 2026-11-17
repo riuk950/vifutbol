@@ -148,6 +148,9 @@ enum TeamEligibilityErrorCode {
   insufficientPlayersForApproval,
   teamNotFound,
   teamHasPlayedMatches,
+  playerAlreadyHasPendingRequest,
+  shirtNumberAlreadyReserved,
+  joinRequestNotFound,
 }
 
 /// Emitted when team enrollment, player registration, or eligibility validation fails.

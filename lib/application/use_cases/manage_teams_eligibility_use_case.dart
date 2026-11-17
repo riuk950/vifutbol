@@ -501,45 +501,55 @@ class ManageTeamsEligibilityUseCase {
 
   /// Officially marks a team as [TeamEligibilityStatus.eligible].
   ///
-  /// Restricted to roles with [RoleCapability.approveRegistrations] (Organizer).
-  /// Requires player count within [minPlayersPerTeam, maxPlayersPerTeam].
+  /// Authorized for [UserRole.coach] (via [RoleCapability.manageTeamRoster])
+  /// and [UserRole.organizer] (via [RoleCapability.approveRegistrations]).
+  /// Requires player count within [max(11, minPlayersPerTeam), maxPlayersPerTeam].
   Future<TournamentTeam> approveTeamEligibility({
     required String teamId,
     required ChampionshipTournament tournament,
     required UserRole actorRole,
   }) async {
-    final canApprove = RolePermissionMatrix.hasCapability(
-      actorRole,
-      RoleCapability.approveRegistrations,
-    );
+    final canApprove =
+        actorRole == UserRole.coach ||
+        RolePermissionMatrix.hasCapability(
+          actorRole,
+          RoleCapability.manageTeamRoster,
+        ) ||
+        RolePermissionMatrix.hasCapability(
+          actorRole,
+          RoleCapability.approveRegistrations,
+        );
     if (!canApprove) {
       throw const UnauthorizedRoleFailure(
-        'Solo el Organizador puede habilitar oficialmente a un equipo',
+        'Solo el Entrenador o el Organizador pueden habilitar a un equipo',
       );
     }
 
-    if (tournament.status == TournamentStatus.finished) {
+    if (tournament.id.isNotEmpty &&
+        tournament.status == TournamentStatus.finished) {
       throw const TeamEligibilityValidationFailure(
         TeamEligibilityErrorCode.tournamentRegistrationsClosed,
         'El campeonato ha finalizado y se encuentra en modo de solo lectura histórica.',
       );
     }
 
-    final tournamentTeams = await _repository.loadTeamsForTournament(
-      tournament.id,
-    );
+    final candidateTeams = tournament.id.isNotEmpty
+        ? await _repository.loadTeamsForTournament(tournament.id)
+        : await _repository.loadTeams();
 
-    final teamIndex = tournamentTeams.indexWhere((t) => t.id == teamId);
+    final teamIndex = candidateTeams.indexWhere((t) => t.id == teamId);
     if (teamIndex < 0) {
       throw const TeamEligibilityValidationFailure(
         TeamEligibilityErrorCode.teamNotFound,
-        'Equipo no encontrado en el campeonato',
+        'Equipo no encontrado',
       );
     }
 
-    final targetTeam = tournamentTeams[teamIndex];
+    final targetTeam = candidateTeams[teamIndex];
     final playerCount = targetTeam.players.length;
-    final minRequired = tournament.rules.minPlayersPerTeam;
+    final minRequired = tournament.rules.minPlayersPerTeam > 11
+        ? tournament.rules.minPlayersPerTeam
+        : 11;
 
     if (playerCount < minRequired) {
       throw TeamEligibilityValidationFailure(

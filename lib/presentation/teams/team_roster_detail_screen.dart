@@ -18,15 +18,27 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_button.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
+import 'package:vifutbol/presentation/teams/widgets/invite_player_to_team_modal.dart';
 import 'package:vifutbol/presentation/teams/widgets/kick_pulse_team_crest.dart';
+import 'package:vifutbol/application/providers/team_join_requests_providers.dart';
+import 'package:vifutbol/domain/entities/team_join_request.dart';
 
 /// Screen displaying the official squad roster of a team, player registration,
-/// quota progress, and organizer-only eligibility approval.
-class TeamRosterDetailScreen extends ConsumerWidget {
+/// quota progress, and coach/organizer eligibility approval.
+class TeamRosterDetailScreen extends ConsumerStatefulWidget {
   const TeamRosterDetailScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TeamRosterDetailScreen> createState() =>
+      _TeamRosterDetailScreenState();
+}
+
+class _TeamRosterDetailScreenState
+    extends ConsumerState<TeamRosterDetailScreen> {
+  String? _lastLoadedTeamId;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final activeRole = ref.watch(activeUserRoleProvider);
     final teamsState = ref.watch(teamsControllerProvider);
@@ -49,6 +61,15 @@ class TeamRosterDetailScreen extends ConsumerWidget {
       );
     }
 
+    if (_lastLoadedTeamId != team.id) {
+      _lastLoadedTeamId = team.id;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
+            .read(teamJoinRequestsControllerProvider.notifier)
+            .loadRequestsForTeam(team.id);
+      });
+    }
+
     final tournament = tournamentsState.tournaments.firstWhere(
       (t) => t.id == team.tournamentId,
       orElse: () =>
@@ -64,30 +85,30 @@ class TeamRosterDetailScreen extends ConsumerWidget {
           ),
     );
 
-    final canManageRoster =
-        (RolePermissionMatrix.hasCapability(
-              activeRole,
-              RoleCapability.manageTeamRoster,
-            ) ||
-            RolePermissionMatrix.hasCapability(
-              activeRole,
-              RoleCapability.manageTournaments,
-            ) ||
+    final isTournamentOpen =
+        team.tournamentId.isEmpty ||
+        tournament.status == TournamentStatus.openRegistration;
+    final isCoach =
+        activeRole == UserRole.coach ||
+        RolePermissionMatrix.hasCapability(
+          activeRole,
+          RoleCapability.manageTeamRoster,
+        );
+
+    final canManageRoster = isCoach && isTournamentOpen;
+
+    final canApproveEligibility =
+        (isCoach ||
             RolePermissionMatrix.hasCapability(
               activeRole,
               RoleCapability.approveRegistrations,
             )) &&
-        tournament.status == TournamentStatus.openRegistration;
+        isTournamentOpen;
 
-    final canApproveEligibility =
-        RolePermissionMatrix.hasCapability(
-          activeRole,
-          RoleCapability.approveRegistrations,
-        ) &&
-        tournament.status == TournamentStatus.openRegistration;
-
-    final meetsMinQuota =
-        team.players.length >= tournament.rules.minPlayersPerTeam;
+    final effectiveMinQuota = tournament.rules.minPlayersPerTeam > 11
+        ? tournament.rules.minPlayersPerTeam
+        : 11;
+    final meetsMinQuota = team.players.length >= effectiveMinQuota;
     final withinMaxQuota =
         team.players.length <= tournament.rules.maxPlayersPerTeam;
     final isReadyOrEligible =
@@ -181,16 +202,31 @@ class TeamRosterDetailScreen extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        l10n.teamsQuotaProgress(
-                          team.players.length,
-                          tournament.rules.minPlayersPerTeam,
-                          tournament.rules.maxPlayersPerTeam,
-                        ),
+                        meetsMinQuota
+                            ? l10n.teamsQuotaProgress(
+                                team.players.length,
+                                effectiveMinQuota,
+                                tournament.rules.maxPlayersPerTeam,
+                              )
+                            : l10n.teamRosterQuotaProgress(
+                                team.players.length,
+                                effectiveMinQuota,
+                              ),
                         style: KickPulseTypography.captionMeta.copyWith(
-                          color: KickPulseColors.textSecondary,
+                          color: meetsMinQuota
+                              ? KickPulseColors.textSecondary
+                              : KickPulseColors.accentWarning,
                         ),
                       ),
-                      if (team.players.length >=
+                      if (!meetsMinQuota)
+                        Text(
+                          l10n.teamRosterIneligibleIndicator,
+                          style: KickPulseTypography.captionMeta.copyWith(
+                            color: KickPulseColors.accentWarning,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      else if (team.players.length >=
                           tournament.rules.maxPlayersPerTeam)
                         Text(
                           l10n.teamErrorMaxPlayersQuotaReached,
@@ -235,14 +271,18 @@ class TeamRosterDetailScreen extends ConsumerWidget {
                               label: l10n.teamEnrollPlayerAction,
                               icon: const Icon(Icons.person_add, size: 18),
                               onPressed: () async {
-                                _showPlayerFormDialog(
+                                final sent = await InvitePlayerToTeamModal.show(
                                   context,
-                                  ref,
-                                  team,
-                                  tournament,
-                                  activeRole,
-                                  l10n,
+                                  team: team,
                                 );
+                                if (sent == true) {
+                                  ref
+                                      .read(
+                                        teamJoinRequestsControllerProvider
+                                            .notifier,
+                                      )
+                                      .loadRequestsForTeam(team.id);
+                                }
                               },
                             ),
                           ),
@@ -307,6 +347,104 @@ class TeamRosterDetailScreen extends ConsumerWidget {
                   ],
                 ],
               ),
+            ),
+
+            // Sent Join Requests Section (Coach only)
+            Consumer(
+              builder: (context, ref, _) {
+                final requestsState =
+                    ref.watch(teamJoinRequestsControllerProvider);
+                final pending = requestsState.teamRequests
+                    .where(
+                      (r) =>
+                          r.teamId == team.id &&
+                          r.status == TeamJoinRequestStatus.pending,
+                    )
+                    .toList();
+
+                if (!isCoach || pending.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
+                return Column(
+                  key: const Key('team_sent_requests_section'),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Solicitudes Enviadas (${pending.length})',
+                      style: KickPulseTypography.sectionHeader.copyWith(
+                        color: KickPulseColors.accentElectric,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+                    ...pending.map((req) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: KickPulseRadiiSpacing.spaceSm,
+                        ),
+                        child: KickPulseCard(
+                          key: Key('sent_request_card_${req.id}'),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 16,
+                                backgroundColor:
+                                    KickPulseColors.surfaceElevated,
+                                child: Text(
+                                  '#${req.shirtNumber}',
+                                  style: const TextStyle(
+                                    color: KickPulseColors.accentElectric,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: KickPulseRadiiSpacing.spaceSm,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      req.playerName,
+                                      style: KickPulseTypography.cardTitle
+                                          .copyWith(fontSize: 14),
+                                    ),
+                                    Text(
+                                      'Doc: ${req.playerDocumentId} • Pendiente',
+                                      style: KickPulseTypography.captionMeta,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                key: Key('cancel_join_request_${req.id}'),
+                                icon: const Icon(
+                                  Icons.cancel_outlined,
+                                  color: KickPulseColors.accentLive,
+                                ),
+                                onPressed: () async {
+                                  await ref
+                                      .read(
+                                        teamJoinRequestsControllerProvider
+                                            .notifier,
+                                      )
+                                      .cancelJoinRequest(
+                                        requestId: req.id,
+                                        actorRole: activeRole,
+                                      );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                    const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+                  ],
+                );
+              },
             ),
 
             // Roster Header

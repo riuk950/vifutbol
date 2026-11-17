@@ -55,6 +55,11 @@ class FakeTeamsController extends StateNotifier<TeamsCatalogState>
     : super(TeamsCatalogState(teams: teams));
 
   @override
+  void selectTeam(String? teamId) {
+    state = state.copyWith(selectedTeamId: teamId);
+  }
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
@@ -145,6 +150,11 @@ Widget createCoachPanelApp({
       ],
       supportedLocales: const [Locale('es')],
       home: const PanelScreen(),
+      routes: {
+        '/tournaments/teams/detail': (context) => const Scaffold(
+          body: Text('Team Roster Detail Destination'),
+        ),
+      },
     ),
   );
 }
@@ -219,7 +229,7 @@ void main() {
       await tester.tap(find.byKey(const Key('coach_action_manage_roster')));
       await tester.pumpAndSettle();
       expect(
-        find.textContaining('Gestionar Plantilla: Tigres del Prado'),
+        find.text('Team Roster Detail Destination'),
         findsOneWidget,
       );
     });

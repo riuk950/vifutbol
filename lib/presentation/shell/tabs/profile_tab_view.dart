@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../application/providers/auth_providers.dart';
 import '../../../application/providers/foundation_providers.dart';
 import '../../../application/providers/sync_providers.dart';
+import '../../../application/providers/team_join_requests_providers.dart';
 import '../../../domain/entities/app_environment.dart';
 import '../../../domain/entities/role_permission_matrix.dart';
 import '../../../domain/entities/user_role.dart';
@@ -288,6 +289,67 @@ class ProfileTabView extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
+
+          // Player Team Join Requests Section (Only visible for player role)
+          if (!isGuest &&
+              (activeRole == UserRole.player ||
+                  (user?.authorizedRoles.contains(UserRole.player) ?? false))) ...[
+            KickPulseCard(
+              child: InkWell(
+                key: const Key('profile_team_requests_tile'),
+                onTap: () {
+                  Navigator.of(context).pushNamed('/profile/team-requests');
+                },
+                borderRadius: BorderRadius.circular(
+                  KickPulseRadiiSpacing.cardRadius,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: KickPulseRadiiSpacing.spaceSm,
+                    vertical: KickPulseRadiiSpacing.spaceXs,
+                  ),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        backgroundColor: KickPulseColors.surfaceElevated,
+                        child: Icon(
+                          Icons.mail_outline,
+                          color: KickPulseColors.accentElectric,
+                        ),
+                      ),
+                      const SizedBox(width: KickPulseRadiiSpacing.spaceMd),
+                      Expanded(
+                        child: Text(
+                          l10n.profileTeamRequestsTile,
+                          style: KickPulseTypography.cardTitle,
+                        ),
+                      ),
+                      Consumer(
+                        builder: (context, ref, _) {
+                          final pendingCount = ref.watch(
+                            playerPendingRequestsCountProvider,
+                          );
+                          if (pendingCount > 0) {
+                            return KickPulseBadge(
+                              label: '$pendingCount',
+                              variant: KickPulseBadgeVariant.dev,
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.chevron_right,
+                        color: KickPulseColors.textSecondary,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
+          ],
 
           // RBAC Matrix Capabilities Section
           Text(

@@ -4214,5 +4214,115 @@
   "completeProfileInvalidDocumentError": "Ingresa un documento válido (mínimo 5 caracteres).",
   "@completeProfileInvalidDocumentError": {
     "description": "Error de validación para documento inválido"
+  },
+  "teamRosterIneligibleIndicator": "No elegible / Faltan jugadores",
+  "@teamRosterIneligibleIndicator": {
+    "description": "Indicador cuando el equipo no alcanza los 11 jugadores reglamentarios"
+  },
+  "teamRosterQuotaProgress": "{current}/{min} jugadores mínimos",
+  "@teamRosterQuotaProgress": {
+    "description": "Texto del progreso de cuota mínima de jugadores",
+    "placeholders": {
+      "current": { "type": "int" },
+      "min": { "type": "int" }
+    }
+  },
+  "teamRosterEnableCompetitionAction": "Habilitar para Competiciones",
+  "@teamRosterEnableCompetitionAction": {
+    "description": "Acción para habilitar un equipo a estado eligible"
+  },
+  "teamRosterEnableSuccessMessage": "Equipo habilitado oficialmente para competir.",
+  "@teamRosterEnableSuccessMessage": {
+    "description": "Mensaje tras habilitar el equipo con éxito"
+  },
+  "teamRosterPendingRequestsHeader": "Solicitudes enviadas ({count})",
+  "@teamRosterPendingRequestsHeader": {
+    "description": "Encabezado de invitaciones pendientes enviadas por el equipo",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "teamRosterCancelRequestAction": "Cancelar invitación",
+  "@teamRosterCancelRequestAction": {
+    "description": "Botón para cancelar una solicitud pendiente enviada a un jugador"
+  },
+  "teamInvitePlayerModalTitle": "Invitar Jugador a la Plantilla",
+  "@teamInvitePlayerModalTitle": {
+    "description": "Título del modal para buscar e invitar jugadores a un club"
+  },
+  "teamInviteSearchHint": "Buscar jugador por nombre o documento...",
+  "@teamInviteSearchHint": {
+    "description": "Placeholder del buscador de jugadores registrados"
+  },
+  "teamInviteShirtNumberLabel": "Dorsal propuesto (1-99)",
+  "@teamInviteShirtNumberLabel": {
+    "description": "Etiqueta para ingresar el número de dorsal"
+  },
+  "teamInvitePositionLabel": "Posición táctica",
+  "@teamInvitePositionLabel": {
+    "description": "Etiqueta para seleccionar la posición"
+  },
+  "teamInviteSendAction": "Enviar Solicitud",
+  "@teamInviteSendAction": {
+    "description": "Botón para enviar la solicitud de incorporación"
+  },
+  "teamInviteSuccessMessage": "Solicitud enviada a {playerName}.",
+  "@teamInviteSuccessMessage": {
+    "description": "Mensaje de éxito al enviar solicitud de incorporación",
+    "placeholders": {
+      "playerName": { "type": "String" }
+    }
+  },
+  "teamInviteDuplicateShirtError": "El dorsal {shirt} ya está ocupado en la plantilla o en una solicitud pendiente.",
+  "@teamInviteDuplicateShirtError": {
+    "description": "Error al elegir un dorsal ya asignado",
+    "placeholders": {
+      "shirt": { "type": "int" }
+    }
+  },
+  "teamInviteDuplicatePlayerError": "Este jugador ya pertenece al equipo o tiene una invitación pendiente.",
+  "@teamInviteDuplicatePlayerError": {
+    "description": "Error si el jugador ya está invitado o en plantilla"
+  },
+  "teamInviteEmptySearchMessage": "No se encontraron jugadores registrados con \"{query}\"",
+  "@teamInviteEmptySearchMessage": {
+    "description": "Mensaje de búsqueda vacía en catálogo de jugadores",
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  },
+  "profileTeamRequestsTile": "Solicitudes de Equipos",
+  "@profileTeamRequestsTile": {
+    "description": "Opción en el perfil para revisar invitaciones de clubes"
+  },
+  "profileTeamRequestsTitle": "Invitaciones de Equipos",
+  "@profileTeamRequestsTitle": {
+    "description": "Título de la pantalla de solicitudes recibidas"
+  },
+  "profileTeamRequestsEmpty": "No tienes solicitudes de equipos pendientes.",
+  "@profileTeamRequestsEmpty": {
+    "description": "Estado vacío en bandeja de invitaciones de equipos"
+  },
+  "profileTeamRequestAcceptAction": "Aceptar",
+  "@profileTeamRequestAcceptAction": {
+    "description": "Botón para aceptar solicitud de equipo"
+  },
+  "profileTeamRequestRejectAction": "Rechazar",
+  "@profileTeamRequestRejectAction": {
+    "description": "Botón para rechazar solicitud de equipo"
+  },
+  "profileTeamRequestAcceptedMessage": "Te has unido exitosamente a {teamName}.",
+  "@profileTeamRequestAcceptedMessage": {
+    "description": "Confirmación tras aceptar invitación",
+    "placeholders": {
+      "teamName": { "type": "String" }
+    }
+  },
+  "profileTeamRequestRejectedMessage": "Invitación de {teamName} rechazada.",
+  "@profileTeamRequestRejectedMessage": {
+    "description": "Confirmación tras rechazar invitación",
+    "placeholders": {
+      "teamName": { "type": "String" }
+    }
   }
 }

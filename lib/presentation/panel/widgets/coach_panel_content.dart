@@ -82,21 +82,14 @@ class CoachPanelContent extends ConsumerWidget {
 
   void _onManageRosterAction(
     BuildContext context,
+    WidgetRef ref,
     TournamentTeam? team,
     AppLocalizations l10n,
   ) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(
-            team != null
-                ? '${l10n.coachActionManageRoster}: ${team.name}'
-                : l10n.coachActionManageRoster,
-          ),
-          backgroundColor: KickPulseColors.accentElectric,
-        ),
-      );
+    if (team != null) {
+      ref.read(teamsControllerProvider.notifier).selectTeam(team.id);
+      Navigator.of(context).pushNamed('/tournaments/teams/detail');
+    }
   }
 
   @override
@@ -293,7 +286,7 @@ class CoachPanelContent extends ConsumerWidget {
                   icon: const Icon(Icons.badge_outlined, size: 20),
                   variant: KickPulseButtonVariant.secondary,
                   onPressed: () async {
-                    _onManageRosterAction(context, team, l10n);
+                    _onManageRosterAction(context, ref, team, l10n);
                   },
                 ),
               ],
