@@ -3427,4 +3427,260 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get coachRosterNoGoalkeeperAlert =>
       'Alerta táctica: El equipo no tiene porteros registrados.';
+
+  @override
+  String get profilePersonalDataTile => 'Datos Personales';
+
+  @override
+  String get profilePersonalDataSubtitle =>
+      'Información personal, ubicación y posiciones';
+
+  @override
+  String get playerPersonalDataTitle => 'Datos Personales';
+
+  @override
+  String get playerPersonalDataSubtitle =>
+      'Completa tu información personal y deportiva';
+
+  @override
+  String get playerPersonalDataDocumentLabel => 'Número de documento';
+
+  @override
+  String get playerPersonalDataDocumentHint => 'Ej. 1020304050';
+
+  @override
+  String get playerPersonalDataDocumentRequired =>
+      'El número de documento es obligatorio';
+
+  @override
+  String get playerPersonalDataDocumentInvalid =>
+      'El documento debe tener al menos 5 caracteres';
+
+  @override
+  String get playerPersonalDataPhoneLabel => 'Teléfono';
+
+  @override
+  String get playerPersonalDataPhoneHint => 'Ej. 3001234567';
+
+  @override
+  String get playerPersonalDataPhoneRequired => 'El teléfono es obligatorio';
+
+  @override
+  String get playerPersonalDataPhoneInvalid =>
+      'El teléfono debe tener al menos 7 dígitos';
+
+  @override
+  String get playerPersonalDataFirstNameLabel => 'Primer nombre';
+
+  @override
+  String get playerPersonalDataFirstNameHint => 'Ej. Juan';
+
+  @override
+  String get playerPersonalDataFirstNameRequired =>
+      'El primer nombre es obligatorio';
+
+  @override
+  String get playerPersonalDataSecondNameLabel => 'Segundo nombre';
+
+  @override
+  String get playerPersonalDataSecondNameHint => 'Ej. Carlos (opcional)';
+
+  @override
+  String get playerPersonalDataFirstSurnameLabel => 'Primer apellido';
+
+  @override
+  String get playerPersonalDataFirstSurnameHint => 'Ej. Pérez';
+
+  @override
+  String get playerPersonalDataFirstSurnameRequired =>
+      'El primer apellido es obligatorio';
+
+  @override
+  String get playerPersonalDataSecondSurnameLabel => 'Segundo apellido';
+
+  @override
+  String get playerPersonalDataSecondSurnameHint => 'Ej. Gómez (opcional)';
+
+  @override
+  String get playerPersonalDataSexLabel => 'Sexo';
+
+  @override
+  String get playerPersonalDataSexRequired => 'Selecciona tu sexo';
+
+  @override
+  String get playerPersonalDataSexMale => 'Masculino';
+
+  @override
+  String get playerPersonalDataSexFemale => 'Femenino';
+
+  @override
+  String get playerPersonalDataSexOther => 'Otro';
+
+  @override
+  String get playerPersonalDataBirthDateLabel => 'Fecha de nacimiento';
+
+  @override
+  String get playerPersonalDataBirthDateHint => 'AAAA-MM-DD';
+
+  @override
+  String get playerPersonalDataBirthDateRequired =>
+      'La fecha de nacimiento es obligatoria';
+
+  @override
+  String get playerPersonalDataAgeLabel => 'Edad';
+
+  @override
+  String playerPersonalDataAgeYears(int age) {
+    return '$age años';
+  }
+
+  @override
+  String get playerPersonalDataBloodTypeLabel => 'Tipo de sangre y RH';
+
+  @override
+  String get playerPersonalDataBloodTypeHint => 'Selecciona una opción';
+
+  @override
+  String get playerPersonalDataBloodTypeRequired =>
+      'Selecciona tu tipo de sangre';
+
+  @override
+  String get playerPersonalDataDepartmentLabel => 'Departamento';
+
+  @override
+  String get playerPersonalDataDepartmentHint => 'Selecciona tu departamento';
+
+  @override
+  String get playerPersonalDataDepartmentRequired =>
+      'Selecciona tu departamento';
+
+  @override
+  String get playerPersonalDataMunicipalityLabel => 'Municipio';
+
+  @override
+  String get playerPersonalDataMunicipalityHint => 'Selecciona tu municipio';
+
+  @override
+  String get playerPersonalDataMunicipalityRequired =>
+      'Selecciona tu municipio';
+
+  @override
+  String get playerPersonalDataSelectDepartmentFirst =>
+      'Selecciona primero un departamento';
+
+  @override
+  String get playerPersonalDataPositionsLabel => 'Posiciones de juego';
+
+  @override
+  String get playerPersonalDataPositionsSubtitle =>
+      'Selecciona una o más posiciones en las que juegas';
+
+  @override
+  String get playerPersonalDataPositionsRequired =>
+      'Debes seleccionar al menos una posición';
+
+  @override
+  String get playerPersonalDataSaveButton => 'Guardar datos personales';
+
+  @override
+  String get playerPersonalDataSaving => 'Guardando...';
+
+  @override
+  String get playerPersonalDataSaveSuccess =>
+      'Datos personales actualizados correctamente';
+
+  @override
+  String get playerPersonalDataErrorBanner =>
+      'No fue posible guardar los datos. Inténtalo nuevamente.';
+
+  @override
+  String get playerPersonalDataDocumentAlreadyLinked =>
+      'Este número de documento ya está asociado a otro jugador.';
+
+  @override
+  String get playerPersonalDataOfflineError =>
+      'No hay conexión a internet. Los datos no se pudieron sincronizar.';
+
+  @override
+  String get playerPersonalDataUnsavedChangesTitle => '¿Descartar cambios?';
+
+  @override
+  String get playerPersonalDataUnsavedChangesMessage =>
+      'Tienes cambios sin guardar en tu ficha personal. Si sales ahora, se perderán las modificaciones.';
+
+  @override
+  String get playerPersonalDataUnsavedChangesDiscard => 'Descartar';
+
+  @override
+  String get playerPersonalDataUnsavedChangesKeepEditing =>
+      'Continuar editando';
+
+  @override
+  String get playerPositionPOR => 'Portero (POR)';
+
+  @override
+  String get playerPositionDFC => 'Defensa Central (DFC)';
+
+  @override
+  String get playerPositionLD => 'Lateral Derecho (LD)';
+
+  @override
+  String get playerPositionLI => 'Lateral Izquierdo (LI)';
+
+  @override
+  String get playerPositionCAD => 'Carrilero Derecho (CAD)';
+
+  @override
+  String get playerPositionCAI => 'Carrilero Izquierdo (CAI)';
+
+  @override
+  String get playerPositionMCD => 'Mediocentro Defensivo (MCD)';
+
+  @override
+  String get playerPositionMC => 'Mediocentro (MC)';
+
+  @override
+  String get playerPositionMCO => 'Mediocentro Ofensivo (MCO)';
+
+  @override
+  String get playerPositionMD => 'Medio Derecho (MD)';
+
+  @override
+  String get playerPositionMI => 'Medio Izquierdo (MI)';
+
+  @override
+  String get playerPositionED => 'Extremo Derecho (ED)';
+
+  @override
+  String get playerPositionEI => 'Extremo Izquierdo (EI)';
+
+  @override
+  String get playerPositionMP => 'Mediapunta (MP)';
+
+  @override
+  String get playerPositionDC => 'Delantero Centro (DC)';
+
+  @override
+  String get playerTacticalLineGoalkeeper => 'Portería';
+
+  @override
+  String get playerTacticalLineDefender => 'Defensa';
+
+  @override
+  String get playerTacticalLineMidfielder => 'Mediocampo';
+
+  @override
+  String get playerTacticalLineForward => 'Delantera';
+
+  @override
+  String get locationPickerSearchPlaceholder => 'Buscar...';
+
+  @override
+  String get locationPickerEmptyState => 'No se encontraron resultados';
+
+  @override
+  String get locationPickerSelectDepartmentTitle => 'Seleccionar Departamento';
+
+  @override
+  String get locationPickerSelectMunicipalityTitle => 'Seleccionar Municipio';
 }

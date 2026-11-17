@@ -122,6 +122,19 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
         'p_city': roleProfile?.city,
         'p_preferences': roleProfile?.preferences,
         'p_certification_level': roleProfile?.certificationLevel,
+        'p_first_name': roleProfile?.firstName,
+        'p_second_name': roleProfile?.secondName,
+        'p_first_surname': roleProfile?.firstSurname,
+        'p_second_surname': roleProfile?.secondSurname,
+        'p_sex': roleProfile?.sex,
+        'p_birth_date': roleProfile?.birthDate != null
+            ? '${roleProfile!.birthDate!.year.toString().padLeft(4, '0')}-${roleProfile.birthDate!.month.toString().padLeft(2, '0')}-${roleProfile.birthDate!.day.toString().padLeft(2, '0')}'
+            : null,
+        'p_blood_type': roleProfile?.bloodType,
+        'p_department': roleProfile?.department,
+        'p_municipality': roleProfile?.municipality,
+        'p_primary_position': roleProfile?.primaryPosition?.name,
+        'p_secondary_positions': roleProfile?.secondaryPositions,
       },
     );
     if (result is Map<String, dynamic>) {
@@ -157,7 +170,9 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
         client
             .schema(schema)
             .from('players')
-            .select('id')
+            .select(
+              'id, first_name, second_name, first_surname, second_surname, sex, birth_date, blood_type, department, municipality, position, secondary_positions',
+            )
             .eq('user_account_id', userAccountId)
             .limit(1)
             .maybeSingle(),
@@ -180,7 +195,20 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
         ...?coach,
         ...?organizer,
         ...?fan,
-        if (player != null) 'linked_player_id': player['id'],
+        if (player != null) ...{
+          'linked_player_id': player['id'],
+          'first_name': player['first_name'],
+          'second_name': player['second_name'],
+          'first_surname': player['first_surname'],
+          'second_surname': player['second_surname'],
+          'sex': player['sex'],
+          'birth_date': player['birth_date'],
+          'blood_type': player['blood_type'],
+          'department': player['department'],
+          'municipality': player['municipality'],
+          'primary_position': player['position'],
+          'secondary_positions': player['secondary_positions'],
+        },
         if (referee != null) ...{
           'linked_referee_id': referee['id'],
           'certification_level': referee['certification_level'],
@@ -734,6 +762,7 @@ class SupabaseAuthRepository implements AuthRepository {
   Future<UserAccount> updateRoleProfile({
     required String userId,
     required UserRole role,
+    String? fullName,
     String? phone,
     String? documentId,
     RoleProfileData? roleProfile,
@@ -761,7 +790,9 @@ class SupabaseAuthRepository implements AuthRepository {
         activeRole: role.name,
         authorizedRoles: updatedRoles.map((r) => r.name).toList(),
         onboardingCompleted: true,
-        fullName: currentAccount.fullName,
+        fullName: fullName?.trim().isNotEmpty == true
+            ? fullName!.trim()
+            : currentAccount.fullName,
         phone: phone,
         documentId: documentId,
         roleProfile: roleProfile,

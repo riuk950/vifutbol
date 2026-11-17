@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vifutbol/domain/entities/role_profile_data.dart';
+import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/user_account.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 
@@ -10,17 +11,40 @@ void main() {
       expect(guest.isProfileCompleteForActiveRole, isTrue);
     });
 
-    test('player requires phone and documentId', () {
+    test(
+        'player requires phone, documentId, and all mandatory HU 21.1 personal/tactical fields',
+        () {
       final incomplete = UserAccount(
         id: 'u1',
         fullName: 'Carlos Ruiz',
         email: 'carlos@test.com',
         activeRole: UserRole.player,
         phone: '3001234567',
+        documentId: '10203040',
       );
+      // Fails because RoleProfileData is missing
       expect(incomplete.isProfileCompleteForActiveRole, isFalse);
 
-      final complete = incomplete.copyWith(documentId: '10203040');
+      final partialProfile = incomplete.copyWith(
+        roleProfile: RoleProfileData(
+          firstName: 'Carlos',
+          firstSurname: 'Ruiz',
+          sex: 'male',
+          birthDate: DateTime(1998, 5, 20),
+          bloodType: 'O+',
+          department: 'Antioquia',
+          municipality: 'Medellín',
+          secondaryPositions: const [], // empty positions
+        ),
+      );
+      expect(partialProfile.isProfileCompleteForActiveRole, isFalse);
+
+      final complete = partialProfile.copyWith(
+        roleProfile: partialProfile.roleProfile!.copyWith(
+          secondaryPositions: ['LD', 'CAD'],
+          primaryPosition: PlayerPosition.defender,
+        ),
+      );
       expect(complete.isProfileCompleteForActiveRole, isTrue);
     });
 
@@ -121,6 +145,50 @@ void main() {
       expect(restored.documentId, '12345678');
       expect(restored.roleProfile?.clubName, 'Academia Sur');
       expect(restored.roleProfile?.linkedPlayerId, 'p-1');
+    });
+
+    test('toJson / fromJson preserves all HU 21.1 player fields', () {
+      final birth = DateTime(1995, 10, 15);
+      final playerAccount = UserAccount(
+        id: 'u-player',
+        fullName: 'Mateo Andrés Gómez Ruiz',
+        email: 'mateo@test.com',
+        activeRole: UserRole.player,
+        authorizedRoles: {UserRole.player, UserRole.fan},
+        onboardingCompleted: true,
+        phone: '3009876543',
+        documentId: '1098765432',
+        roleProfile: RoleProfileData(
+          firstName: 'Mateo',
+          secondName: 'Andrés',
+          firstSurname: 'Gómez',
+          secondSurname: 'Ruiz',
+          sex: 'male',
+          birthDate: birth,
+          bloodType: 'O+',
+          department: 'Antioquia',
+          municipality: 'Medellín',
+          primaryPosition: PlayerPosition.defender,
+          secondaryPositions: const ['DFC', 'LD'],
+          linkedPlayerId: 'player-uuid-123',
+        ),
+      );
+
+      final json = playerAccount.toJson();
+      final restored = UserAccount.fromJson(json);
+
+      expect(restored.roleProfile?.firstName, 'Mateo');
+      expect(restored.roleProfile?.secondName, 'Andrés');
+      expect(restored.roleProfile?.firstSurname, 'Gómez');
+      expect(restored.roleProfile?.secondSurname, 'Ruiz');
+      expect(restored.roleProfile?.sex, 'male');
+      expect(restored.roleProfile?.birthDate, equals(birth));
+      expect(restored.roleProfile?.bloodType, 'O+');
+      expect(restored.roleProfile?.department, 'Antioquia');
+      expect(restored.roleProfile?.municipality, 'Medellín');
+      expect(restored.roleProfile?.primaryPosition, PlayerPosition.defender);
+      expect(restored.roleProfile?.secondaryPositions, equals(['DFC', 'LD']));
+      expect(restored.isProfileCompleteForActiveRole, isTrue);
     });
   });
 }

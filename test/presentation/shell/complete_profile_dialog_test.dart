@@ -140,21 +140,22 @@ void main() {
     expect(find.text('Datos incompletos'), findsNothing);
   });
 
-  testWidgets('fan omits document field and keeps inputs on conflict error',
+  testWidgets('referee preserves inputs on conflict error in dialog',
       (tester) async {
-    final incompletePlayer = UserAccount(
+    final incompleteReferee = UserAccount(
       id: 'u2',
       fullName: 'Carlos Ruiz',
       email: 'carlos@test.com',
-      activeRole: UserRole.player,
-      authorizedRoles: {UserRole.player, UserRole.fan},
+      activeRole: UserRole.referee,
+      authorizedRoles: {UserRole.referee, UserRole.fan},
       onboardingCompleted: true,
     );
 
     when(
       () => authRepository.updateRoleProfile(
         userId: 'u2',
-        role: UserRole.player,
+        role: UserRole.referee,
+        fullName: any(named: 'fullName'),
         phone: any(named: 'phone'),
         documentId: any(named: 'documentId'),
         roleProfile: any(named: 'roleProfile'),
@@ -167,7 +168,7 @@ void main() {
         status: AuthStatus.authenticated,
         session: AuthSession(
           sessionId: 's2',
-          user: incompletePlayer,
+          user: incompleteReferee,
           sessionToken: 't2',
           authenticatedAt: DateTime(2026, 11, 13),
         ),

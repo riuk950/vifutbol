@@ -5871,6 +5871,474 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Alerta táctica: El equipo no tiene porteros registrados.'**
   String get coachRosterNoGoalkeeperAlert;
+
+  /// Título de la tarjeta de datos personales en el perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Datos Personales'**
+  String get profilePersonalDataTile;
+
+  /// Subtítulo de la tarjeta de datos personales en el perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Información personal, ubicación y posiciones'**
+  String get profilePersonalDataSubtitle;
+
+  /// Título de la pantalla de datos personales del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Datos Personales'**
+  String get playerPersonalDataTitle;
+
+  /// Subtítulo de la pantalla de datos personales del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Completa tu información personal y deportiva'**
+  String get playerPersonalDataSubtitle;
+
+  /// Etiqueta para el número de documento de identidad del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Número de documento'**
+  String get playerPersonalDataDocumentLabel;
+
+  /// Pista para el número de documento de identidad del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. 1020304050'**
+  String get playerPersonalDataDocumentHint;
+
+  /// Error cuando el documento está vacío
+  ///
+  /// In es, this message translates to:
+  /// **'El número de documento es obligatorio'**
+  String get playerPersonalDataDocumentRequired;
+
+  /// Error cuando el documento tiene menos de 5 caracteres
+  ///
+  /// In es, this message translates to:
+  /// **'El documento debe tener al menos 5 caracteres'**
+  String get playerPersonalDataDocumentInvalid;
+
+  /// Etiqueta para el teléfono del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Teléfono'**
+  String get playerPersonalDataPhoneLabel;
+
+  /// Pista para el teléfono del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. 3001234567'**
+  String get playerPersonalDataPhoneHint;
+
+  /// Error cuando el teléfono está vacío
+  ///
+  /// In es, this message translates to:
+  /// **'El teléfono es obligatorio'**
+  String get playerPersonalDataPhoneRequired;
+
+  /// Error cuando el teléfono tiene menos de 7 dígitos
+  ///
+  /// In es, this message translates to:
+  /// **'El teléfono debe tener al menos 7 dígitos'**
+  String get playerPersonalDataPhoneInvalid;
+
+  /// Etiqueta para el primer nombre del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Primer nombre'**
+  String get playerPersonalDataFirstNameLabel;
+
+  /// Pista para el primer nombre del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. Juan'**
+  String get playerPersonalDataFirstNameHint;
+
+  /// Error cuando el primer nombre está vacío
+  ///
+  /// In es, this message translates to:
+  /// **'El primer nombre es obligatorio'**
+  String get playerPersonalDataFirstNameRequired;
+
+  /// Etiqueta para el segundo nombre del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Segundo nombre'**
+  String get playerPersonalDataSecondNameLabel;
+
+  /// Pista para el segundo nombre del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. Carlos (opcional)'**
+  String get playerPersonalDataSecondNameHint;
+
+  /// Etiqueta para el primer apellido del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Primer apellido'**
+  String get playerPersonalDataFirstSurnameLabel;
+
+  /// Pista para el primer apellido del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. Pérez'**
+  String get playerPersonalDataFirstSurnameHint;
+
+  /// Error cuando el primer apellido está vacío
+  ///
+  /// In es, this message translates to:
+  /// **'El primer apellido es obligatorio'**
+  String get playerPersonalDataFirstSurnameRequired;
+
+  /// Etiqueta para el segundo apellido del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Segundo apellido'**
+  String get playerPersonalDataSecondSurnameLabel;
+
+  /// Pista para el segundo apellido del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. Gómez (opcional)'**
+  String get playerPersonalDataSecondSurnameHint;
+
+  /// Etiqueta para el selector de sexo del jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Sexo'**
+  String get playerPersonalDataSexLabel;
+
+  /// Error cuando el sexo no ha sido seleccionado
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona tu sexo'**
+  String get playerPersonalDataSexRequired;
+
+  /// Opción de sexo masculino
+  ///
+  /// In es, this message translates to:
+  /// **'Masculino'**
+  String get playerPersonalDataSexMale;
+
+  /// Opción de sexo femenino
+  ///
+  /// In es, this message translates to:
+  /// **'Femenino'**
+  String get playerPersonalDataSexFemale;
+
+  /// Opción de sexo otro
+  ///
+  /// In es, this message translates to:
+  /// **'Otro'**
+  String get playerPersonalDataSexOther;
+
+  /// Etiqueta para el campo de fecha de nacimiento
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha de nacimiento'**
+  String get playerPersonalDataBirthDateLabel;
+
+  /// Pista para fecha de nacimiento
+  ///
+  /// In es, this message translates to:
+  /// **'AAAA-MM-DD'**
+  String get playerPersonalDataBirthDateHint;
+
+  /// Error cuando la fecha de nacimiento está vacía
+  ///
+  /// In es, this message translates to:
+  /// **'La fecha de nacimiento es obligatoria'**
+  String get playerPersonalDataBirthDateRequired;
+
+  /// Etiqueta para el campo de edad calculada
+  ///
+  /// In es, this message translates to:
+  /// **'Edad'**
+  String get playerPersonalDataAgeLabel;
+
+  /// Texto descriptivo de edad en años cumplidos
+  ///
+  /// In es, this message translates to:
+  /// **'{age} años'**
+  String playerPersonalDataAgeYears(int age);
+
+  /// Etiqueta para el selector de tipo de sangre
+  ///
+  /// In es, this message translates to:
+  /// **'Tipo de sangre y RH'**
+  String get playerPersonalDataBloodTypeLabel;
+
+  /// Pista para el selector de tipo de sangre
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona una opción'**
+  String get playerPersonalDataBloodTypeHint;
+
+  /// Error cuando no se ha seleccionado tipo de sangre
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona tu tipo de sangre'**
+  String get playerPersonalDataBloodTypeRequired;
+
+  /// Etiqueta para el selector de departamento
+  ///
+  /// In es, this message translates to:
+  /// **'Departamento'**
+  String get playerPersonalDataDepartmentLabel;
+
+  /// Pista para el selector de departamento
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona tu departamento'**
+  String get playerPersonalDataDepartmentHint;
+
+  /// Error cuando no se ha seleccionado departamento
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona tu departamento'**
+  String get playerPersonalDataDepartmentRequired;
+
+  /// Etiqueta para el selector de municipio
+  ///
+  /// In es, this message translates to:
+  /// **'Municipio'**
+  String get playerPersonalDataMunicipalityLabel;
+
+  /// Pista para el selector de municipio
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona tu municipio'**
+  String get playerPersonalDataMunicipalityHint;
+
+  /// Error cuando no se ha seleccionado municipio
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona tu municipio'**
+  String get playerPersonalDataMunicipalityRequired;
+
+  /// Mensaje informativo cuando se intenta seleccionar municipio sin departamento previo
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona primero un departamento'**
+  String get playerPersonalDataSelectDepartmentFirst;
+
+  /// Etiqueta para la sección de posiciones tácticas
+  ///
+  /// In es, this message translates to:
+  /// **'Posiciones de juego'**
+  String get playerPersonalDataPositionsLabel;
+
+  /// Subtítulo explicativo de posiciones de juego
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona una o más posiciones en las que juegas'**
+  String get playerPersonalDataPositionsSubtitle;
+
+  /// Error cuando no se ha seleccionado ninguna posición táctica
+  ///
+  /// In es, this message translates to:
+  /// **'Debes seleccionar al menos una posición'**
+  String get playerPersonalDataPositionsRequired;
+
+  /// Texto del botón principal para guardar el formulario de datos personales
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar datos personales'**
+  String get playerPersonalDataSaveButton;
+
+  /// Texto del botón de guardar durante el procesamiento
+  ///
+  /// In es, this message translates to:
+  /// **'Guardando...'**
+  String get playerPersonalDataSaving;
+
+  /// Mensaje de confirmación exitosa al guardar
+  ///
+  /// In es, this message translates to:
+  /// **'Datos personales actualizados correctamente'**
+  String get playerPersonalDataSaveSuccess;
+
+  /// Mensaje genérico de error al intentar guardar los datos personales
+  ///
+  /// In es, this message translates to:
+  /// **'No fue posible guardar los datos. Inténtalo nuevamente.'**
+  String get playerPersonalDataErrorBanner;
+
+  /// Mensaje de error cuando el documento ya está vinculado a otra cuenta de jugador
+  ///
+  /// In es, this message translates to:
+  /// **'Este número de documento ya está asociado a otro jugador.'**
+  String get playerPersonalDataDocumentAlreadyLinked;
+
+  /// Mensaje de error cuando no hay conexión disponible para sincronizar con Supabase
+  ///
+  /// In es, this message translates to:
+  /// **'No hay conexión a internet. Los datos no se pudieron sincronizar.'**
+  String get playerPersonalDataOfflineError;
+
+  /// Título del diálogo de confirmación ante cambios sin guardar
+  ///
+  /// In es, this message translates to:
+  /// **'¿Descartar cambios?'**
+  String get playerPersonalDataUnsavedChangesTitle;
+
+  /// Mensaje del diálogo de confirmación ante cambios sin guardar
+  ///
+  /// In es, this message translates to:
+  /// **'Tienes cambios sin guardar en tu ficha personal. Si sales ahora, se perderán las modificaciones.'**
+  String get playerPersonalDataUnsavedChangesMessage;
+
+  /// Botón para descartar cambios y salir de la pantalla
+  ///
+  /// In es, this message translates to:
+  /// **'Descartar'**
+  String get playerPersonalDataUnsavedChangesDiscard;
+
+  /// Botón para permanecer en la pantalla y seguir editando
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar editando'**
+  String get playerPersonalDataUnsavedChangesKeepEditing;
+
+  /// Posición de Portero
+  ///
+  /// In es, this message translates to:
+  /// **'Portero (POR)'**
+  String get playerPositionPOR;
+
+  /// Posición de Defensa Central
+  ///
+  /// In es, this message translates to:
+  /// **'Defensa Central (DFC)'**
+  String get playerPositionDFC;
+
+  /// Posición de Lateral Derecho
+  ///
+  /// In es, this message translates to:
+  /// **'Lateral Derecho (LD)'**
+  String get playerPositionLD;
+
+  /// Posición de Lateral Izquierdo
+  ///
+  /// In es, this message translates to:
+  /// **'Lateral Izquierdo (LI)'**
+  String get playerPositionLI;
+
+  /// Posición de Carrilero Derecho
+  ///
+  /// In es, this message translates to:
+  /// **'Carrilero Derecho (CAD)'**
+  String get playerPositionCAD;
+
+  /// Posición de Carrilero Izquierdo
+  ///
+  /// In es, this message translates to:
+  /// **'Carrilero Izquierdo (CAI)'**
+  String get playerPositionCAI;
+
+  /// Posición de Mediocentro Defensivo
+  ///
+  /// In es, this message translates to:
+  /// **'Mediocentro Defensivo (MCD)'**
+  String get playerPositionMCD;
+
+  /// Posición de Mediocentro
+  ///
+  /// In es, this message translates to:
+  /// **'Mediocentro (MC)'**
+  String get playerPositionMC;
+
+  /// Posición de Mediocentro Ofensivo
+  ///
+  /// In es, this message translates to:
+  /// **'Mediocentro Ofensivo (MCO)'**
+  String get playerPositionMCO;
+
+  /// Posición de Medio Derecho
+  ///
+  /// In es, this message translates to:
+  /// **'Medio Derecho (MD)'**
+  String get playerPositionMD;
+
+  /// Posición de Medio Izquierdo
+  ///
+  /// In es, this message translates to:
+  /// **'Medio Izquierdo (MI)'**
+  String get playerPositionMI;
+
+  /// Posición de Extremo Derecho
+  ///
+  /// In es, this message translates to:
+  /// **'Extremo Derecho (ED)'**
+  String get playerPositionED;
+
+  /// Posición de Extremo Izquierdo
+  ///
+  /// In es, this message translates to:
+  /// **'Extremo Izquierdo (EI)'**
+  String get playerPositionEI;
+
+  /// Posición de Mediapunta
+  ///
+  /// In es, this message translates to:
+  /// **'Mediapunta (MP)'**
+  String get playerPositionMP;
+
+  /// Posición de Delantero Centro
+  ///
+  /// In es, this message translates to:
+  /// **'Delantero Centro (DC)'**
+  String get playerPositionDC;
+
+  /// Encabezado de línea táctica para arqueros
+  ///
+  /// In es, this message translates to:
+  /// **'Portería'**
+  String get playerTacticalLineGoalkeeper;
+
+  /// Encabezado de línea táctica para defensores
+  ///
+  /// In es, this message translates to:
+  /// **'Defensa'**
+  String get playerTacticalLineDefender;
+
+  /// Encabezado de línea táctica para mediocampistas
+  ///
+  /// In es, this message translates to:
+  /// **'Mediocampo'**
+  String get playerTacticalLineMidfielder;
+
+  /// Encabezado de línea táctica para delanteros
+  ///
+  /// In es, this message translates to:
+  /// **'Delantera'**
+  String get playerTacticalLineForward;
+
+  /// Pista del campo de búsqueda en el selector de ubicación
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar...'**
+  String get locationPickerSearchPlaceholder;
+
+  /// Mensaje cuando no hay coincidencias de búsqueda en el selector
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontraron resultados'**
+  String get locationPickerEmptyState;
+
+  /// Título del modal para seleccionar departamento
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar Departamento'**
+  String get locationPickerSelectDepartmentTitle;
+
+  /// Título del modal para seleccionar municipio
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar Municipio'**
+  String get locationPickerSelectMunicipalityTitle;
 }
 
 class _AppLocalizationsDelegate

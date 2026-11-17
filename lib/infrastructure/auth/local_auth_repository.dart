@@ -249,6 +249,7 @@ class LocalAuthRepository implements AuthRepository {
   Future<UserAccount> updateRoleProfile({
     required String userId,
     required UserRole role,
+    String? fullName,
     String? phone,
     String? documentId,
     RoleProfileData? roleProfile,
@@ -282,9 +283,31 @@ class LocalAuthRepository implements AuthRepository {
           currentUser.roleProfile?.linkedPlayerId,
       linkedRefereeId: roleProfile?.linkedRefereeId ??
           currentUser.roleProfile?.linkedRefereeId,
+      firstName: roleProfile?.firstName ?? currentUser.roleProfile?.firstName,
+      secondName:
+          roleProfile?.secondName ?? currentUser.roleProfile?.secondName,
+      firstSurname:
+          roleProfile?.firstSurname ?? currentUser.roleProfile?.firstSurname,
+      secondSurname:
+          roleProfile?.secondSurname ?? currentUser.roleProfile?.secondSurname,
+      sex: roleProfile?.sex ?? currentUser.roleProfile?.sex,
+      birthDate: roleProfile?.birthDate ?? currentUser.roleProfile?.birthDate,
+      bloodType: roleProfile?.bloodType ?? currentUser.roleProfile?.bloodType,
+      department:
+          roleProfile?.department ?? currentUser.roleProfile?.department,
+      municipality:
+          roleProfile?.municipality ?? currentUser.roleProfile?.municipality,
+      primaryPosition: roleProfile?.primaryPosition ??
+          currentUser.roleProfile?.primaryPosition,
+      secondaryPositions: roleProfile?.secondaryPositions.isNotEmpty == true
+          ? roleProfile!.secondaryPositions
+          : (currentUser.roleProfile?.secondaryPositions ?? const []),
     );
 
     final updatedUser = currentUser.copyWith(
+      fullName: fullName?.trim().isNotEmpty == true
+          ? fullName!.trim()
+          : currentUser.fullName,
       activeRole: role,
       phone: phone?.trim().isNotEmpty == true
           ? phone!.trim()

@@ -339,6 +339,7 @@ class AuthController extends StateNotifier<AuthFlowState> {
   /// Updates personal contact/document data and role-specific profile fields.
   Future<bool> updateRoleProfile({
     required UserRole role,
+    String? fullName,
     String? phone,
     String? documentId,
     RoleProfileData? roleProfile,
@@ -353,6 +354,7 @@ class AuthController extends StateNotifier<AuthFlowState> {
       final updatedUser = await authRepository.updateRoleProfile(
         userId: currentSession.user.id,
         role: role,
+        fullName: fullName,
         phone: phone,
         documentId: documentId,
         roleProfile: roleProfile,

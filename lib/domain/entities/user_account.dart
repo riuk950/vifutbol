@@ -40,6 +40,16 @@ class UserAccount {
 
     switch (activeRole) {
       case UserRole.player:
+        return hasPhone &&
+            hasDoc &&
+            _hasText(roleProfile?.firstName) &&
+            _hasText(roleProfile?.firstSurname) &&
+            _hasText(roleProfile?.sex) &&
+            roleProfile?.birthDate != null &&
+            _hasText(roleProfile?.bloodType) &&
+            _hasText(roleProfile?.department) &&
+            _hasText(roleProfile?.municipality) &&
+            (roleProfile?.secondaryPositions.isNotEmpty ?? false);
       case UserRole.referee:
         return hasPhone && hasDoc;
       case UserRole.coach:

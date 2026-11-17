@@ -5,6 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:vifutbol/application/controllers/auth_controller.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
+import 'package:vifutbol/application/providers/team_join_requests_providers.dart';
 import 'package:vifutbol/application/use_cases/authenticate_user_use_case.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/auth_flow_state.dart';
@@ -42,6 +43,7 @@ Widget _wrapWithApp(
     overrides: [
       authControllerProvider.overrideWith((_) => controller),
       environmentConfigProvider.overrideWithValue(config),
+      playerPendingRequestsCountProvider.overrideWith((ref) => 0),
     ],
     child: MaterialApp(
       locale: const Locale('es'),

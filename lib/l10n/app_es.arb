@@ -4380,5 +4380,320 @@
   "coachRosterNoGoalkeeperAlert": "Alerta táctica: El equipo no tiene porteros registrados.",
   "@coachRosterNoGoalkeeperAlert": {
     "description": "Alerta preventiva mostrada cuando el equipo no cuenta con ningún arquero"
+  },
+  "profilePersonalDataTile": "Datos Personales",
+  "@profilePersonalDataTile": {
+    "description": "Título de la tarjeta de datos personales en el perfil"
+  },
+  "profilePersonalDataSubtitle": "Información personal, ubicación y posiciones",
+  "@profilePersonalDataSubtitle": {
+    "description": "Subtítulo de la tarjeta de datos personales en el perfil"
+  },
+  "playerPersonalDataTitle": "Datos Personales",
+  "@playerPersonalDataTitle": {
+    "description": "Título de la pantalla de datos personales del jugador"
+  },
+  "playerPersonalDataSubtitle": "Completa tu información personal y deportiva",
+  "@playerPersonalDataSubtitle": {
+    "description": "Subtítulo de la pantalla de datos personales del jugador"
+  },
+  "playerPersonalDataDocumentLabel": "Número de documento",
+  "@playerPersonalDataDocumentLabel": {
+    "description": "Etiqueta para el número de documento de identidad del jugador"
+  },
+  "playerPersonalDataDocumentHint": "Ej. 1020304050",
+  "@playerPersonalDataDocumentHint": {
+    "description": "Pista para el número de documento de identidad del jugador"
+  },
+  "playerPersonalDataDocumentRequired": "El número de documento es obligatorio",
+  "@playerPersonalDataDocumentRequired": {
+    "description": "Error cuando el documento está vacío"
+  },
+  "playerPersonalDataDocumentInvalid": "El documento debe tener al menos 5 caracteres",
+  "@playerPersonalDataDocumentInvalid": {
+    "description": "Error cuando el documento tiene menos de 5 caracteres"
+  },
+  "playerPersonalDataPhoneLabel": "Teléfono",
+  "@playerPersonalDataPhoneLabel": {
+    "description": "Etiqueta para el teléfono del jugador"
+  },
+  "playerPersonalDataPhoneHint": "Ej. 3001234567",
+  "@playerPersonalDataPhoneHint": {
+    "description": "Pista para el teléfono del jugador"
+  },
+  "playerPersonalDataPhoneRequired": "El teléfono es obligatorio",
+  "@playerPersonalDataPhoneRequired": {
+    "description": "Error cuando el teléfono está vacío"
+  },
+  "playerPersonalDataPhoneInvalid": "El teléfono debe tener al menos 7 dígitos",
+  "@playerPersonalDataPhoneInvalid": {
+    "description": "Error cuando el teléfono tiene menos de 7 dígitos"
+  },
+  "playerPersonalDataFirstNameLabel": "Primer nombre",
+  "@playerPersonalDataFirstNameLabel": {
+    "description": "Etiqueta para el primer nombre del jugador"
+  },
+  "playerPersonalDataFirstNameHint": "Ej. Juan",
+  "@playerPersonalDataFirstNameHint": {
+    "description": "Pista para el primer nombre del jugador"
+  },
+  "playerPersonalDataFirstNameRequired": "El primer nombre es obligatorio",
+  "@playerPersonalDataFirstNameRequired": {
+    "description": "Error cuando el primer nombre está vacío"
+  },
+  "playerPersonalDataSecondNameLabel": "Segundo nombre",
+  "@playerPersonalDataSecondNameLabel": {
+    "description": "Etiqueta para el segundo nombre del jugador"
+  },
+  "playerPersonalDataSecondNameHint": "Ej. Carlos (opcional)",
+  "@playerPersonalDataSecondNameHint": {
+    "description": "Pista para el segundo nombre del jugador"
+  },
+  "playerPersonalDataFirstSurnameLabel": "Primer apellido",
+  "@playerPersonalDataFirstSurnameLabel": {
+    "description": "Etiqueta para el primer apellido del jugador"
+  },
+  "playerPersonalDataFirstSurnameHint": "Ej. Pérez",
+  "@playerPersonalDataFirstSurnameHint": {
+    "description": "Pista para el primer apellido del jugador"
+  },
+  "playerPersonalDataFirstSurnameRequired": "El primer apellido es obligatorio",
+  "@playerPersonalDataFirstSurnameRequired": {
+    "description": "Error cuando el primer apellido está vacío"
+  },
+  "playerPersonalDataSecondSurnameLabel": "Segundo apellido",
+  "@playerPersonalDataSecondSurnameLabel": {
+    "description": "Etiqueta para el segundo apellido del jugador"
+  },
+  "playerPersonalDataSecondSurnameHint": "Ej. Gómez (opcional)",
+  "@playerPersonalDataSecondSurnameHint": {
+    "description": "Pista para el segundo apellido del jugador"
+  },
+  "playerPersonalDataSexLabel": "Sexo",
+  "@playerPersonalDataSexLabel": {
+    "description": "Etiqueta para el selector de sexo del jugador"
+  },
+  "playerPersonalDataSexRequired": "Selecciona tu sexo",
+  "@playerPersonalDataSexRequired": {
+    "description": "Error cuando el sexo no ha sido seleccionado"
+  },
+  "playerPersonalDataSexMale": "Masculino",
+  "@playerPersonalDataSexMale": {
+    "description": "Opción de sexo masculino"
+  },
+  "playerPersonalDataSexFemale": "Femenino",
+  "@playerPersonalDataSexFemale": {
+    "description": "Opción de sexo femenino"
+  },
+  "playerPersonalDataSexOther": "Otro",
+  "@playerPersonalDataSexOther": {
+    "description": "Opción de sexo otro"
+  },
+  "playerPersonalDataBirthDateLabel": "Fecha de nacimiento",
+  "@playerPersonalDataBirthDateLabel": {
+    "description": "Etiqueta para el campo de fecha de nacimiento"
+  },
+  "playerPersonalDataBirthDateHint": "AAAA-MM-DD",
+  "@playerPersonalDataBirthDateHint": {
+    "description": "Pista para fecha de nacimiento"
+  },
+  "playerPersonalDataBirthDateRequired": "La fecha de nacimiento es obligatoria",
+  "@playerPersonalDataBirthDateRequired": {
+    "description": "Error cuando la fecha de nacimiento está vacía"
+  },
+  "playerPersonalDataAgeLabel": "Edad",
+  "@playerPersonalDataAgeLabel": {
+    "description": "Etiqueta para el campo de edad calculada"
+  },
+  "playerPersonalDataAgeYears": "{age} años",
+  "@playerPersonalDataAgeYears": {
+    "description": "Texto descriptivo de edad en años cumplidos",
+    "placeholders": {
+      "age": { "type": "int" }
+    }
+  },
+  "playerPersonalDataBloodTypeLabel": "Tipo de sangre y RH",
+  "@playerPersonalDataBloodTypeLabel": {
+    "description": "Etiqueta para el selector de tipo de sangre"
+  },
+  "playerPersonalDataBloodTypeHint": "Selecciona una opción",
+  "@playerPersonalDataBloodTypeHint": {
+    "description": "Pista para el selector de tipo de sangre"
+  },
+  "playerPersonalDataBloodTypeRequired": "Selecciona tu tipo de sangre",
+  "@playerPersonalDataBloodTypeRequired": {
+    "description": "Error cuando no se ha seleccionado tipo de sangre"
+  },
+  "playerPersonalDataDepartmentLabel": "Departamento",
+  "@playerPersonalDataDepartmentLabel": {
+    "description": "Etiqueta para el selector de departamento"
+  },
+  "playerPersonalDataDepartmentHint": "Selecciona tu departamento",
+  "@playerPersonalDataDepartmentHint": {
+    "description": "Pista para el selector de departamento"
+  },
+  "playerPersonalDataDepartmentRequired": "Selecciona tu departamento",
+  "@playerPersonalDataDepartmentRequired": {
+    "description": "Error cuando no se ha seleccionado departamento"
+  },
+  "playerPersonalDataMunicipalityLabel": "Municipio",
+  "@playerPersonalDataMunicipalityLabel": {
+    "description": "Etiqueta para el selector de municipio"
+  },
+  "playerPersonalDataMunicipalityHint": "Selecciona tu municipio",
+  "@playerPersonalDataMunicipalityHint": {
+    "description": "Pista para el selector de municipio"
+  },
+  "playerPersonalDataMunicipalityRequired": "Selecciona tu municipio",
+  "@playerPersonalDataMunicipalityRequired": {
+    "description": "Error cuando no se ha seleccionado municipio"
+  },
+  "playerPersonalDataSelectDepartmentFirst": "Selecciona primero un departamento",
+  "@playerPersonalDataSelectDepartmentFirst": {
+    "description": "Mensaje informativo cuando se intenta seleccionar municipio sin departamento previo"
+  },
+  "playerPersonalDataPositionsLabel": "Posiciones de juego",
+  "@playerPersonalDataPositionsLabel": {
+    "description": "Etiqueta para la sección de posiciones tácticas"
+  },
+  "playerPersonalDataPositionsSubtitle": "Selecciona una o más posiciones en las que juegas",
+  "@playerPersonalDataPositionsSubtitle": {
+    "description": "Subtítulo explicativo de posiciones de juego"
+  },
+  "playerPersonalDataPositionsRequired": "Debes seleccionar al menos una posición",
+  "@playerPersonalDataPositionsRequired": {
+    "description": "Error cuando no se ha seleccionado ninguna posición táctica"
+  },
+  "playerPersonalDataSaveButton": "Guardar datos personales",
+  "@playerPersonalDataSaveButton": {
+    "description": "Texto del botón principal para guardar el formulario de datos personales"
+  },
+  "playerPersonalDataSaving": "Guardando...",
+  "@playerPersonalDataSaving": {
+    "description": "Texto del botón de guardar durante el procesamiento"
+  },
+  "playerPersonalDataSaveSuccess": "Datos personales actualizados correctamente",
+  "@playerPersonalDataSaveSuccess": {
+    "description": "Mensaje de confirmación exitosa al guardar"
+  },
+  "playerPersonalDataErrorBanner": "No fue posible guardar los datos. Inténtalo nuevamente.",
+  "@playerPersonalDataErrorBanner": {
+    "description": "Mensaje genérico de error al intentar guardar los datos personales"
+  },
+  "playerPersonalDataDocumentAlreadyLinked": "Este número de documento ya está asociado a otro jugador.",
+  "@playerPersonalDataDocumentAlreadyLinked": {
+    "description": "Mensaje de error cuando el documento ya está vinculado a otra cuenta de jugador"
+  },
+  "playerPersonalDataOfflineError": "No hay conexión a internet. Los datos no se pudieron sincronizar.",
+  "@playerPersonalDataOfflineError": {
+    "description": "Mensaje de error cuando no hay conexión disponible para sincronizar con Supabase"
+  },
+  "playerPersonalDataUnsavedChangesTitle": "¿Descartar cambios?",
+  "@playerPersonalDataUnsavedChangesTitle": {
+    "description": "Título del diálogo de confirmación ante cambios sin guardar"
+  },
+  "playerPersonalDataUnsavedChangesMessage": "Tienes cambios sin guardar en tu ficha personal. Si sales ahora, se perderán las modificaciones.",
+  "@playerPersonalDataUnsavedChangesMessage": {
+    "description": "Mensaje del diálogo de confirmación ante cambios sin guardar"
+  },
+  "playerPersonalDataUnsavedChangesDiscard": "Descartar",
+  "@playerPersonalDataUnsavedChangesDiscard": {
+    "description": "Botón para descartar cambios y salir de la pantalla"
+  },
+  "playerPersonalDataUnsavedChangesKeepEditing": "Continuar editando",
+  "@playerPersonalDataUnsavedChangesKeepEditing": {
+    "description": "Botón para permanecer en la pantalla y seguir editando"
+  },
+  "playerPositionPOR": "Portero (POR)",
+  "@playerPositionPOR": {
+    "description": "Posición de Portero"
+  },
+  "playerPositionDFC": "Defensa Central (DFC)",
+  "@playerPositionDFC": {
+    "description": "Posición de Defensa Central"
+  },
+  "playerPositionLD": "Lateral Derecho (LD)",
+  "@playerPositionLD": {
+    "description": "Posición de Lateral Derecho"
+  },
+  "playerPositionLI": "Lateral Izquierdo (LI)",
+  "@playerPositionLI": {
+    "description": "Posición de Lateral Izquierdo"
+  },
+  "playerPositionCAD": "Carrilero Derecho (CAD)",
+  "@playerPositionCAD": {
+    "description": "Posición de Carrilero Derecho"
+  },
+  "playerPositionCAI": "Carrilero Izquierdo (CAI)",
+  "@playerPositionCAI": {
+    "description": "Posición de Carrilero Izquierdo"
+  },
+  "playerPositionMCD": "Mediocentro Defensivo (MCD)",
+  "@playerPositionMCD": {
+    "description": "Posición de Mediocentro Defensivo"
+  },
+  "playerPositionMC": "Mediocentro (MC)",
+  "@playerPositionMC": {
+    "description": "Posición de Mediocentro"
+  },
+  "playerPositionMCO": "Mediocentro Ofensivo (MCO)",
+  "@playerPositionMCO": {
+    "description": "Posición de Mediocentro Ofensivo"
+  },
+  "playerPositionMD": "Medio Derecho (MD)",
+  "@playerPositionMD": {
+    "description": "Posición de Medio Derecho"
+  },
+  "playerPositionMI": "Medio Izquierdo (MI)",
+  "@playerPositionMI": {
+    "description": "Posición de Medio Izquierdo"
+  },
+  "playerPositionED": "Extremo Derecho (ED)",
+  "@playerPositionED": {
+    "description": "Posición de Extremo Derecho"
+  },
+  "playerPositionEI": "Extremo Izquierdo (EI)",
+  "@playerPositionEI": {
+    "description": "Posición de Extremo Izquierdo"
+  },
+  "playerPositionMP": "Mediapunta (MP)",
+  "@playerPositionMP": {
+    "description": "Posición de Mediapunta"
+  },
+  "playerPositionDC": "Delantero Centro (DC)",
+  "@playerPositionDC": {
+    "description": "Posición de Delantero Centro"
+  },
+  "playerTacticalLineGoalkeeper": "Portería",
+  "@playerTacticalLineGoalkeeper": {
+    "description": "Encabezado de línea táctica para arqueros"
+  },
+  "playerTacticalLineDefender": "Defensa",
+  "@playerTacticalLineDefender": {
+    "description": "Encabezado de línea táctica para defensores"
+  },
+  "playerTacticalLineMidfielder": "Mediocampo",
+  "@playerTacticalLineMidfielder": {
+    "description": "Encabezado de línea táctica para mediocampistas"
+  },
+  "playerTacticalLineForward": "Delantera",
+  "@playerTacticalLineForward": {
+    "description": "Encabezado de línea táctica para delanteros"
+  },
+  "locationPickerSearchPlaceholder": "Buscar...",
+  "@locationPickerSearchPlaceholder": {
+    "description": "Pista del campo de búsqueda en el selector de ubicación"
+  },
+  "locationPickerEmptyState": "No se encontraron resultados",
+  "@locationPickerEmptyState": {
+    "description": "Mensaje cuando no hay coincidencias de búsqueda en el selector"
+  },
+  "locationPickerSelectDepartmentTitle": "Seleccionar Departamento",
+  "@locationPickerSelectDepartmentTitle": {
+    "description": "Título del modal para seleccionar departamento"
+  },
+  "locationPickerSelectMunicipalityTitle": "Seleccionar Municipio",
+  "@locationPickerSelectMunicipalityTitle": {
+    "description": "Título del modal para seleccionar municipio"
   }
 }

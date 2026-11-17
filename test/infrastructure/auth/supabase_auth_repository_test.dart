@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/connectivity_status.dart';
 import 'package:vifutbol/domain/entities/role_profile_data.dart';
+import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/failures/app_failure.dart';
 import 'package:vifutbol/domain/repositories/connectivity_repository.dart';
@@ -129,7 +130,8 @@ void main() {
       expect(account.onboardingCompleted, isTrue);
     });
 
-    test('updateRoleProfile returns linked player & phone/documentId',
+    test(
+        'updateRoleProfile forwards fullName, phone/documentId and all player fields',
         () async {
       when(() => dataSource.fetchByAuthUserId('auth-1')).thenAnswer(
         (_) async => {
@@ -151,7 +153,7 @@ void main() {
           activeRole: 'player',
           authorizedRoles: any(named: 'authorizedRoles'),
           onboardingCompleted: true,
-          fullName: 'Carlos Ruiz',
+          fullName: 'Carlos Andrés Ruiz Pérez',
           phone: '3001234567',
           documentId: '10203040',
           roleProfile: any(named: 'roleProfile'),
@@ -160,7 +162,7 @@ void main() {
         (_) async => {
           'id': 'auth-1',
           'auth_user_id': 'auth-1',
-          'full_name': 'Carlos Ruiz',
+          'full_name': 'Carlos Andrés Ruiz Pérez',
           'email': 'carlos@test.com',
           'active_role': 'player',
           'authorized_roles': ['fan', 'player'],
@@ -168,21 +170,51 @@ void main() {
           'onboarding_completed': true,
           'phone': '3001234567',
           'document_id': '10203040',
-          'role_profile': {'linked_player_id': 'player-existing-1'},
+          'role_profile': {
+            'linked_player_id': 'player-existing-1',
+            'first_name': 'Carlos',
+            'second_name': 'Andrés',
+            'first_surname': 'Ruiz',
+            'second_surname': 'Pérez',
+            'sex': 'male',
+            'birth_date': '1998-05-20',
+            'blood_type': 'O+',
+            'department': 'Antioquia',
+            'municipality': 'Medellín',
+            'primary_position': 'defender',
+            'secondary_positions': ['LD', 'CAD'],
+          },
         },
       );
 
       final updated = await repository.updateRoleProfile(
         userId: 'auth-1',
         role: UserRole.player,
+        fullName: 'Carlos Andrés Ruiz Pérez',
         phone: '3001234567',
         documentId: '10203040',
-        roleProfile: const RoleProfileData(),
+        roleProfile: RoleProfileData(
+          firstName: 'Carlos',
+          secondName: 'Andrés',
+          firstSurname: 'Ruiz',
+          secondSurname: 'Pérez',
+          sex: 'male',
+          birthDate: DateTime(1998, 5, 20),
+          bloodType: 'O+',
+          department: 'Antioquia',
+          municipality: 'Medellín',
+          primaryPosition: PlayerPosition.defender,
+          secondaryPositions: const ['LD', 'CAD'],
+        ),
       );
 
+      expect(updated.fullName, 'Carlos Andrés Ruiz Pérez');
       expect(updated.phone, '3001234567');
       expect(updated.documentId, '10203040');
       expect(updated.roleProfile?.linkedPlayerId, 'player-existing-1');
+      expect(updated.roleProfile?.firstName, 'Carlos');
+      expect(updated.roleProfile?.municipality, 'Medellín');
+      expect(updated.roleProfile?.secondaryPositions, equals(['LD', 'CAD']));
       expect(updated.isProfileCompleteForActiveRole, isTrue);
     });
 

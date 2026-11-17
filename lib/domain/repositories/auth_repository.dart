@@ -47,6 +47,7 @@ abstract class AuthRepository {
   Future<UserAccount> updateRoleProfile({
     required String userId,
     required UserRole role,
+    String? fullName,
     String? phone,
     String? documentId,
     RoleProfileData? roleProfile,

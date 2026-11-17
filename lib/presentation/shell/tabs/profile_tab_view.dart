@@ -200,7 +200,12 @@ class ProfileTabView extends ConsumerWidget {
                     variant: KickPulseButtonVariant.primary,
                     isFullWidth: true,
                     onPressed: () async {
-                      CompleteProfileDialog.show(context, user: user);
+                      if (activeRole == UserRole.player) {
+                        Navigator.of(context)
+                            .pushNamed('/profile/personal-data');
+                      } else {
+                        CompleteProfileDialog.show(context, user: user);
+                      }
                     },
                   ),
                 ],
@@ -289,6 +294,65 @@ class ProfileTabView extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
+
+          // Player Personal Data Section (Only visible for player role)
+          if (!isGuest &&
+              (activeRole == UserRole.player ||
+                  (user?.authorizedRoles.contains(UserRole.player) ?? false))) ...[
+            KickPulseCard(
+              child: InkWell(
+                key: const Key('profile_personal_data_tile'),
+                onTap: () {
+                  Navigator.of(context).pushNamed('/profile/personal-data');
+                },
+                borderRadius: BorderRadius.circular(
+                  KickPulseRadiiSpacing.cardRadius,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: KickPulseRadiiSpacing.spaceSm,
+                    vertical: KickPulseRadiiSpacing.spaceXs,
+                  ),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        backgroundColor: KickPulseColors.surfaceElevated,
+                        child: Icon(
+                          Icons.badge_outlined,
+                          color: KickPulseColors.accentElectric,
+                        ),
+                      ),
+                      const SizedBox(width: KickPulseRadiiSpacing.spaceMd),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.profilePersonalDataTile,
+                              style: KickPulseTypography.cardTitle,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              l10n.profilePersonalDataSubtitle,
+                              style: const TextStyle(
+                                color: KickPulseColors.textSecondary,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.chevron_right,
+                        color: KickPulseColors.textSecondary,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+          ],
 
           // Player Team Join Requests Section (Only visible for player role)
           if (!isGuest &&
