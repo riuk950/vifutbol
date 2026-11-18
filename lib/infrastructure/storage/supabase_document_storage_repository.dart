@@ -129,11 +129,12 @@ class SupabaseDocumentStorageRepository implements DocumentStorageRepository {
   @override
   Future<String?> getSignedDocumentUrl({
     required String storagePath,
-    int expiresInSeconds = 300,
+    int expiresInSeconds = 3600,
   }) async {
-    if (storagePath.trim().isEmpty) return null;
-    if (storagePath.startsWith('http://') || storagePath.startsWith('https://')) {
-      return storagePath;
+    final cleanPath = storagePath.trim().replaceFirst(RegExp(r'^/+'), '');
+    if (cleanPath.isEmpty) return null;
+    if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
+      return cleanPath;
     }
 
     try {
@@ -142,7 +143,7 @@ class SupabaseDocumentStorageRepository implements DocumentStorageRepository {
 
       final storage = client.storage.from(bucketName);
       final signedUrl = await storage.createSignedUrl(
-        storagePath,
+        cleanPath,
         expiresInSeconds,
       );
       return signedUrl;

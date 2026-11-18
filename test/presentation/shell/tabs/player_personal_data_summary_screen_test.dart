@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:vifutbol/application/controllers/auth_controller.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
+import 'package:vifutbol/application/providers/document_scanner_providers.dart';
 import 'package:vifutbol/application/use_cases/authenticate_user_use_case.dart';
 import 'package:vifutbol/domain/entities/auth_flow_state.dart';
 import 'package:vifutbol/domain/entities/auth_session.dart';
@@ -12,11 +13,15 @@ import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/user_account.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/repositories/auth_repository.dart';
+import 'package:vifutbol/domain/repositories/document_storage_repository.dart';
 import 'package:vifutbol/domain/services/player_personal_data_utils.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/shell/tabs/player_personal_data_summary_screen.dart';
 
 class _MockAuthRepository extends Mock implements AuthRepository {}
+
+class _MockDocumentStorageRepository extends Mock
+    implements DocumentStorageRepository {}
 
 class _MockAuthenticateUserUseCase extends Mock
     implements AuthenticateUserUseCase {}
@@ -33,11 +38,14 @@ class _TestAuthController extends AuthController {
 Widget _wrapWithApp(
   Widget child, {
   required _TestAuthController controller,
+  DocumentStorageRepository? storageRepository,
   Map<String, WidgetBuilder>? routes,
 }) {
   return ProviderScope(
     overrides: [
       authControllerProvider.overrideWith((_) => controller),
+      if (storageRepository != null)
+        documentStorageRepositoryProvider.overrideWithValue(storageRepository),
     ],
     child: MaterialApp(
       locale: const Locale('es'),
@@ -381,5 +389,65 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Personal Data Form Screen'), findsOneWidget);
+  });
+
+  testWidgets(
+      'resolves relative storage paths into signed URLs for document thumbnails',
+      (tester) async {
+    final mockStorage = _MockDocumentStorageRepository();
+    when(() => mockStorage.getSignedDocumentUrl(
+          storagePath: 'p-8/document_front.jpg',
+          expiresInSeconds: any(named: 'expiresInSeconds'),
+        )).thenAnswer(
+      (_) async => 'https://example.com/signed_front.jpg',
+    );
+    when(() => mockStorage.getSignedDocumentUrl(
+          storagePath: 'p-8/document_back.jpg',
+          expiresInSeconds: any(named: 'expiresInSeconds'),
+        )).thenAnswer(
+      (_) async => 'https://example.com/signed_back.jpg',
+    );
+
+    final user = UserAccount(
+      id: 'p-8',
+      fullName: 'Andrés Gómez',
+      email: 'andres@example.com',
+      activeRole: UserRole.player,
+      roleProfile: const RoleProfileData(
+        documentFrontUrl: 'p-8/document_front.jpg',
+        documentBackUrl: 'p-8/document_back.jpg',
+      ),
+    );
+
+    final controller = _TestAuthController(
+      authRepository: authRepository,
+      initialState: AuthFlowState(
+        status: AuthStatus.authenticated,
+        session: AuthSession(
+          sessionId: 's-8',
+          user: user,
+          sessionToken: 't-8',
+          authenticatedAt: DateTime.now(),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _wrapWithApp(
+        const PlayerPersonalDataSummaryScreen(),
+        controller: controller,
+        storageRepository: mockStorage,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final images = tester.widgetList<Image>(find.byType(Image));
+    final networkImages = images
+        .where((img) => img.image is NetworkImage)
+        .map((img) => (img.image as NetworkImage).url)
+        .toList();
+
+    expect(networkImages, contains('https://example.com/signed_front.jpg'));
+    expect(networkImages, contains('https://example.com/signed_back.jpg'));
   });
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../application/providers/auth_providers.dart';
+import '../../../application/providers/document_scanner_providers.dart';
 import '../../../domain/entities/detailed_football_position.dart';
 import '../../../domain/entities/player_personal_enums.dart';
 import '../../../domain/entities/team_enums.dart';
@@ -431,33 +432,19 @@ class PlayerPersonalDataSummaryScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final hasImage = imageUrl != null && imageUrl.trim().isNotEmpty;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            color: KickPulseColors.textSecondary,
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
-        if (hasImage)
-          InkWell(
-            key: thumbnailKey,
-            onTap: () => _openZoomDialog(context, imageUrl, title),
-            borderRadius: BorderRadius.circular(KickPulseRadiiSpacing.cardRadius),
-            child: ClipRRect(
-              borderRadius:
-                  BorderRadius.circular(KickPulseRadiiSpacing.cardRadius),
-              child: AspectRatio(
-                aspectRatio: 16 / 10,
-                child: _buildImageWidget(imageUrl, fit: BoxFit.cover),
-              ),
+    if (!hasImage) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              color: KickPulseColors.textSecondary,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
             ),
-          )
-        else
+          ),
+          const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
           Container(
             key: emptyKey,
             height: 90,
@@ -488,6 +475,81 @@ class PlayerPersonalDataSummaryScreen extends ConsumerWidget {
               ),
             ),
           ),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            color: KickPulseColors.textSecondary,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
+        Consumer(
+          builder: (context, ref, _) {
+            final resolvedAsync =
+                ref.watch(resolveDocumentUrlProvider(imageUrl));
+
+            return resolvedAsync.when(
+              data: (resolvedUrl) {
+                final effectiveUrl = resolvedUrl ?? imageUrl;
+                return InkWell(
+                  key: thumbnailKey,
+                  onTap: () => _openZoomDialog(context, effectiveUrl, title),
+                  borderRadius:
+                      BorderRadius.circular(KickPulseRadiiSpacing.cardRadius),
+                  child: ClipRRect(
+                    borderRadius:
+                        BorderRadius.circular(KickPulseRadiiSpacing.cardRadius),
+                    child: AspectRatio(
+                      aspectRatio: 16 / 10,
+                      child: _buildImageWidget(effectiveUrl, fit: BoxFit.cover),
+                    ),
+                  ),
+                );
+              },
+              loading: () => Container(
+                height: 90,
+                decoration: BoxDecoration(
+                  color: KickPulseColors.surfaceSubtle,
+                  borderRadius:
+                      BorderRadius.circular(KickPulseRadiiSpacing.cardRadius),
+                  border: Border.all(color: KickPulseColors.borderSubtle),
+                ),
+                child: const Center(
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: KickPulseColors.accentPrimary,
+                    ),
+                  ),
+                ),
+              ),
+              error: (err, stack) => InkWell(
+                key: thumbnailKey,
+                onTap: () => _openZoomDialog(context, imageUrl, title),
+                borderRadius:
+                    BorderRadius.circular(KickPulseRadiiSpacing.cardRadius),
+                child: ClipRRect(
+                  borderRadius:
+                      BorderRadius.circular(KickPulseRadiiSpacing.cardRadius),
+                  child: AspectRatio(
+                    aspectRatio: 16 / 10,
+                    child: _buildImageWidget(imageUrl, fit: BoxFit.cover),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ],
     );
   }
@@ -538,10 +600,36 @@ class PlayerPersonalDataSummaryScreen extends ConsumerWidget {
               Flexible(
                 child: Padding(
                   padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
-                  child: InteractiveViewer(
-                    minScale: 0.8,
-                    maxScale: 4.0,
-                    child: _buildImageWidget(imageUrl, fit: BoxFit.contain),
+                  child: Consumer(
+                    builder: (context, ref, _) {
+                      final resolvedAsync =
+                          ref.watch(resolveDocumentUrlProvider(imageUrl));
+
+                      return resolvedAsync.when(
+                        data: (url) => InteractiveViewer(
+                          minScale: 0.8,
+                          maxScale: 4.0,
+                          child: _buildImageWidget(url ?? imageUrl,
+                              fit: BoxFit.contain),
+                        ),
+                        loading: () => const Center(
+                          child: SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: KickPulseColors.accentPrimary,
+                            ),
+                          ),
+                        ),
+                        error: (err, stack) => InteractiveViewer(
+                          minScale: 0.8,
+                          maxScale: 4.0,
+                          child: _buildImageWidget(imageUrl,
+                              fit: BoxFit.contain),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),

@@ -2,6 +2,8 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vifutbol/application/providers/document_scanner_providers.dart';
 import 'package:vifutbol/domain/entities/colombian_id_scan_result.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
@@ -383,32 +385,82 @@ class IdDocumentCaptureCard extends StatelessWidget {
     }
 
     if (remoteUrl != null && remoteUrl.isNotEmpty) {
-      return Container(
-        color: KickPulseColors.surfaceElevated,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.cloud_done_outlined,
-                color: KickPulseColors.accentPrimary,
-                size: 28,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Guardado',
-                style: KickPulseTypography.captionMeta.copyWith(
-                  color: KickPulseColors.textSecondary,
-                  fontSize: 10,
+      return Consumer(
+        builder: (context, ref, _) {
+          final resolvedAsync =
+              ref.watch(resolveDocumentUrlProvider(remoteUrl));
+
+          return resolvedAsync.when(
+            data: (resolved) {
+              if (resolved != null &&
+                  (resolved.startsWith('http://') ||
+                      resolved.startsWith('https://'))) {
+                return Image.network(
+                  resolved,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      _buildSavedCloudPlaceholder(),
+                );
+              }
+              if (resolved != null) {
+                final file = File(resolved);
+                if (file.existsSync()) {
+                  return Image.file(
+                    file,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        _buildSavedCloudPlaceholder(),
+                  );
+                }
+              }
+              return _buildSavedCloudPlaceholder();
+            },
+            loading: () => Container(
+              color: KickPulseColors.surfaceElevated,
+              child: const Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: KickPulseColors.accentPrimary,
+                  ),
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+            error: (err, stack) => _buildSavedCloudPlaceholder(),
+          );
+        },
       );
     }
 
     return _buildPlaceholderIcon();
+  }
+
+  Widget _buildSavedCloudPlaceholder() {
+    return Container(
+      color: KickPulseColors.surfaceElevated,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.cloud_done_outlined,
+              color: KickPulseColors.accentPrimary,
+              size: 28,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Guardado',
+              style: KickPulseTypography.captionMeta.copyWith(
+                color: KickPulseColors.textSecondary,
+                fontSize: 10,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildPlaceholderIcon() {

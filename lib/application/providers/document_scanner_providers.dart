@@ -1,5 +1,7 @@
 // lib/application/providers/document_scanner_providers.dart
 
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/app_environment.dart';
 import '../../domain/repositories/colombian_id_scanner_service.dart';
@@ -32,4 +34,25 @@ final documentStorageRepositoryProvider =
   }
 
   return const LocalDocumentStorageRepository();
+});
+
+/// Asynchronously resolves an image reference (which can be a local filesystem path,
+/// an existing HTTP(S) URL, or a private Supabase Storage relative path) into a displayable
+/// URL or local path.
+final resolveDocumentUrlProvider =
+    FutureProvider.family<String?, String?>((ref, rawPath) async {
+  if (rawPath == null || rawPath.trim().isEmpty) return null;
+  final path = rawPath.trim();
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+  final localFile = File(path);
+  if (localFile.existsSync()) {
+    return path;
+  }
+  final storageRepo = ref.watch(documentStorageRepositoryProvider);
+  return await storageRepo.getSignedDocumentUrl(
+    storagePath: path,
+    expiresInSeconds: 3600,
+  );
 });
