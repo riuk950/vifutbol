@@ -70,6 +70,13 @@ class FakeTournamentsController extends StateNotifier<TournamentsCatalogState>
          ),
        );
 
+  int loadCatalogCalls = 0;
+
+  @override
+  Future<void> loadCatalog() async {
+    loadCatalogCalls++;
+  }
+
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -78,6 +85,13 @@ class FakeTeamsController extends StateNotifier<TeamsCatalogState>
     implements TeamsController {
   FakeTeamsController({List<TournamentTeam> teams = const []})
     : super(TeamsCatalogState(teams: teams));
+
+  int loadTeamsCalls = 0;
+
+  @override
+  Future<void> loadTeams() async {
+    loadTeamsCalls++;
+  }
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -412,5 +426,212 @@ void main() {
         expect(find.text('Copa Seed'), findsNothing);
       },
     );
+
+    testWidgets(
+      'HU 22.4: triggers parallel cloud hydration on cold start and pull-to-refresh',
+      (tester) async {
+        final tournamentsCtrl = FakeTournamentsController();
+        final teamsCtrl = FakeTeamsController();
+        var loadAllMatchesCalls = 0;
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              environmentConfigProvider.overrideWithValue(
+                EnvironmentConfig.development(),
+              ),
+              localStorageRepositoryProvider.overrideWithValue(
+                _FakeLocalStorageRepository(),
+              ),
+              connectivityRepositoryProvider.overrideWithValue(
+                _FakeConnectivityRepository(),
+              ),
+              activeUserRoleProvider.overrideWith((ref) => UserRole.organizer),
+              tournamentsControllerProvider.overrideWith(
+                (_) => tournamentsCtrl,
+              ),
+              teamsControllerProvider.overrideWith((_) => teamsCtrl),
+              matchesCatalogControllerProvider.overrideWith(
+                (_) => _SpyMatchesWidgetController(
+                  onLoadAllMatches: () => loadAllMatchesCalls++,
+                ),
+              ),
+            ],
+            child: MaterialApp(
+              theme: KickPulseTheme.darkTheme,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [Locale('es')],
+              home: const Scaffold(body: OrganizerPanelContent()),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tournamentsCtrl.loadCatalogCalls, 1);
+        expect(teamsCtrl.loadTeamsCalls, 1);
+        expect(loadAllMatchesCalls, 1);
+
+        await tester.fling(
+          find.byKey(const Key('organizer_panel_content')),
+          const Offset(0, 300),
+          1000,
+        );
+        await tester.pumpAndSettle();
+
+        expect(tournamentsCtrl.loadCatalogCalls, 2);
+        expect(teamsCtrl.loadTeamsCalls, 2);
+        expect(loadAllMatchesCalls, 2);
+      },
+    );
+
+    testWidgets(
+      'HU 22.4: updates summary metrics and team count badge live without widget restart',
+      (tester) async {
+        final t1 = ChampionshipTournament(
+          id: 't-live-1',
+          organizerId: 'org-seed-1',
+          name: 'Copa Reactiva',
+          category: 'Libre',
+          format: TournamentFormat.league,
+          status: TournamentStatus.openRegistration,
+          startDate: DateTime(2026, 1, 1),
+          endDate: DateTime(2026, 6, 1),
+          updatedAt: DateTime(2026, 1, 1),
+        );
+
+        final tournamentsCtrl = FakeTournamentsController(tournaments: [t1]);
+        final teamsCtrl = FakeTeamsController();
+        final matchesCtrl = _SpyMatchesWidgetController();
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              environmentConfigProvider.overrideWithValue(
+                EnvironmentConfig.development(),
+              ),
+              localStorageRepositoryProvider.overrideWithValue(
+                _FakeLocalStorageRepository(),
+              ),
+              connectivityRepositoryProvider.overrideWithValue(
+                _FakeConnectivityRepository(),
+              ),
+              activeUserRoleProvider.overrideWith((ref) => UserRole.organizer),
+              tournamentsControllerProvider.overrideWith(
+                (_) => tournamentsCtrl,
+              ),
+              teamsControllerProvider.overrideWith((_) => teamsCtrl),
+              matchesCatalogControllerProvider.overrideWith((_) => matchesCtrl),
+            ],
+            child: MaterialApp(
+              theme: KickPulseTheme.darkTheme,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [Locale('es')],
+              home: const Scaffold(body: OrganizerPanelContent()),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Initially: 1 active, 0 pending matches, 1 unseeded, 0 teams
+        expect(
+          find.descendant(
+            of: find.byKey(const Key('organizer_metric_unseeded_tournaments')),
+            matching: find.text('1'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: find.byKey(
+              const Key('organizer_competition_teams_badge_t-live-1'),
+            ),
+            matching: find.textContaining('0'),
+          ),
+          findsOneWidget,
+        );
+
+        // Enroll 2 teams and generate 3 pending matches in-memory
+        teamsCtrl.state = teamsCtrl.state.copyWith(
+          teams: [
+            TournamentTeam(
+              id: 'team-1',
+              tournamentId: 't-live-1',
+              name: 'Alpha',
+              shortCode: 'ALP',
+            ),
+            TournamentTeam(
+              id: 'team-2',
+              tournamentId: 't-live-1',
+              name: 'Beta',
+              shortCode: 'BET',
+            ),
+          ],
+        );
+        matchesCtrl.state = matchesCtrl.state.copyWith(
+          matches: List.generate(
+            3,
+            (i) => ChampionshipMatch(
+              id: 'm-live-$i',
+              tournamentId: 't-live-1',
+              roundNumber: 1,
+              roundName: 'Jornada 1',
+              homeTeamId: 'team-1',
+              awayTeamId: 'team-2',
+            ),
+          ),
+        );
+        await tester.pump();
+
+        expect(
+          find.descendant(
+            of: find.byKey(const Key('organizer_metric_unseeded_tournaments')),
+            matching: find.text('0'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: find.byKey(const Key('organizer_metric_pending_matches')),
+            matching: find.text('3'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: find.byKey(
+              const Key('organizer_competition_teams_badge_t-live-1'),
+            ),
+            matching: find.textContaining('2'),
+          ),
+          findsOneWidget,
+        );
+      },
+    );
   });
+}
+
+class _SpyMatchesWidgetController extends StateNotifier<MatchesCatalogState>
+    implements MatchesCatalogController {
+  _SpyMatchesWidgetController({this.onLoadAllMatches})
+    : super(const MatchesCatalogState());
+
+  final VoidCallback? onLoadAllMatches;
+
+  @override
+  Future<void> loadAllMatches({bool silent = false}) async {
+    onLoadAllMatches?.call();
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

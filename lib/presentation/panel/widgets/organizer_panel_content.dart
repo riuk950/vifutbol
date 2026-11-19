@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
@@ -18,8 +19,50 @@ import 'package:vifutbol/presentation/panel/widgets/organizer_competitions_secti
 import 'package:vifutbol/presentation/tournaments/widgets/add_teams_to_competition_modal.dart';
 
 /// Dynamic panel content for [UserRole.organizer].
-class OrganizerPanelContent extends ConsumerWidget {
+class OrganizerPanelContent extends ConsumerStatefulWidget {
   const OrganizerPanelContent({super.key});
+
+  @override
+  ConsumerState<OrganizerPanelContent> createState() =>
+      _OrganizerPanelContentState();
+}
+
+class _OrganizerPanelContentState extends ConsumerState<OrganizerPanelContent> {
+  bool _isHydrating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(_hydrateOrganizerData);
+  }
+
+  Future<void> _safeRun(Future<void> Function() action) async {
+    try {
+      await action();
+    } catch (_) {
+      // Preserve cached organizer summary on transient network failures or partial test fakes.
+    }
+  }
+
+  Future<void> _hydrateOrganizerData() async {
+    if (_isHydrating || !mounted) return;
+    _isHydrating = true;
+    try {
+      await Future.wait([
+        _safeRun(
+          () => ref.read(tournamentsControllerProvider.notifier).loadCatalog(),
+        ),
+        _safeRun(() => ref.read(teamsControllerProvider.notifier).loadTeams()),
+        _safeRun(
+          () => ref
+              .read(matchesCatalogControllerProvider.notifier)
+              .loadAllMatches(silent: true),
+        ),
+      ]);
+    } finally {
+      _isHydrating = false;
+    }
+  }
 
   Widget _buildMetricCard({
     required Key key,
@@ -136,17 +179,29 @@ class OrganizerPanelContent extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    ref.listen<String?>(
+      authControllerProvider.select((state) => state.session?.user.id),
+      (previous, next) {
+        if (previous != next && next != null && next.trim().isNotEmpty) {
+          _hydrateOrganizerData();
+        }
+      },
+    );
+
     final metrics = ref.watch(organizerPanelMetricsProvider);
 
     final activeTournamentsCount = metrics.activeTournamentsCount;
     final pendingScheduleMatchesCount = metrics.pendingScheduleMatchesCount;
     final unseededTournamentsCount = metrics.unseededTournamentsCount;
 
-    return SingleChildScrollView(
-      key: const Key('organizer_panel_content'),
-      padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
+    return RefreshIndicator(
+      onRefresh: _hydrateOrganizerData,
+      child: SingleChildScrollView(
+        key: const Key('organizer_panel_content'),
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -196,6 +251,7 @@ class OrganizerPanelContent extends ConsumerWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }

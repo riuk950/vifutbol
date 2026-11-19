@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
@@ -109,6 +110,7 @@ class _OrganizerCompetitionsSectionState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final tournaments = ref.watch(organizerTournamentsProvider);
+    final allTeams = ref.watch(teamsControllerProvider).teams;
 
     return Column(
       key: const Key('organizer_competitions_section'),
@@ -203,7 +205,15 @@ class _OrganizerCompetitionsSectionState
                 const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
             itemBuilder: (context, index) {
               final tournament = tournaments[index];
-              return _buildTournamentCard(context, tournament, l10n);
+              final enrolledTeamsCount = allTeams
+                  .where((team) => team.tournamentId == tournament.id)
+                  .length;
+              return _buildTournamentCard(
+                context,
+                tournament,
+                enrolledTeamsCount,
+                l10n,
+              );
             },
           ),
       ],
@@ -213,6 +223,7 @@ class _OrganizerCompetitionsSectionState
   Widget _buildTournamentCard(
     BuildContext context,
     ChampionshipTournament tournament,
+    int enrolledTeamsCount,
     AppLocalizations l10n,
   ) {
     return KickPulseCard(
@@ -371,6 +382,23 @@ class _OrganizerCompetitionsSectionState
                     _formatLabel(tournament.format, l10n),
                     style: KickPulseTypography.captionMeta.copyWith(
                       color: KickPulseColors.textSecondary,
+                    ),
+                  ),
+                ),
+                Container(
+                  key: Key('organizer_competition_teams_badge_${tournament.id}'),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: KickPulseColors.surfaceElevated,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    l10n.competitionTeamsHeaderCount(enrolledTeamsCount),
+                    style: KickPulseTypography.captionMeta.copyWith(
+                      color: KickPulseColors.accentPrimary,
                     ),
                   ),
                 ),

@@ -8,6 +8,7 @@ import 'package:vifutbol/application/providers/sync_providers.dart';
 import 'package:vifutbol/application/use_cases/manage_tournaments_use_case.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/sync_status.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournaments_catalog_state.dart';
@@ -107,35 +108,31 @@ OrganizerPanelData computeOrganizerPanelMetrics({
     );
   }
 
-  final organizerTournamentIds = organizerTournaments.map((t) => t.id).toSet();
-
-  final activeTournamentsCount = organizerTournaments
+  final activeTournaments = organizerTournaments
       .where(
         (t) =>
             t.status == TournamentStatus.inProgress ||
             t.status == TournamentStatus.openRegistration,
       )
-      .length;
+      .toList();
+  final activeTournamentIds = activeTournaments.map((t) => t.id).toSet();
 
   final pendingScheduleMatchesCount = allMatches
       .where(
         (m) =>
-            organizerTournamentIds.contains(m.tournamentId) &&
-            m.scheduledStartTime == null,
+            activeTournamentIds.contains(m.tournamentId) &&
+            m.scheduledStartTime == null &&
+            m.status != MatchStatus.completed &&
+            m.status != MatchStatus.inProgress,
       )
       .length;
 
-  final unseededTournamentsCount = organizerTournaments
-      .where(
-        (t) =>
-            (t.status == TournamentStatus.openRegistration ||
-                t.status == TournamentStatus.inProgress) &&
-            !allMatches.any((m) => m.tournamentId == t.id),
-      )
+  final unseededTournamentsCount = activeTournaments
+      .where((t) => !allMatches.any((m) => m.tournamentId == t.id))
       .length;
 
   return OrganizerPanelData(
-    activeTournamentsCount: activeTournamentsCount,
+    activeTournamentsCount: activeTournaments.length,
     pendingScheduleMatchesCount: pendingScheduleMatchesCount,
     unseededTournamentsCount: unseededTournamentsCount,
   );

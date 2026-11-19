@@ -2,16 +2,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vifutbol/application/controllers/auth_controller.dart';
 import 'package:vifutbol/application/controllers/matches_catalog_controller.dart';
+import 'package:vifutbol/application/controllers/teams_controller.dart';
 import 'package:vifutbol/application/controllers/tournaments_controller.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
+import 'package:vifutbol/application/providers/sync_bootstrap_provider.dart';
+import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/application/use_cases/manage_tournaments_use_case.dart';
 import 'package:vifutbol/domain/entities/auth_flow_state.dart';
 import 'package:vifutbol/domain/entities/auth_session.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/matches_catalog_state.dart';
+import 'package:vifutbol/domain/entities/sync_status.dart';
+import 'package:vifutbol/domain/entities/teams_catalog_state.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournaments_catalog_state.dart';
 import 'package:vifutbol/domain/entities/ui_view_state.dart';
@@ -280,5 +286,213 @@ void main() {
       expect(metrics.pendingScheduleMatchesCount, 0);
       expect(metrics.unseededTournamentsCount, 1);
     });
+
+    test(
+      'HU 22.4 (US1): recalculates metrics immediately after generating fixture, scheduling 2 of 6 matches, and regenerating',
+      () {
+        final t1 = makeTournament(
+          id: 't-1',
+          organizerId: 'org-seed-1',
+          status: TournamentStatus.openRegistration,
+        );
+        final tournamentsCtrl = _FakeTournamentsController([t1]);
+        final matchesCtrl = _FakeMatchesCatalogController(const []);
+
+        final container = ProviderContainer(
+          overrides: [
+            authControllerProvider.overrideWith(
+              (_) => _FakeAuthController(
+                const AuthFlowState(status: AuthStatus.unauthenticated),
+              ),
+            ),
+            tournamentsControllerProvider.overrideWith((_) => tournamentsCtrl),
+            matchesCatalogControllerProvider.overrideWith((_) => matchesCtrl),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        var metrics = container.read(organizerPanelMetricsProvider);
+        expect(metrics.activeTournamentsCount, 1);
+        expect(metrics.unseededTournamentsCount, 1);
+        expect(metrics.pendingScheduleMatchesCount, 0);
+
+        // Generate 6 unscheduled matches
+        final generated = List.generate(
+          6,
+          (i) => makeMatch(id: 'm-$i', tournamentId: 't-1'),
+        );
+        matchesCtrl.state = matchesCtrl.state.copyWith(matches: generated);
+
+        metrics = container.read(organizerPanelMetricsProvider);
+        expect(metrics.unseededTournamentsCount, 0);
+        expect(metrics.pendingScheduleMatchesCount, 6);
+
+        // Schedule 2 of the 6 matches
+        final afterSchedule = [
+          for (var i = 0; i < generated.length; i++)
+            i < 2
+                ? generated[i].copyWith(
+                    scheduledStartTime: DateTime(2026, 5, 1, 10 + i),
+                    status: MatchStatus.scheduled,
+                  )
+                : generated[i],
+        ];
+        matchesCtrl.state = matchesCtrl.state.copyWith(matches: afterSchedule);
+
+        metrics = container.read(organizerPanelMetricsProvider);
+        expect(metrics.pendingScheduleMatchesCount, 4);
+      },
+    );
+
+    test(
+      'HU 22.4 (US2): recalculates metrics on create, transition to finished, and delete',
+      () {
+        final t1 = makeTournament(
+          id: 't-1',
+          organizerId: 'org-seed-1',
+          status: TournamentStatus.inProgress,
+        );
+        final tournamentsCtrl = _FakeTournamentsController([t1]);
+        final matchesCtrl = _FakeMatchesCatalogController([
+          makeMatch(id: 'm-1', tournamentId: 't-1'),
+          makeMatch(
+            id: 'm-done',
+            tournamentId: 't-1',
+          ).copyWith(status: MatchStatus.completed),
+        ]);
+
+        final container = ProviderContainer(
+          overrides: [
+            authControllerProvider.overrideWith(
+              (_) => _FakeAuthController(
+                const AuthFlowState(status: AuthStatus.unauthenticated),
+              ),
+            ),
+            tournamentsControllerProvider.overrideWith((_) => tournamentsCtrl),
+            matchesCatalogControllerProvider.overrideWith((_) => matchesCtrl),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        // Completed match without scheduledStartTime is excluded
+        var metrics = container.read(organizerPanelMetricsProvider);
+        expect(metrics.activeTournamentsCount, 1);
+        expect(metrics.pendingScheduleMatchesCount, 1);
+
+        // Create a second tournament (unseeded)
+        final t2 = makeTournament(
+          id: 't-2',
+          organizerId: 'org-seed-1',
+          status: TournamentStatus.openRegistration,
+        );
+        tournamentsCtrl.state = tournamentsCtrl.state.copyWith(
+          tournaments: [t1, t2],
+        );
+        metrics = container.read(organizerPanelMetricsProvider);
+        expect(metrics.activeTournamentsCount, 2);
+        expect(metrics.unseededTournamentsCount, 1);
+
+        // Transition t1 to finished -> excluded from active & pending matches
+        tournamentsCtrl.state = tournamentsCtrl.state.copyWith(
+          tournaments: [
+            t1.copyWith(status: TournamentStatus.finished),
+            t2,
+          ],
+        );
+        metrics = container.read(organizerPanelMetricsProvider);
+        expect(metrics.activeTournamentsCount, 1);
+        expect(metrics.pendingScheduleMatchesCount, 0);
+        expect(metrics.unseededTournamentsCount, 1);
+
+        // Delete t2
+        tournamentsCtrl.state = tournamentsCtrl.state.copyWith(
+          tournaments: [t1.copyWith(status: TournamentStatus.finished)],
+        );
+        metrics = container.read(organizerPanelMetricsProvider);
+        expect(metrics.activeTournamentsCount, 0);
+        expect(metrics.unseededTournamentsCount, 0);
+      },
+    );
+
+    test(
+      'HU 22.4 (C1): refreshControllerForSyncedEntity refreshes tournaments, teams, and matches controllers',
+      () async {
+        final tournamentsCtrl = _SpyTournamentsController();
+        final teamsCtrl = _SpyTeamsController();
+        final matchesCtrl = _SpyMatchesCatalogController();
+
+        final refresherProvider = Provider<Future<void> Function(SyncOutboxEntityType)>(
+          (ref) => (type) => refreshControllerForSyncedEntity(ref, type),
+        );
+
+        final container = ProviderContainer(
+          overrides: [
+            tournamentsControllerProvider.overrideWith((_) => tournamentsCtrl),
+            teamsControllerProvider.overrideWith((_) => teamsCtrl),
+            matchesCatalogControllerProvider.overrideWith((_) => matchesCtrl),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        final refresh = container.read(refresherProvider);
+        await refresh(SyncOutboxEntityType.tournament);
+        await refresh(SyncOutboxEntityType.team);
+        await refresh(SyncOutboxEntityType.match);
+
+        expect(tournamentsCtrl.loadCatalogCalls, 1);
+        expect(teamsCtrl.loadTeamsCalls, 1);
+        expect(matchesCtrl.loadAllMatchesCalls, 1);
+      },
+    );
   });
+}
+
+class _SpyTournamentsController extends StateNotifier<TournamentsCatalogState>
+    implements TournamentsController {
+  _SpyTournamentsController()
+    : super(
+        const TournamentsCatalogState(
+          viewState: UiSuccessState<List<ChampionshipTournament>>([]),
+        ),
+      );
+
+  int loadCatalogCalls = 0;
+
+  @override
+  Future<void> loadCatalog() async {
+    loadCatalogCalls++;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _SpyTeamsController extends StateNotifier<TeamsCatalogState>
+    implements TeamsController {
+  _SpyTeamsController() : super(const TeamsCatalogState());
+
+  int loadTeamsCalls = 0;
+
+  @override
+  Future<void> loadTeams() async {
+    loadTeamsCalls++;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _SpyMatchesCatalogController extends StateNotifier<MatchesCatalogState>
+    implements MatchesCatalogController {
+  _SpyMatchesCatalogController() : super(const MatchesCatalogState());
+
+  int loadAllMatchesCalls = 0;
+
+  @override
+  Future<void> loadAllMatches({bool silent = false}) async {
+    loadAllMatchesCalls++;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
