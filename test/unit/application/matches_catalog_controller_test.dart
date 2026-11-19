@@ -297,5 +297,52 @@ void main() {
         expect(controller.state.scheduledMatchesForSelectedDate, isEmpty);
       },
     );
+
+    test(
+      'loadAllMatches and loadTournamentMatches preserve cross-tournament matches and generateFixture guards concurrent saves',
+      () async {
+        await repository.saveMatch(
+          ChampionshipMatch(
+            id: 'other-tourn-match',
+            tournamentId: 'tourn-other',
+            roundNumber: 1,
+            roundName: 'Jornada 1',
+            homeTeamId: 'team-x',
+            awayTeamId: 'team-y',
+            status: MatchStatus.scheduled,
+            scheduledStartTime: DateTime(2026, 7, 1, 16, 0),
+            scheduledEndTime: DateTime(2026, 7, 1, 17, 45),
+          ),
+        );
+
+        await controller.loadAllMatches();
+        expect(
+          controller.state.matches.any((m) => m.tournamentId == 'tourn-other'),
+          isTrue,
+        );
+
+        final firstCall = controller.generateFixture(
+          tournament: testTournament,
+          teams: testTeams,
+          userRole: UserRole.organizer,
+        );
+        final secondCall = await controller.generateFixture(
+          tournament: testTournament,
+          teams: testTeams,
+          userRole: UserRole.organizer,
+        );
+
+        expect(secondCall, isFalse);
+        expect(await firstCall, isTrue);
+        expect(
+          controller.state.matches.any((m) => m.tournamentId == 'tourn-other'),
+          isTrue,
+        );
+        expect(
+          controller.state.matches.any((m) => m.tournamentId == testTournament.id),
+          isTrue,
+        );
+      },
+    );
   });
 }

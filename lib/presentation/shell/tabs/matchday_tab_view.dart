@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vifutbol/application/controllers/app_shell_controller.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
-import 'package:vifutbol/application/providers/teams_providers.dart';
-import 'package:vifutbol/application/providers/tournaments_providers.dart';
+import 'package:vifutbol/domain/entities/app_shell_section.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/ui_view_state.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
@@ -30,9 +30,9 @@ class _MatchdayTabViewState extends ConsumerState<MatchdayTabView> {
   }
 
   void _initData() {
-    ref.read(tournamentsControllerProvider.notifier).loadCatalog();
-    ref.read(teamsControllerProvider.notifier).loadTeams();
-    ref.read(dailyMatchesFeedControllerProvider.notifier).refresh();
+    ref
+        .read(dailyMatchesFeedControllerProvider.notifier)
+        .refreshFromCloud(showLoading: true);
   }
 
   void _onOpenMatchReport(ChampionshipMatch match) {
@@ -49,6 +49,15 @@ class _MatchdayTabViewState extends ConsumerState<MatchdayTabView> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(appShellControllerProvider, (previous, next) {
+      if (next.activeSection == AppShellSection.matchday &&
+          previous?.activeSection != AppShellSection.matchday) {
+        ref
+            .read(dailyMatchesFeedControllerProvider.notifier)
+            .refreshFromCloud();
+      }
+    });
+
     final l10n = AppLocalizations.of(context);
     final feedState = ref.watch(dailyMatchesFeedControllerProvider);
 
@@ -72,7 +81,9 @@ class _MatchdayTabViewState extends ConsumerState<MatchdayTabView> {
               color: KickPulseColors.accentPrimary,
               backgroundColor: KickPulseColors.surfaceElevated,
               onRefresh: () async {
-                ref.read(dailyMatchesFeedControllerProvider.notifier).refresh();
+                await ref
+                    .read(dailyMatchesFeedControllerProvider.notifier)
+                    .refreshFromCloud();
               },
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),

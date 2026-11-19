@@ -3842,4 +3842,20 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get playerPersonalDataSummarySubtitle =>
       'Consulta tu carnet, ficha demográfica y táctica';
+
+  @override
+  String get fixtureRegenerateConfirmTitle => '¿Regenerar el fixture?';
+
+  @override
+  String get fixtureRegenerateConfirmMessage =>
+      'Esta competición ya tiene un fixture creado. Si continúas, se reemplazarán todos los partidos actuales y sus programaciones tanto en este dispositivo como en la nube.';
+
+  @override
+  String get fixtureRegenerateConfirmAction => 'Regenerar Fixture';
+
+  @override
+  String get matchLogisticsTbdLabel => 'Por definir';
+
+  @override
+  String get scheduleMatchOptionalHint => 'Opcional — puedes asignarlo después';
 }

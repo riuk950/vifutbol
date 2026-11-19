@@ -5,6 +5,7 @@ import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/role_permission_matrix.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
@@ -51,8 +52,16 @@ class _CompetitionDetailScreenState
     }
   }
 
-  Future<void> _handleGenerateFixture(ChampionshipTournament tournament) async {
-    final confirmed = await GenerateFixtureConfirmationDialog.show(context);
+  Future<void> _handleGenerateFixture(
+    ChampionshipTournament tournament, {
+    bool isRegeneration = false,
+  }) async {
+    if (ref.read(matchesCatalogControllerProvider).isSaving) return;
+
+    final confirmed = await GenerateFixtureConfirmationDialog.show(
+      context,
+      isRegeneration: isRegeneration,
+    );
     if (confirmed != true || !mounted) return;
 
     final userRole = ref.read(activeUserRoleProvider);
@@ -111,13 +120,21 @@ class _CompetitionDetailScreenState
     }
 
     final matchesState = ref.watch(matchesCatalogControllerProvider);
-    final hasFixture = matchesState.matches.any(
-      (m) => m.tournamentId == tournament.id,
+    final tournamentMatches = matchesState.matches
+        .where((m) => m.tournamentId == tournament.id)
+        .toList();
+    final hasStartedOrFinishedMatches = tournamentMatches.any(
+      (m) =>
+          m.status == MatchStatus.inProgress ||
+          m.status == MatchStatus.completed,
     );
 
     return CompetitionDetailFabMenu(
-      showGenerateFixture: !hasFixture,
-      onGenerateFixture: () => _handleGenerateFixture(tournament),
+      showGenerateFixture: !hasStartedOrFinishedMatches && !matchesState.isSaving,
+      onGenerateFixture: () => _handleGenerateFixture(
+        tournament,
+        isRegeneration: tournamentMatches.isNotEmpty,
+      ),
       onAddTeams: () =>
           AddTeamsToCompetitionModal.show(context, tournament: tournament),
     );

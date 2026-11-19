@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
+import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
@@ -213,24 +216,56 @@ class DailyMatchesFeedController extends StateNotifier<DailyMatchesFeedState> {
   }
 
   final Ref ref;
+  Future<void>? _inFlightRefresh;
 
   void _init() {
-    _computeFeed();
+    ref.listen(matchesCatalogControllerProvider, (_, _) => refresh());
+    ref.listen(tournamentsControllerProvider, (_, _) => refresh());
+    refresh();
   }
 
   void selectQuickTab(MatchesDailyTab tab) {
     state = state.copyWith(dateState: state.dateState.withTab(tab));
     _computeFeed();
+    unawaited(refreshFromCloud());
   }
 
   void selectCustomDate(DateTime date) {
     state = state.copyWith(dateState: state.dateState.withCustomDate(date));
     _computeFeed();
+    unawaited(refreshFromCloud());
   }
 
   void resetToToday() {
     state = state.copyWith(dateState: DailyMatchesDateState.today());
     _computeFeed();
+  }
+
+  Future<void> refreshFromCloud({bool showLoading = false}) {
+    if (_inFlightRefresh != null) return _inFlightRefresh!;
+
+    _computeFeed();
+    if (showLoading && state.tournamentGroups.isEmpty) {
+      state = state.copyWith(isLoading: true);
+    }
+
+    final future = () async {
+      try {
+        await Future.wait([
+          ref.read(tournamentsControllerProvider.notifier).loadCatalog(),
+          ref.read(teamsControllerProvider.notifier).loadTeams(),
+          ref
+              .read(matchesCatalogControllerProvider.notifier)
+              .loadAllMatches(silent: true),
+        ]);
+      } finally {
+        _computeFeed();
+        _inFlightRefresh = null;
+      }
+    }();
+
+    _inFlightRefresh = future;
+    return future;
   }
 
   void _computeFeed() {

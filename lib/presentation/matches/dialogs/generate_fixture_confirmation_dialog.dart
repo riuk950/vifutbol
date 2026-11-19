@@ -5,14 +5,23 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dar
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 
 class GenerateFixtureConfirmationDialog extends StatelessWidget {
-  const GenerateFixtureConfirmationDialog({super.key, required this.onConfirm});
+  const GenerateFixtureConfirmationDialog({
+    super.key,
+    required this.onConfirm,
+    this.isRegeneration = false,
+  });
 
   final VoidCallback onConfirm;
+  final bool isRegeneration;
 
-  static Future<bool?> show(BuildContext context) {
+  static Future<bool?> show(
+    BuildContext context, {
+    bool isRegeneration = false,
+  }) {
     return showDialog<bool>(
       context: context,
       builder: (context) => GenerateFixtureConfirmationDialog(
+        isRegeneration: isRegeneration,
         onConfirm: () => Navigator.of(context).pop(true),
       ),
     );
@@ -29,11 +38,15 @@ class GenerateFixtureConfirmationDialog extends StatelessWidget {
         side: const BorderSide(color: KickPulseColors.borderSubtle),
       ),
       title: Text(
-        l10n.matchdayGenerateFixtureDialogTitle,
+        isRegeneration
+            ? l10n.fixtureRegenerateConfirmTitle
+            : l10n.matchdayGenerateFixtureDialogTitle,
         style: KickPulseTypography.cardTitle,
       ),
       content: Text(
-        l10n.matchdayGenerateFixtureDialogMessage,
+        isRegeneration
+            ? l10n.fixtureRegenerateConfirmMessage
+            : l10n.matchdayGenerateFixtureDialogMessage,
         style: KickPulseTypography.bodyPrimary.copyWith(
           color: KickPulseColors.textSecondary,
         ),
@@ -62,7 +75,9 @@ class GenerateFixtureConfirmationDialog extends StatelessWidget {
             ),
           ),
           child: Text(
-            l10n.matchdayGenerateFixtureConfirmButton,
+            isRegeneration
+                ? l10n.fixtureRegenerateConfirmAction
+                : l10n.matchdayGenerateFixtureConfirmButton,
             style: KickPulseTypography.captionMeta.copyWith(
               color: KickPulseColors.surfaceBase,
               fontWeight: FontWeight.bold,

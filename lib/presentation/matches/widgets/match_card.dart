@@ -208,53 +208,52 @@ class MatchCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
 
-                    // Pitch
-                    if (match.pitchName != null) ...[
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.stadium_outlined,
-                            size: 14,
-                            color: KickPulseColors.textSecondary,
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              match.pitchName!,
-                              style: KickPulseTypography.captionMeta.copyWith(
-                                color: KickPulseColors.textSecondary,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                    // Pitch (with "Por definir" fallback when optional logistics are unassigned)
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.stadium_outlined,
+                          size: 14,
+                          color: KickPulseColors.textSecondary,
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            (match.pitchName != null &&
+                                    match.pitchName!.trim().isNotEmpty)
+                                ? match.pitchName!
+                                : l10n.matchLogisticsTbdLabel,
+                            style: KickPulseTypography.captionMeta.copyWith(
+                              color: KickPulseColors.textSecondary,
                             ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                    ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
 
-                    // Referee
-                    if (match.refereeName != null) ...[
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.sports,
-                            size: 14,
-                            color: KickPulseColors.accentElectric,
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              'Árbitro: ${match.refereeName!}',
-                              style: KickPulseTypography.captionMeta.copyWith(
-                                color: KickPulseColors.accentElectric,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                    // Referee (with "Por definir" fallback when unassigned)
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.sports,
+                          size: 14,
+                          color: KickPulseColors.accentElectric,
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'Árbitro: ${(match.refereeName != null && match.refereeName!.trim().isNotEmpty) ? match.refereeName! : l10n.matchLogisticsTbdLabel}',
+                            style: KickPulseTypography.captionMeta.copyWith(
+                              color: KickPulseColors.accentElectric,
+                              fontWeight: FontWeight.w500,
                             ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

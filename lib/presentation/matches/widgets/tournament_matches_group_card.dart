@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/daily_matches_group.dart';
+import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
@@ -118,12 +119,59 @@ class TournamentMatchesGroupCard extends ConsumerWidget {
                   const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
               itemBuilder: (context, index) {
                 final match = group.matches[index];
+                final l10n = AppLocalizations.of(context);
+                final pitchLabel =
+                    (match.pitchName != null &&
+                        match.pitchName!.trim().isNotEmpty)
+                    ? match.pitchName!
+                    : l10n.matchLogisticsTbdLabel;
+                final refereeLabel =
+                    (match.refereeName != null &&
+                        match.refereeName!.trim().isNotEmpty)
+                    ? match.refereeName!
+                    : l10n.matchLogisticsTbdLabel;
                 return MatchCenterCard(
                   key: Key('match_center_card_${match.id}'),
                   match: match,
                   homeTeam: teamsMap[match.homeTeamId],
                   awayTeam: teamsMap[match.awayTeamId],
                   onTap: onMatchTap != null ? () => onMatchTap!(match) : null,
+                  footer: Row(
+                    children: [
+                      const Icon(
+                        Icons.stadium_outlined,
+                        size: 13,
+                        color: KickPulseColors.textSecondary,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          pitchLabel,
+                          style: KickPulseTypography.captionMeta.copyWith(
+                            color: KickPulseColors.textSecondary,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
+                      const Icon(
+                        Icons.sports,
+                        size: 13,
+                        color: KickPulseColors.textSecondary,
+                      ),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          refereeLabel,
+                          style: KickPulseTypography.captionMeta.copyWith(
+                            color: KickPulseColors.textSecondary,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.end,
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),

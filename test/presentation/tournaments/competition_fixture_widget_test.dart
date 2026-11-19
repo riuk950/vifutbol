@@ -37,6 +37,7 @@ import 'package:vifutbol/infrastructure/repositories/local_tournament_matches_re
 import 'package:vifutbol/infrastructure/venues/local_venues_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_theme.dart';
+import 'package:vifutbol/presentation/matches/dialogs/generate_fixture_confirmation_dialog.dart';
 import 'package:vifutbol/presentation/matches/widgets/schedule_match_dialog.dart';
 import 'package:vifutbol/presentation/tournaments/widgets/competition_fixture_tab_view.dart';
 
@@ -134,27 +135,33 @@ class FakeMatchesCatalogController extends StateNotifier<MatchesCatalogState>
     required String matchId,
     required ChampionshipTournament tournament,
     required DateTime scheduledStartTime,
-    required SportsVenue venue,
-    required VenuePitch pitch,
-    required MatchReferee referee,
+    SportsVenue? venue,
+    VenuePitch? pitch,
+    MatchReferee? referee,
     required UserRole userRole,
   }) async {
     final updated = state.matches.map((m) {
       if (m.id == matchId) {
         final durationMinutes = (tournament.rules.halfDurationMinutes * 2) + 15;
+        final String? pitchName;
+        if (venue != null && pitch != null) {
+          pitchName = pitch.name.contains(venue.name)
+              ? pitch.name
+              : '${venue.name} - ${pitch.name}';
+        } else {
+          pitchName = venue?.name;
+        }
         return m.copyWith(
           status: MatchStatus.scheduled,
           scheduledStartTime: scheduledStartTime,
           scheduledEndTime: scheduledStartTime.add(
             Duration(minutes: durationMinutes),
           ),
-          venueId: venue.id,
-          pitchId: pitch.id,
-          pitchName: pitch.name.contains(venue.name)
-              ? pitch.name
-              : '${venue.name} - ${pitch.name}',
-          refereeId: referee.id,
-          refereeName: referee.fullName,
+          venueId: venue?.id,
+          pitchId: pitch?.id,
+          pitchName: pitchName,
+          refereeId: referee?.id,
+          refereeName: referee?.fullName,
         );
       }
       return m;
@@ -562,6 +569,43 @@ void main() {
 
         expect(find.byType(ScheduleMatchDialog), findsOneWidget);
         expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'GenerateFixtureConfirmationDialog renders Spanish regeneration warning and confirms once',
+      (tester) async {
+        int confirmCalls = 0;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [Locale('es')],
+            locale: const Locale('es'),
+            theme: KickPulseTheme.darkTheme,
+            home: Scaffold(
+              body: GenerateFixtureConfirmationDialog(
+                isRegeneration: true,
+                onConfirm: () => confirmCalls++,
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('¿Regenerar el fixture?'), findsOneWidget);
+        expect(find.text('Regenerar Fixture'), findsOneWidget);
+
+        await tester.tap(
+          find.byKey(const Key('confirm_generate_fixture_button')),
+        );
+        await tester.pumpAndSettle();
+        expect(confirmCalls, 1);
       },
     );
   });

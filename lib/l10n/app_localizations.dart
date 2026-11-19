@@ -6621,6 +6621,36 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Consulta tu carnet, ficha demográfica y táctica'**
   String get playerPersonalDataSummarySubtitle;
+
+  /// Título del diálogo de confirmación cuando ya existe un fixture generado
+  ///
+  /// In es, this message translates to:
+  /// **'¿Regenerar el fixture?'**
+  String get fixtureRegenerateConfirmTitle;
+
+  /// Mensaje de confirmación al regenerar el fixture de una competición
+  ///
+  /// In es, this message translates to:
+  /// **'Esta competición ya tiene un fixture creado. Si continúas, se reemplazarán todos los partidos actuales y sus programaciones tanto en este dispositivo como en la nube.'**
+  String get fixtureRegenerateConfirmMessage;
+
+  /// Botón de confirmación para reemplazar el fixture actual
+  ///
+  /// In es, this message translates to:
+  /// **'Regenerar Fixture'**
+  String get fixtureRegenerateConfirmAction;
+
+  /// Etiqueta mostrada cuando la sede, cancha o árbitro aún no han sido asignados
+  ///
+  /// In es, this message translates to:
+  /// **'Por definir'**
+  String get matchLogisticsTbdLabel;
+
+  /// Texto de ayuda para campos opcionales al programar un partido
+  ///
+  /// In es, this message translates to:
+  /// **'Opcional — puedes asignarlo después'**
+  String get scheduleMatchOptionalHint;
 }
 
 class _AppLocalizationsDelegate

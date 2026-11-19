@@ -23,6 +23,42 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
   final FixtureSchedulingUseCase fixtureSchedulingUseCase;
   StreamSubscription<List<ChampionshipMatch>>? _matchesSubscription;
 
+  List<ChampionshipMatch> _mergeTournamentMatches(
+    String tournamentId,
+    List<ChampionshipMatch> updatedMatches,
+  ) {
+    final otherTournamentMatches = state.matches
+        .where((m) => m.tournamentId != tournamentId)
+        .toList();
+    return [...otherTournamentMatches, ...updatedMatches];
+  }
+
+  Future<void> loadAllMatches({bool silent = false}) async {
+    if (!silent) {
+      state = state.copyWith(isLoading: true, errorMessage: () => null);
+    }
+    try {
+      final matches = await matchesRepository.loadAllMatches();
+      final referees = state.referees.isEmpty
+          ? await matchesRepository.loadOfficialReferees()
+          : state.referees;
+      final selectedDate =
+          state.selectedDate ?? _resolveInitialDate(matches);
+
+      state = state.copyWith(
+        matches: matches,
+        referees: referees,
+        selectedDate: selectedDate,
+        isLoading: false,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: () => e is AppFailure ? e.message : e.toString(),
+      );
+    }
+  }
+
   Future<void> loadTournamentMatches(String tournamentId) async {
     state = state.copyWith(isLoading: true, errorMessage: () => null);
     await _matchesSubscription?.cancel();
@@ -41,11 +77,12 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
         }
       }
 
+      final mergedMatches = _mergeTournamentMatches(tournamentId, matches);
       DateTime selectedDate =
           state.selectedDate ?? _resolveInitialDate(matches);
 
       state = state.copyWith(
-        matches: matches,
+        matches: mergedMatches,
         referees: referees,
         selectedRound: selectedRound,
         selectedDate: selectedDate,
@@ -68,7 +105,7 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
               final currentDate =
                   state.selectedDate ?? _resolveInitialDate(updatedMatches);
               state = state.copyWith(
-                matches: updatedMatches,
+                matches: _mergeTournamentMatches(tournamentId, updatedMatches),
                 selectedRound: currentRound,
                 selectedDate: currentDate,
                 isLoading: false,
@@ -148,6 +185,7 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
     required List<TournamentTeam> teams,
     required UserRole userRole,
   }) async {
+    if (state.isSaving) return false;
     state = state.copyWith(isSaving: true, errorMessage: () => null);
     try {
       await fixtureSchedulingUseCase.generateRoundRobinFixture(
@@ -191,11 +229,12 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
     required String matchId,
     required ChampionshipTournament tournament,
     required DateTime scheduledStartTime,
-    required SportsVenue venue,
-    required VenuePitch pitch,
-    required MatchReferee referee,
+    SportsVenue? venue,
+    VenuePitch? pitch,
+    MatchReferee? referee,
     required UserRole userRole,
   }) async {
+    if (state.isSaving) return false;
     state = state.copyWith(isSaving: true, errorMessage: () => null);
     try {
       await fixtureSchedulingUseCase.scheduleMatch(

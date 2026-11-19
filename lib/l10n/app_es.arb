@@ -4888,5 +4888,25 @@
   "playerPersonalDataSummarySubtitle": "Consulta tu carnet, ficha demográfica y táctica",
   "@playerPersonalDataSummarySubtitle": {
     "description": "Subtítulo del botón de datos personales en perfil"
+  },
+  "fixtureRegenerateConfirmTitle": "¿Regenerar el fixture?",
+  "@fixtureRegenerateConfirmTitle": {
+    "description": "Título del diálogo de confirmación cuando ya existe un fixture generado"
+  },
+  "fixtureRegenerateConfirmMessage": "Esta competición ya tiene un fixture creado. Si continúas, se reemplazarán todos los partidos actuales y sus programaciones tanto en este dispositivo como en la nube.",
+  "@fixtureRegenerateConfirmMessage": {
+    "description": "Mensaje de confirmación al regenerar el fixture de una competición"
+  },
+  "fixtureRegenerateConfirmAction": "Regenerar Fixture",
+  "@fixtureRegenerateConfirmAction": {
+    "description": "Botón de confirmación para reemplazar el fixture actual"
+  },
+  "matchLogisticsTbdLabel": "Por definir",
+  "@matchLogisticsTbdLabel": {
+    "description": "Etiqueta mostrada cuando la sede, cancha o árbitro aún no han sido asignados"
+  },
+  "scheduleMatchOptionalHint": "Opcional — puedes asignarlo después",
+  "@scheduleMatchOptionalHint": {
+    "description": "Texto de ayuda para campos opcionales al programar un partido"
   }
 }

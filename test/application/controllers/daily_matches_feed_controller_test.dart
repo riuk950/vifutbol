@@ -1,10 +1,21 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vifutbol/application/controllers/daily_matches_feed_controller.dart';
+import 'package:vifutbol/application/controllers/matches_catalog_controller.dart';
+import 'package:vifutbol/application/controllers/teams_controller.dart';
+import 'package:vifutbol/application/controllers/tournaments_controller.dart';
+import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
+import 'package:vifutbol/application/providers/teams_providers.dart';
+import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/daily_matches_group.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
+import 'package:vifutbol/domain/entities/matches_catalog_state.dart';
+import 'package:vifutbol/domain/entities/teams_catalog_state.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
+import 'package:vifutbol/domain/entities/tournaments_catalog_state.dart';
+import 'package:vifutbol/domain/entities/ui_view_state.dart';
 
 void main() {
   group('DailyMatchesDateState', () {
@@ -183,5 +194,138 @@ void main() {
       expect(groups.first.hasLiveMatches, isTrue);
       expect(groups[1].tournament.id, equals('tour-1'));
     });
+
+    test('excludes unscheduled matches (scheduledStartTime == null)', () {
+      final matches = [
+        ChampionshipMatch(
+          id: 'm-unscheduled',
+          tournamentId: 'tour-1',
+          roundNumber: 1,
+          roundName: 'Jornada 1',
+          homeTeamId: 'h1',
+          awayTeamId: 'a1',
+          scheduledStartTime: null,
+          status: MatchStatus.pendingSchedule,
+        ),
+      ];
+
+      final groups = groupMatchesByActiveTournaments(
+        matches: matches,
+        tournaments: [tActive1],
+        targetDate: targetDate,
+      );
+
+      expect(groups, isEmpty);
+    });
   });
+
+  group('DailyMatchesFeedController cloud hydration', () {
+    test(
+      'refreshFromCloud loads tournaments, teams, and matches and reactively updates feed',
+      () async {
+        final now = DateTime.now();
+        final today = DateTime(now.year, now.month, now.day);
+        final tournament = ChampionshipTournament(
+          id: 't-cloud-1',
+          name: 'Liga Cloud',
+          category: 'Libre',
+          startDate: today.subtract(const Duration(days: 5)),
+          endDate: today.add(const Duration(days: 30)),
+          format: TournamentFormat.league,
+          status: TournamentStatus.openRegistration,
+          updatedAt: today,
+        );
+        final scheduledToday = ChampionshipMatch(
+          id: 'm-today',
+          tournamentId: tournament.id,
+          roundNumber: 1,
+          roundName: 'Jornada 1',
+          homeTeamId: 'team-1',
+          awayTeamId: 'team-2',
+          scheduledStartTime: today.add(const Duration(hours: 15)),
+          scheduledEndTime: today.add(const Duration(hours: 16, minutes: 45)),
+          status: MatchStatus.scheduled,
+        );
+
+        final fakeTournaments = _StubTournamentsController([tournament]);
+        final fakeTeams = _StubTeamsController();
+        final fakeMatches = _StubMatchesCatalogController([scheduledToday]);
+
+        final container = ProviderContainer(
+          overrides: [
+            tournamentsControllerProvider.overrideWith((_) => fakeTournaments),
+            teamsControllerProvider.overrideWith((_) => fakeTeams),
+            matchesCatalogControllerProvider.overrideWith((_) => fakeMatches),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await container
+            .read(dailyMatchesFeedControllerProvider.notifier)
+            .refreshFromCloud();
+
+        expect(fakeTournaments.loadCalls, 1);
+        expect(fakeTeams.loadCalls, 1);
+        expect(fakeMatches.loadAllCalls, 1);
+
+        final feedState = container.read(dailyMatchesFeedControllerProvider);
+        expect(feedState.tournamentGroups.length, 1);
+        expect(feedState.tournamentGroups.first.matches.first.id, 'm-today');
+      },
+    );
+  });
+}
+
+class _StubTournamentsController extends StateNotifier<TournamentsCatalogState>
+    implements TournamentsController {
+  _StubTournamentsController(this._items)
+    : super(TournamentsCatalogState(viewState: UiSuccessState(const [])));
+
+  final List<ChampionshipTournament> _items;
+  int loadCalls = 0;
+
+  @override
+  Future<void> loadCatalog() async {
+    loadCalls++;
+    state = state.copyWith(
+      tournaments: _items,
+      viewState: UiSuccessState(_items),
+    );
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _StubTeamsController extends StateNotifier<TeamsCatalogState>
+    implements TeamsController {
+  _StubTeamsController() : super(const TeamsCatalogState());
+
+  int loadCalls = 0;
+
+  @override
+  Future<void> loadTeams() async {
+    loadCalls++;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _StubMatchesCatalogController extends StateNotifier<MatchesCatalogState>
+    implements MatchesCatalogController {
+  _StubMatchesCatalogController(this._items)
+    : super(const MatchesCatalogState());
+
+  final List<ChampionshipMatch> _items;
+  int loadAllCalls = 0;
+
+  @override
+  Future<void> loadAllMatches({bool silent = false}) async {
+    loadAllCalls++;
+    state = state.copyWith(matches: _items);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

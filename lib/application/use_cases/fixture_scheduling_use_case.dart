@@ -102,9 +102,9 @@ class FixtureSchedulingUseCase {
     required String matchId,
     required ChampionshipTournament tournament,
     required DateTime scheduledStartTime,
-    required SportsVenue venue,
-    required VenuePitch pitch,
-    required MatchReferee referee,
+    SportsVenue? venue,
+    VenuePitch? pitch,
+    MatchReferee? referee,
     required UserRole userRole,
   }) async {
     // 1. Validate authorization
@@ -167,8 +167,8 @@ class FixtureSchedulingUseCase {
       tournamentId: tournament.id,
       startTime: scheduledStartTime,
       endTime: scheduledEndTime,
-      pitchId: pitch.id,
-      refereeId: referee.id,
+      pitchId: pitch?.id,
+      refereeId: referee?.id,
       homeTeamId: currentMatch.homeTeamId,
       awayTeamId: currentMatch.awayTeamId,
       existingMatches: allMatches,
@@ -192,20 +192,39 @@ class FixtureSchedulingUseCase {
       );
     }
 
-    final formattedPitchName = pitch.name.contains(venue.name)
-        ? pitch.name
-        : '${venue.name} - ${pitch.name}';
+    final String? formattedPitchName;
+    if (venue != null && pitch != null) {
+      formattedPitchName = pitch.name.contains(venue.name)
+          ? pitch.name
+          : '${venue.name} - ${pitch.name}';
+    } else if (venue != null) {
+      formattedPitchName = venue.name;
+    } else {
+      formattedPitchName = null;
+    }
 
-    // 5. Update match
-    final updatedMatch = currentMatch.copyWith(
-      status: MatchStatus.scheduled,
+    // 5. Update match (preserving explicit nullability for optional logistics)
+    final updatedMatch = ChampionshipMatch(
+      id: currentMatch.id,
+      tournamentId: currentMatch.tournamentId,
+      roundNumber: currentMatch.roundNumber,
+      roundName: currentMatch.roundName,
+      homeTeamId: currentMatch.homeTeamId,
+      awayTeamId: currentMatch.awayTeamId,
       scheduledStartTime: scheduledStartTime,
       scheduledEndTime: scheduledEndTime,
-      venueId: venue.id,
-      pitchId: pitch.id,
+      venueId: venue?.id,
+      pitchId: pitch?.id,
       pitchName: formattedPitchName,
-      refereeId: referee.id,
-      refereeName: referee.fullName,
+      refereeId: referee?.id,
+      refereeName: referee?.fullName,
+      status: MatchStatus.scheduled,
+      homeScore: currentMatch.homeScore,
+      awayScore: currentMatch.awayScore,
+      homePenaltyScore: currentMatch.homePenaltyScore,
+      awayPenaltyScore: currentMatch.awayPenaltyScore,
+      groupName: currentMatch.groupName,
+      updatedAt: clock.now(),
     );
 
     return matchesRepository.saveMatch(updatedMatch);
@@ -217,8 +236,8 @@ class FixtureSchedulingUseCase {
     required String tournamentId,
     required DateTime startTime,
     required DateTime endTime,
-    required String pitchId,
-    required String refereeId,
+    String? pitchId,
+    String? refereeId,
     required String homeTeamId,
     required String awayTeamId,
     required List<ChampionshipMatch> existingMatches,
@@ -228,8 +247,8 @@ class FixtureSchedulingUseCase {
       if (!match.isScheduled) continue;
       if (!match.overlapsWith(startTime, endTime)) continue;
 
-      // Pitch collision
-      if (match.pitchId == pitchId) {
+      // Pitch collision (only when pitchId is provided)
+      if (pitchId != null && match.pitchId == pitchId) {
         return ScheduleCollisionResult.collision(
           collisionType: ScheduleCollisionType.pitchConflict,
           conflictingMatchId: match.id,
@@ -239,8 +258,8 @@ class FixtureSchedulingUseCase {
         );
       }
 
-      // Referee collision
-      if (match.refereeId == refereeId) {
+      // Referee collision (only when refereeId is provided)
+      if (refereeId != null && match.refereeId == refereeId) {
         return ScheduleCollisionResult.collision(
           collisionType: ScheduleCollisionType.refereeConflict,
           conflictingMatchId: match.id,

@@ -96,6 +96,9 @@ class _RecordingMatchesCatalogController
   _RecordingMatchesCatalogController() : super(const MatchesCatalogState());
 
   DateTime? lastScheduledStartTime;
+  SportsVenue? lastVenue;
+  VenuePitch? lastPitch;
+  MatchReferee? lastReferee;
   int scheduleCallCount = 0;
 
   @override
@@ -103,13 +106,16 @@ class _RecordingMatchesCatalogController
     required String matchId,
     required ChampionshipTournament tournament,
     required DateTime scheduledStartTime,
-    required SportsVenue venue,
-    required VenuePitch pitch,
-    required MatchReferee referee,
+    SportsVenue? venue,
+    VenuePitch? pitch,
+    MatchReferee? referee,
     required UserRole userRole,
   }) async {
     scheduleCallCount++;
     lastScheduledStartTime = scheduledStartTime;
+    lastVenue = venue;
+    lastPitch = pitch;
+    lastReferee = referee;
     return true;
   }
 
@@ -264,6 +270,87 @@ void main() {
             controller.lastScheduledStartTime,
             DateTime(2026, 11, 11, 10, 30),
           );
+        });
+      },
+    );
+
+    testWidgets(
+      'allows scheduling with date and time only when optional venue, pitch, and referee are Por definir',
+      (tester) async {
+        final fakeNow = DateTime(2026, 11, 10, 9, 0);
+        await withClock(Clock.fixed(fakeNow), () async {
+          final emptyStorage = _FakeLocalStorageRepository();
+          await emptyStorage.writeString(LocalVenuesRepository.storageKey, '[]');
+          await emptyStorage.writeString(
+            LocalTournamentMatchesRepository.refereesStorageKey,
+            '[]',
+          );
+
+          final tournament = ChampionshipTournament(
+            id: 't-opt',
+            name: 'Liga Opcional',
+            category: 'Libre',
+            status: TournamentStatus.openRegistration,
+            format: TournamentFormat.league,
+            startDate: DateTime(2026, 11, 1),
+            endDate: DateTime(2026, 12, 20),
+            updatedAt: DateTime(2026, 11, 1),
+          );
+          final match = ChampionshipMatch(
+            id: 'm-opt',
+            tournamentId: tournament.id,
+            roundNumber: 1,
+            roundName: 'Jornada 1',
+            homeTeamId: 't1',
+            awayTeamId: 't2',
+          );
+          final controller = _RecordingMatchesCatalogController();
+
+          await tester.pumpWidget(
+            ProviderScope(
+              overrides: [
+                environmentConfigProvider.overrideWithValue(
+                  EnvironmentConfig.development(),
+                ),
+                localStorageRepositoryProvider.overrideWithValue(emptyStorage),
+                connectivityRepositoryProvider.overrideWithValue(
+                  _FakeConnectivityRepository(),
+                ),
+                activeUserRoleProvider.overrideWith((ref) => UserRole.organizer),
+                matchesCatalogControllerProvider.overrideWith((ref) => controller),
+              ],
+              child: MaterialApp(
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: const [Locale('es')],
+                locale: const Locale('es'),
+                theme: KickPulseTheme.darkTheme,
+                home: Scaffold(
+                  body: ScheduleMatchDialog(
+                    match: match,
+                    tournament: tournament,
+                  ),
+                ),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(find.text('Por definir'), findsNWidgets(2));
+
+          await tester.tap(
+            find.byKey(const Key('confirm_schedule_match_button')),
+          );
+          await tester.pumpAndSettle();
+
+          expect(controller.scheduleCallCount, 1);
+          expect(controller.lastVenue, isNull);
+          expect(controller.lastPitch, isNull);
+          expect(controller.lastReferee, isNull);
         });
       },
     );

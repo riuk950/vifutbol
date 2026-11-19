@@ -51,6 +51,7 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
   MatchReferee? _selectedReferee;
   String? _localError;
   bool _isLoadingVenues = true;
+  bool _isSubmitting = false;
   List<SportsVenue> _venues = [];
   List<MatchReferee> _referees = [];
 
@@ -211,15 +212,8 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
   }
 
   Future<void> _submit() async {
+    if (_isSubmitting) return;
     final l10n = AppLocalizations.of(context);
-    if (_selectedVenue == null || _selectedPitch == null) {
-      setState(() => _localError = l10n.scheduleMatchSelectPitchPrompt);
-      return;
-    }
-    if (_selectedReferee == null) {
-      setState(() => _localError = l10n.scheduleMatchSelectRefereePrompt);
-      return;
-    }
 
     final scheduledStartTime = DateTime(
       _selectedDate.year,
@@ -242,6 +236,11 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
       return;
     }
 
+    setState(() {
+      _isSubmitting = true;
+      _localError = null;
+    });
+
     final userRole = ref.read(activeUserRoleProvider);
 
     final controller = ref.read(matchesCatalogControllerProvider.notifier);
@@ -249,9 +248,9 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
       matchId: widget.match.id,
       tournament: widget.tournament,
       scheduledStartTime: scheduledStartTime,
-      venue: _selectedVenue!,
-      pitch: _selectedPitch!,
-      referee: _selectedReferee!,
+      venue: _selectedVenue,
+      pitch: _selectedPitch,
+      referee: _selectedReferee,
       userRole: userRole,
     );
 
@@ -261,6 +260,7 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
     } else if (mounted) {
       final catalogState = ref.read(matchesCatalogControllerProvider);
       setState(() {
+        _isSubmitting = false;
         _localError = catalogState.errorMessage;
       });
     }
@@ -427,9 +427,9 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
               ),
               const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
 
-              // Venue Selector
+              // Venue Selector (optional)
               Text(
-                l10n.scheduleMatchVenueLabel,
+                '${l10n.scheduleMatchVenueLabel} (${l10n.scheduleMatchOptionalHint})',
                 style: KickPulseTypography.captionMeta.copyWith(
                   color: KickPulseColors.textSecondary,
                 ),
@@ -439,11 +439,11 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
                 const LinearProgressIndicator()
               else if (_venues.isEmpty)
                 Text(
-                  'No hay sedes disponibles',
+                  l10n.matchLogisticsTbdLabel,
                   style: KickPulseTypography.captionMeta,
                 )
               else
-                DropdownButtonFormField<SportsVenue>(
+                DropdownButtonFormField<SportsVenue?>(
                   key: const Key('select_venue_dropdown'),
                   isExpanded: true,
                   initialValue: _selectedVenue,
@@ -464,25 +464,34 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
                       ),
                     ),
                   ),
-                  items: _venues.map((v) {
-                    return DropdownMenuItem<SportsVenue>(
-                      value: v,
+                  items: [
+                    DropdownMenuItem<SportsVenue?>(
+                      value: null,
                       child: Text(
-                        v.name,
-                        style: KickPulseTypography.bodyPrimary,
-                        overflow: TextOverflow.ellipsis,
+                        l10n.matchLogisticsTbdLabel,
+                        style: KickPulseTypography.bodyPrimary.copyWith(
+                          color: KickPulseColors.textSecondary,
+                        ),
                       ),
-                    );
-                  }).toList(),
+                    ),
+                    ..._venues.map((v) {
+                      return DropdownMenuItem<SportsVenue?>(
+                        value: v,
+                        child: Text(
+                          v.name,
+                          style: KickPulseTypography.bodyPrimary,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      );
+                    }),
+                  ],
                   onChanged: (val) {
-                    if (val != null) {
-                      setState(() {
-                        _selectedVenue = val;
-                        _selectedPitch = val.pitches.isNotEmpty
-                            ? val.pitches.first
-                            : null;
-                      });
-                    }
+                    setState(() {
+                      _selectedVenue = val;
+                      _selectedPitch = (val != null && val.pitches.isNotEmpty)
+                          ? val.pitches.first
+                          : null;
+                    });
                   },
                 ),
               const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
@@ -497,7 +506,7 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                DropdownButtonFormField<VenuePitch>(
+                DropdownButtonFormField<VenuePitch?>(
                   key: const Key('select_pitch_dropdown'),
                   isExpanded: true,
                   initialValue: _selectedPitch,
@@ -518,28 +527,37 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
                       ),
                     ),
                   ),
-                  items: _selectedVenue!.pitches.map((p) {
-                    return DropdownMenuItem<VenuePitch>(
-                      value: p,
+                  items: [
+                    DropdownMenuItem<VenuePitch?>(
+                      value: null,
                       child: Text(
-                        p.name,
-                        style: KickPulseTypography.bodyPrimary,
-                        overflow: TextOverflow.ellipsis,
+                        l10n.matchLogisticsTbdLabel,
+                        style: KickPulseTypography.bodyPrimary.copyWith(
+                          color: KickPulseColors.textSecondary,
+                        ),
                       ),
-                    );
-                  }).toList(),
+                    ),
+                    ..._selectedVenue!.pitches.map((p) {
+                      return DropdownMenuItem<VenuePitch?>(
+                        value: p,
+                        child: Text(
+                          p.name,
+                          style: KickPulseTypography.bodyPrimary,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      );
+                    }),
+                  ],
                   onChanged: (val) {
-                    if (val != null) {
-                      setState(() => _selectedPitch = val);
-                    }
+                    setState(() => _selectedPitch = val);
                   },
                 ),
                 const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
               ],
 
-              // Referee Selector
+              // Referee Selector (optional)
               Text(
-                l10n.scheduleMatchRefereeLabel,
+                '${l10n.scheduleMatchRefereeLabel} (${l10n.scheduleMatchOptionalHint})',
                 style: KickPulseTypography.captionMeta.copyWith(
                   color: KickPulseColors.textSecondary,
                 ),
@@ -547,11 +565,11 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
               const SizedBox(height: 4),
               if (referees.isEmpty)
                 Text(
-                  'No hay árbitros registrados',
+                  l10n.matchLogisticsTbdLabel,
                   style: KickPulseTypography.captionMeta,
                 )
               else
-                DropdownButtonFormField<MatchReferee>(
+                DropdownButtonFormField<MatchReferee?>(
                   key: const Key('select_referee_dropdown'),
                   isExpanded: true,
                   initialValue: _selectedReferee,
@@ -572,20 +590,29 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
                       ),
                     ),
                   ),
-                  items: referees.map((r) {
-                    return DropdownMenuItem<MatchReferee>(
-                      value: r,
+                  items: [
+                    DropdownMenuItem<MatchReferee?>(
+                      value: null,
                       child: Text(
-                        '${r.fullName} (${r.certificationLevel})',
-                        style: KickPulseTypography.bodyPrimary,
-                        overflow: TextOverflow.ellipsis,
+                        l10n.matchLogisticsTbdLabel,
+                        style: KickPulseTypography.bodyPrimary.copyWith(
+                          color: KickPulseColors.textSecondary,
+                        ),
                       ),
-                    );
-                  }).toList(),
+                    ),
+                    ...referees.map((r) {
+                      return DropdownMenuItem<MatchReferee?>(
+                        value: r,
+                        child: Text(
+                          '${r.fullName} (${r.certificationLevel})',
+                          style: KickPulseTypography.bodyPrimary,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      );
+                    }),
+                  ],
                   onChanged: (val) {
-                    if (val != null) {
-                      setState(() => _selectedReferee = val);
-                    }
+                    setState(() => _selectedReferee = val);
                   },
                 ),
             ],
@@ -595,7 +622,9 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
       actions: [
         TextButton(
           key: const Key('cancel_schedule_match_button'),
-          onPressed: () => Navigator.of(context).pop(false),
+          onPressed: _isSubmitting
+              ? null
+              : () => Navigator.of(context).pop(false),
           child: Text(
             l10n.actionCancel,
             style: KickPulseTypography.captionMeta.copyWith(
@@ -605,7 +634,7 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
         ),
         ElevatedButton(
           key: const Key('confirm_schedule_match_button'),
-          onPressed: catalogState.isSaving ? null : _submit,
+          onPressed: (_isSubmitting || catalogState.isSaving) ? null : _submit,
           style: ElevatedButton.styleFrom(
             backgroundColor: KickPulseColors.accentPrimary,
             foregroundColor: KickPulseColors.surfaceBase,
@@ -615,7 +644,7 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
               ),
             ),
           ),
-          child: catalogState.isSaving
+          child: (_isSubmitting || catalogState.isSaving)
               ? const SizedBox(
                   width: 16,
                   height: 16,

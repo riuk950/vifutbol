@@ -60,9 +60,16 @@ class _FakeDailyMatchesFeedController extends DailyMatchesFeedController {
     state = initial;
   }
 
+  int refreshFromCloudCalls = 0;
+
   @override
   void refresh() {
     // Preserve fake state during tests
+  }
+
+  @override
+  Future<void> refreshFromCloud({bool showLoading = false}) async {
+    refreshFromCloudCalls++;
   }
 }
 
@@ -223,6 +230,67 @@ void main() {
         findsNothing,
       );
       expect(find.byKey(const Key('generate_fixture_button')), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'triggers refreshFromCloud on init and renders Por definir when optional logistics are null',
+    (tester) async {
+      final scheduledNoLogistics = ChampionshipMatch(
+        id: 'm-tbd',
+        tournamentId: 't-1',
+        roundNumber: 1,
+        roundName: 'Jornada 1',
+        homeTeamId: 'team-a',
+        awayTeamId: 'team-b',
+        scheduledStartTime: DateTime.now(),
+        status: MatchStatus.scheduled,
+      );
+
+      final state = DailyMatchesFeedState(
+        dateState: DailyMatchesDateState.today(),
+        tournamentGroups: [
+          TournamentMatchesGroup(
+            tournament: tournament,
+            matches: [scheduledNoLogistics],
+          ),
+        ],
+        isLoading: false,
+      );
+
+      late _FakeDailyMatchesFeedController fakeController;
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            environmentConfigProvider.overrideWithValue(
+              EnvironmentConfig.development(),
+            ),
+            localStorageRepositoryProvider.overrideWithValue(
+              _FakeLocalStorageRepository(),
+            ),
+            connectivityRepositoryProvider.overrideWithValue(
+              _FakeConnectivityRepository(),
+            ),
+            dailyMatchesFeedControllerProvider.overrideWith((ref) {
+              fakeController = _FakeDailyMatchesFeedController(ref, state);
+              return fakeController;
+            }),
+          ],
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: Locale('es'),
+            home: MatchdayTabView(),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(fakeController.refreshFromCloudCalls, greaterThanOrEqualTo(1));
+      expect(find.byKey(const Key('match_center_card_m-tbd')), findsOneWidget);
+      expect(find.text('Por definir'), findsNWidgets(2));
     },
   );
 }

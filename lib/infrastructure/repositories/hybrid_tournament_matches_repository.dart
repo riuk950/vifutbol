@@ -14,6 +14,10 @@ abstract interface class TournamentMatchesRemoteDataSource {
   Future<List<ChampionshipMatch>> fetchForTournament(String tournamentId);
   Future<ChampionshipMatch> upsertMatch(ChampionshipMatch match);
   Future<List<ChampionshipMatch>> upsertBatch(List<ChampionshipMatch> matches);
+  Future<void> replaceForTournament(
+    String tournamentId,
+    List<ChampionshipMatch> matches,
+  );
   Future<List<MatchReferee>> fetchOfficialReferees();
 }
 
@@ -146,6 +150,46 @@ class PostgrestTournamentMatchesRemoteDataSource
   }
 
   @override
+  Future<void> replaceForTournament(
+    String tournamentId,
+    List<ChampionshipMatch> matches,
+  ) async {
+    final safeTournamentId = HybridRepositorySupport.ensureUuid(
+      tournamentId,
+      'tournament',
+    );
+    final existingRows = await client
+        .schema(schema)
+        .from('matches')
+        .select('id')
+        .eq('tournament_id', safeTournamentId);
+
+    final incomingIds = matches
+        .map((m) => HybridRepositorySupport.ensureUuid(m.id, 'match'))
+        .toSet();
+
+    final staleIds = (existingRows as List<dynamic>)
+        .map((r) => (r as Map)['id'] as String)
+        .where((id) => !incomingIds.contains(id))
+        .toList();
+
+    if (staleIds.isNotEmpty) {
+      await client
+          .schema(schema)
+          .from('matches')
+          .delete()
+          .inFilter('id', staleIds);
+    }
+
+    if (matches.isNotEmpty) {
+      await client
+          .schema(schema)
+          .from('matches')
+          .upsert(matches.map(_toRow).toList(), onConflict: 'id');
+    }
+  }
+
+  @override
   Future<List<MatchReferee>> fetchOfficialReferees() async {
     final rows = await client
         .schema(schema)
@@ -220,16 +264,23 @@ class HybridTournamentMatchesRepository implements TournamentMatchesRepository {
     return local.watchMatchesForTournament(tournamentId);
   }
 
+  static ChampionshipMatch _normalizeMatchId(ChampionshipMatch match) {
+    final canonicalId = HybridRepositorySupport.ensureUuid(match.id, 'match');
+    if (canonicalId == match.id) return match;
+    return match.copyWith(id: canonicalId);
+  }
+
   @override
   Future<ChampionshipMatch> saveMatch(ChampionshipMatch match) {
+    final normalized = _normalizeMatchId(match);
     return support.executeMutation(
-      localWrite: () => local.saveMatch(match),
-      remoteWrite: () => remote.upsertMatch(match),
+      localWrite: () => local.saveMatch(normalized),
+      remoteWrite: () => remote.upsertMatch(normalized),
       entityType: SyncOutboxEntityType.match,
-      entityId: match.id,
+      entityId: normalized.id,
       operation: SyncOutboxOperation.upsert,
-      buildPayload: () => {'match': match.toJson()},
-      displayTitle: match.roundName,
+      buildPayload: () => {'match': normalized.toJson()},
+      displayTitle: normalized.roundName,
     );
   }
 
@@ -238,16 +289,17 @@ class HybridTournamentMatchesRepository implements TournamentMatchesRepository {
     List<ChampionshipMatch> matches,
   ) {
     if (matches.isEmpty) return Future.value(const []);
-    final batchScopeId = matches.first.tournamentId;
+    final normalizedMatches = matches.map(_normalizeMatchId).toList();
+    final batchScopeId = normalizedMatches.first.tournamentId;
     return support.executeMutation(
-      localWrite: () => local.saveMatchesBatch(matches),
-      remoteWrite: () => remote.upsertBatch(matches),
+      localWrite: () => local.saveMatchesBatch(normalizedMatches),
+      remoteWrite: () => remote.upsertBatch(normalizedMatches),
       entityType: SyncOutboxEntityType.match,
       entityId: batchScopeId,
       operation: SyncOutboxOperation.replaceBatch,
       buildPayload: () => {
         'tournamentId': batchScopeId,
-        'matches': matches.map((m) => m.toJson()).toList(),
+        'matches': normalizedMatches.map((m) => m.toJson()).toList(),
       },
       displayTitle: batchScopeId,
     );
@@ -258,16 +310,18 @@ class HybridTournamentMatchesRepository implements TournamentMatchesRepository {
     String tournamentId,
     List<ChampionshipMatch> matches,
   ) {
+    final normalizedMatches = matches.map(_normalizeMatchId).toList();
     return support.executeMutation(
       localWrite: () =>
-          local.replaceMatchesForTournament(tournamentId, matches),
-      remoteWrite: () => remote.upsertBatch(matches),
+          local.replaceMatchesForTournament(tournamentId, normalizedMatches),
+      remoteWrite: () =>
+          remote.replaceForTournament(tournamentId, normalizedMatches),
       entityType: SyncOutboxEntityType.match,
       entityId: tournamentId,
       operation: SyncOutboxOperation.replaceBatch,
       buildPayload: () => {
         'tournamentId': tournamentId,
-        'matches': matches.map((m) => m.toJson()).toList(),
+        'matches': normalizedMatches.map((m) => m.toJson()).toList(),
       },
       displayTitle: tournamentId,
     );
@@ -278,9 +332,10 @@ class HybridTournamentMatchesRepository implements TournamentMatchesRepository {
     if (item.operation == SyncOutboxOperation.upsert) {
       final raw = item.payloadJson['match'];
       if (raw is Map) {
-        await remote.upsertMatch(
+        final match = _normalizeMatchId(
           ChampionshipMatch.fromJson(Map<String, dynamic>.from(raw)),
         );
+        await remote.upsertMatch(match);
       }
       return;
     }
@@ -289,9 +344,18 @@ class HybridTournamentMatchesRepository implements TournamentMatchesRepository {
       final rawList = (item.payloadJson['matches'] as List<dynamic>?) ?? [];
       final matches = rawList
           .whereType<Map>()
-          .map((m) => ChampionshipMatch.fromJson(Map<String, dynamic>.from(m)))
+          .map(
+            (m) => _normalizeMatchId(
+              ChampionshipMatch.fromJson(Map<String, dynamic>.from(m)),
+            ),
+          )
           .toList();
-      await remote.upsertBatch(matches);
+      final tournamentId = (item.payloadJson['tournamentId'] as String?) ?? '';
+      if (tournamentId.trim().isNotEmpty) {
+        await remote.replaceForTournament(tournamentId, matches);
+      } else {
+        await remote.upsertBatch(matches);
+      }
     }
   }
 }

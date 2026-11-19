@@ -623,5 +623,72 @@ void main() {
         );
       }),
     );
+
+    test(
+      'schedules match with date and time only when venue, pitch, and referee are null, while still detecting team collisions',
+      () => withClock(Clock.fixed(DateTime(2026, 6, 1, 9, 0)), () async {
+        final matches = await useCase.generateRoundRobinFixture(
+          tournament: testTournament,
+          teams: testTeams,
+          userRole: UserRole.organizer,
+        );
+
+        final match1 = matches[0];
+        final matchSameTeam = matches.firstWhere(
+          (m) =>
+              m.id != match1.id &&
+              (m.homeTeamId == match1.homeTeamId ||
+                  m.awayTeamId == match1.homeTeamId),
+        );
+        final matchDifferentTeams = matches.firstWhere(
+          (m) =>
+              m.id != match1.id &&
+              m.homeTeamId != match1.homeTeamId &&
+              m.awayTeamId != match1.homeTeamId &&
+              m.homeTeamId != match1.awayTeamId &&
+              m.awayTeamId != match1.awayTeamId,
+        );
+
+        final start = DateTime(2026, 6, 7, 16, 0);
+        final scheduled1 = await useCase.scheduleMatch(
+          matchId: match1.id,
+          tournament: testTournament,
+          scheduledStartTime: start,
+          userRole: UserRole.organizer,
+        );
+
+        expect(scheduled1.status, MatchStatus.scheduled);
+        expect(scheduled1.scheduledStartTime, start);
+        expect(scheduled1.venueId, isNull);
+        expect(scheduled1.pitchId, isNull);
+        expect(scheduled1.refereeId, isNull);
+
+        // Another match with different teams at same time with null pitch/referee must NOT collide
+        final scheduled2 = await useCase.scheduleMatch(
+          matchId: matchDifferentTeams.id,
+          tournament: testTournament,
+          scheduledStartTime: start,
+          userRole: UserRole.organizer,
+        );
+        expect(scheduled2.status, MatchStatus.scheduled);
+
+        // Same team at overlapping time must still fail with teamScheduleCollision
+        await expectLater(
+          () => useCase.scheduleMatch(
+            matchId: matchSameTeam.id,
+            tournament: testTournament,
+            scheduledStartTime: start,
+            userRole: UserRole.organizer,
+          ),
+          throwsA(
+            isA<FixtureScheduleValidationFailure>().having(
+              (f) => f.code,
+              'code',
+              FixtureScheduleErrorCode.teamScheduleCollision,
+            ),
+          ),
+        );
+      }),
+    );
   });
 }
