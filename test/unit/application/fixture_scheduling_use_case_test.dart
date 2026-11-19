@@ -17,6 +17,7 @@ import 'package:vifutbol/domain/entities/venue_enums.dart';
 import 'package:vifutbol/domain/entities/venue_pitch.dart';
 import 'package:vifutbol/domain/failures/app_failure.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
+import 'package:vifutbol/domain/services/colombia_time_utils.dart';
 import 'package:vifutbol/infrastructure/repositories/local_tournament_matches_repository.dart';
 
 class _InMemoryLocalStorageRepository implements LocalStorageRepository {
@@ -296,9 +297,12 @@ void main() {
         );
 
         expect(scheduled.status, MatchStatus.scheduled);
-        expect(scheduled.scheduledStartTime, startTime);
-        // 45*2 + 15 = 105 minutes duration -> 15:45
-        expect(scheduled.scheduledEndTime, DateTime(2026, 6, 6, 15, 45));
+        expect(scheduled.scheduledStartTime, startTime.toUtc());
+        // 45*2 + 15 = 105 minutes duration -> +105 min UTC
+        expect(
+          scheduled.scheduledEndTime,
+          startTime.toUtc().add(const Duration(minutes: 105)),
+        );
         expect(scheduled.pitchId, testPitch1.id);
         expect(scheduled.refereeId, testReferee1.id);
       }),
@@ -658,7 +662,7 @@ void main() {
         );
 
         expect(scheduled1.status, MatchStatus.scheduled);
-        expect(scheduled1.scheduledStartTime, start);
+        expect(scheduled1.scheduledStartTime, start.toUtc());
         expect(scheduled1.venueId, isNull);
         expect(scheduled1.pitchId, isNull);
         expect(scheduled1.refereeId, isNull);
@@ -688,6 +692,34 @@ void main() {
             ),
           ),
         );
+      }),
+    );
+
+    test(
+      'persists scheduledStartTime as UTC instant for far-future Colombia date (e.g. 2030)',
+      () => withClock(Clock.fixed(DateTime.utc(2026, 11, 19, 15, 0)), () async {
+        final matches = await useCase.generateRoundRobinFixture(
+          tournament: testTournament,
+          teams: testTeams,
+          userRole: UserRole.organizer,
+        );
+
+        final farFutureUtc = ColombiaTimeUtils.fromColombiaWallClock(
+          2030,
+          7,
+          20,
+          15,
+          30,
+        );
+        final scheduled = await useCase.scheduleMatch(
+          matchId: matches.first.id,
+          tournament: testTournament,
+          scheduledStartTime: farFutureUtc,
+          userRole: UserRole.organizer,
+        );
+
+        expect(scheduled.scheduledStartTime?.isUtc, isTrue);
+        expect(scheduled.scheduledStartTime, DateTime.utc(2030, 7, 20, 20, 30));
       }),
     );
   });

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
@@ -15,6 +14,7 @@ import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dar
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_state_view.dart';
 import 'package:vifutbol/domain/entities/ui_view_state.dart';
+import 'package:vifutbol/domain/services/colombia_time_utils.dart';
 import 'package:vifutbol/presentation/teams/models/team_match_summary.dart';
 import 'package:vifutbol/presentation/teams/widgets/kick_pulse_team_crest.dart';
 
@@ -366,7 +366,10 @@ class TeamInfoTabView extends ConsumerWidget {
         : null;
 
     final dateStr = match.scheduledStartTime != null
-        ? DateFormat('dd/MM/yyyy HH:mm').format(match.scheduledStartTime!)
+        ? ColombiaTimeUtils.formatDateTime12h(
+            match.scheduledStartTime!,
+            separator: ' ',
+          )
         : 'Horario pendiente';
 
     final venueStr = (match.pitchName != null && match.pitchName!.isNotEmpty)

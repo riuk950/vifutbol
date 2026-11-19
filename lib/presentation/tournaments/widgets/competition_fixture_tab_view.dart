@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
@@ -12,6 +11,7 @@ import 'package:vifutbol/domain/entities/role_permission_matrix.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/entities/ui_view_state.dart';
+import 'package:vifutbol/domain/services/colombia_time_utils.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
@@ -110,7 +110,10 @@ class CompetitionFixtureTabView extends ConsumerWidget {
                                 width: KickPulseRadiiSpacing.spaceSm,
                               ),
                               Text(
-                                '${match.scheduledStartTime!.day.toString().padLeft(2, '0')}/${match.scheduledStartTime!.month.toString().padLeft(2, '0')}/${match.scheduledStartTime!.year} - ${match.scheduledStartTime!.hour.toString().padLeft(2, '0')}:${match.scheduledStartTime!.minute.toString().padLeft(2, '0')}',
+                                ColombiaTimeUtils.formatDateTime12h(
+                                  match.scheduledStartTime!,
+                                  separator: ' - ',
+                                ),
                                 style: KickPulseTypography.bodyPrimary,
                               ),
                             ],
@@ -204,7 +207,7 @@ class CompetitionFixtureTabView extends ConsumerWidget {
     }
 
     final dateStr = match.scheduledStartTime != null
-        ? DateFormat('dd/MM/yyyy • HH:mm').format(match.scheduledStartTime!)
+        ? ColombiaTimeUtils.formatDateTime12h(match.scheduledStartTime!)
         : null;
     final pitchStr = match.pitchName;
     final refereeStr = match.refereeName;

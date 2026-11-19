@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
+import 'package:vifutbol/domain/services/colombia_time_utils.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
@@ -295,17 +295,21 @@ class MatchCenterCard extends StatelessWidget {
         ),
       );
     } else {
-      // Programado (scheduled)
+      // Programado (scheduled) — Colombia 12h AM/PM
       final timeStr = match.scheduledStartTime != null
-          ? DateFormat('HH:mm').format(match.scheduledStartTime!)
+          ? ColombiaTimeUtils.formatTime12h(match.scheduledStartTime!)
           : '--:--';
 
-      return Text(
-        timeStr,
-        style: KickPulseTypography.cardTitle.copyWith(
-          color: KickPulseColors.textPrimary,
-          fontWeight: FontWeight.w700,
-          fontFeatures: const [FontFeature.tabularFigures()],
+      return FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          timeStr,
+          maxLines: 1,
+          style: KickPulseTypography.cardTitle.copyWith(
+            color: KickPulseColors.textPrimary,
+            fontWeight: FontWeight.w700,
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
         ),
       );
     }

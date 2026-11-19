@@ -1,4 +1,3 @@
-import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +9,7 @@ import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/match_referee.dart';
 import 'package:vifutbol/domain/entities/sports_venue.dart';
 import 'package:vifutbol/domain/entities/venue_pitch.dart';
+import 'package:vifutbol/domain/services/colombia_time_utils.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
@@ -58,58 +58,28 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
   @override
   void initState() {
     super.initState();
-    final now = clock.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final presentMinute = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      now.hour,
-      now.minute,
-    );
-    final tournamentStartDay = DateTime(
-      widget.tournament.startDate.year,
-      widget.tournament.startDate.month,
-      widget.tournament.startDate.day,
-    );
-    final tournamentEndDay = DateTime(
-      widget.tournament.endDate.year,
-      widget.tournament.endDate.month,
-      widget.tournament.endDate.day,
-    );
-    final earliestAllowedDay = tournamentStartDay.isAfter(today)
-        ? tournamentStartDay
-        : today;
+    final presentColombia = ColombiaTimeUtils.nowColombia();
 
-    DateTime initial;
+    DateTime initialColombia;
     if (widget.match.scheduledStartTime != null) {
-      initial = widget.match.scheduledStartTime!.isBefore(presentMinute)
-          ? presentMinute
-          : widget.match.scheduledStartTime!;
+      final existingColombia = ColombiaTimeUtils.toColombiaWallClock(
+        widget.match.scheduledStartTime!,
+      );
+      initialColombia = existingColombia.isBefore(presentColombia)
+          ? presentColombia
+          : existingColombia;
     } else {
-      initial = now.add(const Duration(days: 1));
-      final initialDay = DateTime(initial.year, initial.month, initial.day);
-      if (initialDay.isBefore(earliestAllowedDay)) {
-        initial = DateTime(
-          earliestAllowedDay.year,
-          earliestAllowedDay.month,
-          earliestAllowedDay.day,
-          initial.hour,
-          initial.minute,
-        );
-      } else if (!tournamentEndDay.isBefore(earliestAllowedDay) &&
-          initialDay.isAfter(tournamentEndDay)) {
-        initial = DateTime(
-          tournamentEndDay.year,
-          tournamentEndDay.month,
-          tournamentEndDay.day,
-          initial.hour,
-          initial.minute,
-        );
-      }
+      initialColombia = presentColombia.add(const Duration(days: 1));
     }
-    _selectedDate = DateTime(initial.year, initial.month, initial.day);
-    _selectedTime = TimeOfDay(hour: initial.hour, minute: initial.minute);
+    _selectedDate = DateTime(
+      initialColombia.year,
+      initialColombia.month,
+      initialColombia.day,
+    );
+    _selectedTime = TimeOfDay(
+      hour: initialColombia.hour,
+      minute: initialColombia.minute,
+    );
     _loadInitialData();
   }
 
@@ -154,28 +124,8 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
   }
 
   Future<void> _pickDate() async {
-    final now = clock.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final tournamentStartDay = DateTime(
-      widget.tournament.startDate.year,
-      widget.tournament.startDate.month,
-      widget.tournament.startDate.day,
-    );
-    final tournamentEndDay = DateTime(
-      widget.tournament.endDate.year,
-      widget.tournament.endDate.month,
-      widget.tournament.endDate.day,
-    );
-
-    final firstDate = tournamentStartDay.isAfter(today)
-        ? tournamentStartDay
-        : today;
-    var lastDate = tournamentEndDay.isAfter(_selectedDate)
-        ? tournamentEndDay
-        : _selectedDate;
-    if (lastDate.isBefore(firstDate)) {
-      lastDate = firstDate;
-    }
+    final firstDate = ColombiaTimeUtils.todayColombia();
+    final lastDate = ColombiaTimeUtils.maxCalendarDate;
 
     var initialDate = _selectedDate;
     if (initialDate.isBefore(firstDate)) {
@@ -202,6 +152,12 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
     final picked = await showTimePicker(
       context: context,
       initialTime: _selectedTime,
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          child: child!,
+        );
+      },
     );
     if (picked != null && mounted) {
       setState(() {
@@ -215,7 +171,7 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
     if (_isSubmitting) return;
     final l10n = AppLocalizations.of(context);
 
-    final scheduledStartTime = DateTime(
+    final scheduledStartTime = ColombiaTimeUtils.fromColombiaWallClock(
       _selectedDate.year,
       _selectedDate.month,
       _selectedDate.day,
@@ -223,15 +179,7 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
       _selectedTime.minute,
     );
 
-    final now = clock.now();
-    final presentMinute = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      now.hour,
-      now.minute,
-    );
-    if (scheduledStartTime.isBefore(presentMinute)) {
+    if (scheduledStartTime.isBefore(ColombiaTimeUtils.presentMinuteUtc())) {
       setState(() => _localError = l10n.scheduleMatchPastDateTimeError);
       return;
     }
@@ -282,8 +230,10 @@ class _ScheduleMatchDialogState extends ConsumerState<ScheduleMatchDialog> {
     }
 
     final dateFormat = DateFormat('dd/MM/yyyy');
-    final timeStr =
-        '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}';
+    final timeStr = ColombiaTimeUtils.formatTimeOfDay12h(
+      _selectedTime.hour,
+      _selectedTime.minute,
+    );
 
     return AlertDialog(
       backgroundColor: KickPulseColors.surfaceElevated,

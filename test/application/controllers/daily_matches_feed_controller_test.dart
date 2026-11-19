@@ -217,6 +217,41 @@ void main() {
 
       expect(groups, isEmpty);
     });
+
+    test(
+      'groups 9:00 PM Colombia match (02:00 AM UTC next day) on the Colombia evening date',
+      () {
+        final lateEveningUtc = DateTime.utc(2026, 11, 20, 2, 0); // 09:00 PM Colombia on Nov 19
+        final matches = [
+          ChampionshipMatch(
+            id: 'm-late-col',
+            tournamentId: 'tour-1',
+            roundNumber: 1,
+            roundName: 'Jornada 1',
+            homeTeamId: 'h1',
+            awayTeamId: 'a1',
+            scheduledStartTime: lateEveningUtc,
+            scheduledEndTime: lateEveningUtc.add(const Duration(minutes: 105)),
+            status: MatchStatus.scheduled,
+          ),
+        ];
+
+        final groupsNov19 = groupMatchesByActiveTournaments(
+          matches: matches,
+          tournaments: [tActive1],
+          targetDate: DateTime(2026, 11, 19),
+        );
+        final groupsNov20 = groupMatchesByActiveTournaments(
+          matches: matches,
+          tournaments: [tActive1],
+          targetDate: DateTime(2026, 11, 20),
+        );
+
+        expect(groupsNov19.length, 1);
+        expect(groupsNov19.first.matches.first.id, 'm-late-col');
+        expect(groupsNov20, isEmpty);
+      },
+    );
   });
 
   group('DailyMatchesFeedController cloud hydration', () {

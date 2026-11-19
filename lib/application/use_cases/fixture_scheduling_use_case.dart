@@ -12,6 +12,7 @@ import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/entities/venue_pitch.dart';
 import 'package:vifutbol/domain/failures/app_failure.dart';
 import 'package:vifutbol/domain/repositories/tournament_matches_repository.dart';
+import 'package:vifutbol/domain/services/colombia_time_utils.dart';
 import 'package:vifutbol/domain/services/round_robin_generator.dart';
 
 class FixtureSchedulingUseCase {
@@ -125,15 +126,9 @@ class FixtureSchedulingUseCase {
       );
     }
 
-    final now = clock.now();
-    final presentMinute = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      now.hour,
-      now.minute,
-    );
-    if (scheduledStartTime.isBefore(presentMinute)) {
+    final utcStart = scheduledStartTime.toUtc();
+    final presentMinuteUtc = ColombiaTimeUtils.presentMinuteUtc(clock.now());
+    if (utcStart.isBefore(presentMinuteUtc)) {
       throw const FixtureScheduleValidationFailure(
         FixtureScheduleErrorCode.invalidScheduleTimes,
         'No puedes programar un partido en una fecha u hora pasada.',
@@ -156,7 +151,7 @@ class FixtureSchedulingUseCase {
 
     // 3. Compute duration and end time: (halfDurationMinutes * 2) + 15 min break
     final durationMinutes = (tournament.rules.halfDurationMinutes * 2) + 15;
-    final scheduledEndTime = scheduledStartTime.add(
+    final scheduledEndTime = utcStart.add(
       Duration(minutes: durationMinutes),
     );
 
@@ -165,7 +160,7 @@ class FixtureSchedulingUseCase {
     final collision = detectCollisions(
       candidateMatchId: matchId,
       tournamentId: tournament.id,
-      startTime: scheduledStartTime,
+      startTime: utcStart,
       endTime: scheduledEndTime,
       pitchId: pitch?.id,
       refereeId: referee?.id,
@@ -211,7 +206,7 @@ class FixtureSchedulingUseCase {
       roundName: currentMatch.roundName,
       homeTeamId: currentMatch.homeTeamId,
       awayTeamId: currentMatch.awayTeamId,
-      scheduledStartTime: scheduledStartTime,
+      scheduledStartTime: utcStart,
       scheduledEndTime: scheduledEndTime,
       venueId: venue?.id,
       pitchId: pitch?.id,

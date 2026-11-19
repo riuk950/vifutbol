@@ -22,6 +22,7 @@ import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/entities/venue_enums.dart';
 import 'package:vifutbol/domain/entities/venue_pitch.dart';
+import 'package:vifutbol/domain/services/colombia_time_utils.dart';
 import 'package:vifutbol/domain/repositories/connectivity_repository.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/infrastructure/repositories/local_tournament_matches_repository.dart';
@@ -162,9 +163,15 @@ void main() {
 
   group('ScheduleMatchDialog Present/Future Validation Tests', () {
     testWidgets(
-      'date picker clamps firstDate to today even when tournament started in the past',
+      'date picker allows todayColombia through 2100-12-31 without tournament start/end caps',
       (tester) async {
-        final fixedNow = DateTime(2026, 11, 11, 10, 0);
+        final fixedNow = ColombiaTimeUtils.fromColombiaWallClock(
+          2026,
+          11,
+          11,
+          10,
+          0,
+        );
         await withClock(Clock.fixed(fixedNow), () async {
           final tournament = ChampionshipTournament(
             id: 't-past-start',
@@ -172,7 +179,7 @@ void main() {
             category: 'Libre',
             status: TournamentStatus.inProgress,
             format: TournamentFormat.league,
-            startDate: DateTime(2026, 10, 1),
+            startDate: DateTime(2026, 12, 1),
             endDate: DateTime(2026, 12, 20),
             updatedAt: DateTime(2026, 10, 1),
           );
@@ -195,6 +202,9 @@ void main() {
           );
           await tester.pumpAndSettle();
 
+          // Button renders 12h AM/PM format
+          expect(find.text('10:00 AM'), findsOneWidget);
+
           await tester.tap(find.byKey(const Key('pick_match_date_field')));
           await tester.pumpAndSettle();
 
@@ -202,15 +212,77 @@ void main() {
             find.byType(CalendarDatePicker),
           );
           expect(datePicker.firstDate, DateTime(2026, 11, 11));
-          expect(datePicker.lastDate, DateTime(2026, 12, 20));
+          expect(datePicker.lastDate, DateTime(2100, 12, 31));
         });
       },
     );
 
     testWidgets(
-      'allows scheduling in present minute and future, and blocks submitting a past time',
+      'forces 12-hour AM/PM time picker even when device prefers 24-hour format',
       (tester) async {
-        var fakeCurrentTime = DateTime(2026, 11, 11, 10, 30, 20);
+        final fixedNow = ColombiaTimeUtils.fromColombiaWallClock(
+          2026,
+          11,
+          11,
+          15,
+          30,
+        );
+        await withClock(Clock.fixed(fixedNow), () async {
+          final tournament = ChampionshipTournament(
+            id: 't-12h',
+            name: 'Liga 12h',
+            category: 'Libre',
+            status: TournamentStatus.openRegistration,
+            format: TournamentFormat.league,
+            startDate: DateTime(2026, 11, 1),
+            endDate: DateTime(2026, 12, 20),
+            updatedAt: DateTime(2026, 11, 1),
+          );
+          final match = ChampionshipMatch(
+            id: 'm-12h',
+            tournamentId: tournament.id,
+            roundNumber: 1,
+            roundName: 'Jornada 1',
+            homeTeamId: 't1',
+            awayTeamId: 't2',
+          );
+          final controller = _RecordingMatchesCatalogController();
+
+          await tester.pumpWidget(
+            MediaQuery(
+              data: const MediaQueryData(alwaysUse24HourFormat: true),
+              child: buildDialogApp(
+                match: match,
+                tournament: tournament,
+                controller: controller,
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(find.text('03:30 PM'), findsOneWidget);
+
+          await tester.tap(find.byKey(const Key('pick_match_time_field')));
+          await tester.pumpAndSettle();
+
+          // TimePickerDialog must receive alwaysUse24HourFormat: false regardless of device 24h setting
+          final pickerContext = tester.element(find.byType(TimePickerDialog));
+          expect(MediaQuery.of(pickerContext).alwaysUse24HourFormat, isFalse);
+        });
+      },
+    );
+
+    testWidgets(
+      'allows scheduling in present minute and future in Colombia time, and blocks submitting a past time',
+      (tester) async {
+        var fakeCurrentTime = ColombiaTimeUtils.fromColombiaWallClock(
+          2026,
+          11,
+          11,
+          10,
+          30,
+          20,
+        );
         await withClock(Clock(() => fakeCurrentTime), () async {
           final tournament = ChampionshipTournament(
             id: 't-active',
@@ -222,7 +294,7 @@ void main() {
             endDate: DateTime(2026, 12, 20),
             updatedAt: DateTime(2026, 11, 1),
           );
-          // Match previously had a past timestamp -> dialog clamps to presentMinute (10:30)
+          // Match previously had a past timestamp -> dialog clamps to presentMinute (10:30 AM Colombia)
           final match = ChampionshipMatch(
             id: 'm-present',
             tournamentId: tournament.id,
@@ -230,7 +302,13 @@ void main() {
             roundName: 'Jornada 1',
             homeTeamId: 't1',
             awayTeamId: 't2',
-            scheduledStartTime: DateTime(2026, 11, 9, 10, 30),
+            scheduledStartTime: ColombiaTimeUtils.fromColombiaWallClock(
+              2026,
+              11,
+              9,
+              10,
+              30,
+            ),
           );
           final controller = _RecordingMatchesCatalogController();
 
@@ -243,8 +321,15 @@ void main() {
           );
           await tester.pumpAndSettle();
 
-          // Clock moves forward to 11:00 while dialog holds 11/11 10:30 -> past time error!
-          fakeCurrentTime = DateTime(2026, 11, 11, 11, 0, 0);
+          // Clock moves forward to 11:00 AM Colombia while dialog holds 11/11 10:30 AM -> past time error!
+          fakeCurrentTime = ColombiaTimeUtils.fromColombiaWallClock(
+            2026,
+            11,
+            11,
+            11,
+            0,
+            0,
+          );
           await tester.tap(
             find.byKey(const Key('confirm_schedule_match_button')),
           );
@@ -258,8 +343,15 @@ void main() {
           );
           expect(controller.scheduleCallCount, 0);
 
-          // Move clock back to present minute (10:30:55) -> scheduling succeeds!
-          fakeCurrentTime = DateTime(2026, 11, 11, 10, 30, 55);
+          // Move clock back to present minute (10:30:55 AM Colombia) -> scheduling succeeds with UTC instant!
+          fakeCurrentTime = ColombiaTimeUtils.fromColombiaWallClock(
+            2026,
+            11,
+            11,
+            10,
+            30,
+            55,
+          );
           await tester.tap(
             find.byKey(const Key('confirm_schedule_match_button')),
           );
@@ -268,7 +360,7 @@ void main() {
           expect(controller.scheduleCallCount, 1);
           expect(
             controller.lastScheduledStartTime,
-            DateTime(2026, 11, 11, 10, 30),
+            ColombiaTimeUtils.fromColombiaWallClock(2026, 11, 11, 10, 30),
           );
         });
       },

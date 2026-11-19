@@ -1,3 +1,4 @@
+import '../services/colombia_time_utils.dart';
 import 'championship_match.dart';
 import 'match_enums.dart';
 import 'match_referee.dart';
@@ -44,7 +45,7 @@ class MatchesCatalogState {
 
     for (final match in matches) {
       if (match.scheduledStartTime != null) {
-        dates.add(normalizeDate(match.scheduledStartTime!));
+        dates.add(ColombiaTimeUtils.colombiaDateOnly(match.scheduledStartTime!));
       }
     }
 
@@ -65,12 +66,14 @@ class MatchesCatalogState {
     }).toList();
   }
 
-  /// Matches scheduled for the selected calendar date
+  /// Matches scheduled for the selected calendar date (Colombia UTC-5)
   List<ChampionshipMatch> get scheduledMatchesForSelectedDate {
-    final targetDate = selectedDate ?? normalizeDate(DateTime.now());
+    final targetDate = selectedDate ?? ColombiaTimeUtils.todayColombia();
     return matches.where((match) {
       if (match.scheduledStartTime == null) return false;
-      final matchDate = normalizeDate(match.scheduledStartTime!);
+      final matchDate = ColombiaTimeUtils.colombiaDateOnly(
+        match.scheduledStartTime!,
+      );
       if (matchDate != targetDate) return false;
 
       if (statusFilter != null && match.status != statusFilter) {

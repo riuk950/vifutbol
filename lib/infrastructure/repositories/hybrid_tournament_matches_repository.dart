@@ -78,10 +78,10 @@ class PostgrestTournamentMatchesRemoteDataSource
       awayTeamId: row['away_tournament_team_id'] as String,
       scheduledStartTime: rawStart == null
           ? null
-          : DateTime.parse(rawStart).toLocal(),
+          : DateTime.parse(rawStart).toUtc(),
       scheduledEndTime: rawEnd == null
           ? null
-          : DateTime.parse(rawEnd).toLocal(),
+          : DateTime.parse(rawEnd).toUtc(),
       venueId: row['venue_id'] as String?,
       pitchId: row['pitch_id'] as String?,
       pitchName: row['pitch_name'] as String?,

@@ -4,6 +4,7 @@ import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
+import 'package:vifutbol/domain/services/colombia_time_utils.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
@@ -378,13 +379,12 @@ class MatchCard extends StatelessWidget {
 
   String _formatMatchDateTime(DateTime start, DateTime? end) {
     final dateFormatter = DateFormat('EEE d MMM', 'es');
-    final timeFormatter = DateFormat('HH:mm');
-
-    final dateStr = dateFormatter.format(start);
-    final startTimeStr = timeFormatter.format(start);
+    final colombiaStart = ColombiaTimeUtils.toColombiaWallClock(start);
+    final dateStr = dateFormatter.format(colombiaStart);
+    final startTimeStr = ColombiaTimeUtils.formatTime12h(start);
 
     if (end != null) {
-      final endTimeStr = timeFormatter.format(end);
+      final endTimeStr = ColombiaTimeUtils.formatTime12h(end);
       return '$dateStr · $startTimeStr - $endTimeStr';
     }
     return '$dateStr · $startTimeStr';

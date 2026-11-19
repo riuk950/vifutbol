@@ -9,6 +9,7 @@ import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/daily_matches_group.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
+import 'package:vifutbol/domain/services/colombia_time_utils.dart';
 
 /// Estado de la selección de fecha para el feed diario de partidos.
 class DailyMatchesDateState {
@@ -23,17 +24,15 @@ class DailyMatchesDateState {
   });
 
   factory DailyMatchesDateState.today() {
-    final now = DateTime.now();
     return DailyMatchesDateState(
-      selectedDate: DateTime(now.year, now.month, now.day),
+      selectedDate: ColombiaTimeUtils.todayColombia(),
       activeTab: MatchesDailyTab.today,
       isCustomDate: false,
     );
   }
 
   DailyMatchesDateState withTab(MatchesDailyTab tab) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
+    final today = ColombiaTimeUtils.todayColombia();
     switch (tab) {
       case MatchesDailyTab.yesterday:
         return DailyMatchesDateState(
@@ -60,8 +59,7 @@ class DailyMatchesDateState {
 
   DailyMatchesDateState withCustomDate(DateTime date) {
     final normalized = DateTime(date.year, date.month, date.day);
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
+    final today = ColombiaTimeUtils.todayColombia();
     final yesterday = today.subtract(const Duration(days: 1));
     final tomorrow = today.add(const Duration(days: 1));
 
@@ -159,10 +157,8 @@ List<TournamentMatchesGroup> groupMatchesByActiveTournaments({
 
   for (final match in matches) {
     if (match.scheduledStartTime == null) continue;
-    final matchDate = DateTime(
-      match.scheduledStartTime!.year,
-      match.scheduledStartTime!.month,
-      match.scheduledStartTime!.day,
+    final matchDate = ColombiaTimeUtils.colombiaDateOnly(
+      match.scheduledStartTime!,
     );
     if (matchDate != normalizedTarget) continue;
 

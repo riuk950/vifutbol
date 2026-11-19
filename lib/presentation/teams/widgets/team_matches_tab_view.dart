@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/ui_view_state.dart';
+import 'package:vifutbol/domain/services/colombia_time_utils.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
@@ -31,7 +31,10 @@ class TeamMatchesTabView extends ConsumerWidget {
     final awayName = item.awayTeam?.name ?? match.awayTeamId;
 
     final dateStr = match.scheduledStartTime != null
-        ? DateFormat('dd/MM/yyyy - HH:mm').format(match.scheduledStartTime!)
+        ? ColombiaTimeUtils.formatDateTime12h(
+            match.scheduledStartTime!,
+            separator: ' - ',
+          )
         : l10n.teamMatchDetailModalPendingSchedule;
 
     final venueStr = (match.pitchName != null && match.pitchName!.isNotEmpty)
@@ -251,7 +254,11 @@ class TeamMatchesTabView extends ConsumerWidget {
     AppLocalizations l10n,
   ) {
     final dateStr = item.match.scheduledStartTime != null
-        ? DateFormat('dd/MM HH:mm').format(item.match.scheduledStartTime!)
+        ? ColombiaTimeUtils.formatDateTime12h(
+            item.match.scheduledStartTime!,
+            separator: ' ',
+            includeYear: false,
+          )
         : l10n.teamMatchDetailModalPendingSchedule;
 
     final conditionBadge = item.match.status == MatchStatus.inProgress
@@ -341,7 +348,7 @@ class TeamMatchesTabView extends ConsumerWidget {
     AppLocalizations l10n,
   ) {
     final dateStr = item.match.scheduledStartTime != null
-        ? DateFormat('dd/MM/yyyy').format(item.match.scheduledStartTime!)
+        ? ColombiaTimeUtils.formatDate(item.match.scheduledStartTime!)
         : '';
 
     final outcomeBadge = item.outcome != null

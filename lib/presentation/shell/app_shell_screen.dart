@@ -5,6 +5,7 @@ import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/sync_bootstrap_provider.dart';
 import 'package:vifutbol/domain/entities/app_shell_section.dart';
+import 'package:vifutbol/domain/services/colombia_time_utils.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/alerts/widgets/fan_alerts_bell_action.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
@@ -59,13 +60,12 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
   Future<void> _onPickCalendarDate(BuildContext context) async {
     final feedState = ref.read(dailyMatchesFeedControllerProvider);
     final initialDate = feedState.dateState.selectedDate;
-    final now = DateTime.now();
 
     final picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: DateTime(now.year - 2),
-      lastDate: DateTime(now.year + 2),
+      firstDate: ColombiaTimeUtils.minCalendarDate,
+      lastDate: ColombiaTimeUtils.maxCalendarDate,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(

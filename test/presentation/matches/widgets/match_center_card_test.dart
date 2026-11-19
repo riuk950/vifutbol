@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
+import 'package:vifutbol/domain/services/colombia_time_utils.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/matches/widgets/match_center_card.dart';
 import 'package:vifutbol/presentation/teams/models/team_match_summary.dart';
@@ -17,7 +18,13 @@ void main() {
       roundName: 'Jornada 1',
       homeTeamId: 'Real Madrid',
       awayTeamId: 'Borussia Dortmund',
-      scheduledStartTime: DateTime(2026, 11, 6, 18, 30),
+      scheduledStartTime: ColombiaTimeUtils.fromColombiaWallClock(
+        2026,
+        11,
+        6,
+        18,
+        30,
+      ),
       status: MatchStatus.scheduled,
     );
 
@@ -36,7 +43,7 @@ void main() {
 
     expect(find.text('Real Madrid'), findsOneWidget);
     expect(find.text('Borussia Dortmund'), findsOneWidget);
-    expect(find.text('18:30'), findsOneWidget);
+    expect(find.text('06:30 PM'), findsOneWidget);
   });
 
   testWidgets('renders live match with score and EN VIVO badge', (
@@ -85,7 +92,13 @@ void main() {
         roundName: 'Jornada 1',
         homeTeamId: 'team-home',
         awayTeamId: 'team-away',
-        scheduledStartTime: DateTime(2026, 11, 6, 16, 0),
+        scheduledStartTime: ColombiaTimeUtils.fromColombiaWallClock(
+          2026,
+          11,
+          6,
+          16,
+          0,
+        ),
         status: MatchStatus.scheduled,
       );
 
@@ -137,7 +150,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tap center score/hub area
-      await tester.tap(find.text('16:00'));
+      await tester.tap(find.text('04:00 PM'));
       await tester.pumpAndSettle();
 
       expect(matchCenterTapped, isTrue);

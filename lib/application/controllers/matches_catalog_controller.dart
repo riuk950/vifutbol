@@ -12,6 +12,7 @@ import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/entities/venue_pitch.dart';
 import 'package:vifutbol/domain/failures/app_failure.dart';
 import 'package:vifutbol/domain/repositories/tournament_matches_repository.dart';
+import 'package:vifutbol/domain/services/colombia_time_utils.dart';
 
 class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
   MatchesCatalogController({
@@ -136,10 +137,10 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
   }
 
   DateTime _resolveInitialDate(List<ChampionshipMatch> matches) {
-    final today = MatchesCatalogState.normalizeDate(DateTime.now());
+    final today = ColombiaTimeUtils.todayColombia();
     final hasMatchesToday = matches.any((m) {
       if (m.scheduledStartTime == null) return false;
-      return MatchesCatalogState.normalizeDate(m.scheduledStartTime!) == today;
+      return ColombiaTimeUtils.colombiaDateOnly(m.scheduledStartTime!) == today;
     });
 
     if (hasMatchesToday) {
@@ -150,7 +151,7 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
         matches
             .where((m) => m.scheduledStartTime != null)
             .map(
-              (m) => MatchesCatalogState.normalizeDate(m.scheduledStartTime!),
+              (m) => ColombiaTimeUtils.colombiaDateOnly(m.scheduledStartTime!),
             )
             .toSet()
             .toList()
@@ -256,7 +257,7 @@ class MatchesCatalogController extends StateNotifier<MatchesCatalogState> {
           .toList();
       final allMatches = [...otherTournamentMatches, ...updatedMatches];
 
-      final scheduledDate = MatchesCatalogState.normalizeDate(
+      final scheduledDate = ColombiaTimeUtils.colombiaDateOnly(
         scheduledStartTime,
       );
 
