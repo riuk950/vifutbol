@@ -20,8 +20,13 @@ import 'package:vifutbol/presentation/tournaments/widgets/tournament_rules_summa
 /// scoring systems, tiebreakers, squad limits, and primary sports venue.
 class CompetitionInfoTabView extends ConsumerWidget {
   final String tournamentId;
+  final Future<void> Function()? onRefresh;
 
-  const CompetitionInfoTabView({super.key, required this.tournamentId});
+  const CompetitionInfoTabView({
+    super.key,
+    required this.tournamentId,
+    this.onRefresh,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,6 +35,14 @@ class CompetitionInfoTabView extends ConsumerWidget {
     final activeRole = ref.watch(activeUserRoleProvider);
     final matchesCatalog = ref.watch(matchesCatalogControllerProvider);
     final venuesCatalog = ref.watch(venuesControllerProvider);
+
+    Future<void> handleRefresh() async {
+      if (onRefresh != null) {
+        await onRefresh!();
+      } else {
+        await ref.read(tournamentsControllerProvider.notifier).loadCatalog();
+      }
+    }
 
     if (tournamentsCatalog.viewState is UiLoadingState) {
       return const Center(
@@ -46,21 +59,32 @@ class CompetitionInfoTabView extends ConsumerWidget {
         .firstOrNull;
 
     if (tournament == null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceLg),
-          child: KickPulseStateView<void>(
-            key: const Key('competition_detail_info_not_found'),
-            state: UiEmptyState<void>(
-              message: l10n.competitionInfoNotFoundTitle,
-              description: l10n.competitionInfoNotFoundDescription,
+      return RefreshIndicator(
+        onRefresh: handleRefresh,
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceLg),
+                  child: KickPulseStateView<void>(
+                    key: const Key('competition_detail_info_not_found'),
+                    state: UiEmptyState<void>(
+                      message: l10n.competitionInfoNotFoundTitle,
+                      description: l10n.competitionInfoNotFoundDescription,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ),
       );
     }
 
-    // Resolve primary venue: match venue first, fallback to first catalog venue
+    // Resolve primary venue: tournament.venueIds first, then match venue, then first catalog venue
     final tournamentMatches = matchesCatalog.matches
         .where((m) => m.tournamentId == tournamentId)
         .toList();
@@ -69,7 +93,17 @@ class CompetitionInfoTabView extends ConsumerWidget {
         .firstOrNull;
     final String? assignedVenueId = matchWithVenue?.venueId;
 
-    final SportsVenue? primaryVenue = assignedVenueId != null
+    SportsVenue? primaryVenue;
+    for (final venueId in tournament.venueIds) {
+      final linked = venuesCatalog.venues
+          .where((v) => v.id == venueId)
+          .firstOrNull;
+      if (linked != null) {
+        primaryVenue = linked;
+        break;
+      }
+    }
+    primaryVenue ??= assignedVenueId != null
         ? venuesCatalog.venues
                   .where((v) => v.id == assignedVenueId)
                   .firstOrNull ??
@@ -78,9 +112,12 @@ class CompetitionInfoTabView extends ConsumerWidget {
 
     final isOrganizer = activeRole == UserRole.organizer;
 
-    return SingleChildScrollView(
-      key: const Key('competition_detail_info_content'),
-      padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
+    return RefreshIndicator(
+      onRefresh: handleRefresh,
+      child: SingleChildScrollView(
+        key: const Key('competition_detail_info_content'),
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -182,6 +219,7 @@ class CompetitionInfoTabView extends ConsumerWidget {
           ],
         ],
       ),
+    ),
     );
   }
 }

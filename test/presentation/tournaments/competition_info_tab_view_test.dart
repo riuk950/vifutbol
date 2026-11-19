@@ -481,5 +481,106 @@ void main() {
         );
       },
     );
+
+    testWidgets(
+      'HU 22.3: resolves primary venue from tournament.venueIds first and supports pull-to-refresh',
+      (tester) async {
+        final linkedVenue = SportsVenue(
+          id: 'venue-linked',
+          name: 'Estadio Linked',
+          address: 'Calle 100 #10-20',
+          urbanReference: 'Norte',
+          coordinate: const GeoCoordinate(latitude: 4.7, longitude: -74.0),
+          pitches: const [
+            VenuePitch(
+              id: 'p-1',
+              name: 'Cancha 1',
+              surfaceType: PitchSurfaceType.naturalGrass,
+              format: PitchFormat.football11,
+              capacity: 22,
+              hasLighting: true,
+              status: VenueOperationalStatus.active,
+            ),
+          ],
+          status: VenueOperationalStatus.active,
+          updatedAt: DateTime(2026, 2, 1),
+        );
+        final otherVenue = SportsVenue(
+          id: 'venue-other',
+          name: 'Estadio Other',
+          address: 'Calle 50 #5-10',
+          urbanReference: 'Centro',
+          coordinate: const GeoCoordinate(latitude: 4.6, longitude: -74.1),
+          pitches: const [
+            VenuePitch(
+              id: 'p-2',
+              name: 'Cancha 2',
+              surfaceType: PitchSurfaceType.naturalGrass,
+              format: PitchFormat.football7,
+              capacity: 14,
+              hasLighting: true,
+              status: VenueOperationalStatus.active,
+            ),
+          ],
+          status: VenueOperationalStatus.active,
+          updatedAt: DateTime(2026, 2, 1),
+        );
+        final tournamentWithVenueIds = testTournamentWithAudit.copyWith(
+          venueIds: const ['venue-linked'],
+        );
+
+        var refreshCount = 0;
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              tournamentsControllerProvider.overrideWith(
+                (ref) => FakeTournamentsController(
+                  tournaments: [tournamentWithVenueIds],
+                ),
+              ),
+              activeUserRoleProvider.overrideWithValue(UserRole.fan),
+              matchesCatalogControllerProvider.overrideWith(
+                (ref) => FakeMatchesCatalogController(),
+              ),
+              venuesControllerProvider.overrideWith(
+                (ref) =>
+                    FakeVenuesController(venues: [otherVenue, linkedVenue]),
+              ),
+            ],
+            child: MaterialApp(
+              theme: KickPulseTheme.darkTheme,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [Locale('es')],
+              home: Scaffold(
+                body: CompetitionInfoTabView(
+                  tournamentId: tournamentId,
+                  onRefresh: () async {
+                    refreshCount++;
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Estadio Linked'), findsOneWidget);
+        expect(find.text('Estadio Other'), findsNothing);
+
+        await tester.fling(
+          find.byKey(const Key('competition_detail_info_content')),
+          const Offset(0, 300),
+          1000,
+        );
+        await tester.pumpAndSettle();
+        expect(refreshCount, 1);
+      },
+    );
   });
 }

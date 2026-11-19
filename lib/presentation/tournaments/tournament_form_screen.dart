@@ -303,6 +303,7 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
   }
 
   Future<void> _handleSave() async {
+    if (ref.read(tournamentsControllerProvider).isSaving) return;
     final l10n = AppLocalizations.of(context);
     final candidate = _buildCandidateTournament();
     final validationError = _validateCandidate(candidate, l10n);
@@ -1168,7 +1169,9 @@ class _TournamentFormScreenState extends ConsumerState<TournamentFormScreen> {
                   label: _isEditMode
                       ? l10n.tournamentFormSaveEditAction
                       : l10n.tournamentFormSaveCreateAction,
-                  onPressed: _handleSave,
+                  onPressed: ref.watch(tournamentsControllerProvider).isSaving
+                      ? null
+                      : _handleSave,
                 ),
               ],
             ),

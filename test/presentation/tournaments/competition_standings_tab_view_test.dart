@@ -500,5 +500,74 @@ void main() {
         );
       },
     );
+
+    testWidgets(
+      'HU 22.3: preserves cached standings during background refresh and invokes onRefresh on pull',
+      (tester) async {
+        final snapshot = TournamentCompetitiveSnapshot(
+          tournament: leagueTournament,
+          mainStandingsTable: sampleMainTable,
+          rankings: sampleRankings,
+        );
+
+        var refreshCount = 0;
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              tournamentsControllerProvider.overrideWith(
+                (ref) =>
+                    FakeTournamentsController(tournaments: [leagueTournament]),
+              ),
+              standingsAndRankingsControllerProvider(tournamentId).overrideWith(
+                (ref) => FakeStandingsController(
+                  state: StandingsAndRankingsState(
+                    isLoading: true,
+                    snapshot: snapshot,
+                    activeViewMode: CompetitiveViewMode.standings,
+                  ),
+                ),
+              ),
+            ],
+            child: MaterialApp(
+              theme: KickPulseTheme.darkTheme,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [Locale('es')],
+              home: Scaffold(
+                body: CompetitionStandingsTabView(
+                  tournamentId: tournamentId,
+                  onRefresh: () async {
+                    refreshCount++;
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('competition_detail_standings_loading')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('competition_standings_table_card')),
+          findsOneWidget,
+        );
+
+        await tester.fling(
+          find.byKey(const Key('competition_standings_table_card')),
+          const Offset(0, 300),
+          1000,
+        );
+        await tester.pumpAndSettle();
+        expect(refreshCount, 1);
+      },
+    );
   });
 }

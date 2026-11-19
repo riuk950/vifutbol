@@ -136,16 +136,42 @@ class SupabaseCloudSyncService implements CloudSyncService {
     return completer.future;
   }
 
+  /// Returns the strict foreign-key dependency tier for outbox replay ordering.
+  ///
+  /// Parents (`venue` -> `tournament` -> `team`) always flush before child
+  /// records (`match` -> `matchReport`/`lineupTracking`/`matchAlert` ->
+  /// `seasonHonorRoll`/`tournamentNews`/`fanFavorite`).
+  static int dependencyPriority(SyncOutboxEntityType type) => switch (type) {
+    SyncOutboxEntityType.venue => 0,
+    SyncOutboxEntityType.tournament => 1,
+    SyncOutboxEntityType.team => 2,
+    SyncOutboxEntityType.match => 3,
+    SyncOutboxEntityType.matchReport ||
+    SyncOutboxEntityType.lineupTracking ||
+    SyncOutboxEntityType.matchAlert => 4,
+    SyncOutboxEntityType.seasonHonorRoll ||
+    SyncOutboxEntityType.tournamentNews ||
+    SyncOutboxEntityType.fanFavorite => 5,
+  };
+
   Future<SyncFlushResult> _executeFlush(String userId) async {
     final connectivity = await connectivityRepository.checkConnectivity();
     final currentItems = await outboxRepository.loadItemsForUser(userId);
-    final pendingItems = currentItems
-        .where(
-          (item) =>
-              item.status == SyncOutboxItemStatus.queued ||
-              item.status == SyncOutboxItemStatus.retrying,
-        )
-        .toList();
+    final pendingItems =
+        currentItems
+            .where(
+              (item) =>
+                  item.status == SyncOutboxItemStatus.queued ||
+                  item.status == SyncOutboxItemStatus.retrying,
+            )
+            .toList()
+          ..sort((a, b) {
+            final tierCompare = dependencyPriority(
+              a.entityType,
+            ).compareTo(dependencyPriority(b.entityType));
+            if (tierCompare != 0) return tierCompare;
+            return a.createdAt.compareTo(b.createdAt);
+          });
     final existingErrors = currentItems
         .where((item) => item.status == SyncOutboxItemStatus.error)
         .length;

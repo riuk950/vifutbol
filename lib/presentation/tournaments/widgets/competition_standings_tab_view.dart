@@ -15,8 +15,13 @@ import 'package:vifutbol/presentation/standings/widgets/tournament_rankings_card
 /// Tab view presenting tournament standings table, knockout bracket, and rankings.
 class CompetitionStandingsTabView extends ConsumerWidget {
   final String tournamentId;
+  final Future<void> Function()? onRefresh;
 
-  const CompetitionStandingsTabView({super.key, required this.tournamentId});
+  const CompetitionStandingsTabView({
+    super.key,
+    required this.tournamentId,
+    this.onRefresh,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,7 +50,7 @@ class CompetitionStandingsTabView extends ConsumerWidget {
     }
 
     Widget content;
-    if (state.isLoading) {
+    if (state.isLoading && state.snapshot == null) {
       content = const Center(
         key: Key('competition_detail_standings_loading'),
         child: Padding(
@@ -196,14 +201,18 @@ class CompetitionStandingsTabView extends ConsumerWidget {
           ),
         ),
         Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(
-              KickPulseRadiiSpacing.spaceMd,
-              KickPulseRadiiSpacing.spaceXs,
-              KickPulseRadiiSpacing.spaceMd,
-              KickPulseRadiiSpacing.spaceMd,
+          child: RefreshIndicator(
+            onRefresh: onRefresh ?? controller.loadCompetitiveSnapshot,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(
+                KickPulseRadiiSpacing.spaceMd,
+                KickPulseRadiiSpacing.spaceXs,
+                KickPulseRadiiSpacing.spaceMd,
+                KickPulseRadiiSpacing.spaceMd,
+              ),
+              child: content,
             ),
-            child: content,
           ),
         ),
       ],

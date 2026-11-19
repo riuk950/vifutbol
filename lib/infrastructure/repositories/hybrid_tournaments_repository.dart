@@ -170,6 +170,22 @@ class HybridTournamentsRepository implements TournamentsRepository {
   final TournamentsRemoteDataSource remote;
   final HybridRepositorySupport support;
 
+  ChampionshipTournament _normalizeTournament(
+    ChampionshipTournament tournament,
+  ) {
+    final normalizedId = HybridRepositorySupport.ensureUuid(
+      tournament.id,
+      'tournament',
+    );
+    final normalizedVenueIds = tournament.venueIds
+        .map((v) => HybridRepositorySupport.ensureUuid(v, 'venue'))
+        .toList();
+    return tournament.copyWith(
+      id: normalizedId,
+      venueIds: normalizedVenueIds,
+    );
+  }
+
   @override
   Future<List<ChampionshipTournament>> loadTournaments() {
     return support.executeRead(
@@ -183,27 +199,32 @@ class HybridTournamentsRepository implements TournamentsRepository {
   Future<ChampionshipTournament> saveTournament(
     ChampionshipTournament tournament,
   ) {
+    final normalized = _normalizeTournament(tournament);
     return support.executeMutation(
-      localWrite: () => local.saveTournament(tournament),
-      remoteWrite: () => remote.upsert(tournament),
+      localWrite: () => local.saveTournament(normalized),
+      remoteWrite: () => remote.upsert(normalized),
       entityType: SyncOutboxEntityType.tournament,
-      entityId: tournament.id,
+      entityId: normalized.id,
       operation: SyncOutboxOperation.upsert,
-      buildPayload: () => {'tournament': tournament.toJson()},
-      displayTitle: tournament.name,
+      buildPayload: () => {'tournament': normalized.toJson()},
+      displayTitle: normalized.name,
     );
   }
 
   @override
   Future<void> deleteTournament(String tournamentId) {
+    final normalizedId = HybridRepositorySupport.ensureUuid(
+      tournamentId,
+      'tournament',
+    );
     return support.executeMutation(
-      localWrite: () => local.deleteTournament(tournamentId),
-      remoteWrite: () => remote.deleteById(tournamentId),
+      localWrite: () => local.deleteTournament(normalizedId),
+      remoteWrite: () => remote.deleteById(normalizedId),
       entityType: SyncOutboxEntityType.tournament,
-      entityId: tournamentId,
+      entityId: normalizedId,
       operation: SyncOutboxOperation.delete,
-      buildPayload: () => {'tournamentId': tournamentId},
-      displayTitle: tournamentId,
+      buildPayload: () => {'tournamentId': normalizedId},
+      displayTitle: normalizedId,
     );
   }
 

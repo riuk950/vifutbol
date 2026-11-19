@@ -27,12 +27,14 @@ class CompetitionFixtureTabView extends ConsumerWidget {
   final String tournamentId;
   final List<ChampionshipMatch>? customMatches;
   final ChampionshipTournament? tournament;
+  final Future<void> Function()? onRefresh;
 
   const CompetitionFixtureTabView({
     super.key,
     required this.tournamentId,
     this.customMatches,
     this.tournament,
+    this.onRefresh,
   });
 
   void _openMatchDetailModal(
@@ -281,15 +283,36 @@ class CompetitionFixtureTabView extends ConsumerWidget {
           .toList();
     }
 
+    Future<void> handleRefresh() async {
+      if (onRefresh != null) {
+        await onRefresh!();
+      } else {
+        await ref
+            .read(matchesCatalogControllerProvider.notifier)
+            .loadTournamentMatches(tournamentId);
+      }
+    }
+
     if (matches.isEmpty) {
-      return Center(
-        key: const Key('fixture_empty_matches_state'),
-        child: Padding(
-          padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceLg),
-          child: KickPulseStateView<void>(
-            state: UiEmptyState<void>(
-              message: l10n.fixtureEmptyMatchesTitle,
-              description: l10n.fixtureEmptyMatchesMessage,
+      return RefreshIndicator(
+        onRefresh: handleRefresh,
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Center(
+                key: const Key('fixture_empty_matches_state'),
+                child: Padding(
+                  padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceLg),
+                  child: KickPulseStateView<void>(
+                    state: UiEmptyState<void>(
+                      message: l10n.fixtureEmptyMatchesTitle,
+                      description: l10n.fixtureEmptyMatchesMessage,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ),
@@ -298,9 +321,12 @@ class CompetitionFixtureTabView extends ConsumerWidget {
 
     final groups = groupMatchesByRoundNumber(matches);
 
-    return ListView.builder(
-      key: const Key('competition_detail_fixture_list'),
-      padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
+    return RefreshIndicator(
+      onRefresh: handleRefresh,
+      child: ListView.builder(
+        key: const Key('competition_detail_fixture_list'),
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
       itemCount: groups.length,
       itemBuilder: (context, index) {
         final group = groups[index];
@@ -404,6 +430,7 @@ class CompetitionFixtureTabView extends ConsumerWidget {
           ),
         );
       },
+    ),
     );
   }
 }

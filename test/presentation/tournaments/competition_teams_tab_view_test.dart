@@ -497,5 +497,73 @@ void main() {
         );
       },
     );
+
+    testWidgets(
+      'HU 22.3: disables team mutation buttons while isSaving is true and supports pull-to-refresh',
+      (tester) async {
+        final team1 = TournamentTeam(
+          id: 'team-guard',
+          tournamentId: mixedTournament.id,
+          name: 'Equipo Guard',
+          shortCode: 'EGD',
+          groupName: 'Grupo A',
+        );
+        final savingController = FakeTeamsController(teams: [team1]);
+        savingController.state = savingController.state.copyWith(
+          isSaving: true,
+        );
+
+        var refreshCount = 0;
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              tournamentsControllerProvider.overrideWith(
+                (ref) =>
+                    FakeTournamentsController(tournaments: [mixedTournament]),
+              ),
+              teamsControllerProvider.overrideWith((ref) => savingController),
+              activeUserRoleProvider.overrideWithValue(UserRole.organizer),
+            ],
+            child: MaterialApp(
+              theme: KickPulseTheme.darkTheme,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [Locale('es')],
+              home: Scaffold(
+                body: CompetitionTeamsTabView(
+                  tournamentId: mixedTournament.id,
+                  onRefresh: () async {
+                    refreshCount++;
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final moveButton = tester.widget<IconButton>(
+          find.byKey(const Key('competition_team_move_group_team-guard')),
+        );
+        final removeButton = tester.widget<IconButton>(
+          find.byKey(const Key('competition_team_remove_team-guard')),
+        );
+        expect(moveButton.onPressed, isNull);
+        expect(removeButton.onPressed, isNull);
+
+        await tester.fling(
+          find.byKey(const Key('competition_teams_tab_view')),
+          const Offset(0, 300),
+          1000,
+        );
+        await tester.pumpAndSettle();
+        expect(refreshCount, 1);
+      },
+    );
   });
 }

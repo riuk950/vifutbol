@@ -6,11 +6,14 @@ import 'package:vifutbol/application/controllers/matches_catalog_controller.dart
 import 'package:vifutbol/application/controllers/standings_and_rankings_controller.dart';
 import 'package:vifutbol/application/controllers/teams_controller.dart';
 import 'package:vifutbol/application/controllers/tournaments_controller.dart';
+import 'package:vifutbol/application/controllers/venues_controller.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
+import 'package:vifutbol/application/providers/backup_and_season_closure_providers.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
+import 'package:vifutbol/application/providers/venues_providers.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
@@ -18,12 +21,15 @@ import 'package:vifutbol/domain/entities/connectivity_status.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/matches_catalog_state.dart';
+import 'package:vifutbol/domain/entities/season_honor_roll.dart';
+import 'package:vifutbol/domain/entities/sports_venue.dart';
 import 'package:vifutbol/domain/entities/teams_catalog_state.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/entities/tournaments_catalog_state.dart';
 import 'package:vifutbol/domain/entities/ui_view_state.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
+import 'package:vifutbol/domain/entities/venues_catalog_state.dart';
 import 'package:vifutbol/domain/repositories/connectivity_repository.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
@@ -64,6 +70,13 @@ class FakeTournamentsController extends StateNotifier<TournamentsCatalogState>
          ),
        );
 
+  int loadCatalogCalls = 0;
+
+  @override
+  Future<void> loadCatalog() async {
+    loadCatalogCalls++;
+  }
+
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -72,6 +85,13 @@ class FakeTeamsController extends StateNotifier<TeamsCatalogState>
     implements TeamsController {
   FakeTeamsController({List<TournamentTeam> teams = const []})
     : super(TeamsCatalogState(teams: teams));
+
+  int loadTeamsCalls = 0;
+
+  @override
+  Future<void> loadTeams() async {
+    loadTeamsCalls++;
+  }
 
   @override
   Future<bool> enrollTeamInCompetition({
@@ -91,6 +111,13 @@ class FakeMatchesCatalogController extends StateNotifier<MatchesCatalogState>
     implements MatchesCatalogController {
   FakeMatchesCatalogController({List<ChampionshipMatch> matches = const []})
     : super(MatchesCatalogState(matches: matches));
+
+  int loadTournamentMatchesCalls = 0;
+
+  @override
+  Future<void> loadTournamentMatches(String tournamentId) async {
+    loadTournamentMatchesCalls++;
+  }
 
   @override
   Future<bool> generateFixture({
@@ -120,6 +147,34 @@ class FakeStandingsController extends StateNotifier<StandingsAndRankingsState>
     implements StandingsAndRankingsController {
   FakeStandingsController({StandingsAndRankingsState? state})
     : super(state ?? const StandingsAndRankingsState());
+
+  int loadSnapshotCalls = 0;
+
+  @override
+  Future<void> loadCompetitiveSnapshot() async {
+    loadSnapshotCalls++;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class FakeVenuesController extends StateNotifier<VenuesCatalogState>
+    implements VenuesController {
+  FakeVenuesController({List<SportsVenue> venues = const []})
+    : super(
+        VenuesCatalogState(
+          viewState: UiSuccessState<List<SportsVenue>>(venues),
+          venues: venues,
+        ),
+      );
+
+  int loadCatalogCalls = 0;
+
+  @override
+  Future<void> loadCatalog() async {
+    loadCatalogCalls++;
+  }
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -182,6 +237,24 @@ Widget createDetailTestApp({
       ),
       matchesCatalogControllerProvider.overrideWith(
         (ref) => FakeMatchesCatalogController(matches: defaultMatches),
+      ),
+      venuesControllerProvider.overrideWith((ref) => FakeVenuesController()),
+      tournamentHonorRollProvider(tournamentId).overrideWith(
+        (ref) async => SeasonHonorRoll(
+          tournamentId: tournamentId,
+          tournamentName: tournament.name,
+          closedAt: DateTime(2026, 11, 30),
+          championTeamId: 't-a',
+          championTeamName: 'Equipo A',
+          championShortCode: 'EQA',
+          runnerUpTeamId: 't-b',
+          runnerUpTeamName: 'Equipo B',
+          runnerUpShortCode: 'EQB',
+          bestDefenseTeamId: 't-a',
+          bestDefenseTeamName: 'Equipo A',
+          bestDefenseShortCode: 'EQA',
+          bestDefenseGoalsAgainst: 0,
+        ),
       ),
       standingsAndRankingsControllerProvider(
         tournamentId,
@@ -521,6 +594,68 @@ void main() {
                 '${role.name} must never see competition_detail_fab_add_team',
           );
         }
+      },
+    );
+
+    testWidgets(
+      'HU 22.3: triggers parallel cloud hydration of all controllers and honor roll on cold start',
+      (tester) async {
+        const tournamentId = 't-cold-start';
+        final tournamentsCtrl = FakeTournamentsController();
+        final teamsCtrl = FakeTeamsController();
+        final matchesCtrl = FakeMatchesCatalogController();
+        final venuesCtrl = FakeVenuesController();
+        final standingsCtrl = FakeStandingsController();
+        var honorRollFetches = 0;
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              environmentConfigProvider.overrideWithValue(
+                EnvironmentConfig.development(),
+              ),
+              localStorageRepositoryProvider.overrideWithValue(
+                _FakeLocalStorageRepository(),
+              ),
+              connectivityRepositoryProvider.overrideWithValue(
+                _FakeConnectivityRepository(),
+              ),
+              activeUserRoleProvider.overrideWith((ref) => UserRole.fan),
+              tournamentsControllerProvider.overrideWith((_) => tournamentsCtrl),
+              teamsControllerProvider.overrideWith((_) => teamsCtrl),
+              matchesCatalogControllerProvider.overrideWith((_) => matchesCtrl),
+              venuesControllerProvider.overrideWith((_) => venuesCtrl),
+              standingsAndRankingsControllerProvider(
+                tournamentId,
+              ).overrideWith((_) => standingsCtrl),
+              tournamentHonorRollProvider(tournamentId).overrideWith((
+                _,
+              ) async {
+                honorRollFetches++;
+                return null;
+              }),
+            ],
+            child: MaterialApp(
+              theme: KickPulseTheme.darkTheme,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [Locale('es')],
+              home: const CompetitionDetailScreen(tournamentId: tournamentId),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tournamentsCtrl.loadCatalogCalls, 1);
+        expect(teamsCtrl.loadTeamsCalls, 1);
+        expect(matchesCtrl.loadTournamentMatchesCalls, 1);
+        expect(venuesCtrl.loadCatalogCalls, 1);
+        expect(standingsCtrl.loadSnapshotCalls, 1);
+        expect(honorRollFetches, greaterThanOrEqualTo(0));
       },
     );
   });

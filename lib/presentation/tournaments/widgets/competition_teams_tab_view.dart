@@ -26,8 +26,13 @@ import 'package:vifutbol/presentation/teams/widgets/kick_pulse_team_crest.dart';
 /// and Organizer group relocation and team removal.
 class CompetitionTeamsTabView extends ConsumerWidget {
   final String tournamentId;
+  final Future<void> Function()? onRefresh;
 
-  const CompetitionTeamsTabView({super.key, required this.tournamentId});
+  const CompetitionTeamsTabView({
+    super.key,
+    required this.tournamentId,
+    this.onRefresh,
+  });
 
   void _onTeamTapped(BuildContext context, WidgetRef ref, TournamentTeam team) {
     ref.read(teamsControllerProvider.notifier).selectTeam(team.id);
@@ -218,34 +223,53 @@ class CompetitionTeamsTabView extends ConsumerWidget {
         ) &&
         (tournament?.status.isEditable ?? false);
 
+    Future<void> handleRefresh() async {
+      if (onRefresh != null) {
+        await onRefresh!();
+      } else {
+        await ref.read(teamsControllerProvider.notifier).loadTeams();
+      }
+    }
+
     if (teams.isEmpty) {
-      return Center(
-        key: const Key('competition_teams_empty_state'),
-        child: Padding(
-          padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceLg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.group_outlined,
-                size: 56,
-                color: KickPulseColors.textMuted,
-              ),
-              const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
-              Text(
-                l10n.competitionTeamsEmptyTitle,
-                style: KickPulseTypography.cardTitle,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
-              Text(
-                l10n.competitionTeamsEmptyDescription,
-                style: KickPulseTypography.captionMeta.copyWith(
-                  color: KickPulseColors.textSecondary,
+      return RefreshIndicator(
+        onRefresh: handleRefresh,
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Center(
+                key: const Key('competition_teams_empty_state'),
+                child: Padding(
+                  padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceLg),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.group_outlined,
+                        size: 56,
+                        color: KickPulseColors.textMuted,
+                      ),
+                      const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+                      Text(
+                        l10n.competitionTeamsEmptyTitle,
+                        style: KickPulseTypography.cardTitle,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+                      Text(
+                        l10n.competitionTeamsEmptyDescription,
+                        style: KickPulseTypography.captionMeta.copyWith(
+                          color: KickPulseColors.textSecondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
-            ],
+            ),
           ),
         ),
       );
@@ -254,9 +278,12 @@ class CompetitionTeamsTabView extends ConsumerWidget {
     final isMixedGroups =
         tournament?.format == TournamentFormat.mixedGroupsAndKnockout;
 
-    return SingleChildScrollView(
-      key: const Key('competition_teams_tab_view'),
-      padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
+    return RefreshIndicator(
+      onRefresh: handleRefresh,
+      child: SingleChildScrollView(
+        key: const Key('competition_teams_tab_view'),
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -286,6 +313,7 @@ class CompetitionTeamsTabView extends ConsumerWidget {
             ),
         ],
       ),
+    ),
     );
   }
 
@@ -505,13 +533,15 @@ class CompetitionTeamsTabView extends ConsumerWidget {
                       size: 20,
                       color: KickPulseColors.accentPrimary,
                     ),
-                    onPressed: () => _showMoveGroupDialog(
-                      context,
-                      ref,
-                      team,
-                      tournament,
-                      l10n,
-                    ),
+                    onPressed: ref.watch(teamsControllerProvider).isSaving
+                        ? null
+                        : () => _showMoveGroupDialog(
+                              context,
+                              ref,
+                              team,
+                              tournament,
+                              l10n,
+                            ),
                   ),
                 IconButton(
                   key: Key('competition_team_remove_${team.id}'),
@@ -521,13 +551,15 @@ class CompetitionTeamsTabView extends ConsumerWidget {
                     size: 20,
                     color: KickPulseColors.accentWarning,
                   ),
-                  onPressed: () => _showRemoveTeamDialog(
-                    context,
-                    ref,
-                    team,
-                    tournament,
-                    l10n,
-                  ),
+                  onPressed: ref.watch(teamsControllerProvider).isSaving
+                      ? null
+                      : () => _showRemoveTeamDialog(
+                            context,
+                            ref,
+                            team,
+                            tournament,
+                            l10n,
+                          ),
                 ),
               ],
             ],
@@ -547,13 +579,15 @@ class CompetitionTeamsTabView extends ConsumerWidget {
                       label: l10n.teamEligibilityActionApprove,
                       icon: const Icon(Icons.verified_outlined, size: 18),
                       variant: KickPulseButtonVariant.outline,
-                      onPressed: () => _handleApproveTeam(
-                        context,
-                        ref,
-                        team,
-                        tournament,
-                        l10n,
-                      ),
+                      onPressed: ref.watch(teamsControllerProvider).isSaving
+                          ? null
+                          : () => _handleApproveTeam(
+                                context,
+                                ref,
+                                team,
+                                tournament,
+                                l10n,
+                              ),
                     ),
                   if (team.isEligible)
                     KickPulseButton(
@@ -561,13 +595,15 @@ class CompetitionTeamsTabView extends ConsumerWidget {
                       label: l10n.teamEligibilityActionRevoke,
                       icon: const Icon(Icons.block, size: 18),
                       variant: KickPulseButtonVariant.secondary,
-                      onPressed: () => _handleRevokeTeam(
-                        context,
-                        ref,
-                        team,
-                        tournament,
-                        l10n,
-                      ),
+                      onPressed: ref.watch(teamsControllerProvider).isSaving
+                          ? null
+                          : () => _handleRevokeTeam(
+                                context,
+                                ref,
+                                team,
+                                tournament,
+                                l10n,
+                              ),
                     ),
                 ],
               ),
@@ -584,6 +620,7 @@ class CompetitionTeamsTabView extends ConsumerWidget {
     ChampionshipTournament tournament,
     AppLocalizations l10n,
   ) async {
+    if (ref.read(teamsControllerProvider).isSaving) return;
     if (team.players.length < 11) {
       showDialog<void>(
         context: context,
@@ -653,6 +690,7 @@ class CompetitionTeamsTabView extends ConsumerWidget {
     ChampionshipTournament tournament,
     AppLocalizations l10n,
   ) async {
+    if (ref.read(teamsControllerProvider).isSaving) return;
     final userRole = ref.read(activeUserRoleProvider);
     final success = await ref
         .read(teamsControllerProvider.notifier)

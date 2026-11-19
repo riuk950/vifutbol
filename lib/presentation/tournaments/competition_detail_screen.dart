@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vifutbol/application/controllers/standings_and_rankings_controller.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
+import 'package:vifutbol/application/providers/backup_and_season_closure_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
+import 'package:vifutbol/application/providers/venues_providers.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/role_permission_matrix.dart';
@@ -35,6 +38,40 @@ class CompetitionDetailScreen extends ConsumerStatefulWidget {
 
 class _CompetitionDetailScreenState
     extends ConsumerState<CompetitionDetailScreen> {
+  bool _isHydrating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(_hydrateCompetitionData);
+  }
+
+  Future<void> _hydrateCompetitionData() async {
+    if (_isHydrating || !mounted) return;
+    _isHydrating = true;
+    try {
+      await Future.wait([
+        ref.read(tournamentsControllerProvider.notifier).loadCatalog(),
+        ref.read(teamsControllerProvider.notifier).loadTeams(),
+        ref
+            .read(matchesCatalogControllerProvider.notifier)
+            .loadTournamentMatches(widget.tournamentId),
+        ref.read(venuesControllerProvider.notifier).loadCatalog(),
+      ]);
+      if (!mounted) return;
+      await ref
+          .read(
+            standingsAndRankingsControllerProvider(
+              widget.tournamentId,
+            ).notifier,
+          )
+          .loadCompetitiveSnapshot();
+      ref.invalidate(tournamentHonorRollProvider(widget.tournamentId));
+    } finally {
+      _isHydrating = false;
+    }
+  }
+
   (String, KickPulseBadgeVariant) _statusBadgeInfo(
     TournamentStatus status,
     AppLocalizations l10n,
@@ -241,10 +278,22 @@ class _CompetitionDetailScreenState
         body: TabBarView(
           key: const Key('competition_detail_tab_bar_view'),
           children: [
-            CompetitionFixtureTabView(tournamentId: widget.tournamentId),
-            CompetitionStandingsTabView(tournamentId: widget.tournamentId),
-            CompetitionTeamsTabView(tournamentId: widget.tournamentId),
-            CompetitionInfoTabView(tournamentId: widget.tournamentId),
+            CompetitionFixtureTabView(
+              tournamentId: widget.tournamentId,
+              onRefresh: _hydrateCompetitionData,
+            ),
+            CompetitionStandingsTabView(
+              tournamentId: widget.tournamentId,
+              onRefresh: _hydrateCompetitionData,
+            ),
+            CompetitionTeamsTabView(
+              tournamentId: widget.tournamentId,
+              onRefresh: _hydrateCompetitionData,
+            ),
+            CompetitionInfoTabView(
+              tournamentId: widget.tournamentId,
+              onRefresh: _hydrateCompetitionData,
+            ),
           ],
         ),
       ),
