@@ -129,3 +129,4 @@ jobs:
           groups: testers-dev
           file: build/app/outputs/flutter-apk/app-dev-release.apk
           releaseNotesFile: release-notes.txt
+          debug: true
