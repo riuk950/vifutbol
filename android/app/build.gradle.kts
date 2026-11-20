@@ -43,11 +43,11 @@ android {
             dimension = "environment"
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
-            manifestPlaceholders["appName"] = "vifutbol DEV"
+            manifestPlaceholders["appName"] = "Vifutbol DEV"
         }
         create("prod") {
             dimension = "environment"
-            manifestPlaceholders["appName"] = "vifutbol"
+            manifestPlaceholders["appName"] = "Vifutbol"
         }
     }
 
