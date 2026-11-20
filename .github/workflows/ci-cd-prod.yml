@@ -122,10 +122,28 @@ jobs:
           retention-days: 30
 
       - name: Distribute PROD APK to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
-        with:
-          appId: ${{ secrets.FIREBASE_APP_ID_PROD }}
-          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
-          groups: testers-prod
-          file: build/app/outputs/flutter-apk/app-prod-release.apk
-          releaseNotesFile: release-notes.txt
+        env:
+          FIREBASE_APP_ID_PROD: ${{ secrets.FIREBASE_APP_ID_PROD }}
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          raw_sa = os.environ['FIREBASE_SERVICE_ACCOUNT_JSON'].strip()
+          sa = json.loads(raw_sa)
+          if sa.get('type') != 'service_account':
+              print(f"::error::FIREBASE_SERVICE_ACCOUNT_JSON must have type=service_account, got {sa.get('type')}")
+              sys.exit(1)
+          app_id = os.environ['FIREBASE_APP_ID_PROD'].strip()
+          if ':android:' not in app_id:
+              print("::error::FIREBASE_APP_ID_PROD must look like 1:<project_number>:android:<app_hash>")
+              sys.exit(1)
+          with open('/tmp/firebase-sa.json', 'w') as f:
+              json.dump(sa, f)
+          PY
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/firebase-sa.json
+          npx --yes firebase-tools appdistribution:distribute \
+            build/app/outputs/flutter-apk/app-prod-release.apk \
+            --app "$(printf '%s' "$FIREBASE_APP_ID_PROD" | tr -d '[:space:]')" \
+            --groups testers-prod \
+            --release-notes-file release-notes.txt
+          rm -f /tmp/firebase-sa.json

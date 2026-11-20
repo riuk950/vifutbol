@@ -122,11 +122,30 @@ jobs:
           retention-days: 14
 
       - name: Distribute DEV APK to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
-        with:
-          appId: ${{ secrets.FIREBASE_APP_ID_DEV }}
-          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
-          groups: testers-dev
-          file: build/app/outputs/flutter-apk/app-dev-release.apk
-          releaseNotesFile: release-notes.txt
-          debug: true
+        env:
+          FIREBASE_APP_ID_DEV: ${{ secrets.FIREBASE_APP_ID_DEV }}
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          raw_sa = os.environ['FIREBASE_SERVICE_ACCOUNT_JSON'].strip()
+          sa = json.loads(raw_sa)
+          if sa.get('type') != 'service_account':
+              print(f"::error::FIREBASE_SERVICE_ACCOUNT_JSON must have type=service_account, got {sa.get('type')}")
+              sys.exit(1)
+          app_id = os.environ['FIREBASE_APP_ID_DEV'].strip()
+          if ':android:' not in app_id:
+              print("::error::FIREBASE_APP_ID_DEV must look like 1:<project_number>:android:<app_hash>")
+              sys.exit(1)
+          print(f"Service Account project_id={sa.get('project_id')}, App ID prefix={app_id.split(':android:')[0]}:android:***")
+          with open('/tmp/firebase-sa.json', 'w') as f:
+              json.dump(sa, f)
+          PY
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/firebase-sa.json
+          npx --yes firebase-tools appdistribution:distribute \
+            build/app/outputs/flutter-apk/app-dev-release.apk \
+            --app "$(printf '%s' "$FIREBASE_APP_ID_DEV" | tr -d '[:space:]')" \
+            --groups testers-dev \
+            --release-notes-file release-notes.txt \
+            --debug
+          rm -f /tmp/firebase-sa.json
