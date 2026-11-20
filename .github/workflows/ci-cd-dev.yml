@@ -82,6 +82,23 @@ jobs:
         run: |
           printf '%s\n' "$ENV_DEV_FILE" > .env.dev
           : > .env.prod
+          python3 - <<'PY'
+          import sys
+          env = {}
+          with open('.env.dev', 'r', encoding='utf-8') as f:
+              for raw in f:
+                  line = raw.strip()
+                  if not line or line.startswith('#') or '=' not in line:
+                      continue
+                  k, v = line.split('=', 1)
+                  env[k.strip()] = v.strip().strip('"').strip("'")
+          missing = [k for k in ('SUPABASE_URL', 'SUPABASE_ANON_KEY') if not env.get(k)]
+          if missing:
+              print(f"::error::.env.dev is missing required Supabase keys: {', '.join(missing)}")
+              sys.exit(1)
+          schema = env.get('SUPABASE_SCHEMA', 'vifutboldev (default)')
+          print(f"Verified .env.dev -> SUPABASE_URL=present, SUPABASE_ANON_KEY=present (len={len(env['SUPABASE_ANON_KEY'])}), SUPABASE_SCHEMA={schema}")
+          PY
 
       - name: Configure Android Release Keystore
         env:
@@ -146,6 +163,5 @@ jobs:
             build/app/outputs/flutter-apk/app-dev-release.apk \
             --app "$(printf '%s' "$FIREBASE_APP_ID_DEV" | tr -d '[:space:]')" \
             --groups testers-dev \
-            --release-notes-file release-notes.txt \
-            --debug
+            --release-notes-file release-notes.txt
           rm -f /tmp/firebase-sa.json

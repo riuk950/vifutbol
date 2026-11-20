@@ -82,6 +82,23 @@ jobs:
         run: |
           : > .env.dev
           printf '%s\n' "$ENV_PROD_FILE" > .env.prod
+          python3 - <<'PY'
+          import sys
+          env = {}
+          with open('.env.prod', 'r', encoding='utf-8') as f:
+              for raw in f:
+                  line = raw.strip()
+                  if not line or line.startswith('#') or '=' not in line:
+                      continue
+                  k, v = line.split('=', 1)
+                  env[k.strip()] = v.strip().strip('"').strip("'")
+          missing = [k for k in ('SUPABASE_URL', 'SUPABASE_ANON_KEY') if not env.get(k)]
+          if missing:
+              print(f"::error::.env.prod is missing required Supabase keys: {', '.join(missing)}")
+              sys.exit(1)
+          schema = env.get('SUPABASE_SCHEMA', 'public (default)')
+          print(f"Verified .env.prod -> SUPABASE_URL=present, SUPABASE_ANON_KEY=present (len={len(env['SUPABASE_ANON_KEY'])}), SUPABASE_SCHEMA={schema}")
+          PY
 
       - name: Configure Android Release Keystore
         env:
