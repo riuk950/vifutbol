@@ -70,6 +70,10 @@ android {
                 // Safe fallback for local builds when release keystore credentials are absent.
                 signingConfigs.getByName("debug")
             }
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 }
