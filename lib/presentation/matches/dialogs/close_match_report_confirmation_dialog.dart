@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../../../domain/entities/championship_match.dart';
 import '../../../domain/entities/digital_match_report.dart';
 import '../../../domain/entities/match_report_enums.dart';

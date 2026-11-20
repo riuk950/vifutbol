@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Semantic colors for KickPulse Mobile (DESIGN.md).
 /// Dark-first high-contrast athletic theme.

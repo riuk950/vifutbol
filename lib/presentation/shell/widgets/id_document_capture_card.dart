@@ -1,7 +1,7 @@
 // lib/presentation/shell/widgets/id_document_capture_card.dart
 
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/providers/document_scanner_providers.dart';
 import 'package:vifutbol/domain/entities/colombian_id_scan_result.dart';

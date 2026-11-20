@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 
 /// Typography scale for KickPulse Mobile with mandatory tabular numerals (FR-004).

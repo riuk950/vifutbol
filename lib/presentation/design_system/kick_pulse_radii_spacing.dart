@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Geometry, radii, spacing and ergonomic constraints for KickPulse Mobile (DESIGN.md).
 class KickPulseRadiiSpacing {

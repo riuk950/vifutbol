@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/controllers/connectivity_banner_controller.dart';
 import 'package:vifutbol/domain/entities/connectivity_status.dart';

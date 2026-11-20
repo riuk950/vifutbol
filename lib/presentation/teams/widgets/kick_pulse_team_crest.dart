@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 
 /// Native vector crest widget rendering athletic emblem shapes, club colors,

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../../../domain/entities/registered_player.dart';
 import '../../design_system/kick_pulse_colors.dart';
 import '../../design_system/kick_pulse_radii_spacing.dart';
