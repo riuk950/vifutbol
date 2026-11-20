@@ -120,3 +120,54 @@ open coverage/html/index.html
 ## 🎨 Diseño
 
 - Basate en DESING.md en la raiz del proyecto.
+
+
+---
+
+## 🚀 CI/CD, Firmado Android y Firebase App Distribution (DEV / PROD)
+
+El repositorio cuenta con pipelines automatizados en GitHub Actions que ejecutan `flutter analyze` y `flutter test` como puerta de calidad obligatoria antes de compilar y distribuir APKs firmados:
+
+- **DEV (`develop`)**: `.github/workflows/ci-cd-dev.yml` → Compila `--flavor dev -t lib/main_dev.dart` (`com.vifutbol.vifutbol.dev`, etiqueta `vifutbol DEV`, banner DEV visible) y distribuye al grupo `testers-dev`.
+- **PROD (`main`)**: `.github/workflows/ci-cd-prod.yml` → Compila `--flavor prod -t lib/main_prod.dart` (`com.vifutbol.vifutbol`, etiqueta `vifutbol`, sin banner DEV) y distribuye al grupo `testers-prod`.
+
+### 1. Generar el Keystore de Release y convertirlo a Base64
+
+```bash
+keytool -genkey -v -keystore upload-keystore.jks \
+  -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+```
+
+Convierte el archivo `.jks` a una sola línea Base64 para guardarlo como secreto:
+
+```bash
+# macOS
+base64 -i upload-keystore.jks | tr -d '\n' | pbcopy
+
+# Linux
+base64 -w 0 upload-keystore.jks
+```
+
+> ⚠️ Nunca subas `*.jks`, `*.keystore`, `android/key.properties`, `.env.dev` ni `.env.prod` a Git (están bloqueados en `.gitignore`).
+
+### 2. Configurar Firebase App Distribution
+
+1. En **Firebase Console**, registra **dos apps Android** para permitir instalación en paralelo en el mismo dispositivo:
+   - **DEV**: package name `com.vifutbol.vifutbol.dev` → copia su **App ID** en `FIREBASE_APP_ID_DEV`.
+   - **PROD**: package name `com.vifutbol.vifutbol` → copia su **App ID** en `FIREBASE_APP_ID_PROD`.
+2. En **App Distribution → Testers & Groups**, crea los grupos `testers-dev` y `testers-prod`.
+3. En **Google Cloud IAM / Firebase**, crea una Service Account con rol **Firebase App Distribution Admin**, descarga su clave JSON y guárdala en `FIREBASE_SERVICE_ACCOUNT_JSON`.
+
+### 3. GitHub Secrets requeridos (`Settings → Secrets and variables → Actions`)
+
+| Categoría | Nombre del Secret | Propósito |
+|---|---|---|
+| **Entorno DEV** | `ENV_DEV_FILE` | Contenido completo multilínea de `.env.dev` |
+| **Entorno PROD** | `ENV_PROD_FILE` | Contenido completo multilínea de `.env.prod` |
+| **Firma Android** | `ANDROID_KEYSTORE_BASE64` | Keystore `.jks` codificado en Base64 (sin saltos de línea) |
+| **Firma Android** | `ANDROID_KEYSTORE_PASSWORD` | Contraseña del keystore (`storePassword`) |
+| **Firma Android** | `ANDROID_KEY_PASSWORD` | Contraseña del alias (`keyPassword`) |
+| **Firma Android** | `ANDROID_KEY_ALIAS` | Alias de la llave (ej. `upload`) |
+| **Firebase** | `FIREBASE_SERVICE_ACCOUNT_JSON` | JSON completo de la Service Account con rol App Distribution Admin |
+| **Firebase** | `FIREBASE_APP_ID_DEV` | App ID de Android DEV (`com.vifutbol.vifutbol.dev`) |
+| **Firebase** | `FIREBASE_APP_ID_PROD` | App ID de Android PROD (`com.vifutbol.vifutbol`) |

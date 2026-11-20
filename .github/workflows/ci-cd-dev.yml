@@ -1,0 +1,130 @@
+name: CI/CD DEV - Android APK & Firebase App Distribution
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+concurrency:
+  group: ci-cd-dev-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-gate-and-distribute-dev:
+    name: Quality Gate, Build & Distribute DEV APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter (stable)
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Create placeholder .env assets for pubspec bundling
+        run: |
+          : > .env.dev
+          : > .env.prod
+
+      - name: Install dependencies and generate localizations
+        run: |
+          flutter pub get
+          flutter gen-l10n
+
+      - name: Quality Gate - Static Analysis
+        run: flutter analyze
+
+      - name: Quality Gate - Automated Tests
+        run: flutter test
+
+      - name: Validate required DEV CI/CD secrets
+        env:
+          ENV_DEV_FILE: ${{ secrets.ENV_DEV_FILE }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          FIREBASE_APP_ID_DEV: ${{ secrets.FIREBASE_APP_ID_DEV }}
+        run: |
+          missing=0
+          for var_name in \
+            ENV_DEV_FILE \
+            ANDROID_KEYSTORE_BASE64 \
+            ANDROID_KEYSTORE_PASSWORD \
+            ANDROID_KEY_PASSWORD \
+            ANDROID_KEY_ALIAS \
+            FIREBASE_SERVICE_ACCOUNT_JSON \
+            FIREBASE_APP_ID_DEV; do
+            if [ -z "${!var_name}" ]; then
+              echo "::error::Missing required GitHub Secret: ${var_name}"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Materialize .env.dev from GitHub Secret
+        env:
+          ENV_DEV_FILE: ${{ secrets.ENV_DEV_FILE }}
+        run: |
+          printf '%s\n' "$ENV_DEV_FILE" > .env.dev
+          : > .env.prod
+
+      - name: Configure Android Release Keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | tr -d '\n\r ' | base64 --decode > android/app/upload-keystore.jks
+          cat <<EOF > android/key.properties
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyPassword=$ANDROID_KEY_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          storeFile=upload-keystore.jks
+          EOF
+
+      - name: Build Signed DEV Release APK
+        run: flutter build apk --release --flavor dev -t lib/main_dev.dart
+
+      - name: Generate Release Notes
+        run: |
+          SHORT_SHA="${GITHUB_SHA::7}"
+          AUTHOR="$(git log -1 --pretty=format:'%an')"
+          MESSAGE="$(git log -1 --pretty=format:'%s')"
+          cat <<EOF > release-notes.txt
+          Entorno: DEV (com.vifutbol.vifutbol.dev)
+          Rama: ${GITHUB_REF_NAME}
+          Commit: ${SHORT_SHA}
+          Autor: ${AUTHOR}
+          Mensaje: ${MESSAGE}
+          EOF
+
+      - name: Upload DEV APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vifutbol-dev-apk-${{ github.run_number }}
+          path: build/app/outputs/flutter-apk/app-dev-release.apk
+          retention-days: 14
+
+      - name: Distribute DEV APK to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID_DEV }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          groups: testers-dev
+          file: build/app/outputs/flutter-apk/app-dev-release.apk
+          releaseNotesFile: release-notes.txt
