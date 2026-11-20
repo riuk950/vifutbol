@@ -163,14 +163,28 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
         .eq('id', safeTeamId)
         .maybeSingle();
 
+    String? resolvedMasterTeamId = existingEnrollment?['team_id'] as String?;
+    String? existingCoachId;
+    if (resolvedMasterTeamId == null) {
+      final existingMasterByName = await client
+          .schema(schema)
+          .from('teams')
+          .select('id, coach_id')
+          .eq('normalized_name', team.normalizedName)
+          .maybeSingle();
+      resolvedMasterTeamId = existingMasterByName?['id'] as String?;
+      existingCoachId = existingMasterByName?['coach_id'] as String?;
+    }
+
     final masterTeamId =
-        (existingEnrollment?['team_id'] as String?) ??
+        resolvedMasterTeamId ??
         HybridRepositorySupport.ensureUuid(team.id, 'team');
 
     // 1. Upsert parent club in `teams`
     await client.schema(schema).from('teams').upsert({
       'id': masterTeamId,
-      'coach_id': HybridRepositorySupport.uuidOrNull(team.coachId),
+      'coach_id':
+          HybridRepositorySupport.uuidOrNull(team.coachId) ?? existingCoachId,
       'name': team.name,
       'normalized_name': team.normalizedName,
       'short_code': safeCode,

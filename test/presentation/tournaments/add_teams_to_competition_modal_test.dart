@@ -115,6 +115,9 @@ class _FakeTournamentsController extends StateNotifier<TournamentsCatalogState>
       );
 
   @override
+  Future<void> loadCatalog() async {}
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
@@ -122,6 +125,9 @@ class _FakeMatchesCatalogController extends StateNotifier<MatchesCatalogState>
     implements MatchesCatalogController {
   _FakeMatchesCatalogController([List<ChampionshipMatch> matches = const []])
     : super(MatchesCatalogState(matches: matches));
+
+  @override
+  Future<void> loadTournamentMatches(String tournamentId) async {}
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
