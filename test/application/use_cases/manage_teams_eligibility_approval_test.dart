@@ -125,8 +125,7 @@ void main() {
         );
         await repository.saveTeam(teamWith11);
 
-        for (final nonOrganizerRole in [
-          UserRole.coach,
+        for (final unauthorizedRole in [
           UserRole.referee,
           UserRole.player,
           UserRole.fan,
@@ -135,10 +134,10 @@ void main() {
             () => useCase.approveTeamEligibility(
               teamId: teamWith11.id,
               tournament: tournament,
-              actorRole: nonOrganizerRole,
+              actorRole: unauthorizedRole,
             ),
             throwsA(isA<UnauthorizedRoleFailure>()),
-            reason: 'Role $nonOrganizerRole must be rejected',
+            reason: 'Role $unauthorizedRole must be rejected',
           );
         }
       });

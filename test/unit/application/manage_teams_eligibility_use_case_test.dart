@@ -752,13 +752,13 @@ void main() {
       );
 
       test(
-        'coach cannot approve team eligibility (UnauthorizedRoleFailure)',
+        'fan cannot approve team eligibility (UnauthorizedRoleFailure)',
         () async {
           expect(
             () => useCase.approveTeamEligibility(
               teamId: smallTeam.id,
               tournament: openTournament,
-              actorRole: UserRole.coach,
+              actorRole: UserRole.fan,
             ),
             throwsA(isA<UnauthorizedRoleFailure>()),
           );
@@ -789,13 +789,13 @@ void main() {
         'organizer approval marks team eligible and all players isEligible = true',
         () async {
           TournamentTeam current = smallTeam;
-          for (int i = 1; i <= 7; i++) {
+          for (int i = 1; i <= 11; i++) {
             current = await useCase.enrollOrUpdatePlayer(
               teamId: current.id,
               player: RegisteredPlayer(
                 id: 'p-$i',
                 fullName: 'Player $i',
-                documentId: '1000000$i',
+                documentId: '100000${i.toString().padLeft(2, '0')}',
                 shirtNumber: i,
                 position: PlayerPosition.defender,
               ),
@@ -821,25 +821,28 @@ void main() {
       test(
         'removing player below minimum quota reverts team to pendingVerification and isEligible = false',
         () async {
+          final strictTournament = openTournament.copyWith(
+            rules: const TournamentRulesConfig(minPlayersPerTeam: 11),
+          );
           TournamentTeam current = smallTeam;
-          for (int i = 1; i <= 7; i++) {
+          for (int i = 1; i <= 11; i++) {
             current = await useCase.enrollOrUpdatePlayer(
               teamId: current.id,
               player: RegisteredPlayer(
                 id: 'p-$i',
                 fullName: 'Player $i',
-                documentId: '1000000$i',
+                documentId: '100000${i.toString().padLeft(2, '0')}',
                 shirtNumber: i,
                 position: PlayerPosition.defender,
               ),
-              tournament: openTournament,
+              tournament: strictTournament,
               actorRole: UserRole.coach,
             );
           }
 
           final approved = await useCase.approveTeamEligibility(
             teamId: current.id,
-            tournament: openTournament,
+            tournament: strictTournament,
             actorRole: UserRole.organizer,
           );
           expect(
@@ -849,12 +852,12 @@ void main() {
 
           final reverted = await useCase.removePlayer(
             teamId: approved.id,
-            playerId: 'p-7',
-            tournament: openTournament,
+            playerId: 'p-11',
+            tournament: strictTournament,
             actorRole: UserRole.coach,
           );
 
-          expect(reverted.players.length, equals(6));
+          expect(reverted.players.length, equals(10));
           expect(
             reverted.eligibilityStatus,
             equals(TeamEligibilityStatus.pendingVerification),

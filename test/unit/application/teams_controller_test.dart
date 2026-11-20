@@ -240,36 +240,33 @@ void main() {
         actorRole: UserRole.coach,
       );
 
-      // minPlayersPerTeam is 2
-      await controller.enrollOrUpdatePlayer(
-        teamId: 'team-1',
-        player: const RegisteredPlayer(
-          id: 'p1',
-          fullName: 'Player 1',
-          documentId: '10000001',
-          shirtNumber: 1,
-          position: PlayerPosition.goalkeeper,
+      // Enroll 11 players to satisfy regulatory minimum quota (11)
+      final approvalTournament = tournament.copyWith(
+        rules: const TournamentRulesConfig(
+          minPlayersPerTeam: 11,
+          maxPlayersPerTeam: 22,
         ),
-        tournament: tournament,
-        actorRole: UserRole.coach,
       );
-
-      await controller.enrollOrUpdatePlayer(
-        teamId: 'team-1',
-        player: const RegisteredPlayer(
-          id: 'p2',
-          fullName: 'Player 2',
-          documentId: '10000002',
-          shirtNumber: 2,
-          position: PlayerPosition.defender,
-        ),
-        tournament: tournament,
-        actorRole: UserRole.coach,
-      );
+      for (int i = 1; i <= 11; i++) {
+        await controller.enrollOrUpdatePlayer(
+          teamId: 'team-1',
+          player: RegisteredPlayer(
+            id: 'p$i',
+            fullName: 'Player $i',
+            documentId: '100000${i.toString().padLeft(2, '0')}',
+            shirtNumber: i,
+            position: i == 1
+                ? PlayerPosition.goalkeeper
+                : PlayerPosition.defender,
+          ),
+          tournament: approvalTournament,
+          actorRole: UserRole.coach,
+        );
+      }
 
       final approved = await controller.approveTeamEligibility(
         teamId: 'team-1',
-        tournament: tournament,
+        tournament: approvalTournament,
         actorRole: UserRole.organizer,
       );
 

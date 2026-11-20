@@ -198,8 +198,11 @@ class _TeamRosterDetailScreenState
                     ),
                   ),
                   const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Wrap(
+                    spacing: KickPulseRadiiSpacing.spaceXs,
+                    runSpacing: 4,
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Text(
                         meetsMinQuota

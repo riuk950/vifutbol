@@ -284,11 +284,19 @@ void main() {
             updatedAt: now,
           );
 
-          when(() => tRemote.upsert(any())).thenAnswer((_) async => tournament);
+          final expectedId = HybridRepositorySupport.ensureUuid(
+            't-online',
+            'tournament',
+          );
+          final normalizedTournament = tournament.copyWith(id: expectedId);
+
+          when(
+            () => tRemote.upsert(any()),
+          ).thenAnswer((_) async => normalizedTournament);
           await tRepo.saveTournament(tournament);
 
-          verify(() => tRemote.upsert(tournament)).called(1);
-          expect((await localT.loadTournaments()).first.id, 't-online');
+          verify(() => tRemote.upsert(normalizedTournament)).called(1);
+          expect((await localT.loadTournaments()).first.id, expectedId);
           expect(await outbox.loadItemsForUser('org-1'), isEmpty);
 
           await connectivity.dispose();
@@ -627,8 +635,8 @@ void main() {
           await Future<void>.delayed(const Duration(milliseconds: 80));
 
           expect(order, [
-            SyncOutboxEntityType.tournament,
             SyncOutboxEntityType.venue,
+            SyncOutboxEntityType.tournament,
             SyncOutboxEntityType.team,
             SyncOutboxEntityType.match,
             SyncOutboxEntityType.lineupTracking,

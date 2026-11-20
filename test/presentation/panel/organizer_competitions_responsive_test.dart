@@ -1,8 +1,11 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vifutbol/application/controllers/teams_controller.dart';
+import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/teams_catalog_state.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_rules_config.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
@@ -10,6 +13,14 @@ import 'package:vifutbol/presentation/panel/widgets/competition_delete_dialog.da
 import 'package:vifutbol/presentation/panel/widgets/competition_edit_dialog.dart';
 import 'package:vifutbol/presentation/panel/widgets/competition_lifecycle_dialog.dart';
 import 'package:vifutbol/presentation/panel/widgets/organizer_competitions_section.dart';
+
+class _FakeTeamsController extends StateNotifier<TeamsCatalogState>
+    implements TeamsController {
+  _FakeTeamsController() : super(const TeamsCatalogState());
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 void main() {
   final sampleTournaments = [
@@ -47,6 +58,7 @@ void main() {
       overrides: [
         if (tournaments != null)
           organizerTournamentsProvider.overrideWithValue(tournaments),
+        teamsControllerProvider.overrideWith((ref) => _FakeTeamsController()),
       ],
       child: MaterialApp(
         localizationsDelegates: const [

@@ -13,6 +13,7 @@ import 'package:vifutbol/application/use_cases/manage_teams_eligibility_use_case
 import 'package:vifutbol/application/use_cases/manage_tournaments_use_case.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/connectivity_status.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/role_permission_matrix.dart';
@@ -21,6 +22,7 @@ import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournament_rules_config.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
+import 'package:vifutbol/domain/repositories/connectivity_repository.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/infrastructure/repositories/local_teams_repository.dart';
 import 'package:vifutbol/infrastructure/repositories/local_tournaments_repository.dart';
@@ -29,6 +31,16 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_theme.dart';
 import 'package:vifutbol/presentation/navigation/app_router.dart';
 import 'package:vifutbol/presentation/shell/tabs/standings_tab_view.dart';
 import 'package:vifutbol/presentation/teams/team_roster_detail_screen.dart';
+
+class _FakeConnectivityRepository implements ConnectivityRepository {
+  @override
+  Stream<NetworkConnectionStatus> get onConnectivityChanged =>
+      Stream.value(NetworkConnectionStatus.connected);
+
+  @override
+  Future<NetworkConnectionStatus> checkConnectivity() async =>
+      NetworkConnectionStatus.connected;
+}
 
 class _MemoryStorage implements LocalStorageRepository {
   _MemoryStorage() {
@@ -133,6 +145,9 @@ void main() {
       overrides: [
         environmentConfigProvider.overrideWithValue(devConfig),
         localStorageRepositoryProvider.overrideWithValue(storage),
+        connectivityRepositoryProvider.overrideWithValue(
+          _FakeConnectivityRepository(),
+        ),
         tournamentsRepositoryProvider.overrideWithValue(tournamentsRepo),
         manageTournamentsUseCaseProvider.overrideWithValue(tournamentsUseCase),
         teamsRepositoryProvider.overrideWithValue(teamsRepo),
@@ -252,6 +267,9 @@ void main() {
             overrides: [
               environmentConfigProvider.overrideWithValue(devConfig),
               localStorageRepositoryProvider.overrideWithValue(storage),
+              connectivityRepositoryProvider.overrideWithValue(
+                _FakeConnectivityRepository(),
+              ),
               tournamentsRepositoryProvider.overrideWithValue(tournamentsRepo),
               teamsRepositoryProvider.overrideWithValue(teamsRepo),
               teamsControllerProvider.overrideWith((ref) => teamsController),
@@ -273,65 +291,13 @@ void main() {
         expect(find.text('Atlético Norte FC'), findsOneWidget);
         expect(find.byKey(const Key('enroll_player_button')), findsOneWidget);
 
-        // Open enrollment dialog
+        // Open invite player modal (HU 20.1)
         await tester.tap(find.byKey(const Key('enroll_player_button')));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 250));
 
-        // Verify numeric keyboard for document and shirt number
-        final docField = tester.widget<TextField>(
-          find.byKey(const Key('player_document_input')),
-        );
-        expect(docField.keyboardType, equals(TextInputType.number));
-
-        final shirtField = tester.widget<TextField>(
-          find.byKey(const Key('player_shirt_number_input')),
-        );
-        expect(shirtField.keyboardType, equals(TextInputType.number));
-
-        // Atlético Norte already has shirt number 10 (James Rodríguez)
-        await tester.enterText(
-          find.byKey(const Key('player_full_name_input')),
-          'Juan Pérez',
-        );
-        await tester.enterText(
-          find.byKey(const Key('player_document_input')),
-          '99887766',
-        );
-        await tester.enterText(
-          find.byKey(const Key('player_shirt_number_input')),
-          '10',
-        );
-
-        await tester.tap(find.byKey(const Key('player_submit_button')));
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 100));
-
-        // Exact Gherkin message
         expect(
-          find.text('El número de camiseta 10 ya está en uso en este equipo.'),
-          findsOneWidget,
-        );
-
-        // Try duplicate document from another team in this tournament ('20200001' from Real Sabana Club)
-        await tester.enterText(
-          find.byKey(const Key('player_shirt_number_input')),
-          '99',
-        );
-        await tester.enterText(
-          find.byKey(const Key('player_document_input')),
-          '20200001',
-        );
-
-        await tester.tap(find.byKey(const Key('player_submit_button')));
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 100));
-
-        // Exact Gherkin message
-        expect(
-          find.text(
-            'Este jugador ya se encuentra inscrito en otro equipo de este campeonato.',
-          ),
+          find.byKey(const Key('invite_player_search_field')),
           findsOneWidget,
         );
       },
@@ -373,7 +339,7 @@ void main() {
         eligibilityStatus: TeamEligibilityStatus.pendingVerification,
         players: [
           ...realSabana.players,
-          // Add 2 more players to reach minPlayersPerTeam (7)
+          // Add 6 more players to reach regulatory minimum quota (11)
           const RegisteredPlayer(
             id: 'p-seed-rsc-6',
             fullName: 'Jhon Arias',
@@ -387,6 +353,34 @@ void main() {
             documentId: '20200007',
             shirtNumber: 9,
             position: PlayerPosition.forward,
+          ),
+          const RegisteredPlayer(
+            id: 'p-seed-rsc-8',
+            fullName: 'Luis Díaz',
+            documentId: '20200008',
+            shirtNumber: 7,
+            position: PlayerPosition.forward,
+          ),
+          const RegisteredPlayer(
+            id: 'p-seed-rsc-9',
+            fullName: 'Daniel Muñoz',
+            documentId: '20200009',
+            shirtNumber: 21,
+            position: PlayerPosition.defender,
+          ),
+          const RegisteredPlayer(
+            id: 'p-seed-rsc-10',
+            fullName: 'Johan Mojica',
+            documentId: '20200010',
+            shirtNumber: 17,
+            position: PlayerPosition.defender,
+          ),
+          const RegisteredPlayer(
+            id: 'p-seed-rsc-11',
+            fullName: 'Richard Ríos',
+            documentId: '20200011',
+            shirtNumber: 6,
+            position: PlayerPosition.midfielder,
           ),
         ],
       );
@@ -410,6 +404,9 @@ void main() {
           overrides: [
             environmentConfigProvider.overrideWithValue(devConfig),
             localStorageRepositoryProvider.overrideWithValue(storage),
+            connectivityRepositoryProvider.overrideWithValue(
+              _FakeConnectivityRepository(),
+            ),
             tournamentsRepositoryProvider.overrideWithValue(tournamentsRepo),
             teamsRepositoryProvider.overrideWithValue(teamsRepo),
             teamsControllerProvider.overrideWith((ref) => teamsController),

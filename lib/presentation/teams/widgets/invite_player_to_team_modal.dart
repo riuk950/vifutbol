@@ -362,6 +362,7 @@ class _InvitePlayerToTeamModalState
                       flex: 3,
                       child: DropdownButtonFormField<PlayerPosition>(
                         key: const Key('invite_player_position_dropdown'),
+                        isExpanded: true,
                         initialValue: _selectedPosition,
                         dropdownColor: KickPulseColors.surfaceElevated,
                         style: KickPulseTypography.bodyPrimary,

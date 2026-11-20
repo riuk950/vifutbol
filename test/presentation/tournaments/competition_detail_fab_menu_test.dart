@@ -2,24 +2,31 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vifutbol/application/controllers/matches_catalog_controller.dart';
+import 'package:vifutbol/application/controllers/standings_and_rankings_controller.dart';
 import 'package:vifutbol/application/controllers/teams_controller.dart';
 import 'package:vifutbol/application/controllers/tournaments_controller.dart';
+import 'package:vifutbol/application/controllers/venues_controller.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
+import 'package:vifutbol/application/providers/backup_and_season_closure_providers.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
+import 'package:vifutbol/application/providers/venues_providers.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/connectivity_status.dart';
 import 'package:vifutbol/domain/entities/local_storage_status.dart';
+import 'package:vifutbol/domain/entities/match_enums.dart';
 import 'package:vifutbol/domain/entities/matches_catalog_state.dart';
+import 'package:vifutbol/domain/entities/sports_venue.dart';
 import 'package:vifutbol/domain/entities/teams_catalog_state.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournaments_catalog_state.dart';
 import 'package:vifutbol/domain/entities/ui_view_state.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
+import 'package:vifutbol/domain/entities/venues_catalog_state.dart';
 import 'package:vifutbol/domain/repositories/connectivity_repository.dart';
 import 'package:vifutbol/domain/repositories/local_storage_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
@@ -61,12 +68,18 @@ class _FakeTournamentsController extends StateNotifier<TournamentsCatalogState>
        );
 
   @override
+  Future<void> loadCatalog() async {}
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class _FakeTeamsController extends StateNotifier<TeamsCatalogState>
     implements TeamsController {
   _FakeTeamsController() : super(const TeamsCatalogState());
+
+  @override
+  Future<void> loadTeams() async {}
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -76,6 +89,37 @@ class _FakeMatchesCatalogController extends StateNotifier<MatchesCatalogState>
     implements MatchesCatalogController {
   _FakeMatchesCatalogController({List<ChampionshipMatch> matches = const []})
     : super(MatchesCatalogState(matches: matches));
+
+  @override
+  Future<void> loadTournamentMatches(String tournamentId) async {}
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _FakeVenuesController extends StateNotifier<VenuesCatalogState>
+    implements VenuesController {
+  _FakeVenuesController()
+    : super(
+        const VenuesCatalogState(
+          viewState: UiSuccessState<List<SportsVenue>>([]),
+          venues: [],
+        ),
+      );
+
+  @override
+  Future<void> loadCatalog() async {}
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _FakeStandingsController extends StateNotifier<StandingsAndRankingsState>
+    implements StandingsAndRankingsController {
+  _FakeStandingsController() : super(const StandingsAndRankingsState());
+
+  @override
+  Future<void> loadCompetitiveSnapshot() async {}
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -106,6 +150,13 @@ void main() {
         matchesCatalogControllerProvider.overrideWith(
           (ref) => _FakeMatchesCatalogController(matches: matches),
         ),
+        venuesControllerProvider.overrideWith((ref) => _FakeVenuesController()),
+        standingsAndRankingsControllerProvider(
+          tournament.id,
+        ).overrideWith((ref) => _FakeStandingsController()),
+        tournamentHonorRollProvider(
+          tournament.id,
+        ).overrideWith((ref) async => null),
       ],
       child: MaterialApp(
         theme: KickPulseTheme.darkTheme,
@@ -204,6 +255,7 @@ void main() {
           roundName: 'Jornada 1',
           homeTeamId: 't-1',
           awayTeamId: 't-2',
+          status: MatchStatus.completed,
         );
 
         await tester.pumpWidget(
