@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -20,7 +21,10 @@ Future<ProviderContainer> bootstrapApp(
   EnvironmentConfig config, {
   void Function(Widget app)? appRunner,
 }) async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  if (appRunner == null) {
+    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  }
 
   // FR-008: Strict Portrait orientation lock for mobile smartphones
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);

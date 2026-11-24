@@ -5,26 +5,42 @@
             "name": "vifutbol [Dev]",
             "request": "launch",
             "type": "dart",
-            "program": "lib/env/main.dev.dart"
+            "program": "lib/env/main.dev.dart",
+            "args": [
+                "--flavor",
+                "dev"
+            ]
         },
         {
             "name": "vifutbol [Prod]",
             "request": "launch",
             "type": "dart",
-            "program": "lib/env/main.prod.dart"
+            "program": "lib/env/main.prod.dart",
+            "args": [
+                "--flavor",
+                "prod"
+            ]
         },
         {
             "name": "vifutbol [Prod Release]",
             "request": "launch",
             "type": "dart",
             "program": "lib/env/main.prod.dart",
-            "flutterMode": "release"
+            "flutterMode": "release",
+            "args": [
+                "--flavor",
+                "prod"
+            ]
         },
         {
             "name": "vifutbol (default main.dart)",
             "request": "launch",
             "type": "dart",
-            "program": "lib/main.dart"
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor",
+                "dev"
+            ]
         }
     ]
 }
