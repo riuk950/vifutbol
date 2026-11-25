@@ -149,7 +149,7 @@ void main() {
           find.byKey(const Key('referee_match_item_match-ref-1')),
           findsOneWidget,
         );
-        expect(find.text('TEAM-A vs TEAM-B'), findsOneWidget);
+        expect(find.text('Equipo Local vs Equipo Visitante'), findsOneWidget);
         expect(find.text('Cancha Sintética Principal'), findsOneWidget);
 
         // Verify Action Button
@@ -157,9 +157,9 @@ void main() {
           const Key('referee_open_match_report_match-ref-1'),
         );
         expect(reportButton, findsOneWidget);
-        expect(find.text('Acta Digital'), findsOneWidget);
+        expect(find.text('Gestionar Acta'), findsOneWidget);
 
-        // Tap "Acta Digital" opens DigitalMatchReportScreen
+        // Tap "Gestionar Acta" opens DigitalMatchReportScreen
         await tester.tap(reportButton);
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 300));

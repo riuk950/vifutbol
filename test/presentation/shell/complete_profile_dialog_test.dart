@@ -143,21 +143,25 @@ void main() {
     expect(find.text('Datos incompletos'), findsNothing);
   });
 
-  testWidgets('referee preserves inputs on conflict error in dialog',
+  testWidgets('organizer preserves inputs on conflict error in dialog',
       (tester) async {
-    final incompleteReferee = UserAccount(
+    final incompleteOrganizer = UserAccount(
       id: 'u2',
       fullName: 'Carlos Ruiz',
       email: 'carlos@test.com',
-      activeRole: UserRole.referee,
-      authorizedRoles: {UserRole.referee, UserRole.fan},
+      activeRole: UserRole.organizer,
+      authorizedRoles: {UserRole.organizer, UserRole.fan},
       onboardingCompleted: true,
+      roleProfile: const RoleProfileData(
+        organizationName: 'Liga Central',
+        baseCity: 'Medellín',
+      ),
     );
 
     when(
       () => authRepository.updateRoleProfile(
         userId: 'u2',
-        role: UserRole.referee,
+        role: UserRole.organizer,
         fullName: any(named: 'fullName'),
         phone: any(named: 'phone'),
         documentId: any(named: 'documentId'),
@@ -171,7 +175,7 @@ void main() {
         status: AuthStatus.authenticated,
         session: AuthSession(
           sessionId: 's2',
-          user: incompleteReferee,
+          user: incompleteOrganizer,
           sessionToken: 't2',
           authenticatedAt: DateTime(2026, 11, 13),
         ),
