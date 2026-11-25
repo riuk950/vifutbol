@@ -5172,5 +5172,85 @@
   "refereeSummaryDocLoadFallback": "Vista previa no disponible",
   "@refereeSummaryDocLoadFallback": {
     "description": "Texto de respaldo cuando no se puede cargar la vista previa de un documento"
+  },
+  "refereeFilterAll": "Todos",
+  "@refereeFilterAll": {
+    "description": "Filtro para ver todos los partidos asignados al árbitro"
+  },
+  "refereeFilterInProgress": "En juego",
+  "@refereeFilterInProgress": {
+    "description": "Filtro de partidos actualmente en juego para el árbitro"
+  },
+  "refereeFilterScheduled": "Programados",
+  "@refereeFilterScheduled": {
+    "description": "Filtro de partidos programados para el árbitro"
+  },
+  "refereeFilterCompleted": "Finalizados",
+  "@refereeFilterCompleted": {
+    "description": "Filtro de partidos finalizados para el árbitro"
+  },
+  "refereeEmptyFilterMessage": "No tienes partidos en esta categoría.",
+  "@refereeEmptyFilterMessage": {
+    "description": "Mensaje cuando no hay partidos asignados en el filtro seleccionado"
+  },
+  "refereeMatchStatusScheduled": "Programado",
+  "@refereeMatchStatusScheduled": {
+    "description": "Etiqueta de estado de partido programado en el panel del árbitro"
+  },
+  "refereeMatchStatusInProgress": "En juego",
+  "@refereeMatchStatusInProgress": {
+    "description": "Etiqueta de estado de partido en juego en el panel del árbitro"
+  },
+  "refereeMatchStatusCompleted": "Finalizado",
+  "@refereeMatchStatusCompleted": {
+    "description": "Etiqueta de estado de partido finalizado en el panel del árbitro"
+  },
+  "refereeMatchStatusPending": "Pendiente",
+  "@refereeMatchStatusPending": {
+    "description": "Etiqueta de estado de partido pendiente en el panel del árbitro"
+  },
+  "refereeMatchStatusCancelled": "Cancelado",
+  "@refereeMatchStatusCancelled": {
+    "description": "Etiqueta de estado de partido cancelado en el panel del árbitro"
+  },
+  "refereeMatchDateUnscheduled": "Fecha por definir",
+  "@refereeMatchDateUnscheduled": {
+    "description": "Texto cuando el partido asignado aún no tiene fecha u hora definida"
+  },
+  "refereeMatchActionManage": "Gestionar Acta",
+  "@refereeMatchActionManage": {
+    "description": "Botón principal para abrir y gestionar el acta digital del partido"
+  },
+  "refereeMatchActionViewClosed": "Ver Acta Finalizada",
+  "@refereeMatchActionViewClosed": {
+    "description": "Botón principal para consultar un acta ya cerrada"
+  },
+  "refereeMatchUnauthorizedBanner": "Solo el árbitro asignado a este partido o un organizador puede modificar el acta.",
+  "@refereeMatchUnauthorizedBanner": {
+    "description": "Aviso de solo lectura cuando un árbitro no asignado abre un acta"
+  },
+  "refereeMatchUnconfirmedConvocationBanner": "Uno o ambos equipos no han confirmado convocatoria oficial; se cargó la plantilla inscrita como respaldo.",
+  "@refereeMatchUnconfirmedConvocationBanner": {
+    "description": "Aviso informativo no bloqueante cuando algún equipo usa su plantilla inscrita sin convocatoria confirmada"
+  },
+  "refereeObservationsTitle": "Observaciones arbitrales",
+  "@refereeObservationsTitle": {
+    "description": "Título de la sección de observaciones arbitrales en el acta digital"
+  },
+  "refereeObservationsHint": "Registra incidencias, estado de la cancha o notas oficiales del encuentro...",
+  "@refereeObservationsHint": {
+    "description": "Pista del campo de observaciones arbitrales"
+  },
+  "refereeObservationsSaveAction": "Guardar observaciones",
+  "@refereeObservationsSaveAction": {
+    "description": "Botón para guardar las observaciones arbitrales del acta"
+  },
+  "refereeObservationsSavedMessage": "Observaciones guardadas en el acta",
+  "@refereeObservationsSavedMessage": {
+    "description": "Confirmación tras guardar las observaciones arbitrales"
+  },
+  "refereeObservationsEmpty": "Sin observaciones registradas.",
+  "@refereeObservationsEmpty": {
+    "description": "Texto mostrado cuando un acta cerrada no tiene observaciones arbitrales"
   }
 }

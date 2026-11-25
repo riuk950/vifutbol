@@ -16,6 +16,7 @@ import '../../domain/repositories/teams_repository.dart';
 import '../../domain/repositories/tournament_matches_repository.dart';
 import '../../domain/repositories/tournaments_repository.dart';
 import '../../domain/services/knockout_bracket_service.dart';
+import '../../domain/services/referee_assigned_matches_service.dart';
 
 /// Application use case controlling live match periods, event recording,
 /// automatic double-yellow expulsions, and immutable report closure.
@@ -36,7 +37,47 @@ class ManageDigitalMatchReportUseCase {
   final TeamsRepository? teamsRepository;
   final KnockoutBracketService knockoutBracketService;
 
-  void _assertAuthorizedForEvents(UserRole role) {
+  /// Verifies whether [activeRole] + optional [actorUserId]/[actorRefereeId]
+  /// is authorized to manage [match]. Organizers are always authorized;
+  /// referees must match [match.refereeId] when actor identity is provided.
+  static bool isMatchAssignedToActor(
+    ChampionshipMatch match, {
+    required UserRole activeRole,
+    String? actorUserId,
+    String? actorRefereeId,
+  }) {
+    if (RolePermissionMatrix.hasCapability(
+      activeRole,
+      RoleCapability.manageTournaments,
+    )) {
+      return true;
+    }
+    if (activeRole != UserRole.referee) {
+      return false;
+    }
+    final matchRefereeId = match.refereeId?.trim();
+    if (matchRefereeId == null || matchRefereeId.isEmpty) {
+      return true;
+    }
+    final hasActorIdentity =
+        (actorUserId != null && actorUserId.trim().isNotEmpty) ||
+        (actorRefereeId != null && actorRefereeId.trim().isNotEmpty);
+    if (!hasActorIdentity) {
+      return true;
+    }
+    return RefereeAssignedMatchesService.isAssignedToReferee(
+      match,
+      userId: actorUserId,
+      linkedRefereeId: actorRefereeId,
+    );
+  }
+
+  void _assertAuthorizedForEvents(
+    UserRole role, {
+    ChampionshipMatch? match,
+    String? actorUserId,
+    String? actorRefereeId,
+  }) {
     final hasPermission =
         RolePermissionMatrix.hasCapability(
           role,
@@ -47,7 +88,14 @@ class ManageDigitalMatchReportUseCase {
           RoleCapability.manageTournaments,
         );
 
-    if (!hasPermission) {
+    if (!hasPermission ||
+        (match != null &&
+            !isMatchAssignedToActor(
+              match,
+              activeRole: role,
+              actorUserId: actorUserId,
+              actorRefereeId: actorRefereeId,
+            ))) {
       throw const MatchReportValidationFailure(
         MatchReportErrorCode.unauthorizedRole,
         'No tienes permisos de árbitro u organizador para dirigir este partido.',
@@ -55,7 +103,12 @@ class ManageDigitalMatchReportUseCase {
     }
   }
 
-  void _assertAuthorizedForClose(UserRole role) {
+  void _assertAuthorizedForClose(
+    UserRole role, {
+    ChampionshipMatch? match,
+    String? actorUserId,
+    String? actorRefereeId,
+  }) {
     final hasPermission =
         RolePermissionMatrix.hasCapability(
           role,
@@ -66,7 +119,14 @@ class ManageDigitalMatchReportUseCase {
           RoleCapability.manageTournaments,
         );
 
-    if (!hasPermission) {
+    if (!hasPermission ||
+        (match != null &&
+            !isMatchAssignedToActor(
+              match,
+              activeRole: role,
+              actorUserId: actorUserId,
+              actorRefereeId: actorRefereeId,
+            ))) {
       throw const MatchReportValidationFailure(
         MatchReportErrorCode.unauthorizedRole,
         'No tienes permisos de árbitro u organizador para cerrar el acta oficial.',
@@ -83,10 +143,17 @@ class ManageDigitalMatchReportUseCase {
     required ChampionshipMatch match,
     required DigitalMatchReport currentReport,
     required MatchPeriod targetPeriod,
+    String? actorUserId,
+    String? actorRefereeId,
     bool isOffline = false,
     DateTime? now,
   }) async {
-    _assertAuthorizedForEvents(activeRole);
+    _assertAuthorizedForEvents(
+      activeRole,
+      match: match,
+      actorUserId: actorUserId,
+      actorRefereeId: actorRefereeId,
+    );
 
     if (currentReport.isClosed) {
       throw const MatchReportValidationFailure(
@@ -159,10 +226,17 @@ class ManageDigitalMatchReportUseCase {
     RegisteredPlayer? assistant,
     required int minute,
     String? notes,
+    String? actorUserId,
+    String? actorRefereeId,
     bool isOffline = false,
     DateTime? now,
   }) async {
-    _assertAuthorizedForEvents(activeRole);
+    _assertAuthorizedForEvents(
+      activeRole,
+      match: match,
+      actorUserId: actorUserId,
+      actorRefereeId: actorRefereeId,
+    );
 
     if (currentReport.isClosed) {
       throw const MatchReportValidationFailure(
@@ -267,10 +341,17 @@ class ManageDigitalMatchReportUseCase {
     required bool isDirectRed,
     required int minute,
     String? notes,
+    String? actorUserId,
+    String? actorRefereeId,
     bool isOffline = false,
     DateTime? now,
   }) async {
-    _assertAuthorizedForEvents(activeRole);
+    _assertAuthorizedForEvents(
+      activeRole,
+      match: match,
+      actorUserId: actorUserId,
+      actorRefereeId: actorRefereeId,
+    );
 
     if (currentReport.isClosed) {
       throw const MatchReportValidationFailure(
@@ -373,10 +454,17 @@ class ManageDigitalMatchReportUseCase {
     required RegisteredPlayer playerIn,
     required int minute,
     String? notes,
+    String? actorUserId,
+    String? actorRefereeId,
     bool isOffline = false,
     DateTime? now,
   }) async {
-    _assertAuthorizedForEvents(activeRole);
+    _assertAuthorizedForEvents(
+      activeRole,
+      match: match,
+      actorUserId: actorUserId,
+      actorRefereeId: actorRefereeId,
+    );
 
     if (currentReport.isClosed) {
       throw const MatchReportValidationFailure(
@@ -444,9 +532,16 @@ class ManageDigitalMatchReportUseCase {
     required ChampionshipMatch match,
     required DigitalMatchReport currentReport,
     required String eventId,
+    String? actorUserId,
+    String? actorRefereeId,
     DateTime? now,
   }) async {
-    _assertAuthorizedForEvents(activeRole);
+    _assertAuthorizedForEvents(
+      activeRole,
+      match: match,
+      actorUserId: actorUserId,
+      actorRefereeId: actorRefereeId,
+    );
 
     if (currentReport.isClosed) {
       throw const MatchReportValidationFailure(
@@ -494,17 +589,56 @@ class ManageDigitalMatchReportUseCase {
     return matchReportsRepository.saveReport(updatedReport);
   }
 
+  Future<DigitalMatchReport> updateRefereeObservations({
+    required UserRole activeRole,
+    required ChampionshipMatch match,
+    required DigitalMatchReport currentReport,
+    required String observations,
+    String? actorUserId,
+    String? actorRefereeId,
+    DateTime? now,
+  }) async {
+    _assertAuthorizedForEvents(
+      activeRole,
+      match: match,
+      actorUserId: actorUserId,
+      actorRefereeId: actorRefereeId,
+    );
+
+    if (currentReport.isClosed) {
+      throw const MatchReportValidationFailure(
+        MatchReportErrorCode.reportAlreadyClosed,
+        'El acta oficial ya ha sido cerrada y no puede ser modificada.',
+      );
+    }
+
+    final trimmed = observations.trim();
+    final updatedReport = currentReport.copyWith(
+      refereeObservations: trimmed.isEmpty ? null : trimmed,
+      clearRefereeObservations: trimmed.isEmpty,
+      updatedAt: now ?? DateTime.now(),
+    );
+
+    return matchReportsRepository.saveReport(updatedReport);
+  }
+
   Future<DigitalMatchReport> closeOfficialMatchReport({
     required UserRole activeRole,
     required String userId,
     required ChampionshipMatch match,
     required DigitalMatchReport currentReport,
+    String? actorRefereeId,
     int? homePenaltyScore,
     int? awayPenaltyScore,
     bool isOffline = false,
     DateTime? now,
   }) async {
-    _assertAuthorizedForClose(activeRole);
+    _assertAuthorizedForClose(
+      activeRole,
+      match: match,
+      actorUserId: userId,
+      actorRefereeId: actorRefereeId,
+    );
 
     if (currentReport.isClosed) {
       throw const MatchReportValidationFailure(

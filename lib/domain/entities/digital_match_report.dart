@@ -17,6 +17,7 @@ class DigitalMatchReport {
     this.periodStartedAt,
     this.elapsedSecondsBeforeCurrentPeriod = 0,
     List<MatchEvent>? events,
+    this.refereeObservations,
     this.closedAt,
     this.closedByUserId,
     DateTime? updatedAt,
@@ -57,6 +58,7 @@ class DigitalMatchReport {
   final DateTime? periodStartedAt;
   final int elapsedSecondsBeforeCurrentPeriod;
   final List<MatchEvent> events;
+  final String? refereeObservations;
   final DateTime? closedAt;
   final String? closedByUserId;
   final DateTime updatedAt;
@@ -119,6 +121,8 @@ class DigitalMatchReport {
     bool clearPeriodStartedAt = false,
     int? elapsedSecondsBeforeCurrentPeriod,
     List<MatchEvent>? events,
+    String? refereeObservations,
+    bool clearRefereeObservations = false,
     DateTime? closedAt,
     String? closedByUserId,
     DateTime? updatedAt,
@@ -144,6 +148,9 @@ class DigitalMatchReport {
           elapsedSecondsBeforeCurrentPeriod ??
           this.elapsedSecondsBeforeCurrentPeriod,
       events: events ?? this.events,
+      refereeObservations: clearRefereeObservations
+          ? null
+          : (refereeObservations ?? this.refereeObservations),
       closedAt: closedAt ?? this.closedAt,
       closedByUserId: closedByUserId ?? this.closedByUserId,
       updatedAt: updatedAt ?? DateTime.now(),
@@ -164,6 +171,7 @@ class DigitalMatchReport {
       'periodStartedAt': periodStartedAt?.toIso8601String(),
       'elapsedSecondsBeforeCurrentPeriod': elapsedSecondsBeforeCurrentPeriod,
       'events': events.map((e) => e.toJson()).toList(),
+      'refereeObservations': refereeObservations,
       'closedAt': closedAt?.toIso8601String(),
       'closedByUserId': closedByUserId,
       'updatedAt': updatedAt.toIso8601String(),
@@ -195,6 +203,9 @@ class DigitalMatchReport {
       elapsedSecondsBeforeCurrentPeriod:
           (json['elapsedSecondsBeforeCurrentPeriod'] as num?)?.toInt() ?? 0,
       events: parsedEvents,
+      refereeObservations:
+          (json['refereeObservations'] ?? json['referee_observations'])
+              as String?,
       closedAt: json['closedAt'] != null
           ? DateTime.tryParse(json['closedAt'] as String)
           : null,

@@ -7047,6 +7047,126 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Vista previa no disponible'**
   String get refereeSummaryDocLoadFallback;
+
+  /// Filtro para ver todos los partidos asignados al árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Todos'**
+  String get refereeFilterAll;
+
+  /// Filtro de partidos actualmente en juego para el árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'En juego'**
+  String get refereeFilterInProgress;
+
+  /// Filtro de partidos programados para el árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Programados'**
+  String get refereeFilterScheduled;
+
+  /// Filtro de partidos finalizados para el árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Finalizados'**
+  String get refereeFilterCompleted;
+
+  /// Mensaje cuando no hay partidos asignados en el filtro seleccionado
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes partidos en esta categoría.'**
+  String get refereeEmptyFilterMessage;
+
+  /// Etiqueta de estado de partido programado en el panel del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Programado'**
+  String get refereeMatchStatusScheduled;
+
+  /// Etiqueta de estado de partido en juego en el panel del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'En juego'**
+  String get refereeMatchStatusInProgress;
+
+  /// Etiqueta de estado de partido finalizado en el panel del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Finalizado'**
+  String get refereeMatchStatusCompleted;
+
+  /// Etiqueta de estado de partido pendiente en el panel del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente'**
+  String get refereeMatchStatusPending;
+
+  /// Etiqueta de estado de partido cancelado en el panel del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelado'**
+  String get refereeMatchStatusCancelled;
+
+  /// Texto cuando el partido asignado aún no tiene fecha u hora definida
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha por definir'**
+  String get refereeMatchDateUnscheduled;
+
+  /// Botón principal para abrir y gestionar el acta digital del partido
+  ///
+  /// In es, this message translates to:
+  /// **'Gestionar Acta'**
+  String get refereeMatchActionManage;
+
+  /// Botón principal para consultar un acta ya cerrada
+  ///
+  /// In es, this message translates to:
+  /// **'Ver Acta Finalizada'**
+  String get refereeMatchActionViewClosed;
+
+  /// Aviso de solo lectura cuando un árbitro no asignado abre un acta
+  ///
+  /// In es, this message translates to:
+  /// **'Solo el árbitro asignado a este partido o un organizador puede modificar el acta.'**
+  String get refereeMatchUnauthorizedBanner;
+
+  /// Aviso informativo no bloqueante cuando algún equipo usa su plantilla inscrita sin convocatoria confirmada
+  ///
+  /// In es, this message translates to:
+  /// **'Uno o ambos equipos no han confirmado convocatoria oficial; se cargó la plantilla inscrita como respaldo.'**
+  String get refereeMatchUnconfirmedConvocationBanner;
+
+  /// Título de la sección de observaciones arbitrales en el acta digital
+  ///
+  /// In es, this message translates to:
+  /// **'Observaciones arbitrales'**
+  String get refereeObservationsTitle;
+
+  /// Pista del campo de observaciones arbitrales
+  ///
+  /// In es, this message translates to:
+  /// **'Registra incidencias, estado de la cancha o notas oficiales del encuentro...'**
+  String get refereeObservationsHint;
+
+  /// Botón para guardar las observaciones arbitrales del acta
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar observaciones'**
+  String get refereeObservationsSaveAction;
+
+  /// Confirmación tras guardar las observaciones arbitrales
+  ///
+  /// In es, this message translates to:
+  /// **'Observaciones guardadas en el acta'**
+  String get refereeObservationsSavedMessage;
+
+  /// Texto mostrado cuando un acta cerrada no tiene observaciones arbitrales
+  ///
+  /// In es, this message translates to:
+  /// **'Sin observaciones registradas.'**
+  String get refereeObservationsEmpty;
 }
 
 class _AppLocalizationsDelegate

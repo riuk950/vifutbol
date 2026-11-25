@@ -79,6 +79,8 @@ class DigitalMatchReportController
         awayTeam: awayTeam,
         homeEligiblePlayers: homePlayers,
         awayEligiblePlayers: awayPlayers,
+        homeConvocationConfirmed: homeConvocation.allPlayerIds.isNotEmpty,
+        awayConvocationConfirmed: awayConvocation.allPlayerIds.isNotEmpty,
         pendingSyncEventsCount: pendingSync.length,
         isLoading: false,
       );
@@ -113,7 +115,10 @@ class DigitalMatchReportController
   Future<bool> transitionPeriod(
     MatchPeriod targetPeriod, {
     required UserRole activeRole,
+    String? actorUserId,
+    String? actorRefereeId,
   }) async {
+    if (state.isSubmitting) return false;
     final currentReport = state.report;
     final currentMatch = state.match;
     if (currentReport == null || currentMatch == null) return false;
@@ -125,6 +130,8 @@ class DigitalMatchReportController
         match: currentMatch,
         currentReport: currentReport,
         targetPeriod: targetPeriod,
+        actorUserId: actorUserId,
+        actorRefereeId: actorRefereeId,
         isOffline: state.isOfflineMode,
       );
 
@@ -163,7 +170,10 @@ class DigitalMatchReportController
     RegisteredPlayer? assistant,
     required int minute,
     String? notes,
+    String? actorUserId,
+    String? actorRefereeId,
   }) async {
+    if (state.isSubmitting) return false;
     final currentReport = state.report;
     final currentMatch = state.match;
     if (currentReport == null || currentMatch == null) return false;
@@ -179,6 +189,8 @@ class DigitalMatchReportController
         assistant: assistant,
         minute: minute,
         notes: notes,
+        actorUserId: actorUserId,
+        actorRefereeId: actorRefereeId,
         isOffline: state.isOfflineMode,
       );
 
@@ -214,7 +226,10 @@ class DigitalMatchReportController
     required bool isDirectRed,
     required int minute,
     String? notes,
+    String? actorUserId,
+    String? actorRefereeId,
   }) async {
+    if (state.isSubmitting) return false;
     final currentReport = state.report;
     final currentMatch = state.match;
     if (currentReport == null || currentMatch == null) return false;
@@ -230,6 +245,8 @@ class DigitalMatchReportController
         isDirectRed: isDirectRed,
         minute: minute,
         notes: notes,
+        actorUserId: actorUserId,
+        actorRefereeId: actorRefereeId,
         isOffline: state.isOfflineMode,
       );
 
@@ -259,7 +276,10 @@ class DigitalMatchReportController
     required RegisteredPlayer playerIn,
     required int minute,
     String? notes,
+    String? actorUserId,
+    String? actorRefereeId,
   }) async {
+    if (state.isSubmitting) return false;
     final currentReport = state.report;
     final currentMatch = state.match;
     if (currentReport == null || currentMatch == null) return false;
@@ -275,6 +295,8 @@ class DigitalMatchReportController
         playerIn: playerIn,
         minute: minute,
         notes: notes,
+        actorUserId: actorUserId,
+        actorRefereeId: actorRefereeId,
         isOffline: state.isOfflineMode,
       );
 
@@ -300,7 +322,10 @@ class DigitalMatchReportController
   Future<bool> removeEvent(
     String eventId, {
     required UserRole activeRole,
+    String? actorUserId,
+    String? actorRefereeId,
   }) async {
+    if (state.isSubmitting) return false;
     final currentReport = state.report;
     final currentMatch = state.match;
     if (currentReport == null || currentMatch == null) return false;
@@ -312,6 +337,8 @@ class DigitalMatchReportController
         match: currentMatch,
         currentReport: currentReport,
         eventId: eventId,
+        actorUserId: actorUserId,
+        actorRefereeId: actorRefereeId,
       );
 
       final updatedMatch = currentMatch.copyWith(
@@ -339,7 +366,44 @@ class DigitalMatchReportController
     }
   }
 
+  Future<bool> updateObservations({
+    required UserRole activeRole,
+    required String observations,
+    String? actorUserId,
+    String? actorRefereeId,
+  }) async {
+    if (state.isSubmitting) return false;
+    final currentReport = state.report;
+    final currentMatch = state.match;
+    if (currentReport == null || currentMatch == null) return false;
+
+    state = state.copyWith(isSubmitting: true, clearErrorMessage: true);
+    try {
+      final updatedReport = await useCase.updateRefereeObservations(
+        activeRole: activeRole,
+        match: currentMatch,
+        currentReport: currentReport,
+        observations: observations,
+        actorUserId: actorUserId,
+        actorRefereeId: actorRefereeId,
+      );
+
+      state = state.copyWith(
+        report: updatedReport,
+        isSubmitting: false,
+      );
+      return true;
+    } catch (e) {
+      state = state.copyWith(
+        isSubmitting: false,
+        errorMessage: e is AppFailure ? e.message : e.toString(),
+      );
+      return false;
+    }
+  }
+
   Future<bool> synchronizeOfflineQueue() async {
+    if (state.isSubmitting) return false;
     final currentMatch = state.match;
     if (currentMatch == null) return false;
 
@@ -368,9 +432,11 @@ class DigitalMatchReportController
   Future<bool> closeReport({
     required UserRole activeRole,
     required String userId,
+    String? actorRefereeId,
     int? homePenaltyScore,
     int? awayPenaltyScore,
   }) async {
+    if (state.isSubmitting) return false;
     final currentReport = state.report;
     final currentMatch = state.match;
     if (currentReport == null || currentMatch == null) return false;
@@ -382,6 +448,7 @@ class DigitalMatchReportController
         userId: userId,
         match: currentMatch,
         currentReport: currentReport,
+        actorRefereeId: actorRefereeId,
         homePenaltyScore: homePenaltyScore,
         awayPenaltyScore: awayPenaltyScore,
         isOffline: state.isOfflineMode,

@@ -187,6 +187,7 @@ class PostgrestMatchReportsRemoteDataSource
       'period_started_at': report.periodStartedAt?.toUtc().toIso8601String(),
       'elapsed_seconds_before_current_period':
           report.elapsedSecondsBeforeCurrentPeriod,
+      'referee_observations': report.refereeObservations,
       'closed_at': report.closedAt?.toUtc().toIso8601String(),
       'closed_by_user_id': HybridRepositorySupport.uuidOrNull(
         report.closedByUserId,
@@ -304,6 +305,7 @@ class PostgrestMatchReportsRemoteDataSource
       elapsedSecondsBeforeCurrentPeriod:
           (row['elapsed_seconds_before_current_period'] as num?)?.toInt() ?? 0,
       events: events,
+      refereeObservations: row['referee_observations'] as String?,
       closedAt: rawClosedAt == null
           ? null
           : DateTime.parse(rawClosedAt).toLocal(),

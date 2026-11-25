@@ -12,6 +12,8 @@ class DigitalMatchReportState {
     this.awayTeam,
     this.homeEligiblePlayers = const <RegisteredPlayer>[],
     this.awayEligiblePlayers = const <RegisteredPlayer>[],
+    this.homeConvocationConfirmed = true,
+    this.awayConvocationConfirmed = true,
     this.isOfflineMode = false,
     this.pendingSyncEventsCount = 0,
     this.isLoading = false,
@@ -26,6 +28,8 @@ class DigitalMatchReportState {
   final TournamentTeam? awayTeam;
   final List<RegisteredPlayer> homeEligiblePlayers;
   final List<RegisteredPlayer> awayEligiblePlayers;
+  final bool homeConvocationConfirmed;
+  final bool awayConvocationConfirmed;
   final bool isOfflineMode;
   final int pendingSyncEventsCount;
   final bool isLoading;
@@ -34,6 +38,8 @@ class DigitalMatchReportState {
   final String? lastActionFeedback;
 
   bool get hasData => match != null && report != null;
+  bool get hasUnconfirmedConvocation =>
+      !homeConvocationConfirmed || !awayConvocationConfirmed;
 
   DigitalMatchReportState copyWith({
     ChampionshipMatch? match,
@@ -42,6 +48,8 @@ class DigitalMatchReportState {
     TournamentTeam? awayTeam,
     List<RegisteredPlayer>? homeEligiblePlayers,
     List<RegisteredPlayer>? awayEligiblePlayers,
+    bool? homeConvocationConfirmed,
+    bool? awayConvocationConfirmed,
     bool? isOfflineMode,
     int? pendingSyncEventsCount,
     bool? isLoading,
@@ -58,6 +66,10 @@ class DigitalMatchReportState {
       awayTeam: awayTeam ?? this.awayTeam,
       homeEligiblePlayers: homeEligiblePlayers ?? this.homeEligiblePlayers,
       awayEligiblePlayers: awayEligiblePlayers ?? this.awayEligiblePlayers,
+      homeConvocationConfirmed:
+          homeConvocationConfirmed ?? this.homeConvocationConfirmed,
+      awayConvocationConfirmed:
+          awayConvocationConfirmed ?? this.awayConvocationConfirmed,
       isOfflineMode: isOfflineMode ?? this.isOfflineMode,
       pendingSyncEventsCount:
           pendingSyncEventsCount ?? this.pendingSyncEventsCount,

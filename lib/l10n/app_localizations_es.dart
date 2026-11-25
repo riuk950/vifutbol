@@ -4091,4 +4091,69 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get refereeSummaryDocLoadFallback => 'Vista previa no disponible';
+
+  @override
+  String get refereeFilterAll => 'Todos';
+
+  @override
+  String get refereeFilterInProgress => 'En juego';
+
+  @override
+  String get refereeFilterScheduled => 'Programados';
+
+  @override
+  String get refereeFilterCompleted => 'Finalizados';
+
+  @override
+  String get refereeEmptyFilterMessage =>
+      'No tienes partidos en esta categoría.';
+
+  @override
+  String get refereeMatchStatusScheduled => 'Programado';
+
+  @override
+  String get refereeMatchStatusInProgress => 'En juego';
+
+  @override
+  String get refereeMatchStatusCompleted => 'Finalizado';
+
+  @override
+  String get refereeMatchStatusPending => 'Pendiente';
+
+  @override
+  String get refereeMatchStatusCancelled => 'Cancelado';
+
+  @override
+  String get refereeMatchDateUnscheduled => 'Fecha por definir';
+
+  @override
+  String get refereeMatchActionManage => 'Gestionar Acta';
+
+  @override
+  String get refereeMatchActionViewClosed => 'Ver Acta Finalizada';
+
+  @override
+  String get refereeMatchUnauthorizedBanner =>
+      'Solo el árbitro asignado a este partido o un organizador puede modificar el acta.';
+
+  @override
+  String get refereeMatchUnconfirmedConvocationBanner =>
+      'Uno o ambos equipos no han confirmado convocatoria oficial; se cargó la plantilla inscrita como respaldo.';
+
+  @override
+  String get refereeObservationsTitle => 'Observaciones arbitrales';
+
+  @override
+  String get refereeObservationsHint =>
+      'Registra incidencias, estado de la cancha o notas oficiales del encuentro...';
+
+  @override
+  String get refereeObservationsSaveAction => 'Guardar observaciones';
+
+  @override
+  String get refereeObservationsSavedMessage =>
+      'Observaciones guardadas en el acta';
+
+  @override
+  String get refereeObservationsEmpty => 'Sin observaciones registradas.';
 }

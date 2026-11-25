@@ -3,11 +3,12 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/providers/auth_providers.dart';
 import '../../application/providers/digital_match_report_providers.dart';
+import '../../application/use_cases/manage_digital_match_report_use_case.dart';
 import '../../domain/entities/championship_match.dart';
 import '../../domain/entities/match_report_enums.dart';
-import '../../domain/entities/role_permission_matrix.dart';
 import '../../domain/entities/team_enums.dart';
 import '../../domain/entities/user_role.dart';
+import '../../l10n/app_localizations.dart';
 import '../design_system/kick_pulse_colors.dart';
 import '../design_system/kick_pulse_radii_spacing.dart';
 import '../design_system/kick_pulse_typography.dart';
@@ -35,11 +36,14 @@ class _DigitalMatchReportScreenState
     extends ConsumerState<DigitalMatchReportScreen> {
   Timer? _ticker;
   late DateTime _now;
+  late final TextEditingController _observationsController;
+  String? _lastSyncedObservations;
 
   @override
   void initState() {
     super.initState();
     _now = DateTime.now();
+    _observationsController = TextEditingController();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.initialMatch != null) {
@@ -60,6 +64,7 @@ class _DigitalMatchReportScreenState
   @override
   void dispose() {
     _ticker?.cancel();
+    _observationsController.dispose();
     super.dispose();
   }
 
@@ -71,6 +76,7 @@ class _DigitalMatchReportScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(digitalMatchReportControllerProvider);
     final controller = ref.read(digitalMatchReportControllerProvider.notifier);
     final activeRole = ref.watch(activeUserRoleProvider);
@@ -86,16 +92,24 @@ class _DigitalMatchReportScreenState
       );
     }
 
-    final bool canEdit =
-        (RolePermissionMatrix.hasCapability(
-              activeRole,
-              RoleCapability.recordMatchEvents,
-            ) ||
-            RolePermissionMatrix.hasCapability(
-              activeRole,
-              RoleCapability.manageTournaments,
-            )) &&
-        !report.isClosed;
+    if (report.refereeObservations != _lastSyncedObservations) {
+      _lastSyncedObservations = report.refereeObservations;
+      if (_observationsController.text.isEmpty &&
+          report.refereeObservations != null) {
+        _observationsController.text = report.refereeObservations!;
+      }
+    }
+
+    final actorUserId = authState.session?.user.id;
+    final actorRefereeId = authState.session?.user.roleProfile?.linkedRefereeId;
+    final bool isAssignedOrOrganizer =
+        ManageDigitalMatchReportUseCase.isMatchAssignedToActor(
+      match,
+      activeRole: activeRole,
+      actorUserId: actorUserId,
+      actorRefereeId: actorRefereeId,
+    );
+    final bool canEdit = isAssignedOrOrganizer && !report.isClosed;
 
     final homeName = state.homeTeam?.name ?? match.homeTeamId;
     final awayName = state.awayTeam?.name ?? match.awayTeamId;
@@ -171,6 +185,65 @@ class _DigitalMatchReportScreenState
                             ? null
                             : () => controller.synchronizeOfflineQueue(),
                       ),
+                  ],
+                ),
+              ),
+
+            // Unauthorized referee read-only banner
+            if (!isAssignedOrOrganizer && !report.isClosed)
+              Container(
+                key: const Key('digital_match_report_unauthorized_banner'),
+                width: double.infinity,
+                padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceSm),
+                color: KickPulseColors.accentLive.withValues(alpha: 0.16),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.lock_outline,
+                      color: KickPulseColors.accentLive,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.refereeMatchUnauthorizedBanner,
+                        style: const TextStyle(
+                          color: KickPulseColors.accentLive,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            // Non-blocking unconfirmed convocation fallback banner
+            if (canEdit && state.hasUnconfirmedConvocation)
+              Container(
+                key: const Key(
+                  'digital_match_report_unconfirmed_convocation_banner',
+                ),
+                width: double.infinity,
+                padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceSm),
+                color: KickPulseColors.accentWarning.withValues(alpha: 0.16),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.info_outline,
+                      color: KickPulseColors.accentWarning,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.refereeMatchUnconfirmedConvocationBanner,
+                        style: const TextStyle(
+                          color: KickPulseColors.textPrimary,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -359,6 +432,8 @@ class _DigitalMatchReportScreenState
                               : () => controller.transitionPeriod(
                                   MatchPeriod.firstHalf,
                                   activeRole: activeRole,
+                                  actorUserId: actorUserId,
+                                  actorRefereeId: actorRefereeId,
                                 ),
                         ),
                       ),
@@ -375,6 +450,8 @@ class _DigitalMatchReportScreenState
                               : () => controller.transitionPeriod(
                                   MatchPeriod.halfTime,
                                   activeRole: activeRole,
+                                  actorUserId: actorUserId,
+                                  actorRefereeId: actorRefereeId,
                                 ),
                         ),
                       ),
@@ -393,6 +470,8 @@ class _DigitalMatchReportScreenState
                               : () => controller.transitionPeriod(
                                   MatchPeriod.secondHalf,
                                   activeRole: activeRole,
+                                  actorUserId: actorUserId,
+                                  actorRefereeId: actorRefereeId,
                                 ),
                         ),
                       ),
@@ -409,6 +488,8 @@ class _DigitalMatchReportScreenState
                               : () => controller.transitionPeriod(
                                   MatchPeriod.fullTime,
                                   activeRole: activeRole,
+                                  actorUserId: actorUserId,
+                                  actorRefereeId: actorRefereeId,
                                 ),
                         ),
                       ),
@@ -434,7 +515,8 @@ class _DigitalMatchReportScreenState
                                   awayName,
                                   controller,
                                   activeRole,
-                                  authState.session?.user.id ?? 'ref-seed-1',
+                                  actorUserId ?? 'ref-seed-1',
+                                  actorRefereeId,
                                 ),
                         ),
                       ),
@@ -554,6 +636,83 @@ class _DigitalMatchReportScreenState
                 ),
               ),
             ],
+
+            // Referee Observations Section
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: KickPulseRadiiSpacing.spaceMd,
+              ),
+              child: KickPulseCard(
+                key: const Key('digital_match_report_observations_card'),
+                padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceSm),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      l10n.refereeObservationsTitle,
+                      style: KickPulseTypography.cardTitle.copyWith(
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
+                    if (canEdit) ...[
+                      TextField(
+                        key: const Key('digital_match_report_observations_field'),
+                        controller: _observationsController,
+                        maxLines: 2,
+                        style: KickPulseTypography.bodyPrimary.copyWith(
+                          fontSize: 13,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: l10n.refereeObservationsHint,
+                          isDense: true,
+                        ),
+                      ),
+                      const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: OutlinedButton.icon(
+                          key: const Key(
+                            'digital_match_report_save_observations_button',
+                          ),
+                          icon: const Icon(Icons.save_outlined, size: 16),
+                          label: Text(l10n.refereeObservationsSaveAction),
+                          onPressed: state.isSubmitting
+                              ? null
+                              : () async {
+                                  final saved =
+                                      await controller.updateObservations(
+                                    activeRole: activeRole,
+                                    observations: _observationsController.text,
+                                    actorUserId: actorUserId,
+                                    actorRefereeId: actorRefereeId,
+                                  );
+                                  if (saved && context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          l10n.refereeObservationsSavedMessage,
+                                        ),
+                                        backgroundColor:
+                                            KickPulseColors.accentPrimary,
+                                      ),
+                                    );
+                                  }
+                                },
+                        ),
+                      ),
+                    ] else
+                      Text(
+                        (report.refereeObservations != null &&
+                                report.refereeObservations!.trim().isNotEmpty)
+                            ? report.refereeObservations!
+                            : l10n.refereeObservationsEmpty,
+                        style: KickPulseTypography.captionMeta,
+                      ),
+                  ],
+                ),
+              ),
+            ),
 
             const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
             const Divider(),
@@ -782,6 +941,7 @@ class _DigitalMatchReportScreenState
     var controller,
     UserRole activeRole,
     String userId,
+    String? actorRefereeId,
   ) {
     showDialog(
       context: context,
@@ -791,7 +951,11 @@ class _DigitalMatchReportScreenState
         homeTeamName: homeName,
         awayTeamName: awayName,
         onConfirmClose: () {
-          controller.closeReport(activeRole: activeRole, userId: userId);
+          controller.closeReport(
+            activeRole: activeRole,
+            userId: userId,
+            actorRefereeId: actorRefereeId,
+          );
         },
       ),
     );
