@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:vifutbol/domain/entities/app_environment.dart';
 import 'package:vifutbol/domain/entities/auth_session.dart';
 import 'package:vifutbol/domain/entities/connectivity_status.dart';
+import 'package:vifutbol/domain/entities/role_profile_data.dart';
 import 'package:vifutbol/domain/entities/user_account.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/failures/app_failure.dart';
@@ -193,5 +195,40 @@ void main() {
       expect(restored, isNull);
       expect(inMemoryStore['auth_session'], isEmpty);
     });
+
+    test(
+      'deleteAccount wipes namespace (session, accounts, passwords, outbox) and local profile files',
+      () async {
+        final tempDir = Directory.systemTemp.createTempSync('local_del_test');
+        final photoFile = File('${tempDir.path}/avatar.jpg')
+          ..writeAsBytesSync([1, 2, 3]);
+        final userWithPhoto = testAccount.copyWith(
+          roleProfile: RoleProfileData(photoUrl: photoFile.path),
+        );
+        final sessionWithPhoto = testSession.copyWith(user: userWithPhoto);
+
+        inMemoryStore['auth_session'] = jsonEncode(sessionWithPhoto.toJson());
+        inMemoryStore['auth_accounts'] = jsonEncode({
+          userWithPhoto.email: userWithPhoto.toJson(),
+        });
+        inMemoryStore['auth_passwords'] = jsonEncode({
+          userWithPhoto.email: 'hashed-pw',
+        });
+        inMemoryStore['sync_outbox_items_v1'] = '[{"id":"outbox-1"}]';
+        when(() => mockStorage.clearNamespace()).thenAnswer((_) async {
+          inMemoryStore.clear();
+        });
+
+        await devRepo.deleteAccount(userId: userWithPhoto.id);
+
+        expect(inMemoryStore.isEmpty, isTrue);
+        expect(photoFile.existsSync(), isFalse);
+        expect(await devRepo.restoreSession(), isNull);
+
+        if (tempDir.existsSync()) {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
   });
 }

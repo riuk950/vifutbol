@@ -337,5 +337,121 @@ void main() {
         await sessionStream.close();
       },
     );
+
+    group('HU 24.3 - deleteAccount', () {
+      test(
+        'deletes account, clears session, and transitions to unauthenticated on success',
+        () async {
+          when(
+            () => mockRepository.deleteAccount(userId: testAccount.id),
+          ).thenAnswer((_) async {});
+
+          controller = AuthController(
+            authRepository: mockRepository,
+            authenticateUserUseCase: authenticateUserUseCase,
+          );
+          await Future<void>.delayed(Duration.zero);
+          controller.state = controller.state.copyWith(
+            status: AuthStatus.authenticated,
+            session: () => testSession,
+          );
+
+          final result = await controller.deleteAccount();
+
+          expect(result, isTrue);
+          expect(controller.state.status, AuthStatus.unauthenticated);
+          expect(controller.state.session, isNull);
+          expect(controller.state.isSubmitting, isFalse);
+          expect(controller.state.lastFailure, isNull);
+          verify(
+            () => mockRepository.deleteAccount(userId: testAccount.id),
+          ).called(1);
+        },
+      );
+
+      test('rejects guest fan session without calling repository', () async {
+        final guestAccount = UserAccount.guestFan(id: 'guest-001');
+        final guestSession = testSession.copyWith(
+          user: guestAccount,
+        );
+        controller = AuthController(
+          authRepository: mockRepository,
+          authenticateUserUseCase: authenticateUserUseCase,
+        );
+        await Future<void>.delayed(Duration.zero);
+        controller.state = controller.state.copyWith(
+          status: AuthStatus.authenticated,
+          session: () => guestSession,
+        );
+
+        final result = await controller.deleteAccount();
+
+        expect(result, isFalse);
+        expect(controller.state.status, AuthStatus.authenticated);
+        expect(controller.state.session, equals(guestSession));
+        verifyNever(() => mockRepository.deleteAccount(userId: any(named: 'userId')));
+      });
+
+      test(
+        'aborts local transition and preserves session on remote/offline failure',
+        () async {
+          const failure = OfflineAuthOperationFailure(
+            'Se requiere conexión a internet para eliminar tu cuenta.',
+          );
+          when(
+            () => mockRepository.deleteAccount(userId: testAccount.id),
+          ).thenThrow(failure);
+
+          controller = AuthController(
+            authRepository: mockRepository,
+            authenticateUserUseCase: authenticateUserUseCase,
+          );
+          await Future<void>.delayed(Duration.zero);
+          controller.state = controller.state.copyWith(
+            status: AuthStatus.authenticated,
+            session: () => testSession,
+          );
+
+          final result = await controller.deleteAccount();
+
+          expect(result, isFalse);
+          expect(controller.state.status, AuthStatus.authenticated);
+          expect(controller.state.session, equals(testSession));
+          expect(controller.state.lastFailure, equals(failure));
+          expect(controller.state.isSubmitting, isFalse);
+        },
+      );
+
+      test(
+        'enforces single-flight lock during concurrent deleteAccount calls',
+        () async {
+          when(
+            () => mockRepository.deleteAccount(userId: testAccount.id),
+          ).thenAnswer((_) async {
+            await Future<void>.delayed(const Duration(milliseconds: 50));
+          });
+
+          controller = AuthController(
+            authRepository: mockRepository,
+            authenticateUserUseCase: authenticateUserUseCase,
+          );
+          await Future<void>.delayed(Duration.zero);
+          controller.state = controller.state.copyWith(
+            status: AuthStatus.authenticated,
+            session: () => testSession,
+          );
+
+          final first = controller.deleteAccount();
+          final second = controller.deleteAccount();
+          final results = await Future.wait([first, second]);
+
+          expect(results[0], isTrue);
+          expect(results[1], isFalse);
+          verify(
+            () => mockRepository.deleteAccount(userId: testAccount.id),
+          ).called(1);
+        },
+      );
+    });
   });
 }

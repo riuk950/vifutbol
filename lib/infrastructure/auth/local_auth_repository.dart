@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import '../../domain/entities/app_environment.dart';
 import '../../domain/entities/auth_session.dart';
@@ -333,6 +334,39 @@ class LocalAuthRepository implements AuthRepository {
     }
 
     return updatedUser;
+  }
+
+  @override
+  Future<void> deleteAccount({required String userId}) async {
+    final currentSession = await restoreSession();
+    if (currentSession == null ||
+        currentSession.user.id != userId ||
+        currentSession.user.isGuestFan) {
+      throw const InvalidCredentialsFailure('Sesión no encontrada.');
+    }
+
+    final roleProfile = currentSession.user.roleProfile;
+    if (roleProfile != null) {
+      final candidates = <String?>[
+        roleProfile.photoUrl,
+        roleProfile.documentFrontUrl,
+        roleProfile.documentBackUrl,
+      ];
+      for (final path in candidates) {
+        if (path == null || path.trim().isEmpty) continue;
+        if (path.startsWith('http://') || path.startsWith('https://')) {
+          continue;
+        }
+        try {
+          final file = File(path);
+          if (await file.exists()) {
+            await file.delete();
+          }
+        } catch (_) {}
+      }
+    }
+
+    await storage.clearNamespace();
   }
 
   @override

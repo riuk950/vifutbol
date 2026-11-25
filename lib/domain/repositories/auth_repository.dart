@@ -53,6 +53,10 @@ abstract class AuthRepository {
     RoleProfileData? roleProfile,
   });
 
+  /// Permanently deletes the authenticated user account and all associated
+  /// personal data across cloud and local storage.
+  Future<void> deleteAccount({required String userId});
+
   /// Clears stored authentication session and returns the user to unauthenticated state.
   Future<void> signOut();
 

@@ -9,6 +9,7 @@ import '../../infrastructure/auth/local_auth_repository.dart';
 import '../../infrastructure/auth/supabase_auth_repository.dart';
 import '../controllers/auth_controller.dart';
 import '../use_cases/authenticate_user_use_case.dart';
+import '../use_cases/delete_account_use_case.dart';
 import 'foundation_providers.dart';
 import 'supabase_providers.dart';
 
@@ -45,15 +46,23 @@ final authenticateUserUseCaseProvider = Provider<AuthenticateUserUseCase>((
   return AuthenticateUserUseCase(authRepository);
 });
 
+/// Provider exposing [DeleteAccountUseCase].
+final deleteAccountUseCaseProvider = Provider<DeleteAccountUseCase>((ref) {
+  final authRepository = ref.watch(authRepositoryProvider);
+  return DeleteAccountUseCase(authRepository);
+});
+
 /// StateNotifierProvider exposing the central [AuthController] and its [AuthFlowState].
 final authControllerProvider =
     StateNotifierProvider<AuthController, AuthFlowState>((ref) {
       final repository = ref.watch(authRepositoryProvider);
       final useCase = ref.watch(authenticateUserUseCaseProvider);
+      final deleteAccountUseCase = ref.watch(deleteAccountUseCaseProvider);
 
       return AuthController(
         authRepository: repository,
         authenticateUserUseCase: useCase,
+        deleteAccountUseCase: deleteAccountUseCase,
       );
     });
 

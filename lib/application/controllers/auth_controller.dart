@@ -10,6 +10,7 @@ import '../../domain/entities/user_role.dart';
 import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../use_cases/authenticate_user_use_case.dart';
+import '../use_cases/delete_account_use_case.dart';
 
 /// StateNotifier orchestrating authentication flows, role onboarding,
 /// brute-force lockout timers, and form draft preservation.
@@ -17,13 +18,17 @@ class AuthController extends StateNotifier<AuthFlowState> {
   AuthController({
     required this.authRepository,
     required this.authenticateUserUseCase,
-  }) : super(const AuthFlowState()) {
+    DeleteAccountUseCase? deleteAccountUseCase,
+  }) : deleteAccountUseCase =
+           deleteAccountUseCase ?? DeleteAccountUseCase(authRepository),
+       super(const AuthFlowState()) {
     _subscribeToSessionChanges();
     initialize();
   }
 
   final AuthRepository authRepository;
   final AuthenticateUserUseCase authenticateUserUseCase;
+  final DeleteAccountUseCase deleteAccountUseCase;
   Timer? _lockoutTicker;
   StreamSubscription<AuthSession?>? _sessionStateSubscription;
 
@@ -375,6 +380,41 @@ class AuthController extends StateNotifier<AuthFlowState> {
         isSubmitting: false,
         lastFailure: () => const OfflineAuthOperationFailure(
           'No se pudo guardar tu perfil. Intenta nuevamente.',
+        ),
+      );
+      return false;
+    }
+  }
+
+  /// Permanently deletes the authenticated user account in cascade across
+  /// cloud and local storage, enforcing single-flight execution.
+  Future<bool> deleteAccount() async {
+    final currentSession = state.session;
+    if (currentSession == null || currentSession.user.isGuestFan) {
+      return false;
+    }
+    if (state.isSubmitting) return false;
+
+    state = state.copyWith(isSubmitting: true, lastFailure: () => null);
+
+    try {
+      await deleteAccountUseCase(user: currentSession.user);
+      _lockoutTicker?.cancel();
+      state = const AuthFlowState(
+        status: AuthStatus.unauthenticated,
+        session: null,
+        isSubmitting: false,
+        lastFailure: null,
+      );
+      return true;
+    } on AppFailure catch (e) {
+      state = state.copyWith(isSubmitting: false, lastFailure: () => e);
+      return false;
+    } catch (_) {
+      state = state.copyWith(
+        isSubmitting: false,
+        lastFailure: () => const OfflineAuthOperationFailure(
+          'No se pudo eliminar tu cuenta en este momento. Tus datos locales se mantuvieron intactos; intenta nuevamente más tarde.',
         ),
       );
       return false;

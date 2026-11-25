@@ -6837,6 +6837,48 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Estamos integrando la pasarela de pagos oficial. Muy pronto podrás activar la experiencia sin anuncios directamente desde la sección de Perfil.'**
   String get faqItem4Answer;
+
+  /// Botón destructivo en Perfil para eliminar permanentemente la cuenta
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar cuenta'**
+  String get profileDeleteAccountButton;
+
+  /// Título del diálogo de confirmación irreversible para eliminar cuenta
+  ///
+  /// In es, this message translates to:
+  /// **'¿Eliminar cuenta permanentemente?'**
+  String get deleteAccountDialogTitle;
+
+  /// Advertencia de irreversibilidad del borrado en cascada
+  ///
+  /// In es, this message translates to:
+  /// **'Esta acción es permanente e irreversible. Se eliminarán tu cuenta, tus perfiles deportivos, solicitudes, favoritos y archivos personales tanto de este dispositivo como de la nube.'**
+  String get deleteAccountDialogMessage;
+
+  /// Botón destructivo de confirmación en el diálogo de eliminación de cuenta
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar cuenta'**
+  String get deleteAccountConfirmAction;
+
+  /// Texto mostrado mientras el borrado en cascada está en progreso
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminando cuenta...'**
+  String get deleteAccountDeletingLabel;
+
+  /// Mensaje cuando se intenta eliminar la cuenta sin conexión
+  ///
+  /// In es, this message translates to:
+  /// **'Se requiere conexión a internet para eliminar tu cuenta. Verifica tu conexión e intenta nuevamente.'**
+  String get deleteAccountOfflineError;
+
+  /// Mensaje de error genérico cuando falla la eliminación en la nube
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo eliminar tu cuenta en este momento. Tus datos locales se mantuvieron intactos; intenta nuevamente más tarde.'**
+  String get deleteAccountGenericError;
 }
 
 class _AppLocalizationsDelegate

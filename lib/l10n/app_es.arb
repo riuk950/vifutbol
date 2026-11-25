@@ -5032,5 +5032,33 @@
   "faqItem4Answer": "Estamos integrando la pasarela de pagos oficial. Muy pronto podrás activar la experiencia sin anuncios directamente desde la sección de Perfil.",
   "@faqItem4Answer": {
     "description": "Respuesta frecuente 4"
+  },
+  "profileDeleteAccountButton": "Eliminar cuenta",
+  "@profileDeleteAccountButton": {
+    "description": "Botón destructivo en Perfil para eliminar permanentemente la cuenta"
+  },
+  "deleteAccountDialogTitle": "¿Eliminar cuenta permanentemente?",
+  "@deleteAccountDialogTitle": {
+    "description": "Título del diálogo de confirmación irreversible para eliminar cuenta"
+  },
+  "deleteAccountDialogMessage": "Esta acción es permanente e irreversible. Se eliminarán tu cuenta, tus perfiles deportivos, solicitudes, favoritos y archivos personales tanto de este dispositivo como de la nube.",
+  "@deleteAccountDialogMessage": {
+    "description": "Advertencia de irreversibilidad del borrado en cascada"
+  },
+  "deleteAccountConfirmAction": "Eliminar cuenta",
+  "@deleteAccountConfirmAction": {
+    "description": "Botón destructivo de confirmación en el diálogo de eliminación de cuenta"
+  },
+  "deleteAccountDeletingLabel": "Eliminando cuenta...",
+  "@deleteAccountDeletingLabel": {
+    "description": "Texto mostrado mientras el borrado en cascada está en progreso"
+  },
+  "deleteAccountOfflineError": "Se requiere conexión a internet para eliminar tu cuenta. Verifica tu conexión e intenta nuevamente.",
+  "@deleteAccountOfflineError": {
+    "description": "Mensaje cuando se intenta eliminar la cuenta sin conexión"
+  },
+  "deleteAccountGenericError": "No se pudo eliminar tu cuenta en este momento. Tus datos locales se mantuvieron intactos; intenta nuevamente más tarde.",
+  "@deleteAccountGenericError": {
+    "description": "Mensaje de error genérico cuando falla la eliminación en la nube"
   }
 }

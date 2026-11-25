@@ -16,12 +16,14 @@ import 'package:vifutbol/domain/entities/role_profile_data.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/user_account.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
+import 'package:vifutbol/domain/failures/app_failure.dart';
 import 'package:vifutbol/domain/repositories/auth_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
 import 'package:vifutbol/presentation/shell/tabs/profile_faq_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/profile_legal_document_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/profile_tab_view.dart';
+import 'package:vifutbol/presentation/shell/tabs/widgets/delete_account_dialog.dart';
 import 'package:vifutbol/presentation/shell/tabs/widgets/remove_ads_dialog.dart';
 
 class _MockAuthRepository extends Mock implements AuthRepository {}
@@ -1023,6 +1025,246 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(find.byType(ProfileLegalDocumentScreen), findsNothing);
+      },
+    );
+  });
+
+  group('HU 24.3 - Cascade account deletion in Profile', () {
+    testWidgets(
+      'shows Eliminar cuenta button for authenticated user and hides it for guest fan',
+      (tester) async {
+        final authUser = UserAccount(
+          id: 'u-del-vis',
+          fullName: 'Usuario Autenticado',
+          email: 'auth@vifutbol.com',
+          activeRole: UserRole.player,
+          authorizedRoles: {UserRole.player},
+          onboardingCompleted: true,
+        );
+        final authController = _TestAuthController(
+          authRepository: authRepository,
+          initialState: AuthFlowState(
+            status: AuthStatus.authenticated,
+            session: AuthSession(
+              sessionId: 's-del-vis',
+              user: authUser,
+              sessionToken: 'tok-del',
+              authenticatedAt: DateTime(2026, 11, 25),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const ProfileTabView(),
+            controller: authController,
+            config: config,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('profile_delete_account_button')),
+          findsOneWidget,
+        );
+        expect(find.text('Eliminar cuenta'), findsOneWidget);
+
+        // Guest fan must NOT see Eliminar cuenta
+        final guestController = _TestAuthController(
+          authRepository: authRepository,
+          initialState: AuthFlowState(
+            status: AuthStatus.authenticated,
+            session: AuthSession(
+              sessionId: 's-del-guest',
+              user: UserAccount.guestFan(id: 'guest-del'),
+              sessionToken: 'tok-guest',
+              authenticatedAt: DateTime(2026, 11, 25),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const ProfileTabView(),
+            controller: guestController,
+            config: config,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const Key('profile_delete_account_button')),
+          findsNothing,
+        );
+      },
+    );
+
+    testWidgets(
+      'cancelling DeleteAccountDialog performs 0 repository calls and preserves session',
+      (tester) async {
+        final user = UserAccount(
+          id: 'u-del-cancel',
+          fullName: 'Usuario Cancelar',
+          email: 'cancel@vifutbol.com',
+          activeRole: UserRole.fan,
+          authorizedRoles: {UserRole.fan},
+          onboardingCompleted: true,
+        );
+        final controller = _TestAuthController(
+          authRepository: authRepository,
+          initialState: AuthFlowState(
+            status: AuthStatus.authenticated,
+            session: AuthSession(
+              sessionId: 's-del-cancel',
+              user: user,
+              sessionToken: 'tok-cancel',
+              authenticatedAt: DateTime(2026, 11, 25),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const ProfileTabView(),
+            controller: controller,
+            config: config,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final deleteBtn = find.byKey(const Key('profile_delete_account_button'));
+        await tester.ensureVisible(deleteBtn);
+        await tester.tap(deleteBtn);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(DeleteAccountDialog), findsOneWidget);
+        await tester.tap(
+          find.byKey(const ValueKey('delete_account_cancel_button')),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byType(DeleteAccountDialog), findsNothing);
+        expect(controller.state.status, AuthStatus.authenticated);
+        verifyNever(() => authRepository.deleteAccount(userId: user.id));
+      },
+    );
+
+    testWidgets(
+      'confirming deletion invokes deleteAccount once (single-flight) and transitions to unauthenticated',
+      (tester) async {
+        final user = UserAccount(
+          id: 'u-del-ok',
+          fullName: 'Usuario Confirmar',
+          email: 'ok@vifutbol.com',
+          activeRole: UserRole.coach,
+          authorizedRoles: {UserRole.coach},
+          onboardingCompleted: true,
+        );
+        when(() => authRepository.deleteAccount(userId: user.id)).thenAnswer(
+          (_) async => Future<void>.delayed(const Duration(milliseconds: 80)),
+        );
+
+        final controller = _TestAuthController(
+          authRepository: authRepository,
+          initialState: AuthFlowState(
+            status: AuthStatus.authenticated,
+            session: AuthSession(
+              sessionId: 's-del-ok',
+              user: user,
+              sessionToken: 'tok-ok',
+              authenticatedAt: DateTime(2026, 11, 25),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const ProfileTabView(),
+            controller: controller,
+            config: config,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final deleteBtn = find.byKey(const Key('profile_delete_account_button'));
+        await tester.ensureVisible(deleteBtn);
+        await tester.tap(deleteBtn);
+        await tester.pumpAndSettle();
+
+        final confirmBtn = find.byKey(
+          const ValueKey('delete_account_confirm_button'),
+        );
+        await tester.tap(confirmBtn);
+        await tester.tap(confirmBtn, warnIfMissed: false);
+        await tester.pump(const Duration(milliseconds: 20));
+
+        expect(find.text('Eliminando cuenta...'), findsOneWidget);
+
+        await tester.pumpAndSettle();
+
+        expect(find.byType(DeleteAccountDialog), findsNothing);
+        expect(controller.state.status, AuthStatus.unauthenticated);
+        expect(controller.state.session, isNull);
+        verify(() => authRepository.deleteAccount(userId: user.id)).called(1);
+      },
+    );
+
+    testWidgets(
+      'offline or remote failure displays Spanish SnackBar and keeps authenticated session',
+      (tester) async {
+        final user = UserAccount(
+          id: 'u-del-err',
+          fullName: 'Usuario Error',
+          email: 'err@vifutbol.com',
+          activeRole: UserRole.organizer,
+          authorizedRoles: {UserRole.organizer},
+          onboardingCompleted: true,
+        );
+        when(() => authRepository.deleteAccount(userId: user.id)).thenThrow(
+          const OfflineAuthOperationFailure(
+            'Se requiere conexión a internet para eliminar tu cuenta.',
+          ),
+        );
+
+        final controller = _TestAuthController(
+          authRepository: authRepository,
+          initialState: AuthFlowState(
+            status: AuthStatus.authenticated,
+            session: AuthSession(
+              sessionId: 's-del-err',
+              user: user,
+              sessionToken: 'tok-err',
+              authenticatedAt: DateTime(2026, 11, 25),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const ProfileTabView(),
+            controller: controller,
+            config: config,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final deleteBtn = find.byKey(const Key('profile_delete_account_button'));
+        await tester.ensureVisible(deleteBtn);
+        await tester.tap(deleteBtn);
+        await tester.pumpAndSettle();
+
+        await tester.tap(
+          find.byKey(const ValueKey('delete_account_confirm_button')),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text('Se requiere conexión a internet para eliminar tu cuenta.'),
+          findsOneWidget,
+        );
+        expect(controller.state.status, AuthStatus.authenticated);
+        expect(controller.state.session, isNotNull);
       },
     );
   });

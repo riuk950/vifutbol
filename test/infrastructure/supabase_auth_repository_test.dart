@@ -794,5 +794,100 @@ void main() {
         expect(inMemoryStore['auth_session'], isEmpty);
       },
     );
+
+    group('HU 24.3 - deleteAccount cascade', () {
+      test(
+        'calls remote deleteAccount RPC, clears local namespace, and signs out on success',
+        () async {
+          final session = buildSession();
+          final cached = AuthSession(
+            sessionId: 'supa-$uid',
+            user: SupabaseAuthRepository.mapRowToUserAccount(
+              buildRow(onboardingCompleted: true),
+            ),
+            sessionToken: rawJwt,
+            authenticatedAt: DateTime.utc(2026, 11, 25),
+          );
+          inMemoryStore['auth_session'] = jsonEncode(cached.toJson());
+          inMemoryStore['sync_outbox_items_v1'] = '[{"id":"pending-1"}]';
+
+          when(() => mockAuth.currentSession).thenReturn(session);
+          when(() => mockStorage.clearNamespace()).thenAnswer((_) async {
+            inMemoryStore.clear();
+          });
+          when(() => mockProfileDataSource.deleteAccount()).thenAnswer(
+            (_) async {},
+          );
+          when(() => mockAuth.signOut()).thenAnswer((_) async {});
+
+          final repo = buildRepository();
+          await repo.deleteAccount(userId: uid);
+
+          verify(() => mockProfileDataSource.deleteAccount()).called(1);
+          verify(() => mockAuth.signOut()).called(1);
+          expect(inMemoryStore.isEmpty, isTrue);
+        },
+      );
+
+      test(
+        'throws OfflineConnectivityFailure without calling RPC or clearing local storage when offline',
+        () async {
+          final session = buildSession();
+          inMemoryStore['auth_session'] = 'keep-me';
+
+          when(() => mockAuth.currentSession).thenReturn(session);
+          when(
+            () => mockConnectivity.checkConnectivity(),
+          ).thenAnswer((_) async => NetworkConnectionStatus.disconnected);
+
+          final repo = buildRepository();
+
+          await expectLater(
+            () => repo.deleteAccount(userId: uid),
+            throwsA(isA<OfflineAuthOperationFailure>()),
+          );
+
+          verifyNever(() => mockProfileDataSource.deleteAccount());
+          expect(inMemoryStore['auth_session'], 'keep-me');
+        },
+      );
+
+      test(
+        'aborts local storage cleanup when remote deleteAccount RPC fails',
+        () async {
+          final session = buildSession();
+          final cached = AuthSession(
+            sessionId: 'supa-$uid',
+            user: SupabaseAuthRepository.mapRowToUserAccount(
+              buildRow(onboardingCompleted: true),
+            ),
+            sessionToken: rawJwt,
+            authenticatedAt: DateTime.utc(2026, 11, 25),
+          );
+          final encodedSession = jsonEncode(cached.toJson());
+          inMemoryStore['auth_session'] = encodedSession;
+
+          when(() => mockAuth.currentSession).thenReturn(session);
+          when(() => mockStorage.clearNamespace()).thenAnswer((_) async {
+            inMemoryStore.clear();
+          });
+          when(() => mockProfileDataSource.deleteAccount()).thenThrow(
+            const PostgrestException(message: 'server error', code: '500'),
+          );
+
+          final repo = buildRepository();
+
+          await expectLater(
+            () => repo.deleteAccount(userId: uid),
+            throwsA(isA<AppFailure>()),
+          );
+
+          verify(() => mockProfileDataSource.deleteAccount()).called(1);
+          verifyNever(() => mockAuth.signOut());
+          verifyNever(() => mockStorage.clearNamespace());
+          expect(inMemoryStore['auth_session'], encodedSession);
+        },
+      );
+    });
   });
 }

@@ -3968,4 +3968,28 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get faqItem4Answer =>
       'Estamos integrando la pasarela de pagos oficial. Muy pronto podrás activar la experiencia sin anuncios directamente desde la sección de Perfil.';
+
+  @override
+  String get profileDeleteAccountButton => 'Eliminar cuenta';
+
+  @override
+  String get deleteAccountDialogTitle => '¿Eliminar cuenta permanentemente?';
+
+  @override
+  String get deleteAccountDialogMessage =>
+      'Esta acción es permanente e irreversible. Se eliminarán tu cuenta, tus perfiles deportivos, solicitudes, favoritos y archivos personales tanto de este dispositivo como de la nube.';
+
+  @override
+  String get deleteAccountConfirmAction => 'Eliminar cuenta';
+
+  @override
+  String get deleteAccountDeletingLabel => 'Eliminando cuenta...';
+
+  @override
+  String get deleteAccountOfflineError =>
+      'Se requiere conexión a internet para eliminar tu cuenta. Verifica tu conexión e intenta nuevamente.';
+
+  @override
+  String get deleteAccountGenericError =>
+      'No se pudo eliminar tu cuenta en este momento. Tus datos locales se mantuvieron intactos; intenta nuevamente más tarde.';
 }

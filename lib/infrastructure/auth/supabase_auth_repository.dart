@@ -48,6 +48,10 @@ abstract class SupabaseUserProfileDataSource {
 
   /// Fetches hydrated role-specific satellite profile attributes for [userAccountId].
   Future<Map<String, dynamic>?> fetchRoleProfileDetails(String userAccountId);
+
+  /// Executes the server-side cascade deletion RPC (`delete_my_account`)
+  /// for the currently authenticated user.
+  Future<void> deleteAccount();
 }
 
 class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
@@ -144,6 +148,11 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
       return result;
     }
     return Map<String, dynamic>.from(result as Map);
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    await client.schema(schema).rpc('delete_my_account');
   }
 
   @override
@@ -819,6 +828,59 @@ class SupabaseAuthRepository implements AuthRepository {
         error,
         fallbackMessage: 'No se pudo guardar tu perfil. Intenta nuevamente.',
       );
+    }
+  }
+
+  @override
+  Future<void> deleteAccount({required String userId}) async {
+    final session = client.auth.currentSession;
+    if (session == null) {
+      throw const InvalidCredentialsFailure('Sesión no encontrada.');
+    }
+
+    await _ensureConnectivity(
+      'Se requiere conexión a internet para eliminar tu cuenta.',
+    );
+
+    final cachedSession = await _readSessionFromCache();
+    final roleProfile = cachedSession?.user.roleProfile;
+
+    try {
+      await _profileDataSource.deleteAccount();
+    } catch (error) {
+      throw _translateError(
+        error,
+        fallbackMessage:
+            'No se pudo eliminar tu cuenta en este momento. Tus datos locales se mantuvieron intactos; intenta nuevamente más tarde.',
+      );
+    }
+
+    await _deleteLocalProfileFiles(roleProfile);
+    await storage.clearNamespace();
+
+    try {
+      await client.auth.signOut();
+    } catch (_) {
+      // Account is already deleted remotely; ignore local client sign-out errors.
+    }
+  }
+
+  Future<void> _deleteLocalProfileFiles(RoleProfileData? roleProfile) async {
+    if (roleProfile == null) return;
+    final candidates = <String?>[
+      roleProfile.photoUrl,
+      roleProfile.documentFrontUrl,
+      roleProfile.documentBackUrl,
+    ];
+    for (final path in candidates) {
+      if (path == null || path.trim().isEmpty) continue;
+      if (path.startsWith('http://') || path.startsWith('https://')) continue;
+      try {
+        final file = File(path);
+        if (await file.exists()) {
+          await file.delete();
+        }
+      } catch (_) {}
     }
   }
 

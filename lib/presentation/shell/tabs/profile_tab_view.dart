@@ -18,6 +18,7 @@ import '../../design_system/widgets/kick_pulse_button.dart';
 import '../../design_system/widgets/kick_pulse_card.dart';
 import '../../sync/sign_out_pending_sync_dialog.dart';
 import 'complete_profile_dialog.dart';
+import 'widgets/delete_account_dialog.dart';
 import 'widgets/profile_legal_support_section.dart';
 
 /// Profile screen displaying identity, read-only active sports role,
@@ -85,6 +86,27 @@ class ProfileTabView extends ConsumerWidget {
 
     if (confirmed == true) {
       await ref.read(authControllerProvider.notifier).signOut();
+    }
+  }
+
+  Future<void> _handleDeleteAccount(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    final deleted = await DeleteAccountDialog.show(
+      context,
+      onConfirmDelete: () =>
+          ref.read(authControllerProvider.notifier).deleteAccount(),
+    );
+
+    if (deleted == false && context.mounted) {
+      final failureMessage =
+          ref.read(authControllerProvider).lastFailure?.message ??
+          l10n.deleteAccountGenericError;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(failureMessage),
+          backgroundColor: KickPulseColors.accentLive,
+        ),
+      );
     }
   }
 
@@ -432,6 +454,32 @@ class ProfileTabView extends ConsumerWidget {
             ),
             onPressed: () => _handleLogout(context, ref),
           ),
+          if (!isGuest && user != null) ...[
+            const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                key: const Key('profile_delete_account_button'),
+                onPressed: () => _handleDeleteAccount(context, ref),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: KickPulseColors.accentLive,
+                  side: const BorderSide(color: KickPulseColors.accentLive),
+                  minimumSize: const Size.fromHeight(48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      KickPulseRadiiSpacing.cardRadius,
+                    ),
+                  ),
+                ),
+                icon: const Icon(
+                  Icons.delete_forever_outlined,
+                  color: KickPulseColors.accentLive,
+                  size: 20,
+                ),
+                label: Text(l10n.profileDeleteAccountButton),
+              ),
+            ),
+          ],
         ],
       ),
     );
