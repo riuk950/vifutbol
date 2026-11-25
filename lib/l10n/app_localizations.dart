@@ -7167,6 +7167,18 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Sin observaciones registradas.'**
   String get refereeObservationsEmpty;
+
+  /// Etiqueta de insignia para notificación de partido asignado al árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Asignación arbitral'**
+  String get alertTypeRefereeAssigned;
+
+  /// Título de la notificación cuando se asigna un partido a un árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Nuevo partido asignado'**
+  String get refereeMatchAssignedAlertTitle;
 }
 
 class _AppLocalizationsDelegate

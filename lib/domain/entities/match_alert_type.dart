@@ -4,7 +4,8 @@ enum MatchAlertType {
   matchStarted,
   goalScored,
   matchEnded,
-  newsPublished;
+  newsPublished,
+  refereeMatchAssigned;
 
   String get storageKey => name;
 

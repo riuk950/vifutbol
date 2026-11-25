@@ -11,14 +11,23 @@ import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/entities/venue_pitch.dart';
 import 'package:vifutbol/domain/failures/app_failure.dart';
+import 'package:vifutbol/domain/repositories/match_alerts_repository.dart';
+import 'package:vifutbol/domain/repositories/teams_repository.dart';
 import 'package:vifutbol/domain/repositories/tournament_matches_repository.dart';
 import 'package:vifutbol/domain/services/colombia_time_utils.dart';
+import 'package:vifutbol/domain/services/referee_assignment_notification_service.dart';
 import 'package:vifutbol/domain/services/round_robin_generator.dart';
 
 class FixtureSchedulingUseCase {
-  const FixtureSchedulingUseCase({required this.matchesRepository});
+  const FixtureSchedulingUseCase({
+    required this.matchesRepository,
+    this.matchAlertsRepository,
+    this.teamsRepository,
+  });
 
   final TournamentMatchesRepository matchesRepository;
+  final MatchAlertsRepository? matchAlertsRepository;
+  final TeamsRepository? teamsRepository;
 
   /// Generates a complete official fixture for the tournament.
   Future<List<ChampionshipMatch>> generateRoundRobinFixture({
@@ -222,7 +231,43 @@ class FixtureSchedulingUseCase {
       updatedAt: clock.now(),
     );
 
-    return matchesRepository.saveMatch(updatedMatch);
+    final savedMatch = await matchesRepository.saveMatch(updatedMatch);
+
+    if (matchAlertsRepository != null &&
+        RefereeAssignmentNotificationService.shouldNotify(
+          previousRefereeId: currentMatch.refereeId,
+          newRefereeId: referee?.id,
+        )) {
+      String homeTeamName = 'Equipo Local';
+      String awayTeamName = 'Equipo Visitante';
+      if (teamsRepository != null) {
+        try {
+          final teams = await teamsRepository!.loadTeamsForTournament(
+            tournament.id,
+          );
+          for (final t in teams) {
+            if (t.id == savedMatch.homeTeamId) homeTeamName = t.name;
+            if (t.id == savedMatch.awayTeamId) awayTeamName = t.name;
+          }
+        } catch (_) {
+          // Fallback to generic team names if team catalog is unavailable
+        }
+      }
+
+      final alert = RefereeAssignmentNotificationService.buildAssignmentAlert(
+        match: savedMatch,
+        recipientUserId: referee?.userAccountId,
+        homeTeamName: homeTeamName,
+        awayTeamName: awayTeamName,
+        tournamentName: tournament.name,
+        now: clock.now(),
+      );
+      if (alert != null) {
+        await matchAlertsRepository!.saveAlert(alert);
+      }
+    }
+
+    return savedMatch;
   }
 
   /// Evaluates whether candidate scheduling window collides with existing matches.

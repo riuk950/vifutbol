@@ -5252,5 +5252,13 @@
   "refereeObservationsEmpty": "Sin observaciones registradas.",
   "@refereeObservationsEmpty": {
     "description": "Texto mostrado cuando un acta cerrada no tiene observaciones arbitrales"
+  },
+  "alertTypeRefereeAssigned": "Asignación arbitral",
+  "@alertTypeRefereeAssigned": {
+    "description": "Etiqueta de insignia para notificación de partido asignado al árbitro"
+  },
+  "refereeMatchAssignedAlertTitle": "Nuevo partido asignado",
+  "@refereeMatchAssignedAlertTitle": {
+    "description": "Título de la notificación cuando se asigna un partido a un árbitro"
   }
 }

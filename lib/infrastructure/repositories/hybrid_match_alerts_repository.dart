@@ -30,6 +30,7 @@ class PostgrestMatchAlertsRemoteDataSource
     MatchAlertType.matchStarted => 'kickoff',
     MatchAlertType.goalScored => 'goal',
     MatchAlertType.matchEnded => 'fullTime',
+    MatchAlertType.refereeMatchAssigned => 'refereeMatchAssigned',
     MatchAlertType.matchUpcoming ||
     MatchAlertType.newsPublished => 'rescheduling',
   };
@@ -38,6 +39,7 @@ class PostgrestMatchAlertsRemoteDataSource
     'kickoff' => MatchAlertType.matchStarted,
     'goal' => MatchAlertType.goalScored,
     'fullTime' => MatchAlertType.matchEnded,
+    'refereeMatchAssigned' => MatchAlertType.refereeMatchAssigned,
     'rescheduling' => MatchAlertType.matchUpcoming,
     _ => MatchAlertType.matchUpcoming,
   };
@@ -66,6 +68,7 @@ class PostgrestMatchAlertsRemoteDataSource
             message: r['message'] as String,
             timestamp: DateTime.parse(r['alert_timestamp'] as String).toLocal(),
             isRead: r['is_read'] as bool? ?? false,
+            recipientUserId: r['recipient_user_id'] as String?,
           ),
         )
         .toList();
@@ -87,6 +90,9 @@ class PostgrestMatchAlertsRemoteDataSource
       'match_id': safeMatchId,
       'tournament_id': safeTournamentId,
       'alert_type': _toDbAlertType(alert.type),
+      'recipient_user_id': HybridRepositorySupport.uuidOrNull(
+        alert.recipientUserId,
+      ),
       'title': alert.title,
       'message': alert.message,
       'alert_timestamp': alert.timestamp.toUtc().toIso8601String(),

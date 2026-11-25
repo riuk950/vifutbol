@@ -10,7 +10,7 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dar
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
 
-class FanAlertsTraySheet extends ConsumerWidget {
+class FanAlertsTraySheet extends ConsumerStatefulWidget {
   const FanAlertsTraySheet({
     super.key,
     required this.userId,
@@ -46,7 +46,14 @@ class FanAlertsTraySheet extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FanAlertsTraySheet> createState() => _FanAlertsTraySheetState();
+}
+
+class _FanAlertsTraySheetState extends ConsumerState<FanAlertsTraySheet> {
+  bool _isSelectingAlert = false;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final trayState = ref.watch(fanAlertsTrayControllerProvider);
 
@@ -82,7 +89,7 @@ class FanAlertsTraySheet extends ConsumerWidget {
                   onPressed: () {
                     ref
                         .read(fanAlertsTrayControllerProvider.notifier)
-                        .markAllAsRead(userId);
+                        .markAllAsRead(widget.userId);
                   },
                   child: Text(
                     l10n.alertsMarkAllRead,
@@ -203,16 +210,27 @@ class FanAlertsTraySheet extends ConsumerWidget {
         KickPulseBadgeVariant.info,
         Icons.newspaper,
       ),
+      MatchAlertType.refereeMatchAssigned => (
+        l10n.alertTypeRefereeAssigned,
+        KickPulseBadgeVariant.warning,
+        Icons.sports,
+      ),
     };
 
-    return InkWell(
-      key: Key('alert_tile_${alert.id}'),
-      onTap: () {
-        // Auto-mark as read
-        ref.read(fanAlertsTrayControllerProvider.notifier).markAsRead(alert.id);
-        Navigator.of(context).pop();
-        onSelectAlert?.call(alert);
-      },
+    return Semantics(
+      button: true,
+      label: '${alert.title}. ${alert.message}',
+      child: InkWell(
+        key: Key('alert_tile_${alert.id}'),
+        onTap: () {
+          if (_isSelectingAlert) return;
+          _isSelectingAlert = true;
+          ref
+              .read(fanAlertsTrayControllerProvider.notifier)
+              .markAsRead(alert.id);
+          Navigator.of(context).pop();
+          widget.onSelectAlert?.call(alert);
+        },
       borderRadius: BorderRadius.circular(KickPulseRadiiSpacing.cardRadius),
       child: Container(
         padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
@@ -299,6 +317,7 @@ class FanAlertsTraySheet extends ConsumerWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }

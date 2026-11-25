@@ -207,6 +207,7 @@ class PostgrestTournamentMatchesRemoteDataSource
             certificationLevel:
                 r['certification_level'] as String? ?? 'Nacional',
             isActive: r['is_active'] as bool? ?? true,
+            userAccountId: r['user_account_id'] as String?,
           ),
         )
         .toList();

@@ -4156,4 +4156,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get refereeObservationsEmpty => 'Sin observaciones registradas.';
+
+  @override
+  String get alertTypeRefereeAssigned => 'Asignación arbitral';
+
+  @override
+  String get refereeMatchAssignedAlertTitle => 'Nuevo partido asignado';
 }

@@ -13,6 +13,11 @@ class LocalMatchAlertsRepository implements MatchAlertsRepository {
 
   static const String alertsStorageKey = 'vifutbol.match_alerts.v1';
 
+  bool _isVisibleForUser(MatchLiveAlert alert, String userId) {
+    final recipient = alert.recipientUserId?.trim();
+    return recipient == null || recipient.isEmpty || recipient == userId;
+  }
+
   @override
   Future<List<MatchLiveAlert>> loadAlerts(
     String userId, {
@@ -20,6 +25,7 @@ class LocalMatchAlertsRepository implements MatchAlertsRepository {
   }) async {
     final all = await _loadAll();
     final filtered = all.where((a) {
+      if (!_isVisibleForUser(a, userId)) return false;
       if (tournamentId != null && a.tournamentId != tournamentId) {
         return false;
       }
@@ -38,6 +44,7 @@ class LocalMatchAlertsRepository implements MatchAlertsRepository {
     yield initial;
     yield* _alertsStreamController.stream.map((all) {
       final filtered = all.where((a) {
+        if (!_isVisibleForUser(a, userId)) return false;
         if (tournamentId != null && a.tournamentId != tournamentId) {
           return false;
         }
@@ -77,6 +84,9 @@ class LocalMatchAlertsRepository implements MatchAlertsRepository {
   Future<void> markAllAsRead(String userId, {String? tournamentId}) async {
     final all = await _loadAll();
     final updated = all.map((a) {
+      if (!_isVisibleForUser(a, userId)) {
+        return a;
+      }
       if (tournamentId != null && a.tournamentId != tournamentId) {
         return a;
       }

@@ -4,6 +4,7 @@ class MatchReferee {
     required this.fullName,
     required this.certificationLevel,
     this.isActive = true,
+    this.userAccountId,
   }) : assert(id.length > 0, 'Referee id cannot be empty'),
        assert(
          fullName.length >= 3,
@@ -18,18 +19,21 @@ class MatchReferee {
   final String fullName;
   final String certificationLevel;
   final bool isActive;
+  final String? userAccountId;
 
   MatchReferee copyWith({
     String? id,
     String? fullName,
     String? certificationLevel,
     bool? isActive,
+    String? userAccountId,
   }) {
     return MatchReferee(
       id: id ?? this.id,
       fullName: fullName ?? this.fullName,
       certificationLevel: certificationLevel ?? this.certificationLevel,
       isActive: isActive ?? this.isActive,
+      userAccountId: userAccountId ?? this.userAccountId,
     );
   }
 
@@ -39,6 +43,7 @@ class MatchReferee {
       'fullName': fullName,
       'certificationLevel': certificationLevel,
       'isActive': isActive,
+      'userAccountId': userAccountId,
     };
   }
 
@@ -48,6 +53,8 @@ class MatchReferee {
       fullName: json['fullName'] as String? ?? '',
       certificationLevel: json['certificationLevel'] as String? ?? 'Nacional',
       isActive: json['isActive'] as bool? ?? true,
+      userAccountId:
+          (json['userAccountId'] ?? json['user_account_id']) as String?,
     );
   }
 
@@ -58,9 +65,11 @@ class MatchReferee {
         other.id == id &&
         other.fullName == fullName &&
         other.certificationLevel == certificationLevel &&
-        other.isActive == isActive;
+        other.isActive == isActive &&
+        other.userAccountId == userAccountId;
   }
 
   @override
-  int get hashCode => Object.hash(id, fullName, certificationLevel, isActive);
+  int get hashCode =>
+      Object.hash(id, fullName, certificationLevel, isActive, userAccountId);
 }

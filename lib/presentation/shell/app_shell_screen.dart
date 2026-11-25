@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vifutbol/application/controllers/app_shell_controller.dart';
+import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/foundation_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/sync_bootstrap_provider.dart';
@@ -99,6 +100,8 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
       // Safe fallback in minimal widget tests without Supabase overrides.
     }
     final shellState = ref.watch(appShellControllerProvider);
+    final authState = ref.watch(authControllerProvider);
+    final activeUserId = authState.session?.user.id ?? 'user-active-current';
     final envConfig = ref.watch(environmentConfigProvider);
     final l10n = AppLocalizations.of(context);
     final isCalendarVisible =
@@ -157,7 +160,7 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen>
               onPressed: () => NewsFilterBottomSheet.show(context),
             ),
           const SyncStatusAppBarAction(),
-          const FanAlertsBellAction(userId: 'user-active-current'),
+          FanAlertsBellAction(userId: activeUserId),
         ],
       ),
       body: Column(

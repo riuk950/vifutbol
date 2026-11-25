@@ -10,6 +10,7 @@ class MatchLiveAlert {
   final String message;
   final DateTime timestamp;
   final bool isRead;
+  final String? recipientUserId;
 
   MatchLiveAlert({
     required this.id,
@@ -20,6 +21,7 @@ class MatchLiveAlert {
     required this.message,
     required this.timestamp,
     this.isRead = false,
+    this.recipientUserId,
   }) {
     if (id.trim().isEmpty) {
       throw ArgumentError.value(id, 'id', 'Alert ID cannot be empty');
@@ -42,7 +44,12 @@ class MatchLiveAlert {
     }
   }
 
-  MatchLiveAlert copyWith({bool? isRead, String? title, String? message}) {
+  MatchLiveAlert copyWith({
+    bool? isRead,
+    String? title,
+    String? message,
+    String? recipientUserId,
+  }) {
     return MatchLiveAlert(
       id: id,
       matchId: matchId,
@@ -52,6 +59,7 @@ class MatchLiveAlert {
       message: message ?? this.message,
       timestamp: timestamp,
       isRead: isRead ?? this.isRead,
+      recipientUserId: recipientUserId ?? this.recipientUserId,
     );
   }
 
@@ -65,6 +73,7 @@ class MatchLiveAlert {
       'message': message,
       'timestamp': timestamp.toIso8601String(),
       'isRead': isRead,
+      'recipientUserId': recipientUserId,
     };
   }
 
@@ -78,6 +87,8 @@ class MatchLiveAlert {
       message: json['message'] as String,
       timestamp: DateTime.parse(json['timestamp'] as String),
       isRead: json['isRead'] as bool? ?? false,
+      recipientUserId:
+          (json['recipientUserId'] ?? json['recipient_user_id']) as String?,
     );
   }
 }
