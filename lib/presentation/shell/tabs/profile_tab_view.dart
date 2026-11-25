@@ -4,10 +4,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../application/providers/auth_providers.dart';
-import '../../../application/providers/foundation_providers.dart';
 import '../../../application/providers/sync_providers.dart';
 import '../../../application/providers/team_join_requests_providers.dart';
-import '../../../domain/entities/app_environment.dart';
 import '../../../domain/entities/role_permission_matrix.dart';
 import '../../../domain/entities/user_account.dart';
 import '../../../domain/entities/user_role.dart';
@@ -21,7 +19,7 @@ import '../../design_system/widgets/kick_pulse_card.dart';
 import '../../sync/sign_out_pending_sync_dialog.dart';
 import 'complete_profile_dialog.dart';
 
-/// Profile screen displaying identity, active sports role, role switching,
+/// Profile screen displaying identity, read-only active sports role,
 /// full RBAC permissions matrix, and secure session termination.
 class ProfileTabView extends ConsumerWidget {
   const ProfileTabView({super.key});
@@ -94,17 +92,9 @@ class ProfileTabView extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authControllerProvider);
     final user = authState.session?.user;
-    final config = ref.watch(environmentConfigProvider);
-    final isDev = config.environment == AppEnvironment.development;
 
     final activeRole = user?.activeRole ?? UserRole.fan;
     final isGuest = user?.isGuestFan ?? false;
-
-    // In dev, any of the 5 roles can be switched for end-to-end testing;
-    // In prod, only authorizedRoles are permitted.
-    final availableRoles = isDev
-        ? UserRole.values.toList()
-        : (user?.authorizedRoles.toList() ?? [UserRole.fan]);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
@@ -146,9 +136,14 @@ class ProfileTabView extends ConsumerWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        KickPulseBadge(
+                        Semantics(
+                          readOnly: true,
                           label: _roleName(l10n, activeRole),
-                          variant: _roleBadgeVariant(activeRole),
+                          child: KickPulseBadge(
+                            key: const ValueKey('profile_active_role_badge'),
+                            label: _roleName(l10n, activeRole),
+                            variant: _roleBadgeVariant(activeRole),
+                          ),
                         ),
                         if (!isGuest && user != null) ...[
                           const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
@@ -225,66 +220,6 @@ class ProfileTabView extends ConsumerWidget {
                     ),
                   ),
                 ],
-              ],
-            ),
-          ),
-          const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
-
-          // Role Switcher Section
-          Text(
-            l10n.profileSwitchRole,
-            style: KickPulseTypography.sectionHeader,
-          ),
-          const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
-          KickPulseCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  isDev
-                      ? 'Entorno DEV activo: Todos los roles están habilitados para alternar en pruebas.'
-                      : 'Roles autorizados en tu cuenta:',
-                  style: const TextStyle(
-                    color: KickPulseColors.textSecondary,
-                    fontSize: 13,
-                  ),
-                ),
-                const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
-                Wrap(
-                  spacing: KickPulseRadiiSpacing.spaceSm,
-                  runSpacing: KickPulseRadiiSpacing.spaceSm,
-                  children: availableRoles.map((role) {
-                    final isCurrent = role == activeRole;
-                    return ChoiceChip(
-                      selected: isCurrent,
-                      label: Text(_roleName(l10n, role)),
-                      selectedColor: KickPulseColors.accentPrimary.withAlpha(
-                        50,
-                      ),
-                      backgroundColor: KickPulseColors.surfaceSubtle,
-                      labelStyle: TextStyle(
-                        color: isCurrent
-                            ? KickPulseColors.accentPrimary
-                            : KickPulseColors.textSecondary,
-                        fontWeight: isCurrent
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                      side: BorderSide(
-                        color: isCurrent
-                            ? KickPulseColors.accentPrimary
-                            : KickPulseColors.borderSubtle,
-                      ),
-                      onSelected: (selected) {
-                        if (selected && !isCurrent) {
-                          ref
-                              .read(authControllerProvider.notifier)
-                              .switchActiveRole(role);
-                        }
-                      },
-                    );
-                  }).toList(),
-                ),
               ],
             ),
           ),

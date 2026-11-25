@@ -362,7 +362,7 @@ void main() {
     );
 
     testWidgets(
-      'ProfileTabView displays active role badge and allows switching',
+      'ProfileTabView displays read-only active role badge and hides role switching',
       (tester) async {
         final coachAccount = testAccount.copyWith(
           activeRole: UserRole.coach,
@@ -378,15 +378,6 @@ void main() {
           authenticateUserUseCase: AuthenticateUserUseCase(mockAuthRepository),
         );
 
-        when(
-          () => mockAuthRepository.switchActiveRole(
-            userId: 'user-001',
-            targetRole: UserRole.player,
-          ),
-        ).thenAnswer(
-          (_) async => coachAccount.copyWith(activeRole: UserRole.player),
-        );
-
         await tester.pumpWidget(
           createTestWidget(
             child: const ProfileTabView(),
@@ -396,21 +387,29 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('Carlos Bilardo'), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('profile_active_role_badge')),
+          findsOneWidget,
+        );
         expect(find.text('Entrenador'), findsWidgets);
         expect(find.text('Permisos y capacidades del rol'), findsOneWidget);
 
-        // Tap on Jugador chip to switch role
-        final playerChip = find.widgetWithText(ChoiceChip, 'Jugador');
-        await tester.ensureVisible(playerChip);
-        await tester.tap(playerChip);
+        // Role switcher section and interactive chips must not be rendered
+        expect(find.byType(ChoiceChip), findsNothing);
+        expect(find.text('Cambiar rol activo'), findsNothing);
+
+        // Tapping the read-only badge must not trigger switchActiveRole
+        await tester.tap(
+          find.byKey(const ValueKey('profile_active_role_badge')),
+        );
         await tester.pumpAndSettle();
 
-        verify(
+        verifyNever(
           () => mockAuthRepository.switchActiveRole(
             userId: 'user-001',
             targetRole: UserRole.player,
           ),
-        ).called(1);
+        );
       },
     );
   });

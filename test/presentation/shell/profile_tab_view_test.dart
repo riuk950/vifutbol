@@ -436,4 +436,250 @@ void main() {
 
     expect(find.text('Personal Data Summary Screen'), findsOneWidget);
   });
+
+  group('HU 24.1 - Read-only active role & disabled role switching', () {
+    String expectedRoleLabel(UserRole role) {
+      return switch (role) {
+        UserRole.organizer => 'Organizador',
+        UserRole.coach => 'Entrenador',
+        UserRole.referee => 'Árbitro',
+        UserRole.player => 'Jugador',
+        UserRole.fan => 'Aficionado',
+      };
+    }
+
+    for (final env in [AppEnvironment.development, AppEnvironment.production]) {
+      final envLabel = env == AppEnvironment.development ? 'dev' : 'prod';
+
+      for (final role in UserRole.values) {
+        testWidgets(
+          'hides role switcher and shows read-only badge for ${role.name} in $envLabel',
+          (tester) async {
+            when(() => config.environment).thenReturn(env);
+            final user = UserAccount(
+              id: 'u-${role.name}-$envLabel',
+              fullName: 'Usuario Prueba',
+              email: 'test@vifutbol.com',
+              activeRole: role,
+              authorizedRoles: UserRole.values.toSet(),
+              onboardingCompleted: true,
+            );
+            final controller = _TestAuthController(
+              authRepository: authRepository,
+              initialState: AuthFlowState(
+                status: AuthStatus.authenticated,
+                session: AuthSession(
+                  sessionId: 's-${role.name}-$envLabel',
+                  user: user,
+                  sessionToken: 'tok',
+                  authenticatedAt: DateTime(2026, 11, 25),
+                ),
+              ),
+            );
+
+            await tester.pumpWidget(
+              _wrapWithApp(
+                const ProfileTabView(),
+                controller: controller,
+                config: config,
+              ),
+            );
+            await tester.pumpAndSettle();
+
+            expect(find.byType(ChoiceChip), findsNothing);
+            expect(find.text('Cambiar rol activo'), findsNothing);
+            expect(
+              find.textContaining('Entorno DEV activo'),
+              findsNothing,
+            );
+            expect(
+              find.text('Roles autorizados en tu cuenta:'),
+              findsNothing,
+            );
+
+            final badgeFinder = find.byKey(
+              const ValueKey('profile_active_role_badge'),
+            );
+            expect(badgeFinder, findsOneWidget);
+            expect(
+              find.descendant(
+                of: badgeFinder,
+                matching: find.text(expectedRoleLabel(role)),
+              ),
+              findsOneWidget,
+            );
+          },
+        );
+      }
+
+      testWidgets(
+        'hides role switcher and shows read-only Aficionado badge for guest in $envLabel',
+        (tester) async {
+          when(() => config.environment).thenReturn(env);
+          final guest = UserAccount.guestFan(id: 'guest-$envLabel');
+          final controller = _TestAuthController(
+            authRepository: authRepository,
+            initialState: AuthFlowState(
+              status: AuthStatus.authenticated,
+              session: AuthSession(
+                sessionId: 's-guest-$envLabel',
+                user: guest,
+                sessionToken: 'tok-guest',
+                authenticatedAt: DateTime(2026, 11, 25),
+              ),
+            ),
+          );
+
+          await tester.pumpWidget(
+            _wrapWithApp(
+              const ProfileTabView(),
+              controller: controller,
+              config: config,
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(find.byType(ChoiceChip), findsNothing);
+          expect(find.text('Cambiar rol activo'), findsNothing);
+          final badgeFinder = find.byKey(
+            const ValueKey('profile_active_role_badge'),
+          );
+          expect(badgeFinder, findsOneWidget);
+          expect(
+            find.descendant(
+              of: badgeFinder,
+              matching: find.text('Aficionado'),
+            ),
+            findsOneWidget,
+          );
+        },
+      );
+    }
+
+    testWidgets(
+      'active role badge exposes readOnly semantics and renders without overflow at 1.5x text scale',
+      (tester) async {
+        final user = UserAccount(
+          id: 'u-a11y',
+          fullName: 'Carlos Organizador',
+          email: 'org@vifutbol.com',
+          activeRole: UserRole.organizer,
+          authorizedRoles: {UserRole.organizer, UserRole.fan},
+          onboardingCompleted: true,
+        );
+        final controller = _TestAuthController(
+          authRepository: authRepository,
+          initialState: AuthFlowState(
+            status: AuthStatus.authenticated,
+            session: AuthSession(
+              sessionId: 's-a11y',
+              user: user,
+              sessionToken: 'tok-a11y',
+              authenticatedAt: DateTime(2026, 11, 25),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          MediaQuery(
+            data: const MediaQueryData(textScaler: TextScaler.linear(1.5)),
+            child: _wrapWithApp(
+              const ProfileTabView(),
+              controller: controller,
+              config: config,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+
+        final badgeFinder = find.byKey(
+          const ValueKey('profile_active_role_badge'),
+        );
+        expect(badgeFinder, findsOneWidget);
+        final semantics = tester.getSemantics(badgeFinder);
+        expect(semantics.label, contains('Organizador'));
+        expect(semantics.flagsCollection.isReadOnly, isTrue);
+      },
+    );
+
+    testWidgets(
+      'repeated taps on active role badge and widget recreation keep activeRole unchanged and preserve profile actions',
+      (tester) async {
+        final user = UserAccount(
+          id: 'u-preserve',
+          fullName: 'Jugador Fiel',
+          email: 'jugador@vifutbol.com',
+          activeRole: UserRole.player,
+          authorizedRoles: {UserRole.player, UserRole.coach, UserRole.fan},
+          onboardingCompleted: true,
+        );
+        final controller = _TestAuthController(
+          authRepository: authRepository,
+          initialState: AuthFlowState(
+            status: AuthStatus.authenticated,
+            session: AuthSession(
+              sessionId: 's-preserve',
+              user: user,
+              sessionToken: 'tok-preserve',
+              authenticatedAt: DateTime(2026, 11, 25),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const ProfileTabView(key: ValueKey('profile_first_mount')),
+            controller: controller,
+            config: config,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final badgeFinder = find.byKey(
+          const ValueKey('profile_active_role_badge'),
+        );
+        for (var i = 0; i < 5; i++) {
+          await tester.tap(badgeFinder);
+        }
+        await tester.pumpAndSettle();
+
+        // Recreate / re-pump ProfileTabView to simulate navigation or resume
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const ProfileTabView(key: ValueKey('profile_remount')),
+            controller: controller,
+            config: config,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          controller.state.session?.user.activeRole,
+          UserRole.player,
+        );
+        for (final target in UserRole.values) {
+          verifyNever(
+            () => authRepository.switchActiveRole(
+              userId: 'u-preserve',
+              targetRole: target,
+            ),
+          );
+        }
+
+        // Preserved profile sections remain intact
+        expect(find.text('Permisos y capacidades del rol'), findsOneWidget);
+        expect(
+          find.byKey(const Key('profile_personal_data_tile')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('profile_complete_action_button')),
+          findsOneWidget,
+        );
+        expect(find.text('Cerrar sesión'), findsOneWidget);
+      },
+    );
+  });
 }
