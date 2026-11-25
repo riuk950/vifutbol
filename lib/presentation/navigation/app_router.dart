@@ -19,6 +19,7 @@ import 'package:vifutbol/presentation/shell/tabs/player_team_requests_screen.dar
 import 'package:vifutbol/presentation/shell/tabs/profile_faq_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/profile_legal_document_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/referee_personal_data_screen.dart';
+import 'package:vifutbol/presentation/shell/tabs/referee_personal_data_summary_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/venues_tab_view.dart';
 import 'package:vifutbol/presentation/teams/coach_lineup_tracking_screen.dart';
 import 'package:vifutbol/presentation/teams/team_detail_screen.dart';
@@ -212,6 +213,12 @@ class AppRouter {
       },
     );
 
+    final refereePersonalDataSummaryHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const RefereePersonalDataSummaryScreen();
+      },
+    );
+
     router.define(
       '/',
       handler: rootHandler,
@@ -355,6 +362,11 @@ class AppRouter {
     router.define(
       '/profile/referee-personal-data',
       handler: refereePersonalDataHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/profile/referee-personal-data/summary',
+      handler: refereePersonalDataSummaryHandler,
       transitionType: TransitionType.fadeIn,
     );
   }

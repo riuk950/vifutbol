@@ -6957,6 +6957,96 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Ingresa tu categoría o nivel de certificación arbitral.'**
   String get refereeCertificationLevelRequiredError;
+
+  /// Título de la sección de foto de avatar del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Foto de perfil'**
+  String get refereeAvatarSectionTitle;
+
+  /// Subtítulo descriptivo de la foto de avatar del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Esta fotografía se mostrará en tu tarjeta de perfil arbitral.'**
+  String get refereeAvatarSectionSubtitle;
+
+  /// Botón para tomar foto de avatar desde la cámara
+  ///
+  /// In es, this message translates to:
+  /// **'Tomar foto de perfil'**
+  String get refereeAvatarCameraButton;
+
+  /// Botón para seleccionar foto de avatar desde la galería
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar de galería'**
+  String get refereeAvatarGalleryButton;
+
+  /// Botón para reemplazar la foto de avatar seleccionada
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar foto'**
+  String get refereeAvatarChangeButton;
+
+  /// Mensaje cuando se deniega el permiso de cámara para avatar del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Permiso de cámara o galería denegado. Habilítalo en los ajustes del dispositivo o usa la opción alternativa.'**
+  String get refereeAvatarPermissionDeniedError;
+
+  /// Mensaje cuando se deniega el permiso de galería para avatar del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'No tenemos permiso para acceder a tu galería. Habilítalo en ajustes o usa la cámara.'**
+  String get refereeAvatarGalleryPermissionDeniedError;
+
+  /// Mensaje de error al cargar la imagen de avatar del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo cargar la imagen seleccionada. Intenta con otra fotografía.'**
+  String get refereeAvatarLoadError;
+
+  /// Título de la pantalla resumen de datos personales y certificación del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil Arbitral'**
+  String get refereePersonalDataSummaryTitle;
+
+  /// Subtítulo del acceso en Perfil cuando el perfil del árbitro está completo
+  ///
+  /// In es, this message translates to:
+  /// **'Consulta tu avatar, datos personales y documentos'**
+  String get refereePersonalDataSummarySubtitle;
+
+  /// Título de la tarjeta de certificación arbitral en la pantalla resumen
+  ///
+  /// In es, this message translates to:
+  /// **'Certificación Arbitral'**
+  String get refereeSummaryCertificationTitle;
+
+  /// Subtítulo de la tarjeta de certificación arbitral en la pantalla resumen
+  ///
+  /// In es, this message translates to:
+  /// **'Categoría oficial y soporte documental'**
+  String get refereeSummaryCertificationSubtitle;
+
+  /// Etiqueta de teléfono en la pantalla resumen del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Teléfono'**
+  String get refereeSummaryPhoneLabel;
+
+  /// Etiqueta del documento de certificación en la pantalla resumen del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Documento de certificación'**
+  String get refereeSummaryCertificationDocLabel;
+
+  /// Texto de respaldo cuando no se puede cargar la vista previa de un documento
+  ///
+  /// In es, this message translates to:
+  /// **'Vista previa no disponible'**
+  String get refereeSummaryDocLoadFallback;
 }
 
 class _AppLocalizationsDelegate

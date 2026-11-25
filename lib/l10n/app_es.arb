@@ -5112,5 +5112,65 @@
   "refereeCertificationLevelRequiredError": "Ingresa tu categoría o nivel de certificación arbitral.",
   "@refereeCertificationLevelRequiredError": {
     "description": "Mensaje de validación cuando falta el nivel de certificación arbitral"
+  },
+  "refereeAvatarSectionTitle": "Foto de perfil",
+  "@refereeAvatarSectionTitle": {
+    "description": "Título de la sección de foto de avatar del árbitro"
+  },
+  "refereeAvatarSectionSubtitle": "Esta fotografía se mostrará en tu tarjeta de perfil arbitral.",
+  "@refereeAvatarSectionSubtitle": {
+    "description": "Subtítulo descriptivo de la foto de avatar del árbitro"
+  },
+  "refereeAvatarCameraButton": "Tomar foto de perfil",
+  "@refereeAvatarCameraButton": {
+    "description": "Botón para tomar foto de avatar desde la cámara"
+  },
+  "refereeAvatarGalleryButton": "Seleccionar de galería",
+  "@refereeAvatarGalleryButton": {
+    "description": "Botón para seleccionar foto de avatar desde la galería"
+  },
+  "refereeAvatarChangeButton": "Cambiar foto",
+  "@refereeAvatarChangeButton": {
+    "description": "Botón para reemplazar la foto de avatar seleccionada"
+  },
+  "refereeAvatarPermissionDeniedError": "Permiso de cámara o galería denegado. Habilítalo en los ajustes del dispositivo o usa la opción alternativa.",
+  "@refereeAvatarPermissionDeniedError": {
+    "description": "Mensaje cuando se deniega el permiso de cámara para avatar del árbitro"
+  },
+  "refereeAvatarGalleryPermissionDeniedError": "No tenemos permiso para acceder a tu galería. Habilítalo en ajustes o usa la cámara.",
+  "@refereeAvatarGalleryPermissionDeniedError": {
+    "description": "Mensaje cuando se deniega el permiso de galería para avatar del árbitro"
+  },
+  "refereeAvatarLoadError": "No se pudo cargar la imagen seleccionada. Intenta con otra fotografía.",
+  "@refereeAvatarLoadError": {
+    "description": "Mensaje de error al cargar la imagen de avatar del árbitro"
+  },
+  "refereePersonalDataSummaryTitle": "Perfil Arbitral",
+  "@refereePersonalDataSummaryTitle": {
+    "description": "Título de la pantalla resumen de datos personales y certificación del árbitro"
+  },
+  "refereePersonalDataSummarySubtitle": "Consulta tu avatar, datos personales y documentos",
+  "@refereePersonalDataSummarySubtitle": {
+    "description": "Subtítulo del acceso en Perfil cuando el perfil del árbitro está completo"
+  },
+  "refereeSummaryCertificationTitle": "Certificación Arbitral",
+  "@refereeSummaryCertificationTitle": {
+    "description": "Título de la tarjeta de certificación arbitral en la pantalla resumen"
+  },
+  "refereeSummaryCertificationSubtitle": "Categoría oficial y soporte documental",
+  "@refereeSummaryCertificationSubtitle": {
+    "description": "Subtítulo de la tarjeta de certificación arbitral en la pantalla resumen"
+  },
+  "refereeSummaryPhoneLabel": "Teléfono",
+  "@refereeSummaryPhoneLabel": {
+    "description": "Etiqueta de teléfono en la pantalla resumen del árbitro"
+  },
+  "refereeSummaryCertificationDocLabel": "Documento de certificación",
+  "@refereeSummaryCertificationDocLabel": {
+    "description": "Etiqueta del documento de certificación en la pantalla resumen del árbitro"
+  },
+  "refereeSummaryDocLoadFallback": "Vista previa no disponible",
+  "@refereeSummaryDocLoadFallback": {
+    "description": "Texto de respaldo cuando no se puede cargar la vista previa de un documento"
   }
 }

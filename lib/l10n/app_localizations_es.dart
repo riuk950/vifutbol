@@ -4039,4 +4039,56 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get refereeCertificationLevelRequiredError =>
       'Ingresa tu categoría o nivel de certificación arbitral.';
+
+  @override
+  String get refereeAvatarSectionTitle => 'Foto de perfil';
+
+  @override
+  String get refereeAvatarSectionSubtitle =>
+      'Esta fotografía se mostrará en tu tarjeta de perfil arbitral.';
+
+  @override
+  String get refereeAvatarCameraButton => 'Tomar foto de perfil';
+
+  @override
+  String get refereeAvatarGalleryButton => 'Seleccionar de galería';
+
+  @override
+  String get refereeAvatarChangeButton => 'Cambiar foto';
+
+  @override
+  String get refereeAvatarPermissionDeniedError =>
+      'Permiso de cámara o galería denegado. Habilítalo en los ajustes del dispositivo o usa la opción alternativa.';
+
+  @override
+  String get refereeAvatarGalleryPermissionDeniedError =>
+      'No tenemos permiso para acceder a tu galería. Habilítalo en ajustes o usa la cámara.';
+
+  @override
+  String get refereeAvatarLoadError =>
+      'No se pudo cargar la imagen seleccionada. Intenta con otra fotografía.';
+
+  @override
+  String get refereePersonalDataSummaryTitle => 'Perfil Arbitral';
+
+  @override
+  String get refereePersonalDataSummarySubtitle =>
+      'Consulta tu avatar, datos personales y documentos';
+
+  @override
+  String get refereeSummaryCertificationTitle => 'Certificación Arbitral';
+
+  @override
+  String get refereeSummaryCertificationSubtitle =>
+      'Categoría oficial y soporte documental';
+
+  @override
+  String get refereeSummaryPhoneLabel => 'Teléfono';
+
+  @override
+  String get refereeSummaryCertificationDocLabel =>
+      'Documento de certificación';
+
+  @override
+  String get refereeSummaryDocLoadFallback => 'Vista previa no disponible';
 }

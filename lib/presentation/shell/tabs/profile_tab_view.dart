@@ -260,9 +260,13 @@ class ProfileTabView extends ConsumerWidget {
               child: InkWell(
                 key: const Key('profile_referee_personal_data_tile'),
                 onTap: () {
-                  Navigator.of(
-                    context,
-                  ).pushNamed('/profile/referee-personal-data');
+                  final isComplete =
+                      user?.isProfileCompleteForActiveRole ?? false;
+                  Navigator.of(context).pushNamed(
+                    isComplete
+                        ? '/profile/referee-personal-data/summary'
+                        : '/profile/referee-personal-data',
+                  );
                 },
                 borderRadius: BorderRadius.circular(
                   KickPulseRadiiSpacing.cardRadius,
@@ -292,7 +296,9 @@ class ProfileTabView extends ConsumerWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              l10n.refereePersonalDataSubtitle,
+                              (user?.isProfileCompleteForActiveRole ?? false)
+                                  ? l10n.refereePersonalDataSummarySubtitle
+                                  : l10n.refereePersonalDataSubtitle,
                               style: const TextStyle(
                                 color: KickPulseColors.textSecondary,
                                 fontSize: 12,

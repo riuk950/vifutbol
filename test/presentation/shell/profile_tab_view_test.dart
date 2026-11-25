@@ -1367,4 +1367,140 @@ void main() {
       },
     );
   });
+
+  group('HU 25.2 - Referee avatar & conditional summary navigation in ProfileTabView', () {
+    testWidgets(
+      'renders Perfil completo and referee avatar photo, and routes tile to summary when complete',
+      (tester) async {
+        final completeReferee = UserAccount(
+          id: 'u-ref-complete',
+          fullName: 'Ana Arbitraje',
+          email: 'ana.ref@vifutbol.com',
+          activeRole: UserRole.referee,
+          authorizedRoles: {UserRole.referee},
+          onboardingCompleted: true,
+          phone: '3101234567',
+          documentId: '10203040',
+          roleProfile: RoleProfileData(
+            firstName: 'Ana',
+            firstSurname: 'Arbitraje',
+            sex: 'female',
+            birthDate: DateTime(1994, 8, 10),
+            bloodType: 'O+',
+            department: 'Antioquia',
+            municipality: 'Medellín',
+            certificationLevel: 'Nacional',
+            documentFrontUrl: 'u-ref-complete/document_front.jpg',
+            documentBackUrl: 'u-ref-complete/document_back.jpg',
+            certificationDocumentUrl: 'u-ref-complete/referee_certification.jpg',
+            photoUrl:
+                'https://cdn.example.com/player-avatars/u-ref-complete/avatar.jpg?t=123',
+          ),
+        );
+        final controller = _TestAuthController(
+          authRepository: authRepository,
+          initialState: AuthFlowState(
+            status: AuthStatus.authenticated,
+            session: AuthSession(
+              sessionId: 's-ref-complete',
+              user: completeReferee,
+              sessionToken: 'tok-ref-complete',
+              authenticatedAt: DateTime(2026, 11, 25),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const ProfileTabView(),
+            controller: controller,
+            config: config,
+            routes: {
+              '/profile/referee-personal-data/summary': (context) =>
+                  const Scaffold(
+                    body: Text('Referee Summary Screen'),
+                  ),
+            },
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Perfil completo'), findsOneWidget);
+        final avatar = tester.widget<CircleAvatar>(
+          find.byKey(const ValueKey('profile_identity_avatar')),
+        );
+        expect(avatar.backgroundImage, isA<NetworkImage>());
+        expect(
+          (avatar.backgroundImage! as NetworkImage).url,
+          'https://cdn.example.com/player-avatars/u-ref-complete/avatar.jpg?t=123',
+        );
+
+        final tile = find.byKey(
+          const Key('profile_referee_personal_data_tile'),
+        );
+        await tester.ensureVisible(tile);
+        await tester.tap(tile);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Referee Summary Screen'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'shows Perfil completo and fallback icon when referee has no avatar photo',
+      (tester) async {
+        final completeRefereeNoAvatar = UserAccount(
+          id: 'u-ref-no-av',
+          fullName: 'Pedro Juez',
+          email: 'pedro@vifutbol.com',
+          activeRole: UserRole.referee,
+          authorizedRoles: {UserRole.referee},
+          onboardingCompleted: true,
+          phone: '3101234567',
+          documentId: '10203041',
+          roleProfile: RoleProfileData(
+            firstName: 'Pedro',
+            firstSurname: 'Juez',
+            sex: 'male',
+            birthDate: DateTime(1991, 4, 12),
+            bloodType: 'A+',
+            department: 'Cundinamarca',
+            municipality: 'Bogotá',
+            certificationLevel: 'Departamental',
+            documentFrontUrl: 'u-ref-no-av/document_front.jpg',
+            documentBackUrl: 'u-ref-no-av/document_back.jpg',
+            certificationDocumentUrl: 'u-ref-no-av/referee_certification.jpg',
+          ),
+        );
+        final controller = _TestAuthController(
+          authRepository: authRepository,
+          initialState: AuthFlowState(
+            status: AuthStatus.authenticated,
+            session: AuthSession(
+              sessionId: 's-ref-no-av',
+              user: completeRefereeNoAvatar,
+              sessionToken: 'tok-ref-no-av',
+              authenticatedAt: DateTime(2026, 11, 25),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const ProfileTabView(),
+            controller: controller,
+            config: config,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Perfil completo'), findsOneWidget);
+        final avatar = tester.widget<CircleAvatar>(
+          find.byKey(const ValueKey('profile_identity_avatar')),
+        );
+        expect(avatar.backgroundImage, isNull);
+        expect(avatar.child, isNotNull);
+      },
+    );
+  });
 }

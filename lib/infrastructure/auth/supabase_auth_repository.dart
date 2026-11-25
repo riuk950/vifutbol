@@ -193,7 +193,7 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
             .schema(schema)
             .from('match_referees')
             .select(
-              'id, certification_level, first_name, second_name, first_surname, second_surname, sex, birth_date, blood_type, department, municipality, document_front_url, document_back_url, certification_document_url',
+              'id, certification_level, first_name, second_name, first_surname, second_surname, sex, birth_date, blood_type, department, municipality, document_front_url, document_back_url, certification_document_url, photo_url',
             )
             .eq('user_account_id', userAccountId)
             .limit(1)
@@ -245,6 +245,7 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
               player?['document_front_url'] ?? referee['document_front_url'],
           'document_back_url':
               player?['document_back_url'] ?? referee['document_back_url'],
+          'photo_url': player?['photo_url'] ?? referee['photo_url'],
         },
       };
       return merged.isEmpty ? null : merged;

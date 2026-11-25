@@ -28,7 +28,13 @@ import '../widgets/searchable_location_picker_sheet.dart';
 /// Colombian ID (dual-side scan & photo capture), location, and referee
 /// certification document.
 class RefereePersonalDataScreen extends ConsumerStatefulWidget {
-  const RefereePersonalDataScreen({super.key});
+  const RefereePersonalDataScreen({
+    super.key,
+    this.avatarPickerOverride,
+  });
+
+  /// Optional test override for picking avatar images from camera or gallery.
+  final Future<String?> Function(ImageSource source)? avatarPickerOverride;
 
   @override
   ConsumerState<RefereePersonalDataScreen> createState() =>
@@ -57,6 +63,8 @@ class RefereePersonalDataScreenState
   late PlayerDocumentCapture _documentCapture;
   String? _certDocLocalPath;
   String? _certDocRemoteUrl;
+  String? _localAvatarPath;
+  String? _remoteAvatarUrl;
 
   bool _isSaving = false;
   bool _isCapturing = false;
@@ -64,6 +72,7 @@ class RefereePersonalDataScreenState
   bool _cameraPermissionDenied = false;
   bool _isDirty = false;
   String? _errorMessage;
+  String? _avatarPermissionError;
   String? _documentImagesError;
   String? _certDocError;
   String? _scanFeedback;
@@ -107,6 +116,16 @@ class RefereePersonalDataScreenState
       final f = File(_certDocRemoteUrl!);
       if (f.existsSync()) {
         _certDocLocalPath = _certDocRemoteUrl;
+      }
+    }
+
+    _remoteAvatarUrl = user?.photoUrl;
+    if (_remoteAvatarUrl != null &&
+        !_remoteAvatarUrl!.startsWith('http://') &&
+        !_remoteAvatarUrl!.startsWith('https://')) {
+      final avatarFile = File(_remoteAvatarUrl!);
+      if (avatarFile.existsSync()) {
+        _localAvatarPath = _remoteAvatarUrl;
       }
     }
   }
@@ -555,6 +574,15 @@ class RefereePersonalDataScreenState
             )
           : (_certDocRemoteUrl ?? '');
 
+      final resolvedPhotoUrl = _localAvatarPath != null &&
+              _localAvatarPath!.trim().isNotEmpty
+          ? await storageRepo.uploadPlayerAvatar(
+              userId: userId,
+              localPath: _localAvatarPath!,
+              existingPhotoUrl: _remoteAvatarUrl,
+            )
+          : _remoteAvatarUrl;
+
       final harmonizedFullName = PlayerPersonalDataUtils.composeFullName(
         firstName: _firstNameController.text,
         secondName: _secondNameController.text,
@@ -581,6 +609,7 @@ class RefereePersonalDataScreenState
         documentFrontUrl: uploadResult.frontUrl,
         documentBackUrl: uploadResult.backUrl,
         certificationDocumentUrl: certDocUrl,
+        photoUrl: resolvedPhotoUrl,
       );
 
       final success = await ref
@@ -701,6 +730,10 @@ class RefereePersonalDataScreenState
                     ),
                     const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
                   ],
+
+                  // 0. Referee Profile Avatar Section
+                  _buildAvatarCard(context, l10n),
+                  const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
 
                   // 1. Colombian ID Dual Scan & Both Sides Capture
                   IdDocumentCaptureCard(
@@ -1211,5 +1244,195 @@ class RefereePersonalDataScreenState
     }
 
     return const SizedBox.shrink();
+  }
+
+  Future<void> _handlePickAvatar(ImageSource source) async {
+    if (_isCapturing || _isSaving) return;
+    final l10n = AppLocalizations.of(context);
+    setState(() {
+      _avatarPermissionError = null;
+      _errorMessage = null;
+    });
+
+    try {
+      String? pickedPath;
+      if (widget.avatarPickerOverride != null) {
+        pickedPath = await widget.avatarPickerOverride!(source);
+      } else {
+        final picker = ImagePicker();
+        final file = await picker.pickImage(
+          source: source,
+          maxWidth: 1024,
+          maxHeight: 1024,
+          imageQuality: 85,
+        );
+        pickedPath = file?.path;
+      }
+
+      if (!mounted || pickedPath == null || pickedPath.trim().isEmpty) {
+        return;
+      }
+
+      setState(() {
+        _localAvatarPath = pickedPath;
+        _isDirty = true;
+      });
+    } on CameraPermissionDeniedFailure {
+      if (!mounted) return;
+      setState(() {
+        _avatarPermissionError = l10n.refereeAvatarPermissionDeniedError;
+      });
+    } on PlatformException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        if (e.code == 'photo_access_denied') {
+          _avatarPermissionError =
+              l10n.refereeAvatarGalleryPermissionDeniedError;
+        } else if (e.code == 'camera_access_denied') {
+          _avatarPermissionError = l10n.refereeAvatarPermissionDeniedError;
+        } else {
+          _errorMessage = l10n.refereeAvatarLoadError;
+        }
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = l10n.refereeAvatarLoadError;
+      });
+    }
+  }
+
+  Widget _buildAvatarCard(BuildContext context, AppLocalizations l10n) {
+    ImageProvider? avatarProvider;
+    if (_localAvatarPath != null && _localAvatarPath!.trim().isNotEmpty) {
+      final localFile = File(_localAvatarPath!);
+      if (localFile.existsSync()) {
+        avatarProvider = FileImage(localFile);
+      }
+    } else if (_remoteAvatarUrl != null &&
+        (_remoteAvatarUrl!.startsWith('http://') ||
+            _remoteAvatarUrl!.startsWith('https://'))) {
+      avatarProvider = NetworkImage(_remoteAvatarUrl!);
+    }
+
+    return KickPulseCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Semantics(
+                label: l10n.refereeAvatarSectionTitle,
+                image: true,
+                child: CircleAvatar(
+                  key: const ValueKey('referee_form_profile_avatar'),
+                  radius: 36,
+                  backgroundColor: KickPulseColors.surfaceSubtle,
+                  backgroundImage: avatarProvider,
+                  onBackgroundImageError:
+                      avatarProvider != null ? (_, _) {} : null,
+                  child: avatarProvider == null
+                      ? const Icon(
+                          Icons.person_outline,
+                          color: KickPulseColors.accentPrimary,
+                          size: 36,
+                        )
+                      : null,
+                ),
+              ),
+              const SizedBox(width: KickPulseRadiiSpacing.spaceMd),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.refereeAvatarSectionTitle,
+                      style: KickPulseTypography.cardTitle,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      l10n.refereeAvatarSectionSubtitle,
+                      style: const TextStyle(
+                        color: KickPulseColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (_avatarPermissionError != null) ...[
+            const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
+            Container(
+              key: const ValueKey('referee_avatar_permission_banner'),
+              padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceSm),
+              decoration: BoxDecoration(
+                color: KickPulseColors.accentWarning.withAlpha(25),
+                borderRadius:
+                    BorderRadius.circular(KickPulseRadiiSpacing.cardRadius),
+                border: Border.all(
+                  color: KickPulseColors.accentWarning.withAlpha(120),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.warning_amber_rounded,
+                    color: KickPulseColors.accentWarning,
+                    size: 20,
+                  ),
+                  const SizedBox(width: KickPulseRadiiSpacing.spaceXs),
+                  Expanded(
+                    child: Text(
+                      _avatarPermissionError!,
+                      style: const TextStyle(
+                        color: KickPulseColors.textPrimary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: _handleOpenSettings,
+                    child: Text(l10n.playerDocumentCameraPermissionOpenSettings),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+          Wrap(
+            spacing: KickPulseRadiiSpacing.spaceSm,
+            runSpacing: KickPulseRadiiSpacing.spaceSm,
+            children: [
+              Semantics(
+                button: true,
+                label: l10n.refereeAvatarCameraButton,
+                child: OutlinedButton.icon(
+                  key: const ValueKey('referee_avatar_camera_button'),
+                  onPressed: _isSaving
+                      ? null
+                      : () => _handlePickAvatar(ImageSource.camera),
+                  icon: const Icon(Icons.camera_alt_outlined, size: 18),
+                  label: Text(l10n.refereeAvatarCameraButton),
+                ),
+              ),
+              Semantics(
+                button: true,
+                label: l10n.refereeAvatarGalleryButton,
+                child: OutlinedButton.icon(
+                  key: const ValueKey('referee_avatar_gallery_button'),
+                  onPressed: _isSaving
+                      ? null
+                      : () => _handlePickAvatar(ImageSource.gallery),
+                  icon: const Icon(Icons.photo_library_outlined, size: 18),
+                  label: Text(l10n.refereeAvatarGalleryButton),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
