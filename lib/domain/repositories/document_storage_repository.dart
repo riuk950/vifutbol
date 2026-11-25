@@ -25,6 +25,16 @@ abstract class DocumentStorageRepository {
     String? existingPhotoUrl,
   });
 
+  /// Uploads a referee certification document image to the private `player-documents`
+  /// storage bucket and returns its storage path.
+  ///
+  /// Throws [DocumentUploadFailure] or [OfflineAuthOperationFailure] if upload fails.
+  Future<String> uploadRefereeCertificationDocument({
+    required String userId,
+    required String localPath,
+    String? existingDocumentUrl,
+  });
+
   /// Generates a signed, temporary URL for displaying private documents from `player-documents`.
   /// Returns `null` if the path is invalid or offline.
   Future<String?> getSignedDocumentUrl({

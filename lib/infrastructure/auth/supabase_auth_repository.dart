@@ -142,6 +142,7 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
         'p_document_front_url': roleProfile?.documentFrontUrl,
         'p_document_back_url': roleProfile?.documentBackUrl,
         'p_photo_url': roleProfile?.photoUrl,
+        'p_certification_document_url': roleProfile?.certificationDocumentUrl,
       },
     );
     if (result is Map<String, dynamic>) {
@@ -191,7 +192,9 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
         client
             .schema(schema)
             .from('match_referees')
-            .select('id, certification_level')
+            .select(
+              'id, certification_level, first_name, second_name, first_surname, second_surname, sex, birth_date, blood_type, department, municipality, document_front_url, document_back_url, certification_document_url',
+            )
             .eq('user_account_id', userAccountId)
             .limit(1)
             .maybeSingle(),
@@ -227,6 +230,21 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
         if (referee != null) ...{
           'linked_referee_id': referee['id'],
           'certification_level': referee['certification_level'],
+          'certification_document_url': referee['certification_document_url'],
+          'first_name': player?['first_name'] ?? referee['first_name'],
+          'second_name': player?['second_name'] ?? referee['second_name'],
+          'first_surname': player?['first_surname'] ?? referee['first_surname'],
+          'second_surname':
+              player?['second_surname'] ?? referee['second_surname'],
+          'sex': player?['sex'] ?? referee['sex'],
+          'birth_date': player?['birth_date'] ?? referee['birth_date'],
+          'blood_type': player?['blood_type'] ?? referee['blood_type'],
+          'department': player?['department'] ?? referee['department'],
+          'municipality': player?['municipality'] ?? referee['municipality'],
+          'document_front_url':
+              player?['document_front_url'] ?? referee['document_front_url'],
+          'document_back_url':
+              player?['document_back_url'] ?? referee['document_back_url'],
         },
       };
       return merged.isEmpty ? null : merged;
@@ -871,6 +889,7 @@ class SupabaseAuthRepository implements AuthRepository {
       roleProfile.photoUrl,
       roleProfile.documentFrontUrl,
       roleProfile.documentBackUrl,
+      roleProfile.certificationDocumentUrl,
     ];
     for (final path in candidates) {
       if (path == null || path.trim().isEmpty) continue;

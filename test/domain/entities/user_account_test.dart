@@ -71,18 +71,63 @@ void main() {
       expect(complete.isProfileCompleteForActiveRole, isTrue);
     });
 
-    test('referee requires phone and documentId', () {
+    test(
+        'referee requires personal identity, location, certificationLevel, both ID sides, and certificationDocumentUrl',
+        () {
       final incomplete = UserAccount(
         id: 'u2',
         fullName: 'Ana Referee',
         email: 'ana@test.com',
         activeRole: UserRole.referee,
+        phone: '3109998877',
         documentId: '9876543',
       );
       expect(incomplete.isProfileCompleteForActiveRole, isFalse);
 
-      final complete = incomplete.copyWith(phone: '3109998877');
-      expect(complete.isProfileCompleteForActiveRole, isTrue);
+      final missingCertDoc = incomplete.copyWith(
+        roleProfile: RoleProfileData(
+          firstName: 'Ana',
+          firstSurname: 'Referee',
+          sex: 'female',
+          birthDate: DateTime(1995, 4, 12),
+          bloodType: 'A+',
+          department: 'Cundinamarca',
+          municipality: 'Bogotá',
+          certificationLevel: 'Nacional',
+          documentFrontUrl: 'u2/document_front.jpg',
+          documentBackUrl: 'u2/document_back.jpg',
+        ),
+      );
+      expect(missingCertDoc.isProfileCompleteForActiveRole, isFalse);
+
+      final missingBackId = missingCertDoc.copyWith(
+        roleProfile: missingCertDoc.roleProfile!.copyWith(
+          certificationDocumentUrl: 'u2/referee_certification.jpg',
+        ),
+      );
+      final missingBackOnly = UserAccount(
+        id: 'u2b',
+        fullName: 'Ana Referee',
+        email: 'ana@test.com',
+        activeRole: UserRole.referee,
+        phone: '3109998877',
+        documentId: '9876543',
+        roleProfile: RoleProfileData(
+          firstName: 'Ana',
+          firstSurname: 'Referee',
+          sex: 'female',
+          birthDate: DateTime(1995, 4, 12),
+          bloodType: 'A+',
+          department: 'Cundinamarca',
+          municipality: 'Bogotá',
+          certificationLevel: 'Nacional',
+          documentFrontUrl: 'u2/document_front.jpg',
+          certificationDocumentUrl: 'u2/referee_certification.jpg',
+        ),
+      );
+      expect(missingBackOnly.isProfileCompleteForActiveRole, isFalse);
+
+      expect(missingBackId.isProfileCompleteForActiveRole, isTrue);
     });
 
     test('coach requires phone, documentId, clubName, and licenseLevel', () {

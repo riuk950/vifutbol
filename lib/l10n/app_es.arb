@@ -5060,5 +5060,57 @@
   "deleteAccountGenericError": "No se pudo eliminar tu cuenta en este momento. Tus datos locales se mantuvieron intactos; intenta nuevamente más tarde.",
   "@deleteAccountGenericError": {
     "description": "Mensaje de error genérico cuando falla la eliminación en la nube"
+  },
+  "refereePersonalDataTitle": "Datos del Árbitro",
+  "@refereePersonalDataTitle": {
+    "description": "Título de la pantalla de datos personales y certificación del árbitro"
+  },
+  "refereePersonalDataTile": "Datos personales y certificación",
+  "@refereePersonalDataTile": {
+    "description": "Acceso en Perfil para el formulario de datos del árbitro"
+  },
+  "refereePersonalDataSubtitle": "Cédula colombiana, ubicación y documento de certificación arbitral",
+  "@refereePersonalDataSubtitle": {
+    "description": "Subtítulo del acceso de datos personales del árbitro en Perfil"
+  },
+  "refereeCertificationSectionTitle": "Certificación Arbitral",
+  "@refereeCertificationSectionTitle": {
+    "description": "Encabezado de la sección de certificación arbitral en el formulario del árbitro"
+  },
+  "refereeCertificationLevelLabel": "Categoría o nivel de certificación arbitral",
+  "@refereeCertificationLevelLabel": {
+    "description": "Etiqueta del campo de nivel/categoría de certificación arbitral"
+  },
+  "refereeCertificationLevelHint": "Ej. Liga Departamental, Nacional, FIFA",
+  "@refereeCertificationLevelHint": {
+    "description": "Pista del campo de nivel de certificación arbitral"
+  },
+  "refereeCertificationDocTitle": "Documento de certificación arbitral",
+  "@refereeCertificationDocTitle": {
+    "description": "Título de la tarjeta de captura del documento que certifica al usuario como árbitro"
+  },
+  "refereeCertificationDocSubtitle": "Adjunta una foto o imagen de tu carnet arbitral, certificado de colegio/liga o diploma.",
+  "@refereeCertificationDocSubtitle": {
+    "description": "Subtítulo descriptivo del documento de certificación arbitral"
+  },
+  "refereeCertificationCaptureButton": "Capturar documento de certificación arbitral",
+  "@refereeCertificationCaptureButton": {
+    "description": "Botón para capturar o seleccionar el documento de certificación arbitral"
+  },
+  "refereeCertificationReplaceButton": "Reemplazar documento",
+  "@refereeCertificationReplaceButton": {
+    "description": "Botón para reemplazar la imagen del documento de certificación arbitral"
+  },
+  "refereeCertificationCapturedBadge": "Documento adjunto",
+  "@refereeCertificationCapturedBadge": {
+    "description": "Insignia de estado cuando el documento arbitral ya fue capturado"
+  },
+  "refereeCertificationDocRequiredError": "Debes adjuntar la imagen de tu documento de certificación arbitral.",
+  "@refereeCertificationDocRequiredError": {
+    "description": "Mensaje de validación cuando falta el documento de certificación arbitral"
+  },
+  "refereeCertificationLevelRequiredError": "Ingresa tu categoría o nivel de certificación arbitral.",
+  "@refereeCertificationLevelRequiredError": {
+    "description": "Mensaje de validación cuando falta el nivel de certificación arbitral"
   }
 }

@@ -127,6 +127,15 @@ class SupabaseDocumentStorageRepository implements DocumentStorageRepository {
   }
 
   @override
+  Future<String> uploadRefereeCertificationDocument({
+    required String userId,
+    required String localPath,
+    String? existingDocumentUrl,
+  }) async {
+    return localPath.isNotEmpty ? localPath : (existingDocumentUrl ?? '');
+  }
+
+  @override
   Future<String?> getSignedDocumentUrl({
     required String storagePath,
     int expiresInSeconds = 3600,
@@ -178,6 +187,15 @@ class LocalDocumentStorageRepository implements DocumentStorageRepository {
     String? existingPhotoUrl,
   }) async {
     return localPath.isNotEmpty ? localPath : (existingPhotoUrl ?? '');
+  }
+
+  @override
+  Future<String> uploadRefereeCertificationDocument({
+    required String userId,
+    required String localPath,
+    String? existingDocumentUrl,
+  }) async {
+    return localPath.isNotEmpty ? localPath : (existingDocumentUrl ?? '');
   }
 
   @override

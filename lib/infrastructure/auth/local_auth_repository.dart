@@ -351,6 +351,7 @@ class LocalAuthRepository implements AuthRepository {
         roleProfile.photoUrl,
         roleProfile.documentFrontUrl,
         roleProfile.documentBackUrl,
+        roleProfile.certificationDocumentUrl,
       ];
       for (final path in candidates) {
         if (path == null || path.trim().isEmpty) continue;

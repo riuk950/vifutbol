@@ -3992,4 +3992,51 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get deleteAccountGenericError =>
       'No se pudo eliminar tu cuenta en este momento. Tus datos locales se mantuvieron intactos; intenta nuevamente más tarde.';
+
+  @override
+  String get refereePersonalDataTitle => 'Datos del Árbitro';
+
+  @override
+  String get refereePersonalDataTile => 'Datos personales y certificación';
+
+  @override
+  String get refereePersonalDataSubtitle =>
+      'Cédula colombiana, ubicación y documento de certificación arbitral';
+
+  @override
+  String get refereeCertificationSectionTitle => 'Certificación Arbitral';
+
+  @override
+  String get refereeCertificationLevelLabel =>
+      'Categoría o nivel de certificación arbitral';
+
+  @override
+  String get refereeCertificationLevelHint =>
+      'Ej. Liga Departamental, Nacional, FIFA';
+
+  @override
+  String get refereeCertificationDocTitle =>
+      'Documento de certificación arbitral';
+
+  @override
+  String get refereeCertificationDocSubtitle =>
+      'Adjunta una foto o imagen de tu carnet arbitral, certificado de colegio/liga o diploma.';
+
+  @override
+  String get refereeCertificationCaptureButton =>
+      'Capturar documento de certificación arbitral';
+
+  @override
+  String get refereeCertificationReplaceButton => 'Reemplazar documento';
+
+  @override
+  String get refereeCertificationCapturedBadge => 'Documento adjunto';
+
+  @override
+  String get refereeCertificationDocRequiredError =>
+      'Debes adjuntar la imagen de tu documento de certificación arbitral.';
+
+  @override
+  String get refereeCertificationLevelRequiredError =>
+      'Ingresa tu categoría o nivel de certificación arbitral.';
 }

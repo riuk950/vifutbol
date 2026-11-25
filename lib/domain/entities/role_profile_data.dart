@@ -32,6 +32,9 @@ class RoleProfileData {
   final String? documentFrontUrl;
   final String? documentBackUrl;
 
+  // HU 25.1 Referee Certification Document
+  final String? certificationDocumentUrl;
+
   // HU 21.3 Player Photo / Avatar Fields
   final String? photoUrl;
 
@@ -58,6 +61,7 @@ class RoleProfileData {
     this.secondaryPositions = const [],
     this.documentFrontUrl,
     this.documentBackUrl,
+    this.certificationDocumentUrl,
     this.photoUrl,
   });
 
@@ -84,6 +88,7 @@ class RoleProfileData {
     List<String>? secondaryPositions,
     String? documentFrontUrl,
     String? documentBackUrl,
+    String? certificationDocumentUrl,
     String? photoUrl,
   }) {
     return RoleProfileData(
@@ -109,6 +114,8 @@ class RoleProfileData {
       secondaryPositions: secondaryPositions ?? this.secondaryPositions,
       documentFrontUrl: documentFrontUrl ?? this.documentFrontUrl,
       documentBackUrl: documentBackUrl ?? this.documentBackUrl,
+      certificationDocumentUrl:
+          certificationDocumentUrl ?? this.certificationDocumentUrl,
       photoUrl: photoUrl ?? this.photoUrl,
     );
   }
@@ -140,6 +147,8 @@ class RoleProfileData {
         'secondaryPositions': secondaryPositions,
       if (documentFrontUrl != null) 'documentFrontUrl': documentFrontUrl,
       if (documentBackUrl != null) 'documentBackUrl': documentBackUrl,
+      if (certificationDocumentUrl != null)
+        'certificationDocumentUrl': certificationDocumentUrl,
       if (photoUrl != null) 'photoUrl': photoUrl,
     };
   }
@@ -208,6 +217,10 @@ class RoleProfileData {
       secondaryPositions: readList('secondaryPositions', 'secondary_positions'),
       documentFrontUrl: readStr('documentFrontUrl', 'document_front_url'),
       documentBackUrl: readStr('documentBackUrl', 'document_back_url'),
+      certificationDocumentUrl: readStr(
+        'certificationDocumentUrl',
+        'certification_document_url',
+      ),
       photoUrl: readStr('photoUrl', 'photo_url'),
     );
   }
@@ -239,6 +252,7 @@ class RoleProfileData {
           _listEquals(secondaryPositions, other.secondaryPositions) &&
           documentFrontUrl == other.documentFrontUrl &&
           documentBackUrl == other.documentBackUrl &&
+          certificationDocumentUrl == other.certificationDocumentUrl &&
           photoUrl == other.photoUrl;
 
   @override
@@ -265,6 +279,7 @@ class RoleProfileData {
         Object.hashAll(secondaryPositions),
         documentFrontUrl,
         documentBackUrl,
+        certificationDocumentUrl,
         photoUrl,
       ]);
 

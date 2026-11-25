@@ -57,7 +57,19 @@ class UserAccount {
             _hasText(roleProfile?.documentBackUrl) &&
             _hasText(roleProfile?.photoUrl);
       case UserRole.referee:
-        return hasPhone && hasDoc;
+        return hasPhone &&
+            hasDoc &&
+            _hasText(roleProfile?.firstName) &&
+            _hasText(roleProfile?.firstSurname) &&
+            _hasText(roleProfile?.sex) &&
+            roleProfile?.birthDate != null &&
+            _hasText(roleProfile?.bloodType) &&
+            _hasText(roleProfile?.department) &&
+            _hasText(roleProfile?.municipality) &&
+            _hasText(roleProfile?.certificationLevel) &&
+            _hasText(roleProfile?.documentFrontUrl) &&
+            _hasText(roleProfile?.documentBackUrl) &&
+            _hasText(roleProfile?.certificationDocumentUrl);
       case UserRole.coach:
         return hasPhone &&
             hasDoc &&

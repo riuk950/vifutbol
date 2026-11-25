@@ -6879,6 +6879,84 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No se pudo eliminar tu cuenta en este momento. Tus datos locales se mantuvieron intactos; intenta nuevamente más tarde.'**
   String get deleteAccountGenericError;
+
+  /// Título de la pantalla de datos personales y certificación del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Datos del Árbitro'**
+  String get refereePersonalDataTitle;
+
+  /// Acceso en Perfil para el formulario de datos del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Datos personales y certificación'**
+  String get refereePersonalDataTile;
+
+  /// Subtítulo del acceso de datos personales del árbitro en Perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Cédula colombiana, ubicación y documento de certificación arbitral'**
+  String get refereePersonalDataSubtitle;
+
+  /// Encabezado de la sección de certificación arbitral en el formulario del árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Certificación Arbitral'**
+  String get refereeCertificationSectionTitle;
+
+  /// Etiqueta del campo de nivel/categoría de certificación arbitral
+  ///
+  /// In es, this message translates to:
+  /// **'Categoría o nivel de certificación arbitral'**
+  String get refereeCertificationLevelLabel;
+
+  /// Pista del campo de nivel de certificación arbitral
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. Liga Departamental, Nacional, FIFA'**
+  String get refereeCertificationLevelHint;
+
+  /// Título de la tarjeta de captura del documento que certifica al usuario como árbitro
+  ///
+  /// In es, this message translates to:
+  /// **'Documento de certificación arbitral'**
+  String get refereeCertificationDocTitle;
+
+  /// Subtítulo descriptivo del documento de certificación arbitral
+  ///
+  /// In es, this message translates to:
+  /// **'Adjunta una foto o imagen de tu carnet arbitral, certificado de colegio/liga o diploma.'**
+  String get refereeCertificationDocSubtitle;
+
+  /// Botón para capturar o seleccionar el documento de certificación arbitral
+  ///
+  /// In es, this message translates to:
+  /// **'Capturar documento de certificación arbitral'**
+  String get refereeCertificationCaptureButton;
+
+  /// Botón para reemplazar la imagen del documento de certificación arbitral
+  ///
+  /// In es, this message translates to:
+  /// **'Reemplazar documento'**
+  String get refereeCertificationReplaceButton;
+
+  /// Insignia de estado cuando el documento arbitral ya fue capturado
+  ///
+  /// In es, this message translates to:
+  /// **'Documento adjunto'**
+  String get refereeCertificationCapturedBadge;
+
+  /// Mensaje de validación cuando falta el documento de certificación arbitral
+  ///
+  /// In es, this message translates to:
+  /// **'Debes adjuntar la imagen de tu documento de certificación arbitral.'**
+  String get refereeCertificationDocRequiredError;
+
+  /// Mensaje de validación cuando falta el nivel de certificación arbitral
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa tu categoría o nivel de certificación arbitral.'**
+  String get refereeCertificationLevelRequiredError;
 }
 
 class _AppLocalizationsDelegate

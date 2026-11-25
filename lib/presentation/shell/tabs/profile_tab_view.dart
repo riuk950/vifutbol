@@ -216,6 +216,9 @@ class ProfileTabView extends ConsumerWidget {
                       if (activeRole == UserRole.player) {
                         Navigator.of(context)
                             .pushNamed('/profile/personal-data');
+                      } else if (activeRole == UserRole.referee) {
+                        Navigator.of(context)
+                            .pushNamed('/profile/referee-personal-data');
                       } else {
                         CompleteProfileDialog.show(context, user: user);
                       }
@@ -247,6 +250,68 @@ class ProfileTabView extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
+
+          // Referee Personal Data Section (Only visible for referee role)
+          if (!isGuest &&
+              (activeRole == UserRole.referee ||
+                  (user?.authorizedRoles.contains(UserRole.referee) ??
+                      false))) ...[
+            KickPulseCard(
+              child: InkWell(
+                key: const Key('profile_referee_personal_data_tile'),
+                onTap: () {
+                  Navigator.of(
+                    context,
+                  ).pushNamed('/profile/referee-personal-data');
+                },
+                borderRadius: BorderRadius.circular(
+                  KickPulseRadiiSpacing.cardRadius,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: KickPulseRadiiSpacing.spaceSm,
+                    vertical: KickPulseRadiiSpacing.spaceXs,
+                  ),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        backgroundColor: KickPulseColors.surfaceElevated,
+                        child: Icon(
+                          Icons.verified_user_outlined,
+                          color: KickPulseColors.accentPrimary,
+                        ),
+                      ),
+                      const SizedBox(width: KickPulseRadiiSpacing.spaceMd),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.refereePersonalDataTile,
+                              style: KickPulseTypography.cardTitle,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              l10n.refereePersonalDataSubtitle,
+                              style: const TextStyle(
+                                color: KickPulseColors.textSecondary,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.chevron_right,
+                        color: KickPulseColors.textSecondary,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+          ],
 
           // Player Personal Data Section (Only visible for player role)
           if (!isGuest &&

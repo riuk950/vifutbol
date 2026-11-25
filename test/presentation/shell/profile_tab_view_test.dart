@@ -1268,4 +1268,103 @@ void main() {
       },
     );
   });
+
+  group('HU 25.1 - Referee profile navigation from ProfileTabView', () {
+    testWidgets(
+      'navigates to /profile/referee-personal-data from Completar mi perfil and referee tile',
+      (tester) async {
+        final refereeUser = UserAccount(
+          id: 'u-ref-nav',
+          fullName: 'Árbitro Central',
+          email: 'ref@vifutbol.com',
+          activeRole: UserRole.referee,
+          authorizedRoles: {UserRole.referee},
+          onboardingCompleted: true,
+        );
+        final controller = _TestAuthController(
+          authRepository: authRepository,
+          initialState: AuthFlowState(
+            status: AuthStatus.authenticated,
+            session: AuthSession(
+              sessionId: 's-ref-nav',
+              user: refereeUser,
+              sessionToken: 'tok-ref-nav',
+              authenticatedAt: DateTime(2026, 11, 25),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const ProfileTabView(),
+            controller: controller,
+            config: config,
+            routes: {
+              '/profile/referee-personal-data': (context) => const Scaffold(
+                    body: Text('Referee Personal Data Screen'),
+                  ),
+            },
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // 1. Complete profile CTA navigates to referee screen
+        await tester.tap(
+          find.byKey(const ValueKey('profile_complete_action_button')),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('Referee Personal Data Screen'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'tapping profile_referee_personal_data_tile navigates to /profile/referee-personal-data',
+      (tester) async {
+        final refereeUser = UserAccount(
+          id: 'u-ref-tile',
+          fullName: 'Árbitro Tile',
+          email: 'reftile@vifutbol.com',
+          activeRole: UserRole.referee,
+          authorizedRoles: {UserRole.referee},
+          onboardingCompleted: true,
+        );
+        final controller = _TestAuthController(
+          authRepository: authRepository,
+          initialState: AuthFlowState(
+            status: AuthStatus.authenticated,
+            session: AuthSession(
+              sessionId: 's-ref-tile',
+              user: refereeUser,
+              sessionToken: 'tok-ref-tile',
+              authenticatedAt: DateTime(2026, 11, 25),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const ProfileTabView(),
+            controller: controller,
+            config: config,
+            routes: {
+              '/profile/referee-personal-data': (context) => const Scaffold(
+                    body: Text('Referee Personal Data Screen'),
+                  ),
+            },
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final tile = find.byKey(
+          const Key('profile_referee_personal_data_tile'),
+        );
+        expect(tile, findsOneWidget);
+        await tester.ensureVisible(tile);
+        await tester.tap(tile);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Referee Personal Data Screen'), findsOneWidget);
+      },
+    );
+  });
 }
