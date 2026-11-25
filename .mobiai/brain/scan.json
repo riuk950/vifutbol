@@ -8,6 +8,7 @@
     "shared"
   ],
   "build_systems": [
+    "cocoapods",
     "gradle"
   ],
   "ui": [],
@@ -17,14 +18,17 @@
   "serialization": [],
   "testing": [],
   "integrations": [],
-  "ci_cd": [],
+  "ci_cd": [
+    "github_actions"
+  ],
   "detected_files": {
-    "android_manifest": "android/app/src/main/AndroidManifest.xml",
+    "android_manifest": "android/app/src/debug/AndroidManifest.xml",
+    "podfile": "ios/Podfile",
     "pubspec_yaml": "pubspec.yaml",
     "xcodeproj": "ios/Runner.xcodeproj",
-    "xcworkspace": "ios/Runner.xcworkspace"
+    "xcworkspace": "ios/Runner.xcodeproj/project.xcworkspace"
   },
   "warnings": [],
-  "created_at": "2026-10-28T14:53:54Z",
-  "updated_at": "2026-10-28T14:53:54Z"
+  "created_at": "2026-11-25T14:51:17Z",
+  "updated_at": "2026-11-25T14:51:17Z"
 }
