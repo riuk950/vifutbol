@@ -16,6 +16,8 @@ import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/player_personal_data_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/player_personal_data_summary_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/player_team_requests_screen.dart';
+import 'package:vifutbol/presentation/shell/tabs/profile_faq_screen.dart';
+import 'package:vifutbol/presentation/shell/tabs/profile_legal_document_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/venues_tab_view.dart';
 import 'package:vifutbol/presentation/teams/coach_lineup_tracking_screen.dart';
 import 'package:vifutbol/presentation/teams/team_detail_screen.dart';
@@ -181,6 +183,28 @@ class AppRouter {
       },
     );
 
+    final profileTermsHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const ProfileLegalDocumentScreen(
+          type: ProfileLegalDocumentType.terms,
+        );
+      },
+    );
+
+    final profilePrivacyPolicyHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const ProfileLegalDocumentScreen(
+          type: ProfileLegalDocumentType.privacyPolicy,
+        );
+      },
+    );
+
+    final profileFaqHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const ProfileFaqScreen();
+      },
+    );
+
     router.define(
       '/',
       handler: rootHandler,
@@ -305,6 +329,21 @@ class AppRouter {
       '/profile/personal-data/summary',
       handler: playerPersonalDataSummaryHandler,
       transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/profile/terms',
+      handler: profileTermsHandler,
+      transitionType: TransitionType.native,
+    );
+    router.define(
+      '/profile/privacy-policy',
+      handler: profilePrivacyPolicyHandler,
+      transitionType: TransitionType.native,
+    );
+    router.define(
+      '/profile/faq',
+      handler: profileFaqHandler,
+      transitionType: TransitionType.native,
     );
   }
 }

@@ -4908,5 +4908,129 @@
   "scheduleMatchOptionalHint": "Opcional — puedes asignarlo después",
   "@scheduleMatchOptionalHint": {
     "description": "Texto de ayuda para campos opcionales al programar un partido"
+  },
+  "profileLegalSupportSectionTitle": "Preferencias y soporte",
+  "@profileLegalSupportSectionTitle": {
+    "description": "Encabezado de la sección de opciones, legal y soporte debajo de permisos en Perfil"
+  },
+  "profileRemoveAdsButton": "Quitar anuncios",
+  "@profileRemoveAdsButton": {
+    "description": "Botón en Perfil para consultar la opción de quitar anuncios"
+  },
+  "profileTermsButton": "Términos y condiciones",
+  "@profileTermsButton": {
+    "description": "Botón en Perfil para abrir los Términos y condiciones"
+  },
+  "profilePrivacyPolicyButton": "Políticas de tratamiento de datos",
+  "@profilePrivacyPolicyButton": {
+    "description": "Botón en Perfil para abrir las Políticas de tratamiento de datos"
+  },
+  "profileFaqButton": "Preguntas frecuentes",
+  "@profileFaqButton": {
+    "description": "Botón en Perfil para abrir las Preguntas frecuentes"
+  },
+  "removeAdsDialogTitle": "Experiencia sin anuncios",
+  "@removeAdsDialogTitle": {
+    "description": "Título del modal informativo para quitar anuncios"
+  },
+  "removeAdsComingSoonBadge": "Próximamente",
+  "@removeAdsComingSoonBadge": {
+    "description": "Insignia que indica disponibilidad próxima de la opción sin anuncios"
+  },
+  "removeAdsDialogDescription": "Muy pronto podrás disfrutar de ViFutbol sin publicidad mientras sigues marcadores, tablas de posiciones y novedades de tus campeonatos en tiempo real.",
+  "@removeAdsDialogDescription": {
+    "description": "Descripción del beneficio de la experiencia sin publicidad"
+  },
+  "removeAdsDialogNotice": "La pasarela de pagos se encuentra en preparación. No se realizará ningún cobro en esta versión.",
+  "@removeAdsDialogNotice": {
+    "description": "Aviso transparente de que la pasarela está en preparación"
+  },
+  "removeAdsDialogCloseAction": "Entendido",
+  "@removeAdsDialogCloseAction": {
+    "description": "Botón para cerrar el modal de quitar anuncios"
+  },
+  "legalDocumentLastUpdated": "Última actualización: noviembre de 2026",
+  "@legalDocumentLastUpdated": {
+    "description": "Subtítulo de fecha de vigencia de documentos legales"
+  },
+  "termsSection1Title": "1. Aceptación y uso de la plataforma",
+  "@termsSection1Title": {
+    "description": "Título sección 1 de términos y condiciones"
+  },
+  "termsSection1Body": "ViFutbol es una plataforma para la gestión de campeonatos, sedes deportivas, equipos, actas de partidos y seguimiento en vivo. Al usar la aplicación aceptas operar bajo estos términos y las reglas deportivas vigentes.",
+  "@termsSection1Body": {
+    "description": "Contenido sección 1 de términos y condiciones"
+  },
+  "termsSection2Title": "2. Roles y responsabilidades",
+  "@termsSection2Title": {
+    "description": "Título sección 2 de términos y condiciones"
+  },
+  "termsSection2Body": "Cada usuario accede según su rol asignado (Organizador, Entrenador, Árbitro, Jugador o Aficionado). Las actas oficiales, resultados y sanciones registradas por roles autorizados constituyen la fuente oficial del torneo.",
+  "@termsSection2Body": {
+    "description": "Contenido sección 2 de términos y condiciones"
+  },
+  "termsSection3Title": "3. Operación offline y disponibilidad",
+  "@termsSection3Title": {
+    "description": "Título sección 3 de términos y condiciones"
+  },
+  "termsSection3Body": "ViFutbol permite consultar información descargada y operar sin conexión en cancha, sincronizando los cambios pendientes cuando la conectividad se restablece.",
+  "@termsSection3Body": {
+    "description": "Contenido sección 3 de términos y condiciones"
+  },
+  "privacySection1Title": "1. Datos personales recolectados",
+  "@privacySection1Title": {
+    "description": "Título sección 1 de políticas de tratamiento de datos"
+  },
+  "privacySection1Body": "Tratamos los datos suministrados en tu perfil (nombre, correo electrónico, documento de identificación y ficha deportiva de jugador cuando corresponda) exclusivamente para administrar campeonatos, inscripciones y elegibilidad.",
+  "@privacySection1Body": {
+    "description": "Contenido sección 1 de políticas de tratamiento de datos"
+  },
+  "privacySection2Title": "2. Finalidad y protección",
+  "@privacySection2Title": {
+    "description": "Título sección 2 de políticas de tratamiento de datos"
+  },
+  "privacySection2Body": "Tu información se almacena de forma segura en tu dispositivo para soporte offline y en nuestros servidores autorizados, sin ser comercializada con terceros.",
+  "@privacySection2Body": {
+    "description": "Contenido sección 2 de políticas de tratamiento de datos"
+  },
+  "privacySection3Title": "3. Derechos del titular",
+  "@privacySection3Title": {
+    "description": "Título sección 3 de políticas de tratamiento de datos"
+  },
+  "privacySection3Body": "Como titular de los datos puedes consultar, actualizar y solicitar la supresión de tu información personal conforme a la normativa aplicable de protección de datos.",
+  "@privacySection3Body": {
+    "description": "Contenido sección 3 de políticas de tratamiento de datos"
+  },
+  "faqItem1Question": "¿Cómo funciona ViFutbol sin conexión a internet?",
+  "@faqItem1Question": {
+    "description": "Pregunta frecuente 1"
+  },
+  "faqItem1Answer": "La aplicación guarda una copia local de tus torneos, partidos y datos del perfil para que puedas consultarlos en la cancha. Cuando vuelvas a tener conexión, la sincronización actualiza automáticamente los cambios pendientes.",
+  "@faqItem1Answer": {
+    "description": "Respuesta frecuente 1"
+  },
+  "faqItem2Question": "¿Puedo cambiar mi rol activo desde el Perfil?",
+  "@faqItem2Question": {
+    "description": "Pregunta frecuente 2"
+  },
+  "faqItem2Answer": "No. Por seguridad e integridad del control de acceso (RBAC), tu rol activo se muestra en modo solo lectura en la tarjeta de identidad del Perfil.",
+  "@faqItem2Answer": {
+    "description": "Respuesta frecuente 2"
+  },
+  "faqItem3Question": "¿Cómo completo mis datos deportivos como Jugador?",
+  "@faqItem3Question": {
+    "description": "Pregunta frecuente 3"
+  },
+  "faqItem3Answer": "Si tu rol es Jugador, ingresa a 'Datos personales' dentro de tu Perfil para completar tu ficha demográfica, posición táctica y documento de identidad.",
+  "@faqItem3Answer": {
+    "description": "Respuesta frecuente 3"
+  },
+  "faqItem4Question": "¿Cuándo estará disponible la opción de Quitar anuncios?",
+  "@faqItem4Question": {
+    "description": "Pregunta frecuente 4"
+  },
+  "faqItem4Answer": "Estamos integrando la pasarela de pagos oficial. Muy pronto podrás activar la experiencia sin anuncios directamente desde la sección de Perfil.",
+  "@faqItem4Answer": {
+    "description": "Respuesta frecuente 4"
   }
 }

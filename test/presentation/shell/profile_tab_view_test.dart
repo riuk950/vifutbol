@@ -19,7 +19,10 @@ import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/domain/repositories/auth_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
+import 'package:vifutbol/presentation/shell/tabs/profile_faq_screen.dart';
+import 'package:vifutbol/presentation/shell/tabs/profile_legal_document_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/profile_tab_view.dart';
+import 'package:vifutbol/presentation/shell/tabs/widgets/remove_ads_dialog.dart';
 
 class _MockAuthRepository extends Mock implements AuthRepository {}
 
@@ -679,6 +682,347 @@ void main() {
           findsOneWidget,
         );
         expect(find.text('Cerrar sesión'), findsOneWidget);
+      },
+    );
+  });
+
+  group('HU 24.2 - Legal, support and remove ads actions in Profile', () {
+    for (final env in [AppEnvironment.development, AppEnvironment.production]) {
+      final envLabel = env == AppEnvironment.development ? 'dev' : 'prod';
+
+      for (final role in UserRole.values) {
+        testWidgets(
+          'renders 4 ordered action tiles below capabilities and above logout for ${role.name} in $envLabel',
+          (tester) async {
+            when(() => config.environment).thenReturn(env);
+            final user = UserAccount(
+              id: 'u-legal-${role.name}-$envLabel',
+              fullName: 'Usuario Legal',
+              email: 'legal@vifutbol.com',
+              activeRole: role,
+              authorizedRoles: {role},
+              onboardingCompleted: true,
+            );
+            final controller = _TestAuthController(
+              authRepository: authRepository,
+              initialState: AuthFlowState(
+                status: AuthStatus.authenticated,
+                session: AuthSession(
+                  sessionId: 's-legal-${role.name}-$envLabel',
+                  user: user,
+                  sessionToken: 'tok-legal',
+                  authenticatedAt: DateTime(2026, 11, 25),
+                ),
+              ),
+            );
+
+            await tester.pumpWidget(
+              _wrapWithApp(
+                const ProfileTabView(),
+                controller: controller,
+                config: config,
+              ),
+            );
+            await tester.pumpAndSettle();
+
+            final capabilitiesFinder = find.byKey(
+              const Key('profile_capabilities_section'),
+            );
+            final removeAdsFinder = find.byKey(
+              const Key('profile_remove_ads_tile'),
+            );
+            final termsFinder = find.byKey(const Key('profile_terms_tile'));
+            final privacyFinder = find.byKey(
+              const Key('profile_privacy_policy_tile'),
+            );
+            final faqFinder = find.byKey(const Key('profile_faq_tile'));
+            final logoutFinder = find.byKey(
+              const Key('profile_logout_action_button'),
+            );
+
+            expect(capabilitiesFinder, findsOneWidget);
+            expect(removeAdsFinder, findsOneWidget);
+            expect(termsFinder, findsOneWidget);
+            expect(privacyFinder, findsOneWidget);
+            expect(faqFinder, findsOneWidget);
+            expect(logoutFinder, findsOneWidget);
+
+            expect(find.text('Quitar anuncios'), findsOneWidget);
+            expect(find.text('Términos y condiciones'), findsOneWidget);
+            expect(
+              find.text('Políticas de tratamiento de datos'),
+              findsOneWidget,
+            );
+            expect(find.text('Preguntas frecuentes'), findsOneWidget);
+
+            final capabilitiesBottom = tester
+                .getBottomLeft(capabilitiesFinder)
+                .dy;
+            final removeAdsTop = tester.getTopLeft(removeAdsFinder).dy;
+            final termsTop = tester.getTopLeft(termsFinder).dy;
+            final privacyTop = tester.getTopLeft(privacyFinder).dy;
+            final faqTop = tester.getTopLeft(faqFinder).dy;
+            final logoutTop = tester.getTopLeft(logoutFinder).dy;
+
+            expect(removeAdsTop, greaterThan(capabilitiesBottom));
+            expect(termsTop, greaterThan(removeAdsTop));
+            expect(privacyTop, greaterThan(termsTop));
+            expect(faqTop, greaterThan(privacyTop));
+            expect(logoutTop, greaterThan(faqTop));
+
+            for (final finder in [
+              removeAdsFinder,
+              termsFinder,
+              privacyFinder,
+              faqFinder,
+            ]) {
+              expect(tester.getSize(finder).height, greaterThanOrEqualTo(44));
+            }
+          },
+        );
+      }
+
+      testWidgets(
+        'renders all 4 ordered action tiles for guest fan in $envLabel',
+        (tester) async {
+          when(() => config.environment).thenReturn(env);
+          final guest = UserAccount.guestFan(id: 'guest-legal-$envLabel');
+          final controller = _TestAuthController(
+            authRepository: authRepository,
+            initialState: AuthFlowState(
+              status: AuthStatus.authenticated,
+              session: AuthSession(
+                sessionId: 's-guest-legal-$envLabel',
+                user: guest,
+                sessionToken: 'tok-guest',
+                authenticatedAt: DateTime(2026, 11, 25),
+              ),
+            ),
+          );
+
+          await tester.pumpWidget(
+            _wrapWithApp(
+              const ProfileTabView(),
+              controller: controller,
+              config: config,
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(
+            find.byKey(const Key('profile_remove_ads_tile')),
+            findsOneWidget,
+          );
+          expect(find.byKey(const Key('profile_terms_tile')), findsOneWidget);
+          expect(
+            find.byKey(const Key('profile_privacy_policy_tile')),
+            findsOneWidget,
+          );
+          expect(find.byKey(const Key('profile_faq_tile')), findsOneWidget);
+        },
+      );
+    }
+
+    testWidgets(
+      'renders 4 action tiles without overflow at 1.5x text scale',
+      (tester) async {
+        final user = UserAccount(
+          id: 'u-legal-a11y',
+          fullName: 'Usuario Accesible',
+          email: 'a11y@vifutbol.com',
+          activeRole: UserRole.fan,
+          authorizedRoles: {UserRole.fan},
+          onboardingCompleted: true,
+        );
+        final controller = _TestAuthController(
+          authRepository: authRepository,
+          initialState: AuthFlowState(
+            status: AuthStatus.authenticated,
+            session: AuthSession(
+              sessionId: 's-legal-a11y',
+              user: user,
+              sessionToken: 'tok-a11y',
+              authenticatedAt: DateTime(2026, 11, 25),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          MediaQuery(
+            data: const MediaQueryData(textScaler: TextScaler.linear(1.5)),
+            child: _wrapWithApp(
+              const ProfileTabView(),
+              controller: controller,
+              config: config,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'navigates to Terms, Privacy Policy, and FAQ screens offline and returns cleanly to Profile',
+      (tester) async {
+        final user = UserAccount(
+          id: 'u-legal-nav',
+          fullName: 'Usuario Navegacion',
+          email: 'nav@vifutbol.com',
+          activeRole: UserRole.organizer,
+          authorizedRoles: {UserRole.organizer},
+          onboardingCompleted: true,
+        );
+        final controller = _TestAuthController(
+          authRepository: authRepository,
+          initialState: AuthFlowState(
+            status: AuthStatus.authenticated,
+            session: AuthSession(
+              sessionId: 's-legal-nav',
+              user: user,
+              sessionToken: 'tok-nav',
+              authenticatedAt: DateTime(2026, 11, 25),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const ProfileTabView(),
+            controller: controller,
+            config: config,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // 1. Terms & Conditions
+        final termsTile = find.byKey(const Key('profile_terms_tile'));
+        await tester.ensureVisible(termsTile);
+        await tester.tap(termsTile);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(ProfileLegalDocumentScreen), findsOneWidget);
+        expect(find.text('1. Aceptación y uso de la plataforma'), findsOneWidget);
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(AppBar),
+            matching: find.byType(IconButton),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byType(ProfileTabView), findsOneWidget);
+
+        // 2. Privacy Policy
+        final privacyTile = find.byKey(
+          const Key('profile_privacy_policy_tile'),
+        );
+        await tester.ensureVisible(privacyTile);
+        await tester.tap(privacyTile);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(ProfileLegalDocumentScreen), findsOneWidget);
+        expect(find.text('1. Datos personales recolectados'), findsOneWidget);
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(AppBar),
+            matching: find.byType(IconButton),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byType(ProfileTabView), findsOneWidget);
+
+        // 3. FAQ
+        final faqTile = find.byKey(const Key('profile_faq_tile'));
+        await tester.ensureVisible(faqTile);
+        await tester.tap(faqTile);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(ProfileFaqScreen), findsOneWidget);
+        expect(
+          find.text('¿Cómo funciona ViFutbol sin conexión a internet?'),
+          findsOneWidget,
+        );
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(AppBar),
+            matching: find.byType(IconButton),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byType(ProfileTabView), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'opens RemoveAdsDialog on tap, closes cleanly, and guards against rapid double taps',
+      (tester) async {
+        final user = UserAccount(
+          id: 'u-remove-ads',
+          fullName: 'Usuario Anuncios',
+          email: 'ads@vifutbol.com',
+          activeRole: UserRole.fan,
+          authorizedRoles: {UserRole.fan},
+          onboardingCompleted: true,
+        );
+        final controller = _TestAuthController(
+          authRepository: authRepository,
+          initialState: AuthFlowState(
+            status: AuthStatus.authenticated,
+            session: AuthSession(
+              sessionId: 's-remove-ads',
+              user: user,
+              sessionToken: 'tok-ads',
+              authenticatedAt: DateTime(2026, 11, 25),
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const ProfileTabView(),
+            controller: controller,
+            config: config,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final removeAdsTile = find.byKey(const Key('profile_remove_ads_tile'));
+        await tester.ensureVisible(removeAdsTile);
+
+        // Rapid double tap must open only a single RemoveAdsDialog
+        await tester.tap(removeAdsTile);
+        await tester.tap(removeAdsTile, warnIfMissed: false);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(RemoveAdsDialog), findsOneWidget);
+        expect(find.text('Próximamente'), findsOneWidget);
+
+        await tester.tap(
+          find.byKey(const ValueKey('remove_ads_dialog_close_button')),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byType(RemoveAdsDialog), findsNothing);
+
+        // Rapid double tap on Terms must push only 1 screen
+        final termsTile = find.byKey(const Key('profile_terms_tile'));
+        await tester.ensureVisible(termsTile);
+        await tester.tap(termsTile);
+        await tester.tap(termsTile, warnIfMissed: false);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(ProfileLegalDocumentScreen), findsOneWidget);
+        await tester.tap(
+          find.descendant(
+            of: find.byType(AppBar),
+            matching: find.byType(IconButton),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byType(ProfileLegalDocumentScreen), findsNothing);
       },
     );
   });

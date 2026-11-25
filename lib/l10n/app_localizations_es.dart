@@ -3858,4 +3858,114 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get scheduleMatchOptionalHint => 'Opcional — puedes asignarlo después';
+
+  @override
+  String get profileLegalSupportSectionTitle => 'Preferencias y soporte';
+
+  @override
+  String get profileRemoveAdsButton => 'Quitar anuncios';
+
+  @override
+  String get profileTermsButton => 'Términos y condiciones';
+
+  @override
+  String get profilePrivacyPolicyButton => 'Políticas de tratamiento de datos';
+
+  @override
+  String get profileFaqButton => 'Preguntas frecuentes';
+
+  @override
+  String get removeAdsDialogTitle => 'Experiencia sin anuncios';
+
+  @override
+  String get removeAdsComingSoonBadge => 'Próximamente';
+
+  @override
+  String get removeAdsDialogDescription =>
+      'Muy pronto podrás disfrutar de ViFutbol sin publicidad mientras sigues marcadores, tablas de posiciones y novedades de tus campeonatos en tiempo real.';
+
+  @override
+  String get removeAdsDialogNotice =>
+      'La pasarela de pagos se encuentra en preparación. No se realizará ningún cobro en esta versión.';
+
+  @override
+  String get removeAdsDialogCloseAction => 'Entendido';
+
+  @override
+  String get legalDocumentLastUpdated =>
+      'Última actualización: noviembre de 2026';
+
+  @override
+  String get termsSection1Title => '1. Aceptación y uso de la plataforma';
+
+  @override
+  String get termsSection1Body =>
+      'ViFutbol es una plataforma para la gestión de campeonatos, sedes deportivas, equipos, actas de partidos y seguimiento en vivo. Al usar la aplicación aceptas operar bajo estos términos y las reglas deportivas vigentes.';
+
+  @override
+  String get termsSection2Title => '2. Roles y responsabilidades';
+
+  @override
+  String get termsSection2Body =>
+      'Cada usuario accede según su rol asignado (Organizador, Entrenador, Árbitro, Jugador o Aficionado). Las actas oficiales, resultados y sanciones registradas por roles autorizados constituyen la fuente oficial del torneo.';
+
+  @override
+  String get termsSection3Title => '3. Operación offline y disponibilidad';
+
+  @override
+  String get termsSection3Body =>
+      'ViFutbol permite consultar información descargada y operar sin conexión en cancha, sincronizando los cambios pendientes cuando la conectividad se restablece.';
+
+  @override
+  String get privacySection1Title => '1. Datos personales recolectados';
+
+  @override
+  String get privacySection1Body =>
+      'Tratamos los datos suministrados en tu perfil (nombre, correo electrónico, documento de identificación y ficha deportiva de jugador cuando corresponda) exclusivamente para administrar campeonatos, inscripciones y elegibilidad.';
+
+  @override
+  String get privacySection2Title => '2. Finalidad y protección';
+
+  @override
+  String get privacySection2Body =>
+      'Tu información se almacena de forma segura en tu dispositivo para soporte offline y en nuestros servidores autorizados, sin ser comercializada con terceros.';
+
+  @override
+  String get privacySection3Title => '3. Derechos del titular';
+
+  @override
+  String get privacySection3Body =>
+      'Como titular de los datos puedes consultar, actualizar y solicitar la supresión de tu información personal conforme a la normativa aplicable de protección de datos.';
+
+  @override
+  String get faqItem1Question =>
+      '¿Cómo funciona ViFutbol sin conexión a internet?';
+
+  @override
+  String get faqItem1Answer =>
+      'La aplicación guarda una copia local de tus torneos, partidos y datos del perfil para que puedas consultarlos en la cancha. Cuando vuelvas a tener conexión, la sincronización actualiza automáticamente los cambios pendientes.';
+
+  @override
+  String get faqItem2Question =>
+      '¿Puedo cambiar mi rol activo desde el Perfil?';
+
+  @override
+  String get faqItem2Answer =>
+      'No. Por seguridad e integridad del control de acceso (RBAC), tu rol activo se muestra en modo solo lectura en la tarjeta de identidad del Perfil.';
+
+  @override
+  String get faqItem3Question =>
+      '¿Cómo completo mis datos deportivos como Jugador?';
+
+  @override
+  String get faqItem3Answer =>
+      'Si tu rol es Jugador, ingresa a \'Datos personales\' dentro de tu Perfil para completar tu ficha demográfica, posición táctica y documento de identidad.';
+
+  @override
+  String get faqItem4Question =>
+      '¿Cuándo estará disponible la opción de Quitar anuncios?';
+
+  @override
+  String get faqItem4Answer =>
+      'Estamos integrando la pasarela de pagos oficial. Muy pronto podrás activar la experiencia sin anuncios directamente desde la sección de Perfil.';
 }

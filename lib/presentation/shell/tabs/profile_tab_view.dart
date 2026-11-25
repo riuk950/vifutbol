@@ -18,6 +18,7 @@ import '../../design_system/widgets/kick_pulse_button.dart';
 import '../../design_system/widgets/kick_pulse_card.dart';
 import '../../sync/sign_out_pending_sync_dialog.dart';
 import 'complete_profile_dialog.dart';
+import 'widgets/profile_legal_support_section.dart';
 
 /// Profile screen displaying identity, read-only active sports role,
 /// full RBAC permissions matrix, and secure session termination.
@@ -360,6 +361,7 @@ class ProfileTabView extends ConsumerWidget {
           ),
           const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
           KickPulseCard(
+            key: const Key('profile_capabilities_section'),
             child: Column(
               children: RoleCapability.values.map((cap) {
                 final isGranted = isGuest
@@ -407,10 +409,15 @@ class ProfileTabView extends ConsumerWidget {
               }).toList(),
             ),
           ),
+          const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
+
+          // Legal, Support & Remove Ads Section
+          const ProfileLegalSupportSection(),
           const SizedBox(height: KickPulseRadiiSpacing.spaceXl),
 
           // Logout Action Button
           KickPulseButton(
+            key: const Key('profile_logout_action_button'),
             label: isGuest
                 ? l10n.profileLoginRegisterButton
                 : l10n.profileLogoutAction,

@@ -6651,6 +6651,192 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Opcional — puedes asignarlo después'**
   String get scheduleMatchOptionalHint;
+
+  /// Encabezado de la sección de opciones, legal y soporte debajo de permisos en Perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Preferencias y soporte'**
+  String get profileLegalSupportSectionTitle;
+
+  /// Botón en Perfil para consultar la opción de quitar anuncios
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar anuncios'**
+  String get profileRemoveAdsButton;
+
+  /// Botón en Perfil para abrir los Términos y condiciones
+  ///
+  /// In es, this message translates to:
+  /// **'Términos y condiciones'**
+  String get profileTermsButton;
+
+  /// Botón en Perfil para abrir las Políticas de tratamiento de datos
+  ///
+  /// In es, this message translates to:
+  /// **'Políticas de tratamiento de datos'**
+  String get profilePrivacyPolicyButton;
+
+  /// Botón en Perfil para abrir las Preguntas frecuentes
+  ///
+  /// In es, this message translates to:
+  /// **'Preguntas frecuentes'**
+  String get profileFaqButton;
+
+  /// Título del modal informativo para quitar anuncios
+  ///
+  /// In es, this message translates to:
+  /// **'Experiencia sin anuncios'**
+  String get removeAdsDialogTitle;
+
+  /// Insignia que indica disponibilidad próxima de la opción sin anuncios
+  ///
+  /// In es, this message translates to:
+  /// **'Próximamente'**
+  String get removeAdsComingSoonBadge;
+
+  /// Descripción del beneficio de la experiencia sin publicidad
+  ///
+  /// In es, this message translates to:
+  /// **'Muy pronto podrás disfrutar de ViFutbol sin publicidad mientras sigues marcadores, tablas de posiciones y novedades de tus campeonatos en tiempo real.'**
+  String get removeAdsDialogDescription;
+
+  /// Aviso transparente de que la pasarela está en preparación
+  ///
+  /// In es, this message translates to:
+  /// **'La pasarela de pagos se encuentra en preparación. No se realizará ningún cobro en esta versión.'**
+  String get removeAdsDialogNotice;
+
+  /// Botón para cerrar el modal de quitar anuncios
+  ///
+  /// In es, this message translates to:
+  /// **'Entendido'**
+  String get removeAdsDialogCloseAction;
+
+  /// Subtítulo de fecha de vigencia de documentos legales
+  ///
+  /// In es, this message translates to:
+  /// **'Última actualización: noviembre de 2026'**
+  String get legalDocumentLastUpdated;
+
+  /// Título sección 1 de términos y condiciones
+  ///
+  /// In es, this message translates to:
+  /// **'1. Aceptación y uso de la plataforma'**
+  String get termsSection1Title;
+
+  /// Contenido sección 1 de términos y condiciones
+  ///
+  /// In es, this message translates to:
+  /// **'ViFutbol es una plataforma para la gestión de campeonatos, sedes deportivas, equipos, actas de partidos y seguimiento en vivo. Al usar la aplicación aceptas operar bajo estos términos y las reglas deportivas vigentes.'**
+  String get termsSection1Body;
+
+  /// Título sección 2 de términos y condiciones
+  ///
+  /// In es, this message translates to:
+  /// **'2. Roles y responsabilidades'**
+  String get termsSection2Title;
+
+  /// Contenido sección 2 de términos y condiciones
+  ///
+  /// In es, this message translates to:
+  /// **'Cada usuario accede según su rol asignado (Organizador, Entrenador, Árbitro, Jugador o Aficionado). Las actas oficiales, resultados y sanciones registradas por roles autorizados constituyen la fuente oficial del torneo.'**
+  String get termsSection2Body;
+
+  /// Título sección 3 de términos y condiciones
+  ///
+  /// In es, this message translates to:
+  /// **'3. Operación offline y disponibilidad'**
+  String get termsSection3Title;
+
+  /// Contenido sección 3 de términos y condiciones
+  ///
+  /// In es, this message translates to:
+  /// **'ViFutbol permite consultar información descargada y operar sin conexión en cancha, sincronizando los cambios pendientes cuando la conectividad se restablece.'**
+  String get termsSection3Body;
+
+  /// Título sección 1 de políticas de tratamiento de datos
+  ///
+  /// In es, this message translates to:
+  /// **'1. Datos personales recolectados'**
+  String get privacySection1Title;
+
+  /// Contenido sección 1 de políticas de tratamiento de datos
+  ///
+  /// In es, this message translates to:
+  /// **'Tratamos los datos suministrados en tu perfil (nombre, correo electrónico, documento de identificación y ficha deportiva de jugador cuando corresponda) exclusivamente para administrar campeonatos, inscripciones y elegibilidad.'**
+  String get privacySection1Body;
+
+  /// Título sección 2 de políticas de tratamiento de datos
+  ///
+  /// In es, this message translates to:
+  /// **'2. Finalidad y protección'**
+  String get privacySection2Title;
+
+  /// Contenido sección 2 de políticas de tratamiento de datos
+  ///
+  /// In es, this message translates to:
+  /// **'Tu información se almacena de forma segura en tu dispositivo para soporte offline y en nuestros servidores autorizados, sin ser comercializada con terceros.'**
+  String get privacySection2Body;
+
+  /// Título sección 3 de políticas de tratamiento de datos
+  ///
+  /// In es, this message translates to:
+  /// **'3. Derechos del titular'**
+  String get privacySection3Title;
+
+  /// Contenido sección 3 de políticas de tratamiento de datos
+  ///
+  /// In es, this message translates to:
+  /// **'Como titular de los datos puedes consultar, actualizar y solicitar la supresión de tu información personal conforme a la normativa aplicable de protección de datos.'**
+  String get privacySection3Body;
+
+  /// Pregunta frecuente 1
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cómo funciona ViFutbol sin conexión a internet?'**
+  String get faqItem1Question;
+
+  /// Respuesta frecuente 1
+  ///
+  /// In es, this message translates to:
+  /// **'La aplicación guarda una copia local de tus torneos, partidos y datos del perfil para que puedas consultarlos en la cancha. Cuando vuelvas a tener conexión, la sincronización actualiza automáticamente los cambios pendientes.'**
+  String get faqItem1Answer;
+
+  /// Pregunta frecuente 2
+  ///
+  /// In es, this message translates to:
+  /// **'¿Puedo cambiar mi rol activo desde el Perfil?'**
+  String get faqItem2Question;
+
+  /// Respuesta frecuente 2
+  ///
+  /// In es, this message translates to:
+  /// **'No. Por seguridad e integridad del control de acceso (RBAC), tu rol activo se muestra en modo solo lectura en la tarjeta de identidad del Perfil.'**
+  String get faqItem2Answer;
+
+  /// Pregunta frecuente 3
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cómo completo mis datos deportivos como Jugador?'**
+  String get faqItem3Question;
+
+  /// Respuesta frecuente 3
+  ///
+  /// In es, this message translates to:
+  /// **'Si tu rol es Jugador, ingresa a \'Datos personales\' dentro de tu Perfil para completar tu ficha demográfica, posición táctica y documento de identidad.'**
+  String get faqItem3Answer;
+
+  /// Pregunta frecuente 4
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cuándo estará disponible la opción de Quitar anuncios?'**
+  String get faqItem4Question;
+
+  /// Respuesta frecuente 4
+  ///
+  /// In es, this message translates to:
+  /// **'Estamos integrando la pasarela de pagos oficial. Muy pronto podrás activar la experiencia sin anuncios directamente desde la sección de Perfil.'**
+  String get faqItem4Answer;
 }
 
 class _AppLocalizationsDelegate
