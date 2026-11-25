@@ -7129,7 +7129,7 @@ abstract class AppLocalizations {
   /// Aviso de solo lectura cuando un árbitro no asignado abre un acta
   ///
   /// In es, this message translates to:
-  /// **'Solo el árbitro asignado a este partido o un organizador puede modificar el acta.'**
+  /// **'Solo el árbitro asignado a este partido puede iniciar y gestionar el acta.'**
   String get refereeMatchUnauthorizedBanner;
 
   /// Aviso informativo no bloqueante cuando algún equipo usa su plantilla inscrita sin convocatoria confirmada

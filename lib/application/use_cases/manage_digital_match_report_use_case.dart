@@ -38,20 +38,14 @@ class ManageDigitalMatchReportUseCase {
   final KnockoutBracketService knockoutBracketService;
 
   /// Verifies whether [activeRole] + optional [actorUserId]/[actorRefereeId]
-  /// is authorized to manage [match]. Organizers are always authorized;
-  /// referees must match [match.refereeId] when actor identity is provided.
+  /// is authorized to start and manage [match]. Only the assigned
+  /// [UserRole.referee] is authorized.
   static bool isMatchAssignedToActor(
     ChampionshipMatch match, {
     required UserRole activeRole,
     String? actorUserId,
     String? actorRefereeId,
   }) {
-    if (RolePermissionMatrix.hasCapability(
-      activeRole,
-      RoleCapability.manageTournaments,
-    )) {
-      return true;
-    }
     if (activeRole != UserRole.referee) {
       return false;
     }
@@ -79,13 +73,10 @@ class ManageDigitalMatchReportUseCase {
     String? actorRefereeId,
   }) {
     final hasPermission =
+        role == UserRole.referee &&
         RolePermissionMatrix.hasCapability(
           role,
           RoleCapability.recordMatchEvents,
-        ) ||
-        RolePermissionMatrix.hasCapability(
-          role,
-          RoleCapability.manageTournaments,
         );
 
     if (!hasPermission ||
@@ -98,7 +89,7 @@ class ManageDigitalMatchReportUseCase {
             ))) {
       throw const MatchReportValidationFailure(
         MatchReportErrorCode.unauthorizedRole,
-        'No tienes permisos de árbitro u organizador para dirigir este partido.',
+        'Solo el árbitro asignado a este partido puede iniciar y gestionar el acta.',
       );
     }
   }
@@ -110,13 +101,10 @@ class ManageDigitalMatchReportUseCase {
     String? actorRefereeId,
   }) {
     final hasPermission =
+        role == UserRole.referee &&
         RolePermissionMatrix.hasCapability(
           role,
           RoleCapability.closeMatchReport,
-        ) ||
-        RolePermissionMatrix.hasCapability(
-          role,
-          RoleCapability.manageTournaments,
         );
 
     if (!hasPermission ||
@@ -129,7 +117,7 @@ class ManageDigitalMatchReportUseCase {
             ))) {
       throw const MatchReportValidationFailure(
         MatchReportErrorCode.unauthorizedRole,
-        'No tienes permisos de árbitro u organizador para cerrar el acta oficial.',
+        'Solo el árbitro asignado a este partido puede cerrar el acta oficial.',
       );
     }
   }

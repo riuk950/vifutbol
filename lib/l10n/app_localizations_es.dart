@@ -4134,7 +4134,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get refereeMatchUnauthorizedBanner =>
-      'Solo el árbitro asignado a este partido o un organizador puede modificar el acta.';
+      'Solo el árbitro asignado a este partido puede iniciar y gestionar el acta.';
 
   @override
   String get refereeMatchUnconfirmedConvocationBanner =>

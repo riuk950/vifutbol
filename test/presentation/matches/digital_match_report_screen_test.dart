@@ -323,4 +323,60 @@ void main() {
       );
     },
   );
+
+  testWidgets(
+    'shows read-only banner and hides Iniciar Partido when organizer opens a match report',
+    (tester) async {
+      final match = ChampionshipMatch(
+        id: 'm-org',
+        tournamentId: 't-1',
+        roundNumber: 1,
+        roundName: 'Jornada 1',
+        homeTeamId: 'home-1',
+        awayTeamId: 'away-1',
+        refereeId: 'assigned-ref-99',
+        status: MatchStatus.scheduled,
+        updatedAt: now,
+      );
+      when(() => lineupsRepo.loadConvocationForTeam(any(), any())).thenAnswer(
+        (inv) async => MatchLineupConvocation(
+          id: 'conv-${inv.positionalArguments[1]}',
+          tournamentId: 't-1',
+          teamId: inv.positionalArguments[1] as String,
+          updatedAt: now,
+          starterPlayerIds: const ['p-1'],
+        ),
+      );
+      when(() => reportsRepo.loadOrCreateReport(any())).thenAnswer(
+        (_) async => DigitalMatchReport(
+          matchId: 'm-org',
+          tournamentId: 't-1',
+          homeTeamId: 'home-1',
+          awayTeamId: 'away-1',
+        ),
+      );
+
+      final organizer = UserAccount(
+        id: 'u-org',
+        fullName: 'Organizador Liga',
+        email: 'org@vifutbol.com',
+        activeRole: UserRole.organizer,
+        authorizedRoles: {UserRole.organizer},
+        onboardingCompleted: true,
+      );
+
+      await tester.pumpWidget(wrapScreen(match: match, user: organizer));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const Key('digital_match_report_unauthorized_banner')),
+        findsOneWidget,
+      );
+      expect(find.text('Iniciar Partido'), findsNothing);
+      expect(
+        find.byKey(const Key('digital_match_report_observations_field')),
+        findsNothing,
+      );
+    },
+  );
 }

@@ -197,7 +197,7 @@ void main() {
       );
     });
 
-    test('enforces assigned referee ownership and allows organizer override', () async {
+    test('enforces assigned referee-only ownership and rejects organizer or unassigned referee', () async {
       final report = DigitalMatchReport(
         matchId: match.id,
         tournamentId: match.tournamentId,
@@ -223,14 +223,22 @@ void main() {
         ),
       );
 
-      final orgStarted = await useCase.transitionMatchPeriod(
-        activeRole: UserRole.organizer,
-        match: match,
-        currentReport: report,
-        targetPeriod: MatchPeriod.firstHalf,
-        actorUserId: 'org-user',
+      await expectLater(
+        () => useCase.transitionMatchPeriod(
+          activeRole: UserRole.organizer,
+          match: match,
+          currentReport: report,
+          targetPeriod: MatchPeriod.firstHalf,
+          actorUserId: 'org-user',
+        ),
+        throwsA(
+          isA<MatchReportValidationFailure>().having(
+            (e) => e.code,
+            'code',
+            MatchReportErrorCode.unauthorizedRole,
+          ),
+        ),
       );
-      expect(orgStarted.currentPeriod, MatchPeriod.firstHalf);
     });
   });
 }

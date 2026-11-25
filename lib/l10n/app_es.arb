@@ -5225,7 +5225,7 @@
   "@refereeMatchActionViewClosed": {
     "description": "Botón principal para consultar un acta ya cerrada"
   },
-  "refereeMatchUnauthorizedBanner": "Solo el árbitro asignado a este partido o un organizador puede modificar el acta.",
+  "refereeMatchUnauthorizedBanner": "Solo el árbitro asignado a este partido puede iniciar y gestionar el acta.",
   "@refereeMatchUnauthorizedBanner": {
     "description": "Aviso de solo lectura cuando un árbitro no asignado abre un acta"
   },
