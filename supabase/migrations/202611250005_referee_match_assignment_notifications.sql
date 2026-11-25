@@ -98,14 +98,16 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  SELECT name INTO v_home_name
-  FROM vifutboldev.tournament_teams
-  WHERE id = NEW.home_tournament_team_id
+  SELECT t.name INTO v_home_name
+  FROM vifutboldev.tournament_teams tt
+  JOIN vifutboldev.teams t ON t.id = tt.team_id
+  WHERE tt.id = NEW.home_tournament_team_id
   LIMIT 1;
 
-  SELECT name INTO v_away_name
-  FROM vifutboldev.tournament_teams
-  WHERE id = NEW.away_tournament_team_id
+  SELECT t.name INTO v_away_name
+  FROM vifutboldev.tournament_teams tt
+  JOIN vifutboldev.teams t ON t.id = tt.team_id
+  WHERE tt.id = NEW.away_tournament_team_id
   LIMIT 1;
 
   SELECT name INTO v_tournament_name
