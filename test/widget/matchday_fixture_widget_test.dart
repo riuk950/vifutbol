@@ -298,10 +298,19 @@ void main() {
                   builder: (context) => ElevatedButton(
                     key: const Key('open_schedule_dialog_test'),
                     onPressed: () {
+                      final futureDate = DateTime.now().add(
+                        const Duration(days: 7),
+                      );
                       ScheduleMatchDialog.show(
                         context: context,
                         match: pendingMatch.copyWith(
-                          scheduledStartTime: DateTime(2026, 11, 20, 10, 0),
+                          scheduledStartTime: DateTime(
+                            futureDate.year,
+                            futureDate.month,
+                            futureDate.day,
+                            10,
+                            0,
+                          ),
                         ),
                         tournament: testTournament,
                       );
