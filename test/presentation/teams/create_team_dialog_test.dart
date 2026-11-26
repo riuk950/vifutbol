@@ -33,6 +33,10 @@ class MockTeamsController extends StateNotifier<TeamsCatalogState>
   Future<bool> createTeam({
     required String name,
     required String shortCode,
+    String? delegateName,
+    DateTime? foundedDate,
+    int primaryColorHex = 0xFF00E676,
+    int secondaryColorHex = 0xFF0A0E17,
     ChampionshipTournament? tournament,
     String coachId = 'coach-seed-1',
     UserRole actorRole = UserRole.coach,

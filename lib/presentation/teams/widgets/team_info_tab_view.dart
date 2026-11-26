@@ -111,6 +111,27 @@ class TeamInfoTabView extends ConsumerWidget {
             value: tournament?.name ?? 'Competición oficial',
           ),
           const Divider(color: KickPulseColors.borderSubtle, height: 16),
+          KeyedSubtree(
+            key: const Key('team_info_delegate_row'),
+            child: _buildInfoRow(
+              label: l10n.teamInfoDelegateLabel,
+              value: (team.delegateName != null &&
+                      team.delegateName!.trim().isNotEmpty)
+                  ? team.delegateName!
+                  : l10n.teamInfoNotRegistered,
+            ),
+          ),
+          const Divider(color: KickPulseColors.borderSubtle, height: 16),
+          KeyedSubtree(
+            key: const Key('team_info_founded_date_row'),
+            child: _buildInfoRow(
+              label: l10n.teamInfoFoundedDateLabel,
+              value: team.foundedDate != null
+                  ? '${team.foundedDate!.day.toString().padLeft(2, '0')}/${team.foundedDate!.month.toString().padLeft(2, '0')}/${team.foundedDate!.year}'
+                  : l10n.teamInfoDateNotRegistered,
+            ),
+          ),
+          const Divider(color: KickPulseColors.borderSubtle, height: 16),
           Wrap(
             alignment: WrapAlignment.spaceBetween,
             runAlignment: WrapAlignment.center,
@@ -173,12 +194,16 @@ class TeamInfoTabView extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: KickPulseTypography.captionMeta.copyWith(
-            color: KickPulseColors.textSecondary,
+        Flexible(
+          child: Text(
+            label,
+            style: KickPulseTypography.captionMeta.copyWith(
+              color: KickPulseColors.textSecondary,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
+        const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
         Flexible(
           child: Text(
             value,

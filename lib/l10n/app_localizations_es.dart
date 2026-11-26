@@ -4243,4 +4243,84 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get coachSummaryDocLoadFallback =>
       'No se pudo cargar la imagen del documento';
+
+  @override
+  String get createTeamScreenTitle => 'Registrar Equipo';
+
+  @override
+  String get createTeamScreenSubtitle =>
+      'Completa la ficha institucional e identidad visual de tu club';
+
+  @override
+  String get createTeamIdentityPreviewTitle => 'Vista previa del club';
+
+  @override
+  String get createTeamShortCodeHelper =>
+      'Sigla de 2 a 4 caracteres (auto-sugerida y editable)';
+
+  @override
+  String get createTeamDelegateLabel => 'Delegado del equipo';
+
+  @override
+  String get createTeamDelegateHint =>
+      'Nombre completo del delegado responsable';
+
+  @override
+  String get createTeamDelegateRequired =>
+      'El nombre del delegado es obligatorio';
+
+  @override
+  String get createTeamFoundedDateLabel => 'Fecha de creación';
+
+  @override
+  String get createTeamFoundedDateHint => 'Selecciona la fecha de fundación';
+
+  @override
+  String get createTeamFoundedDateRequired =>
+      'La fecha de creación es obligatoria';
+
+  @override
+  String get createTeamFoundedDateFutureError =>
+      'La fecha de creación no puede ser posterior a hoy';
+
+  @override
+  String get createTeamColorsSectionTitle => 'Colores distintivos';
+
+  @override
+  String get createTeamPrimaryColorLabel => 'Color primario';
+
+  @override
+  String get createTeamSecondaryColorLabel => 'Color secundario';
+
+  @override
+  String get createTeamDistinctColorsError =>
+      'El color primario y el color secundario deben ser distintos';
+
+  @override
+  String get createTeamSubmitButton => 'Registrar equipo';
+
+  @override
+  String get createTeamUnsavedChangesTitle => '¿Descartar cambios?';
+
+  @override
+  String get createTeamUnsavedChangesMessage =>
+      'Tienes datos sin guardar en el registro del equipo. ¿Deseas salir y descartar los cambios?';
+
+  @override
+  String get createTeamUnsavedChangesDiscard => 'Descartar';
+
+  @override
+  String get createTeamUnsavedChangesKeep => 'Seguir editando';
+
+  @override
+  String get teamInfoDelegateLabel => 'Delegado';
+
+  @override
+  String get teamInfoFoundedDateLabel => 'Fecha de creación';
+
+  @override
+  String get teamInfoNotRegistered => 'No registrado';
+
+  @override
+  String get teamInfoDateNotRegistered => 'No registrada';
 }

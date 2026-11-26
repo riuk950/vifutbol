@@ -17,6 +17,8 @@ class TournamentTeam {
   final String? coachId;
   final String? coachName;
   final String? categoryLabel;
+  final String? delegateName;
+  final DateTime? foundedDate;
 
   TournamentTeam({
     required this.id,
@@ -33,6 +35,8 @@ class TournamentTeam {
     this.coachId = 'coach-seed-1',
     this.coachName,
     this.categoryLabel,
+    this.delegateName,
+    this.foundedDate,
   }) : players = List.unmodifiable(
          [...players]..sort((a, b) => a.shirtNumber.compareTo(b.shirtNumber)),
        ),
@@ -68,6 +72,10 @@ class TournamentTeam {
     bool clearCoachName = false,
     String? categoryLabel,
     bool clearCategoryLabel = false,
+    String? delegateName,
+    bool clearDelegateName = false,
+    DateTime? foundedDate,
+    bool clearFoundedDate = false,
   }) {
     return TournamentTeam(
       id: id ?? this.id,
@@ -85,6 +93,10 @@ class TournamentTeam {
       coachName: clearCoachName ? null : (coachName ?? this.coachName),
       categoryLabel:
           clearCategoryLabel ? null : (categoryLabel ?? this.categoryLabel),
+      delegateName:
+          clearDelegateName ? null : (delegateName ?? this.delegateName),
+      foundedDate:
+          clearFoundedDate ? null : (foundedDate ?? this.foundedDate),
     );
   }
 
@@ -104,10 +116,16 @@ class TournamentTeam {
       'coachId': coachId,
       'coachName': coachName,
       'categoryLabel': categoryLabel,
+      'delegateName': delegateName,
+      'foundedDate': foundedDate != null
+          ? '${foundedDate!.year.toString().padLeft(4, '0')}-${foundedDate!.month.toString().padLeft(2, '0')}-${foundedDate!.day.toString().padLeft(2, '0')}'
+          : null,
     };
   }
 
   factory TournamentTeam.fromJson(Map<String, dynamic> json) {
+    final rawDelegate = json['delegateName'] as String?;
+    final rawFounded = json['foundedDate'] as String?;
     return TournamentTeam(
       id: json['id'] as String,
       tournamentId: json['tournamentId'] as String? ?? '',
@@ -135,6 +153,10 @@ class TournamentTeam {
       coachId: json['coachId'] as String? ?? 'coach-seed-1',
       coachName: json['coachName'] as String?,
       categoryLabel: json['categoryLabel'] as String?,
+      delegateName: (rawDelegate != null && rawDelegate.trim().isNotEmpty)
+          ? rawDelegate.trim()
+          : null,
+      foundedDate: rawFounded != null ? DateTime.tryParse(rawFounded) : null,
     );
   }
 

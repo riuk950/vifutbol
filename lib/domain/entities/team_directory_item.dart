@@ -13,6 +13,8 @@ class TeamDirectoryItem {
   final int playerCount;
   final TeamEligibilityStatus eligibilityStatus;
   final String? coachId;
+  final String? delegateName;
+  final DateTime? foundedDate;
   final DateTime updatedAt;
 
   const TeamDirectoryItem({
@@ -27,10 +29,14 @@ class TeamDirectoryItem {
     this.playerCount = 0,
     this.eligibilityStatus = TeamEligibilityStatus.pendingVerification,
     this.coachId,
+    this.delegateName,
+    this.foundedDate,
     required this.updatedAt,
   });
 
   factory TeamDirectoryItem.fromJson(Map<String, dynamic> json) {
+    final rawDelegate = json['delegateName'] as String?;
+    final rawFounded = json['foundedDate'] as String?;
     return TeamDirectoryItem(
       id: json['id'] as String,
       name: json['name'] as String,
@@ -49,6 +55,10 @@ class TeamDirectoryItem {
         json['eligibilityStatus'] as String? ?? 'pendingVerification',
       ),
       coachId: json['coachId'] as String?,
+      delegateName: (rawDelegate != null && rawDelegate.trim().isNotEmpty)
+          ? rawDelegate.trim()
+          : null,
+      foundedDate: rawFounded != null ? DateTime.tryParse(rawFounded) : null,
       updatedAt:
           DateTime.tryParse(json['updatedAt'] as String? ?? '') ??
           DateTime.fromMillisecondsSinceEpoch(0),
@@ -67,6 +77,10 @@ class TeamDirectoryItem {
     'playerCount': playerCount,
     'eligibilityStatus': eligibilityStatus.name,
     'coachId': coachId,
+    'delegateName': delegateName,
+    'foundedDate': foundedDate != null
+        ? '${foundedDate!.year.toString().padLeft(4, '0')}-${foundedDate!.month.toString().padLeft(2, '0')}-${foundedDate!.day.toString().padLeft(2, '0')}'
+        : null,
     'updatedAt': updatedAt.toIso8601String(),
   };
 
@@ -86,6 +100,8 @@ class TeamDirectoryItem {
           playerCount == other.playerCount &&
           eligibilityStatus == other.eligibilityStatus &&
           coachId == other.coachId &&
+          delegateName == other.delegateName &&
+          foundedDate == other.foundedDate &&
           updatedAt == other.updatedAt;
 
   @override
@@ -101,6 +117,8 @@ class TeamDirectoryItem {
     playerCount,
     eligibilityStatus,
     coachId,
+    delegateName,
+    foundedDate,
     updatedAt,
   );
 }

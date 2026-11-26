@@ -76,10 +76,14 @@ class TeamsController extends StateNotifier<TeamsCatalogState> {
     }
   }
 
-  /// Creates a new autonomous or tournament-enrolled team for a coach.
+  /// Creates a new autonomous or tournament-enrolled team for a coach or organizer.
   Future<bool> createTeam({
     required String name,
     required String shortCode,
+    String? delegateName,
+    DateTime? foundedDate,
+    int primaryColorHex = 0xFF00E676,
+    int secondaryColorHex = 0xFF0A0E17,
     ChampionshipTournament? tournament,
     String coachId = 'coach-seed-1',
     UserRole actorRole = UserRole.coach,
@@ -94,6 +98,10 @@ class TeamsController extends StateNotifier<TeamsCatalogState> {
         tournamentId: tournament?.id ?? '',
         name: name,
         shortCode: shortCode,
+        primaryColorHex: primaryColorHex,
+        secondaryColorHex: secondaryColorHex,
+        delegateName: delegateName,
+        foundedDate: foundedDate,
         coachId: coachId,
       );
 

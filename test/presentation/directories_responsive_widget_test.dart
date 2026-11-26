@@ -579,7 +579,15 @@ void main() {
         expect(find.byKey(const Key('team_detail_tab_bar')), findsOneWidget);
         expect(find.byKey(const Key('team_club_profile_card')), findsOneWidget);
         expect(find.byKey(const Key('team_last_match_card')), findsOneWidget);
-        expect(find.byKey(const Key('team_next_match_card')), findsOneWidget);
+        final nextMatchCard = find.byKey(const Key('team_next_match_card'));
+        await tester.scrollUntilVisible(
+          nextMatchCard,
+          200,
+          scrollable: find.byType(Scrollable).last,
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(nextMatchCard, findsOneWidget);
 
         // Switch to "Partidos" tab
         await tester.tap(find.byKey(const Key('team_detail_tab_matches')));

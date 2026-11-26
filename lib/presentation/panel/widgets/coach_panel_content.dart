@@ -11,7 +11,6 @@ import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dar
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_button.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
 import 'package:vifutbol/presentation/panel/widgets/coach_positional_roster_section.dart';
-import 'package:vifutbol/presentation/teams/dialogs/create_team_dialog.dart';
 
 /// Dynamic panel content for [UserRole.coach].
 class CoachPanelContent extends ConsumerWidget {
@@ -141,7 +140,8 @@ class CoachPanelContent extends ConsumerWidget {
                       label: l10n.coachActionRegisterTeamEmpty,
                       icon: const Icon(Icons.add, size: 20),
                       variant: KickPulseButtonVariant.primary,
-                      onPressed: () => CreateTeamDialog.show(context),
+                      onPressed: () =>
+                          Navigator.of(context).pushNamed('/teams/create'),
                     ),
                   ],
                 ),

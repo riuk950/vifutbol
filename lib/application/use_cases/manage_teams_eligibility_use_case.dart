@@ -71,13 +71,41 @@ class ManageTeamsEligibilityUseCase {
       );
     }
 
+    if (team.primaryColorHex == team.secondaryColorHex) {
+      throw const TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.duplicateTeamColors,
+        'El color primario y el color secundario deben ser distintos',
+      );
+    }
+
+    final foundedDate = team.foundedDate;
+    if (foundedDate != null) {
+      final now = DateTime.now();
+      final todayDate = DateTime(now.year, now.month, now.day);
+      final normalizedFounded = DateTime(
+        foundedDate.year,
+        foundedDate.month,
+        foundedDate.day,
+      );
+      if (normalizedFounded.isAfter(todayDate)) {
+        throw const TeamEligibilityValidationFailure(
+          TeamEligibilityErrorCode.invalidFoundedDate,
+          'La fecha de creación no puede ser posterior a hoy',
+        );
+      }
+    }
+
+    final candidateNormalizedName = _normalizeTeamKey(trimmedName);
+
     if (tournament != null) {
       final tournamentTeams = await _repository.loadTeamsForTournament(
         tournament.id,
       );
 
       final isDuplicateName = tournamentTeams.any(
-        (t) => t.id != team.id && t.normalizedName == team.normalizedName,
+        (t) =>
+            t.id != team.id &&
+            _normalizeTeamKey(t.name) == candidateNormalizedName,
       );
       if (isDuplicateName) {
         throw const TeamEligibilityValidationFailure(
@@ -88,7 +116,9 @@ class ManageTeamsEligibilityUseCase {
     } else {
       final allTeams = await _repository.loadTeams();
       final isDuplicateName = allTeams.any(
-        (t) => t.id != team.id && t.normalizedName == team.normalizedName,
+        (t) =>
+            t.id != team.id &&
+            _normalizeTeamKey(t.name) == candidateNormalizedName,
       );
       if (isDuplicateName) {
         throw const TeamEligibilityValidationFailure(
@@ -98,10 +128,16 @@ class ManageTeamsEligibilityUseCase {
       }
     }
 
+    final trimmedDelegate = team.delegateName?.trim();
     final sanitizedTeam = team.copyWith(
       name: trimmedName,
       shortCode: trimmedShortCode.toUpperCase(),
       tournamentId: tournament?.id ?? team.tournamentId,
+      delegateName:
+          (trimmedDelegate != null && trimmedDelegate.isNotEmpty)
+              ? trimmedDelegate
+              : null,
+      clearDelegateName: trimmedDelegate == null || trimmedDelegate.isEmpty,
       updatedAt: DateTime.now(),
     );
 
@@ -323,6 +359,8 @@ class ManageTeamsEligibilityUseCase {
       coachId: sourceTeam.coachId,
       coachName: sourceTeam.coachName,
       categoryLabel: tournament.category,
+      delegateName: sourceTeam.delegateName,
+      foundedDate: sourceTeam.foundedDate,
       updatedAt: DateTime.now(),
     );
 
@@ -648,6 +686,9 @@ class ManageTeamsEligibilityUseCase {
       );
     }
   }
+
+  String _normalizeTeamKey(String name) =>
+      normalizeSearchText(name).replaceAll(RegExp(r'\s+'), ' ');
 
   void _ensureRosterManagementPermission(UserRole role) {
     if (!RolePermissionMatrix.hasCapability(

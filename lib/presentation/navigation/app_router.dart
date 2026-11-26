@@ -24,6 +24,7 @@ import 'package:vifutbol/presentation/shell/tabs/referee_personal_data_screen.da
 import 'package:vifutbol/presentation/shell/tabs/referee_personal_data_summary_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/venues_tab_view.dart';
 import 'package:vifutbol/presentation/teams/coach_lineup_tracking_screen.dart';
+import 'package:vifutbol/presentation/teams/create_team_screen.dart';
 import 'package:vifutbol/presentation/teams/team_detail_screen.dart';
 import 'package:vifutbol/presentation/teams/team_roster_detail_screen.dart';
 import 'package:vifutbol/presentation/tournaments/tournament_form_screen.dart';
@@ -233,6 +234,12 @@ class AppRouter {
       },
     );
 
+    final createTeamHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const CreateTeamScreen();
+      },
+    );
+
     router.define(
       '/',
       handler: rootHandler,
@@ -392,6 +399,11 @@ class AppRouter {
       '/profile/coach-personal-data/summary',
       handler: coachPersonalDataSummaryHandler,
       transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/teams/create',
+      handler: createTeamHandler,
+      transitionType: TransitionType.native,
     );
   }
 }

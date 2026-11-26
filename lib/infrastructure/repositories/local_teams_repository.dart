@@ -153,6 +153,8 @@ class LocalTeamsRepository implements TeamsRepository {
           playerCount: team.players.length,
           eligibilityStatus: team.eligibilityStatus,
           coachId: team.coachId,
+          delegateName: team.delegateName,
+          foundedDate: team.foundedDate,
           updatedAt: team.updatedAt,
         );
       } else {
@@ -175,6 +177,8 @@ class LocalTeamsRepository implements TeamsRepository {
           playerCount: existing.playerCount + team.players.length,
           eligibilityStatus: updatedStatus,
           coachId: existing.coachId ?? team.coachId,
+          delegateName: existing.delegateName ?? team.delegateName,
+          foundedDate: existing.foundedDate ?? team.foundedDate,
           updatedAt: team.updatedAt.isAfter(existing.updatedAt)
               ? team.updatedAt
               : existing.updatedAt,

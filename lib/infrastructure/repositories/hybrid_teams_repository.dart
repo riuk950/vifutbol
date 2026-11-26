@@ -191,6 +191,12 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
       'crest_shape': team.crestShape.name,
       'primary_color_hex': team.primaryColorHex,
       'secondary_color_hex': team.secondaryColorHex,
+      'delegate_name': (team.delegateName != null && team.delegateName!.trim().isNotEmpty)
+          ? team.delegateName!.trim()
+          : null,
+      'founded_date': team.foundedDate != null
+          ? '${team.foundedDate!.year.toString().padLeft(4, '0')}-${team.foundedDate!.month.toString().padLeft(2, '0')}-${team.foundedDate!.day.toString().padLeft(2, '0')}'
+          : null,
       'updated_at': nowIso,
     }, onConflict: 'id');
 
@@ -370,6 +376,12 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
       categoryLabel: (categoryLabel != null && categoryLabel.trim().isNotEmpty)
           ? categoryLabel.trim()
           : null,
+      delegateName: (teamMap['delegate_name'] as String?)?.trim().isNotEmpty == true
+          ? (teamMap['delegate_name'] as String).trim()
+          : null,
+      foundedDate: teamMap['founded_date'] is String
+          ? DateTime.tryParse(teamMap['founded_date'] as String)
+          : null,
       updatedAt: DateTime.parse(row['updated_at'] as String).toLocal(),
     );
   }
@@ -402,6 +414,12 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
           ? coachName.trim()
           : null,
       categoryLabel: null,
+      delegateName: (teamMap['delegate_name'] as String?)?.trim().isNotEmpty == true
+          ? (teamMap['delegate_name'] as String).trim()
+          : null,
+      foundedDate: teamMap['founded_date'] is String
+          ? DateTime.tryParse(teamMap['founded_date'] as String)
+          : null,
       updatedAt: teamMap['updated_at'] != null
           ? DateTime.parse(teamMap['updated_at'] as String).toLocal()
           : DateTime.now(),
@@ -495,7 +513,7 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
         .schema(schema)
         .from('teams')
         .select(
-          'id, coach_id, name, short_code, crest_shape, primary_color_hex, secondary_color_hex, updated_at, '
+          'id, coach_id, name, short_code, crest_shape, primary_color_hex, secondary_color_hex, delegate_name, founded_date, updated_at, '
           'tournament_teams(id, tournament_id, eligibility_status, tournaments(name, category), players(id))',
         )
         .order('name', ascending: true);
@@ -563,6 +581,12 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
               ? TeamEligibilityStatus.eligible
               : TeamEligibilityStatus.pendingVerification,
           coachId: row['coach_id'] as String?,
+          delegateName: (row['delegate_name'] as String?)?.trim().isNotEmpty == true
+              ? (row['delegate_name'] as String).trim()
+              : null,
+          foundedDate: row['founded_date'] is String
+              ? DateTime.tryParse(row['founded_date'] as String)
+              : null,
           updatedAt:
               DateTime.tryParse(
                 row['updated_at'] as String? ?? '',

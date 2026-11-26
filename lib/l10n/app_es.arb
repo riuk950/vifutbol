@@ -5356,5 +5356,101 @@
   "coachSummaryDocLoadFallback": "No se pudo cargar la imagen del documento",
   "@coachSummaryDocLoadFallback": {
     "description": "Mensaje de respaldo cuando falla la carga de la imagen de la cédula"
+  },
+  "createTeamScreenTitle": "Registrar Equipo",
+  "@createTeamScreenTitle": {
+    "description": "Título de la página dedicada de registro detallado de equipo"
+  },
+  "createTeamScreenSubtitle": "Completa la ficha institucional e identidad visual de tu club",
+  "@createTeamScreenSubtitle": {
+    "description": "Subtítulo de la página de registro detallado de equipo"
+  },
+  "createTeamIdentityPreviewTitle": "Vista previa del club",
+  "@createTeamIdentityPreviewTitle": {
+    "description": "Título de la tarjeta de vista previa en vivo en el registro de equipo"
+  },
+  "createTeamShortCodeHelper": "Sigla de 2 a 4 caracteres (auto-sugerida y editable)",
+  "@createTeamShortCodeHelper": {
+    "description": "Texto de ayuda para el código corto del equipo"
+  },
+  "createTeamDelegateLabel": "Delegado del equipo",
+  "@createTeamDelegateLabel": {
+    "description": "Etiqueta del campo delegado del equipo"
+  },
+  "createTeamDelegateHint": "Nombre completo del delegado responsable",
+  "@createTeamDelegateHint": {
+    "description": "Texto de ejemplo para el campo delegado del equipo"
+  },
+  "createTeamDelegateRequired": "El nombre del delegado es obligatorio",
+  "@createTeamDelegateRequired": {
+    "description": "Error de validación cuando falta el delegado del equipo"
+  },
+  "createTeamFoundedDateLabel": "Fecha de creación",
+  "@createTeamFoundedDateLabel": {
+    "description": "Etiqueta del campo fecha de creación del equipo"
+  },
+  "createTeamFoundedDateHint": "Selecciona la fecha de fundación",
+  "@createTeamFoundedDateHint": {
+    "description": "Texto de ejemplo para la fecha de creación del equipo"
+  },
+  "createTeamFoundedDateRequired": "La fecha de creación es obligatoria",
+  "@createTeamFoundedDateRequired": {
+    "description": "Error de validación cuando falta la fecha de creación del equipo"
+  },
+  "createTeamFoundedDateFutureError": "La fecha de creación no puede ser posterior a hoy",
+  "@createTeamFoundedDateFutureError": {
+    "description": "Error de validación cuando la fecha de creación es futura"
+  },
+  "createTeamColorsSectionTitle": "Colores distintivos",
+  "@createTeamColorsSectionTitle": {
+    "description": "Título de la sección de colores distintivos del equipo"
+  },
+  "createTeamPrimaryColorLabel": "Color primario",
+  "@createTeamPrimaryColorLabel": {
+    "description": "Etiqueta de la paleta de color primario"
+  },
+  "createTeamSecondaryColorLabel": "Color secundario",
+  "@createTeamSecondaryColorLabel": {
+    "description": "Etiqueta de la paleta de color secundario"
+  },
+  "createTeamDistinctColorsError": "El color primario y el color secundario deben ser distintos",
+  "@createTeamDistinctColorsError": {
+    "description": "Error de validación cuando ambos colores coinciden"
+  },
+  "createTeamSubmitButton": "Registrar equipo",
+  "@createTeamSubmitButton": {
+    "description": "Botón principal para registrar el equipo"
+  },
+  "createTeamUnsavedChangesTitle": "¿Descartar cambios?",
+  "@createTeamUnsavedChangesTitle": {
+    "description": "Título del diálogo al salir con cambios sin guardar en registro de equipo"
+  },
+  "createTeamUnsavedChangesMessage": "Tienes datos sin guardar en el registro del equipo. ¿Deseas salir y descartar los cambios?",
+  "@createTeamUnsavedChangesMessage": {
+    "description": "Mensaje del diálogo de cambios sin guardar en registro de equipo"
+  },
+  "createTeamUnsavedChangesDiscard": "Descartar",
+  "@createTeamUnsavedChangesDiscard": {
+    "description": "Botón para descartar cambios sin guardar"
+  },
+  "createTeamUnsavedChangesKeep": "Seguir editando",
+  "@createTeamUnsavedChangesKeep": {
+    "description": "Botón para continuar editando el formulario"
+  },
+  "teamInfoDelegateLabel": "Delegado",
+  "@teamInfoDelegateLabel": {
+    "description": "Etiqueta del delegado en la ficha de información del equipo"
+  },
+  "teamInfoFoundedDateLabel": "Fecha de creación",
+  "@teamInfoFoundedDateLabel": {
+    "description": "Etiqueta de fecha de creación en la ficha de información del equipo"
+  },
+  "teamInfoNotRegistered": "No registrado",
+  "@teamInfoNotRegistered": {
+    "description": "Texto de respaldo cuando un equipo no tiene delegado registrado"
+  },
+  "teamInfoDateNotRegistered": "No registrada",
+  "@teamInfoDateNotRegistered": {
+    "description": "Texto de respaldo cuando un equipo no tiene fecha de creación registrada"
   }
 }

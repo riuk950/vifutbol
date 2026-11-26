@@ -13,7 +13,6 @@ import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_search_bar.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_state_view.dart';
-import 'package:vifutbol/presentation/teams/dialogs/create_team_dialog.dart';
 import 'package:vifutbol/presentation/teams/team_detail_screen.dart';
 import 'package:vifutbol/presentation/teams/widgets/kick_pulse_team_crest.dart';
 
@@ -61,8 +60,8 @@ class _TeamsDirectoryScreenState extends ConsumerState<TeamsDirectoryScreen> {
     );
   }
 
-  void _openCreateTeamDialog(BuildContext context) {
-    CreateTeamDialog.show(context);
+  void _openCreateTeamScreen(BuildContext context) {
+    Navigator.of(context).pushNamed('/teams/create');
   }
 
   Future<void> _handleRefresh() async {
@@ -121,7 +120,7 @@ class _TeamsDirectoryScreenState extends ConsumerState<TeamsDirectoryScreen> {
               key: const Key('create_team_from_directory_button'),
               icon: const Icon(Icons.add),
               tooltip: l10n.registerTeamAction,
-              onPressed: () => _openCreateTeamDialog(context),
+              onPressed: () => _openCreateTeamScreen(context),
             ),
         ],
       ),

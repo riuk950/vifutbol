@@ -7323,6 +7323,150 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No se pudo cargar la imagen del documento'**
   String get coachSummaryDocLoadFallback;
+
+  /// Título de la página dedicada de registro detallado de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar Equipo'**
+  String get createTeamScreenTitle;
+
+  /// Subtítulo de la página de registro detallado de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Completa la ficha institucional e identidad visual de tu club'**
+  String get createTeamScreenSubtitle;
+
+  /// Título de la tarjeta de vista previa en vivo en el registro de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Vista previa del club'**
+  String get createTeamIdentityPreviewTitle;
+
+  /// Texto de ayuda para el código corto del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Sigla de 2 a 4 caracteres (auto-sugerida y editable)'**
+  String get createTeamShortCodeHelper;
+
+  /// Etiqueta del campo delegado del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Delegado del equipo'**
+  String get createTeamDelegateLabel;
+
+  /// Texto de ejemplo para el campo delegado del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre completo del delegado responsable'**
+  String get createTeamDelegateHint;
+
+  /// Error de validación cuando falta el delegado del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'El nombre del delegado es obligatorio'**
+  String get createTeamDelegateRequired;
+
+  /// Etiqueta del campo fecha de creación del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha de creación'**
+  String get createTeamFoundedDateLabel;
+
+  /// Texto de ejemplo para la fecha de creación del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona la fecha de fundación'**
+  String get createTeamFoundedDateHint;
+
+  /// Error de validación cuando falta la fecha de creación del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'La fecha de creación es obligatoria'**
+  String get createTeamFoundedDateRequired;
+
+  /// Error de validación cuando la fecha de creación es futura
+  ///
+  /// In es, this message translates to:
+  /// **'La fecha de creación no puede ser posterior a hoy'**
+  String get createTeamFoundedDateFutureError;
+
+  /// Título de la sección de colores distintivos del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Colores distintivos'**
+  String get createTeamColorsSectionTitle;
+
+  /// Etiqueta de la paleta de color primario
+  ///
+  /// In es, this message translates to:
+  /// **'Color primario'**
+  String get createTeamPrimaryColorLabel;
+
+  /// Etiqueta de la paleta de color secundario
+  ///
+  /// In es, this message translates to:
+  /// **'Color secundario'**
+  String get createTeamSecondaryColorLabel;
+
+  /// Error de validación cuando ambos colores coinciden
+  ///
+  /// In es, this message translates to:
+  /// **'El color primario y el color secundario deben ser distintos'**
+  String get createTeamDistinctColorsError;
+
+  /// Botón principal para registrar el equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar equipo'**
+  String get createTeamSubmitButton;
+
+  /// Título del diálogo al salir con cambios sin guardar en registro de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'¿Descartar cambios?'**
+  String get createTeamUnsavedChangesTitle;
+
+  /// Mensaje del diálogo de cambios sin guardar en registro de equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Tienes datos sin guardar en el registro del equipo. ¿Deseas salir y descartar los cambios?'**
+  String get createTeamUnsavedChangesMessage;
+
+  /// Botón para descartar cambios sin guardar
+  ///
+  /// In es, this message translates to:
+  /// **'Descartar'**
+  String get createTeamUnsavedChangesDiscard;
+
+  /// Botón para continuar editando el formulario
+  ///
+  /// In es, this message translates to:
+  /// **'Seguir editando'**
+  String get createTeamUnsavedChangesKeep;
+
+  /// Etiqueta del delegado en la ficha de información del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Delegado'**
+  String get teamInfoDelegateLabel;
+
+  /// Etiqueta de fecha de creación en la ficha de información del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha de creación'**
+  String get teamInfoFoundedDateLabel;
+
+  /// Texto de respaldo cuando un equipo no tiene delegado registrado
+  ///
+  /// In es, this message translates to:
+  /// **'No registrado'**
+  String get teamInfoNotRegistered;
+
+  /// Texto de respaldo cuando un equipo no tiene fecha de creación registrada
+  ///
+  /// In es, this message translates to:
+  /// **'No registrada'**
+  String get teamInfoDateNotRegistered;
 }
 
 class _AppLocalizationsDelegate

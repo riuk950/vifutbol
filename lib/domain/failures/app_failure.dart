@@ -151,6 +151,8 @@ enum TeamEligibilityErrorCode {
   playerAlreadyHasPendingRequest,
   shirtNumberAlreadyReserved,
   joinRequestNotFound,
+  invalidFoundedDate,
+  duplicateTeamColors,
 }
 
 /// Emitted when team enrollment, player registration, or eligibility validation fails.

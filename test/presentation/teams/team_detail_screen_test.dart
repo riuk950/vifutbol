@@ -192,7 +192,14 @@ void main() {
         expect(find.text('FT'), findsOneWidget);
 
         // Next Match Card
-        expect(find.byKey(const Key('team_next_match_card')), findsOneWidget);
+        final nextMatchCard = find.byKey(const Key('team_next_match_card'));
+        await tester.scrollUntilVisible(
+          nextMatchCard,
+          200,
+          scrollable: find.byType(Scrollable).last,
+        );
+        await tester.pumpAndSettle();
+        expect(nextMatchCard, findsOneWidget);
         expect(
           find.byKey(const Key('team_next_match_content')),
           findsOneWidget,

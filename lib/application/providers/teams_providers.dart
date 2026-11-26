@@ -91,6 +91,8 @@ List<TournamentTeam> _resolveEffectiveTeams(Ref ref, String teamId) {
       secondaryColorHex: item.secondaryColorHex,
       eligibilityStatus: item.eligibilityStatus,
       coachId: item.coachId,
+      delegateName: item.delegateName,
+      foundedDate: item.foundedDate,
       updatedAt: item.updatedAt,
     ),
   ];
