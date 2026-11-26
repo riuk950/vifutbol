@@ -19,6 +19,7 @@ class TournamentTeam {
   final String? categoryLabel;
   final String? delegateName;
   final DateTime? foundedDate;
+  final String? crestUrl;
 
   TournamentTeam({
     required this.id,
@@ -37,6 +38,7 @@ class TournamentTeam {
     this.categoryLabel,
     this.delegateName,
     this.foundedDate,
+    this.crestUrl,
   }) : players = List.unmodifiable(
          [...players]..sort((a, b) => a.shirtNumber.compareTo(b.shirtNumber)),
        ),
@@ -76,6 +78,8 @@ class TournamentTeam {
     bool clearDelegateName = false,
     DateTime? foundedDate,
     bool clearFoundedDate = false,
+    String? crestUrl,
+    bool clearCrestUrl = false,
   }) {
     return TournamentTeam(
       id: id ?? this.id,
@@ -97,6 +101,7 @@ class TournamentTeam {
           clearDelegateName ? null : (delegateName ?? this.delegateName),
       foundedDate:
           clearFoundedDate ? null : (foundedDate ?? this.foundedDate),
+      crestUrl: clearCrestUrl ? null : (crestUrl ?? this.crestUrl),
     );
   }
 
@@ -120,12 +125,14 @@ class TournamentTeam {
       'foundedDate': foundedDate != null
           ? '${foundedDate!.year.toString().padLeft(4, '0')}-${foundedDate!.month.toString().padLeft(2, '0')}-${foundedDate!.day.toString().padLeft(2, '0')}'
           : null,
+      'crestUrl': crestUrl,
     };
   }
 
   factory TournamentTeam.fromJson(Map<String, dynamic> json) {
     final rawDelegate = json['delegateName'] as String?;
     final rawFounded = json['foundedDate'] as String?;
+    final rawCrestUrl = json['crestUrl'] as String?;
     return TournamentTeam(
       id: json['id'] as String,
       tournamentId: json['tournamentId'] as String? ?? '',
@@ -157,6 +164,9 @@ class TournamentTeam {
           ? rawDelegate.trim()
           : null,
       foundedDate: rawFounded != null ? DateTime.tryParse(rawFounded) : null,
+      crestUrl: (rawCrestUrl != null && rawCrestUrl.trim().isNotEmpty)
+          ? rawCrestUrl.trim()
+          : null,
     );
   }
 

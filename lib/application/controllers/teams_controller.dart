@@ -3,6 +3,7 @@ import 'package:uuid/uuid.dart';
 import 'package:vifutbol/application/use_cases/manage_teams_eligibility_use_case.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
+import 'package:vifutbol/domain/entities/team_enums.dart';
 import 'package:vifutbol/domain/entities/teams_catalog_state.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
@@ -84,6 +85,7 @@ class TeamsController extends StateNotifier<TeamsCatalogState> {
     DateTime? foundedDate,
     int primaryColorHex = 0xFF00E676,
     int secondaryColorHex = 0xFF0A0E17,
+    String? crestUrl,
     ChampionshipTournament? tournament,
     String coachId = 'coach-seed-1',
     UserRole actorRole = UserRole.coach,
@@ -98,10 +100,12 @@ class TeamsController extends StateNotifier<TeamsCatalogState> {
         tournamentId: tournament?.id ?? '',
         name: name,
         shortCode: shortCode,
+        crestShape: TeamCrestShape.circle,
         primaryColorHex: primaryColorHex,
         secondaryColorHex: secondaryColorHex,
         delegateName: delegateName,
         foundedDate: foundedDate,
+        crestUrl: crestUrl,
         coachId: coachId,
       );
 

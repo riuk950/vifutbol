@@ -361,6 +361,7 @@ class ManageTeamsEligibilityUseCase {
       categoryLabel: tournament.category,
       delegateName: sourceTeam.delegateName,
       foundedDate: sourceTeam.foundedDate,
+      crestUrl: sourceTeam.crestUrl,
       updatedAt: DateTime.now(),
     );
 

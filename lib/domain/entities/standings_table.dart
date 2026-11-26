@@ -10,6 +10,7 @@ class StandingsRow {
     required this.teamShortCode,
     this.crestShape = TeamCrestShape.shield,
     this.primaryColorHex = 0xFF00E676,
+    this.crestUrl,
     required this.played,
     required this.won,
     required this.drawn,
@@ -42,6 +43,7 @@ class StandingsRow {
   final String teamShortCode;
   final TeamCrestShape crestShape;
   final int primaryColorHex;
+  final String? crestUrl;
   final int played;
   final int won;
   final int drawn;
@@ -66,6 +68,7 @@ class StandingsRow {
     String? teamShortCode,
     TeamCrestShape? crestShape,
     int? primaryColorHex,
+    String? crestUrl,
     int? played,
     int? won,
     int? drawn,
@@ -88,6 +91,7 @@ class StandingsRow {
       teamShortCode: teamShortCode ?? this.teamShortCode,
       crestShape: crestShape ?? this.crestShape,
       primaryColorHex: primaryColorHex ?? this.primaryColorHex,
+      crestUrl: crestUrl ?? this.crestUrl,
       played: played ?? this.played,
       won: won ?? this.won,
       drawn: drawn ?? this.drawn,

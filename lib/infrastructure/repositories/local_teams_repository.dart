@@ -155,6 +155,7 @@ class LocalTeamsRepository implements TeamsRepository {
           coachId: team.coachId,
           delegateName: team.delegateName,
           foundedDate: team.foundedDate,
+          crestUrl: team.crestUrl,
           updatedAt: team.updatedAt,
         );
       } else {
@@ -179,6 +180,7 @@ class LocalTeamsRepository implements TeamsRepository {
           coachId: existing.coachId ?? team.coachId,
           delegateName: existing.delegateName ?? team.delegateName,
           foundedDate: existing.foundedDate ?? team.foundedDate,
+          crestUrl: existing.crestUrl ?? team.crestUrl,
           updatedAt: team.updatedAt.isAfter(existing.updatedAt)
               ? team.updatedAt
               : existing.updatedAt,

@@ -1,10 +1,17 @@
+import 'dart:io';
+
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vifutbol/application/providers/auth_providers.dart';
+import 'package:vifutbol/application/providers/document_scanner_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
+import 'package:vifutbol/infrastructure/storage/supabase_document_storage_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
@@ -33,7 +40,13 @@ const List<int> kTeamDistinctiveColorPalette = <int>[
 /// name, auto-suggested short code, delegate, founded date, distinctive colors,
 /// live club preview, and optional tournament enrollment.
 class CreateTeamScreen extends ConsumerStatefulWidget {
-  const CreateTeamScreen({super.key});
+  const CreateTeamScreen({
+    super.key,
+    this.crestPickerOverride,
+  });
+
+  /// Optional test override for picking a team crest image from camera or gallery.
+  final Future<String?> Function(ImageSource source)? crestPickerOverride;
 
   @override
   ConsumerState<CreateTeamScreen> createState() => CreateTeamScreenState();
@@ -55,6 +68,8 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
   String? _selectedTournamentId;
   int _primaryColorHex = kTeamDistinctiveColorPalette[0];
   int _secondaryColorHex = kTeamDistinctiveColorPalette[1];
+  String? _localCrestPath;
+  String? _crestValidationError;
   String? _errorMessage;
 
   @override
@@ -230,6 +245,132 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
     });
   }
 
+  void _showCrestSourceSheet() {
+    final l10n = AppLocalizations.of(context);
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: KickPulseColors.surfaceBase,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(KickPulseRadiiSpacing.cardRadius),
+        ),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n.createTeamCrestSourceTitle,
+                style: KickPulseTypography.sectionHeader,
+              ),
+              const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+              ListTile(
+                key: const Key('create_team_crest_source_gallery'),
+                leading: const Icon(
+                  Icons.photo_library,
+                  color: KickPulseColors.accentElectric,
+                ),
+                title: Text(
+                  l10n.playerProfilePhotoGalleryOption,
+                  style: KickPulseTypography.bodyPrimary,
+                ),
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  _pickCrestImage(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                key: const Key('create_team_crest_source_camera'),
+                leading: const Icon(
+                  Icons.camera_alt,
+                  color: KickPulseColors.accentPrimary,
+                ),
+                title: Text(
+                  l10n.playerProfilePhotoCameraOption,
+                  style: KickPulseTypography.bodyPrimary,
+                ),
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  _pickCrestImage(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickCrestImage(ImageSource source) async {
+    if (_isSubmitting) return;
+    final l10n = AppLocalizations.of(context);
+    try {
+      String? pickedPath;
+      if (widget.crestPickerOverride != null) {
+        pickedPath = await widget.crestPickerOverride!(source);
+      } else {
+        final picker = ImagePicker();
+        final picked = await picker.pickImage(
+          source: source,
+          maxWidth: 1024,
+          imageQuality: 85,
+        );
+        pickedPath = picked?.path;
+      }
+
+      if (pickedPath == null || pickedPath.trim().isEmpty || !mounted) return;
+      final cleanPath = pickedPath.trim();
+      final dotIndex = cleanPath.lastIndexOf('.');
+      final ext = dotIndex >= 0
+          ? cleanPath.substring(dotIndex + 1).toLowerCase()
+          : '';
+      if (!const {'jpg', 'jpeg', 'png', 'webp'}.contains(ext)) {
+        setState(() {
+          _crestValidationError = l10n.createTeamCrestInvalidFormatError;
+        });
+        return;
+      }
+
+      final file = File(cleanPath);
+      if (file.existsSync() &&
+          file.lengthSync() >
+              SupabaseDocumentStorageRepository.maxTeamCrestBytes) {
+        if (!mounted) return;
+        setState(() {
+          _crestValidationError = l10n.createTeamCrestMaxSizeError;
+        });
+        return;
+      }
+
+      if (!mounted) return;
+      setState(() {
+        _localCrestPath = cleanPath;
+        _crestValidationError = null;
+        _isDirty = true;
+      });
+    } on PlatformException {
+      if (!mounted) return;
+      setState(() {
+        _crestValidationError = l10n.playerProfilePhotoPermissionDenied;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _crestValidationError = l10n.playerProfilePhotoPermissionDenied;
+      });
+    }
+  }
+
+  void _removeCrestImage() {
+    setState(() {
+      _localCrestPath = null;
+      _crestValidationError = null;
+      _isDirty = true;
+    });
+  }
+
   Future<void> _handleSubmit() async {
     if (_isSubmitting) return;
     final l10n = AppLocalizations.of(context);
@@ -270,6 +411,31 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
       final shortCode = _shortCodeController.text.trim().toUpperCase();
       final delegateName = _delegateController.text.trim();
 
+      String? resolvedCrestUrl;
+      var usedOfflineCrestFallback = false;
+      if (_localCrestPath != null && _localCrestPath!.trim().isNotEmpty) {
+        try {
+          final storageRepo = ref.read(documentStorageRepositoryProvider);
+          final uploadedUrl = await storageRepo.uploadTeamCrest(
+            userId: coachId,
+            teamId: const Uuid().v4(),
+            localPath: _localCrestPath!,
+          );
+          resolvedCrestUrl = uploadedUrl.trim().isNotEmpty
+              ? uploadedUrl
+              : _localCrestPath;
+          if (resolvedCrestUrl == _localCrestPath &&
+              !resolvedCrestUrl!.startsWith('http://') &&
+              !resolvedCrestUrl.startsWith('https://')) {
+            usedOfflineCrestFallback = true;
+          }
+        } catch (_) {
+          // Offline-first continuity: preserve local path for immediate circular display
+          resolvedCrestUrl = _localCrestPath;
+          usedOfflineCrestFallback = true;
+        }
+      }
+
       final success = await ref
           .read(teamsControllerProvider.notifier)
           .createTeam(
@@ -279,6 +445,7 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
             foundedDate: _foundedDate,
             primaryColorHex: _primaryColorHex,
             secondaryColorHex: _secondaryColorHex,
+            crestUrl: resolvedCrestUrl,
             tournament: selectedTournament,
             coachId: coachId,
             actorRole: actorRole,
@@ -293,7 +460,11 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
           ..hideCurrentSnackBar()
           ..showSnackBar(
             SnackBar(
-              content: Text(l10n.createTeamSuccessMessage(teamName)),
+              content: Text(
+                usedOfflineCrestFallback
+                    ? l10n.createTeamCrestOfflineSyncNotice
+                    : l10n.createTeamSuccessMessage(teamName),
+              ),
               backgroundColor: KickPulseColors.accentPrimary,
             ),
           );
@@ -442,81 +613,171 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
                           const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
                         ],
 
-                        // 1. Live Identity Preview Card
+                        // 1. Live Identity Preview & Circular Crest Picker Card
                         KickPulseCard(
                           key: const Key('create_team_identity_preview'),
-                          child: Row(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              KickPulseTeamCrest(
-                                shortCode: previewShortCode,
-                                primaryColorHex: _primaryColorHex,
-                                secondaryColorHex: _secondaryColorHex,
-                                size: 60,
-                              ),
-                              const SizedBox(
-                                width: KickPulseRadiiSpacing.spaceMd,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      l10n.createTeamIdentityPreviewTitle,
-                                      style: const TextStyle(
-                                        color: KickPulseColors.textSecondary,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      previewName,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: KickPulseTypography.cardTitle,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Row(
+                              Row(
+                                children: [
+                                  KickPulseTeamCrest(
+                                    shortCode: previewShortCode,
+                                    primaryColorHex: _primaryColorHex,
+                                    secondaryColorHex: _secondaryColorHex,
+                                    crestUrl: _localCrestPath,
+                                    size: 64,
+                                  ),
+                                  const SizedBox(
+                                    width: KickPulseRadiiSpacing.spaceMd,
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Container(
-                                          width: 14,
-                                          height: 14,
-                                          decoration: BoxDecoration(
-                                            color: Color(_primaryColorHex),
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color:
-                                                  KickPulseColors.borderStrong,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Container(
-                                          width: 14,
-                                          height: 14,
-                                          decoration: BoxDecoration(
-                                            color: Color(_secondaryColorHex),
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color:
-                                                  KickPulseColors.borderStrong,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
                                         Text(
-                                          previewShortCode,
+                                          l10n.createTeamIdentityPreviewTitle,
                                           style: const TextStyle(
-                                            color: KickPulseColors.textSecondary,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                KickPulseColors.textSecondary,
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
                                           ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          previewName,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: KickPulseTypography.cardTitle,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              width: 14,
+                                              height: 14,
+                                              decoration: BoxDecoration(
+                                                color: Color(_primaryColorHex),
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: KickPulseColors
+                                                      .borderStrong,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 6),
+                                            Container(
+                                              width: 14,
+                                              height: 14,
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    Color(_secondaryColorHex),
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: KickPulseColors
+                                                      .borderStrong,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              previewShortCode,
+                                              style: const TextStyle(
+                                                color: KickPulseColors
+                                                    .textSecondary,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: KickPulseRadiiSpacing.spaceMd,
+                              ),
+                              const Divider(
+                                height: 1,
+                                color: KickPulseColors.borderSubtle,
+                              ),
+                              const SizedBox(
+                                height: KickPulseRadiiSpacing.spaceSm,
+                              ),
+                              Text(
+                                l10n.createTeamCrestHelper,
+                                style: const TextStyle(
+                                  color: KickPulseColors.textSecondary,
+                                  fontSize: 12,
                                 ),
                               ),
+                              const SizedBox(
+                                height: KickPulseRadiiSpacing.spaceSm,
+                              ),
+                              Wrap(
+                                spacing: KickPulseRadiiSpacing.spaceSm,
+                                runSpacing: KickPulseRadiiSpacing.spaceSm,
+                                children: [
+                                  OutlinedButton.icon(
+                                    key: const Key(
+                                      'create_team_upload_crest_button',
+                                    ),
+                                    onPressed: _showCrestSourceSheet,
+                                    icon: const Icon(
+                                      Icons.add_a_photo_outlined,
+                                      size: 18,
+                                    ),
+                                    label: Text(
+                                      _localCrestPath == null
+                                          ? l10n.createTeamCrestUploadAction
+                                          : l10n.createTeamCrestChangeAction,
+                                    ),
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor:
+                                          KickPulseColors.accentElectric,
+                                      side: const BorderSide(
+                                        color: KickPulseColors.accentElectric,
+                                      ),
+                                    ),
+                                  ),
+                                  if (_localCrestPath != null)
+                                    TextButton.icon(
+                                      key: const Key(
+                                        'create_team_remove_crest_button',
+                                      ),
+                                      onPressed: _removeCrestImage,
+                                      icon: const Icon(
+                                        Icons.delete_outline,
+                                        size: 18,
+                                        color: KickPulseColors.accentLive,
+                                      ),
+                                      label: Text(
+                                        l10n.createTeamCrestRemoveAction,
+                                        style: const TextStyle(
+                                          color: KickPulseColors.accentLive,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              if (_crestValidationError != null) ...[
+                                const SizedBox(
+                                  height: KickPulseRadiiSpacing.spaceXs,
+                                ),
+                                Text(
+                                  _crestValidationError!,
+                                  key: const Key('create_team_crest_error'),
+                                  style: const TextStyle(
+                                    color: KickPulseColors.accentLive,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),

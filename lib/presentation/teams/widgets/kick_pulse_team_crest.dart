@@ -1,15 +1,19 @@
+import 'dart:io';
+
 import 'package:material_ui/material_ui.dart';
 import 'package:vifutbol/domain/entities/team_enums.dart';
 
-/// Native vector crest widget rendering athletic emblem shapes, club colors,
-/// and uppercase shortCode monogram with 60 fps performance.
+/// Native vector crest widget rendering athletic circular emblems, club colors,
+/// optional circular club photograph (`crestUrl`), and uppercase shortCode monogram
+/// fallback with 60 fps performance.
 class KickPulseTeamCrest extends StatelessWidget {
   const KickPulseTeamCrest({
     super.key,
     required this.shortCode,
-    this.crestShape = TeamCrestShape.shield,
+    this.crestShape = TeamCrestShape.circle,
     this.primaryColorHex = 0xFF00E676,
     this.secondaryColorHex = 0xFF0A0E17,
+    this.crestUrl,
     this.size = 44.0,
   });
 
@@ -17,6 +21,7 @@ class KickPulseTeamCrest extends StatelessWidget {
   final TeamCrestShape crestShape;
   final int primaryColorHex;
   final int secondaryColorHex;
+  final String? crestUrl;
   final double size;
 
   @override
@@ -25,20 +30,71 @@ class KickPulseTeamCrest extends StatelessWidget {
     final primary = Color(primaryColorHex);
     final secondary = Color(secondaryColorHex);
 
-    return Semantics(
-      label: 'Escudo $cleanCode',
-      child: SizedBox(
-        width: size,
-        height: size,
-        child: CustomPaint(
-          painter: _CrestPainter(
-            shape: crestShape,
-            primaryColor: primary,
-            secondaryColor: secondary,
-            shortCode: cleanCode,
-          ),
+    final fallback = SizedBox(
+      key: const Key('kick_pulse_team_crest_fallback'),
+      width: size,
+      height: size,
+      child: CustomPaint(
+        painter: _CrestPainter(
+          shape: TeamCrestShape.circle,
+          primaryColor: primary,
+          secondaryColor: secondary,
+          shortCode: cleanCode,
         ),
       ),
+    );
+
+    final rawUrl = crestUrl?.trim();
+    Widget content = fallback;
+
+    if (rawUrl != null && rawUrl.isNotEmpty) {
+      final isRemote =
+          rawUrl.startsWith('http://') || rawUrl.startsWith('https://');
+      Widget? imageWidget;
+      if (isRemote) {
+        imageWidget = Image.network(
+          rawUrl,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          errorBuilder: (_, _, _) => fallback,
+        );
+      } else {
+        final file = File(rawUrl);
+        if (file.existsSync()) {
+          imageWidget = Image.file(
+            file,
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+            errorBuilder: (_, _, _) => fallback,
+          );
+        }
+      }
+
+      if (imageWidget != null) {
+        content = Container(
+          key: const Key('kick_pulse_team_crest_photo'),
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [primary, secondary],
+            ),
+            border: Border.all(color: primary, width: 2.0),
+          ),
+          padding: const EdgeInsets.all(1.5),
+          child: ClipOval(child: imageWidget),
+        );
+      }
+    }
+
+    return Semantics(
+      label: 'Escudo $cleanCode',
+      child: content,
     );
   }
 }
@@ -122,40 +178,7 @@ class _CrestPainter extends CustomPainter {
     final w = size.width;
     final h = size.height;
     final path = Path();
-
-    switch (shape) {
-      case TeamCrestShape.circle:
-        path.addOval(Rect.fromLTWH(0, 0, w, h));
-        break;
-
-      case TeamCrestShape.diamond:
-        path.moveTo(w / 2, 0);
-        path.lineTo(w, h / 2);
-        path.lineTo(w / 2, h);
-        path.lineTo(0, h / 2);
-        path.close();
-        break;
-
-      case TeamCrestShape.hexagon:
-        path.moveTo(w * 0.25, 0);
-        path.lineTo(w * 0.75, 0);
-        path.lineTo(w, h * 0.5);
-        path.lineTo(w * 0.75, h);
-        path.lineTo(w * 0.25, h);
-        path.lineTo(0, h * 0.5);
-        path.close();
-        break;
-
-      case TeamCrestShape.shield:
-        path.moveTo(0, h * 0.1);
-        path.quadraticBezierTo(w * 0.5, 0, w, h * 0.1);
-        path.lineTo(w, h * 0.58);
-        path.quadraticBezierTo(w * 0.5, h, w * 0.5, h);
-        path.quadraticBezierTo(0, h * 0.75, 0, h * 0.58);
-        path.close();
-        break;
-    }
-
+    path.addOval(Rect.fromLTWH(0, 0, w, h));
     return path;
   }
 

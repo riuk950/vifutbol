@@ -37,6 +37,7 @@ class MockTeamsController extends StateNotifier<TeamsCatalogState>
     DateTime? foundedDate,
     int primaryColorHex = 0xFF00E676,
     int secondaryColorHex = 0xFF0A0E17,
+    String? crestUrl,
     ChampionshipTournament? tournament,
     String coachId = 'coach-seed-1',
     UserRole actorRole = UserRole.coach,

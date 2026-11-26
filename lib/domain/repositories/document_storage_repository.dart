@@ -35,6 +35,18 @@ abstract class DocumentStorageRepository {
     String? existingDocumentUrl,
   });
 
+  /// Uploads a team crest photograph to the public-read `team-crests` bucket
+  /// (owner-scoped write) and returns its public URL.
+  ///
+  /// Validates format (`jpg`, `jpeg`, `png`, `webp`) and max size (`5 MB`).
+  /// Throws [DocumentUploadFailure] or [OfflineAuthOperationFailure] if upload fails.
+  Future<String> uploadTeamCrest({
+    required String userId,
+    required String teamId,
+    required String localPath,
+    String? existingCrestUrl,
+  });
+
   /// Generates a signed, temporary URL for displaying private documents from `player-documents`.
   /// Returns `null` if the path is invalid or offline.
   Future<String?> getSignedDocumentUrl({

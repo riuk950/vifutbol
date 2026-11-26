@@ -200,6 +200,7 @@ class _TeamCard extends StatelessWidget {
             crestShape: team.crestShape,
             primaryColorHex: team.primaryColorHex,
             secondaryColorHex: team.secondaryColorHex,
+            crestUrl: team.crestUrl,
             size: 46.0,
           ),
           const SizedBox(width: KickPulseRadiiSpacing.spaceSm),

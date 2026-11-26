@@ -463,6 +463,7 @@ class CompetitionTeamsTabView extends ConsumerWidget {
                 crestShape: team.crestShape,
                 primaryColorHex: team.primaryColorHex,
                 secondaryColorHex: team.secondaryColorHex,
+                crestUrl: team.crestUrl,
                 size: 44.0,
               ),
               const SizedBox(width: KickPulseRadiiSpacing.spaceSm),

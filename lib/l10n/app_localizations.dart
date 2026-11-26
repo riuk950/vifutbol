@@ -7467,6 +7467,60 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No registrada'**
   String get teamInfoDateNotRegistered;
+
+  /// Título de la sección de carga del escudo fotográfico del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Escudo del equipo'**
+  String get createTeamCrestSectionTitle;
+
+  /// Botón para subir o tomar foto del escudo del equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Subir escudo'**
+  String get createTeamCrestUploadAction;
+
+  /// Botón para reemplazar la foto del escudo seleccionada
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar escudo'**
+  String get createTeamCrestChangeAction;
+
+  /// Botón para eliminar la foto del escudo seleccionada
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar escudo'**
+  String get createTeamCrestRemoveAction;
+
+  /// Texto informativo de formatos y tamaño máximo del escudo
+  ///
+  /// In es, this message translates to:
+  /// **'Opcional · JPG, PNG o WebP (máx. 5 MB)'**
+  String get createTeamCrestHelper;
+
+  /// Título de la hoja inferior para elegir origen de la foto del escudo
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar escudo'**
+  String get createTeamCrestSourceTitle;
+
+  /// Error cuando la imagen del escudo no tiene extensión JPEG, PNG o WebP
+  ///
+  /// In es, this message translates to:
+  /// **'Formato no soportado. Usa una imagen JPG, PNG o WebP'**
+  String get createTeamCrestInvalidFormatError;
+
+  /// Error cuando la imagen del escudo supera 5 MB
+  ///
+  /// In es, this message translates to:
+  /// **'La imagen del escudo supera el tamaño máximo permitido de 5 MB'**
+  String get createTeamCrestMaxSizeError;
+
+  /// Aviso cuando el escudo queda guardado localmente pendiente de sincronización
+  ///
+  /// In es, this message translates to:
+  /// **'Equipo guardado. El escudo se sincronizará al restablecer la conexión'**
+  String get createTeamCrestOfflineSyncNotice;
 }
 
 class _AppLocalizationsDelegate

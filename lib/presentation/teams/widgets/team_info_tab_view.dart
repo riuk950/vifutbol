@@ -411,6 +411,7 @@ class TeamInfoTabView extends ConsumerWidget {
               crestShape: opponent?.crestShape ?? TeamCrestShape.shield,
               primaryColorHex: opponent?.primaryColorHex ?? 0xFF38BDF8,
               secondaryColorHex: opponent?.secondaryColorHex ?? 0xFF0A0E17,
+              crestUrl: opponent?.crestUrl,
               size: 38,
             ),
             const SizedBox(width: KickPulseRadiiSpacing.spaceSm),

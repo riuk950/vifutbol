@@ -13,12 +13,22 @@ class SupabaseDocumentStorageRepository implements DocumentStorageRepository {
   final ConnectivityRepository connectivity;
   final String bucketName;
   final String avatarBucketName;
+  final String teamCrestBucketName;
+
+  static const int maxTeamCrestBytes = 5 * 1024 * 1024;
+  static const Map<String, String> _allowedCrestMimeTypes = {
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'png': 'image/png',
+    'webp': 'image/webp',
+  };
 
   SupabaseDocumentStorageRepository({
     required this.client,
     required this.connectivity,
     this.bucketName = 'player-documents',
     this.avatarBucketName = 'player-avatars',
+    this.teamCrestBucketName = 'team-crests',
   });
 
   @override
@@ -136,6 +146,72 @@ class SupabaseDocumentStorageRepository implements DocumentStorageRepository {
   }
 
   @override
+  Future<String> uploadTeamCrest({
+    required String userId,
+    required String teamId,
+    required String localPath,
+    String? existingCrestUrl,
+  }) async {
+    final trimmedPath = localPath.trim();
+    if (trimmedPath.isEmpty) {
+      return existingCrestUrl ?? '';
+    }
+
+    final dotIndex = trimmedPath.lastIndexOf('.');
+    final ext = dotIndex >= 0
+        ? trimmedPath.substring(dotIndex + 1).toLowerCase()
+        : '';
+    final mimeType = _allowedCrestMimeTypes[ext];
+    if (mimeType == null) {
+      throw const DocumentUploadFailure(
+        'Formato no soportado. Usa una imagen JPG, PNG o WebP.',
+      );
+    }
+
+    final file = File(trimmedPath);
+    if (!await file.exists()) {
+      return existingCrestUrl ?? '';
+    }
+
+    final length = await file.length();
+    if (length > maxTeamCrestBytes) {
+      throw const DocumentUploadFailure(
+        'La imagen del escudo supera el tamaño máximo permitido de 5 MB.',
+      );
+    }
+
+    final conn = await connectivity.checkConnectivity();
+    if (conn.isDisconnected) {
+      throw const OfflineAuthOperationFailure(
+        'Sin conexión a internet para subir el escudo del equipo.',
+      );
+    }
+
+    try {
+      final storage = client.storage.from(teamCrestBucketName);
+      final crestPath = '$userId/crest_$teamId.$ext';
+      await storage.upload(
+        crestPath,
+        file,
+        fileOptions: FileOptions(
+          upsert: true,
+          contentType: mimeType,
+        ),
+      );
+
+      final basePublicUrl = storage.getPublicUrl(crestPath);
+      final cacheBuster = DateTime.now().millisecondsSinceEpoch;
+      return '$basePublicUrl?t=$cacheBuster';
+    } catch (e) {
+      if (e is AppFailure) rethrow;
+      throw DocumentUploadFailure(
+        'Error al subir la imagen del escudo. Inténtalo nuevamente.',
+        e,
+      );
+    }
+  }
+
+  @override
   Future<String?> getSignedDocumentUrl({
     required String storagePath,
     int expiresInSeconds = 3600,
@@ -196,6 +272,40 @@ class LocalDocumentStorageRepository implements DocumentStorageRepository {
     String? existingDocumentUrl,
   }) async {
     return localPath.isNotEmpty ? localPath : (existingDocumentUrl ?? '');
+  }
+
+  @override
+  Future<String> uploadTeamCrest({
+    required String userId,
+    required String teamId,
+    required String localPath,
+    String? existingCrestUrl,
+  }) async {
+    final trimmedPath = localPath.trim();
+    if (trimmedPath.isEmpty) {
+      return existingCrestUrl ?? '';
+    }
+
+    final dotIndex = trimmedPath.lastIndexOf('.');
+    final ext = dotIndex >= 0
+        ? trimmedPath.substring(dotIndex + 1).toLowerCase()
+        : '';
+    if (!const {'jpg', 'jpeg', 'png', 'webp'}.contains(ext)) {
+      throw const DocumentUploadFailure(
+        'Formato no soportado. Usa una imagen JPG, PNG o WebP.',
+      );
+    }
+
+    final file = File(trimmedPath);
+    if (await file.exists() &&
+        await file.length() >
+            SupabaseDocumentStorageRepository.maxTeamCrestBytes) {
+      throw const DocumentUploadFailure(
+        'La imagen del escudo supera el tamaño máximo permitido de 5 MB.',
+      );
+    }
+
+    return trimmedPath;
   }
 
   @override

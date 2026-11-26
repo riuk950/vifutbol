@@ -15,6 +15,7 @@ class TeamDirectoryItem {
   final String? coachId;
   final String? delegateName;
   final DateTime? foundedDate;
+  final String? crestUrl;
   final DateTime updatedAt;
 
   const TeamDirectoryItem({
@@ -31,12 +32,14 @@ class TeamDirectoryItem {
     this.coachId,
     this.delegateName,
     this.foundedDate,
+    this.crestUrl,
     required this.updatedAt,
   });
 
   factory TeamDirectoryItem.fromJson(Map<String, dynamic> json) {
     final rawDelegate = json['delegateName'] as String?;
     final rawFounded = json['foundedDate'] as String?;
+    final rawCrestUrl = json['crestUrl'] as String?;
     return TeamDirectoryItem(
       id: json['id'] as String,
       name: json['name'] as String,
@@ -59,6 +62,9 @@ class TeamDirectoryItem {
           ? rawDelegate.trim()
           : null,
       foundedDate: rawFounded != null ? DateTime.tryParse(rawFounded) : null,
+      crestUrl: (rawCrestUrl != null && rawCrestUrl.trim().isNotEmpty)
+          ? rawCrestUrl.trim()
+          : null,
       updatedAt:
           DateTime.tryParse(json['updatedAt'] as String? ?? '') ??
           DateTime.fromMillisecondsSinceEpoch(0),
@@ -81,6 +87,7 @@ class TeamDirectoryItem {
     'foundedDate': foundedDate != null
         ? '${foundedDate!.year.toString().padLeft(4, '0')}-${foundedDate!.month.toString().padLeft(2, '0')}-${foundedDate!.day.toString().padLeft(2, '0')}'
         : null,
+    'crestUrl': crestUrl,
     'updatedAt': updatedAt.toIso8601String(),
   };
 
@@ -102,6 +109,7 @@ class TeamDirectoryItem {
           coachId == other.coachId &&
           delegateName == other.delegateName &&
           foundedDate == other.foundedDate &&
+          crestUrl == other.crestUrl &&
           updatedAt == other.updatedAt;
 
   @override
@@ -119,6 +127,7 @@ class TeamDirectoryItem {
     coachId,
     delegateName,
     foundedDate,
+    crestUrl,
     updatedAt,
   );
 }

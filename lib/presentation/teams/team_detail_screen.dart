@@ -109,6 +109,7 @@ class TeamDetailScreen extends ConsumerWidget {
                 crestShape: team.crestShape,
                 primaryColorHex: team.primaryColorHex,
                 secondaryColorHex: team.secondaryColorHex,
+                crestUrl: team.crestUrl,
                 size: 36,
               ),
               const SizedBox(width: KickPulseRadiiSpacing.spaceSm),

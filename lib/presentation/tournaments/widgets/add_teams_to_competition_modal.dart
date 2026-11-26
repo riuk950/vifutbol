@@ -504,6 +504,7 @@ class _AddTeamsToCompetitionModalState
                 crestShape: team.crestShape,
                 primaryColorHex: team.primaryColorHex,
                 secondaryColorHex: team.secondaryColorHex,
+                crestUrl: team.crestUrl,
                 size: 40.0,
               ),
               const SizedBox(width: 12.0),

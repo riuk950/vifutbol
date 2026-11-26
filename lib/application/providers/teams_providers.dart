@@ -93,6 +93,7 @@ List<TournamentTeam> _resolveEffectiveTeams(Ref ref, String teamId) {
       coachId: item.coachId,
       delegateName: item.delegateName,
       foundedDate: item.foundedDate,
+      crestUrl: item.crestUrl,
       updatedAt: item.updatedAt,
     ),
   ];

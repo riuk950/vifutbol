@@ -199,6 +199,7 @@ class StandingsCalculatorService {
           teamShortCode: current.team.shortCode,
           crestShape: current.team.crestShape,
           primaryColorHex: current.team.primaryColorHex,
+          crestUrl: current.team.crestUrl,
           played: current.played,
           won: current.won,
           drawn: current.drawn,

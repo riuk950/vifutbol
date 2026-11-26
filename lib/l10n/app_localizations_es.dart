@@ -4323,4 +4323,34 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get teamInfoDateNotRegistered => 'No registrada';
+
+  @override
+  String get createTeamCrestSectionTitle => 'Escudo del equipo';
+
+  @override
+  String get createTeamCrestUploadAction => 'Subir escudo';
+
+  @override
+  String get createTeamCrestChangeAction => 'Cambiar escudo';
+
+  @override
+  String get createTeamCrestRemoveAction => 'Quitar escudo';
+
+  @override
+  String get createTeamCrestHelper => 'Opcional · JPG, PNG o WebP (máx. 5 MB)';
+
+  @override
+  String get createTeamCrestSourceTitle => 'Seleccionar escudo';
+
+  @override
+  String get createTeamCrestInvalidFormatError =>
+      'Formato no soportado. Usa una imagen JPG, PNG o WebP';
+
+  @override
+  String get createTeamCrestMaxSizeError =>
+      'La imagen del escudo supera el tamaño máximo permitido de 5 MB';
+
+  @override
+  String get createTeamCrestOfflineSyncNotice =>
+      'Equipo guardado. El escudo se sincronizará al restablecer la conexión';
 }

@@ -5452,5 +5452,41 @@
   "teamInfoDateNotRegistered": "No registrada",
   "@teamInfoDateNotRegistered": {
     "description": "Texto de respaldo cuando un equipo no tiene fecha de creación registrada"
+  },
+  "createTeamCrestSectionTitle": "Escudo del equipo",
+  "@createTeamCrestSectionTitle": {
+    "description": "Título de la sección de carga del escudo fotográfico del equipo"
+  },
+  "createTeamCrestUploadAction": "Subir escudo",
+  "@createTeamCrestUploadAction": {
+    "description": "Botón para subir o tomar foto del escudo del equipo"
+  },
+  "createTeamCrestChangeAction": "Cambiar escudo",
+  "@createTeamCrestChangeAction": {
+    "description": "Botón para reemplazar la foto del escudo seleccionada"
+  },
+  "createTeamCrestRemoveAction": "Quitar escudo",
+  "@createTeamCrestRemoveAction": {
+    "description": "Botón para eliminar la foto del escudo seleccionada"
+  },
+  "createTeamCrestHelper": "Opcional · JPG, PNG o WebP (máx. 5 MB)",
+  "@createTeamCrestHelper": {
+    "description": "Texto informativo de formatos y tamaño máximo del escudo"
+  },
+  "createTeamCrestSourceTitle": "Seleccionar escudo",
+  "@createTeamCrestSourceTitle": {
+    "description": "Título de la hoja inferior para elegir origen de la foto del escudo"
+  },
+  "createTeamCrestInvalidFormatError": "Formato no soportado. Usa una imagen JPG, PNG o WebP",
+  "@createTeamCrestInvalidFormatError": {
+    "description": "Error cuando la imagen del escudo no tiene extensión JPEG, PNG o WebP"
+  },
+  "createTeamCrestMaxSizeError": "La imagen del escudo supera el tamaño máximo permitido de 5 MB",
+  "@createTeamCrestMaxSizeError": {
+    "description": "Error cuando la imagen del escudo supera 5 MB"
+  },
+  "createTeamCrestOfflineSyncNotice": "Equipo guardado. El escudo se sincronizará al restablecer la conexión",
+  "@createTeamCrestOfflineSyncNotice": {
+    "description": "Aviso cuando el escudo queda guardado localmente pendiente de sincronización"
   }
 }

@@ -84,6 +84,7 @@ class MatchCard extends StatelessWidget {
                             homeTeam?.primaryColorHex ?? 0xFF00E676,
                         secondaryColorHex:
                             homeTeam?.secondaryColorHex ?? 0xFF0A0E17,
+                        crestUrl: homeTeam?.crestUrl,
                         size: 36,
                       ),
                       const SizedBox(width: KickPulseRadiiSpacing.spaceSm),
@@ -159,6 +160,7 @@ class MatchCard extends StatelessWidget {
                             awayTeam?.primaryColorHex ?? 0xFF2979FF,
                         secondaryColorHex:
                             awayTeam?.secondaryColorHex ?? 0xFF0A0E17,
+                        crestUrl: awayTeam?.crestUrl,
                         size: 36,
                       ),
                     ],

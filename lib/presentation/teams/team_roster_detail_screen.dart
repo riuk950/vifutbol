@@ -152,6 +152,7 @@ class _TeamRosterDetailScreenState
                         crestShape: team.crestShape,
                         primaryColorHex: team.primaryColorHex,
                         secondaryColorHex: team.secondaryColorHex,
+                        crestUrl: team.crestUrl,
                         size: 60.0,
                       ),
                       const SizedBox(width: KickPulseRadiiSpacing.spaceMd),

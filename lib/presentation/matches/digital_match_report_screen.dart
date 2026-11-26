@@ -334,6 +334,7 @@ class _DigitalMatchReportScreenState
                                 secondaryColorHex:
                                     state.homeTeam?.secondaryColorHex ??
                                     0xFF065F46,
+                                crestUrl: state.homeTeam?.crestUrl,
                                 size: 48,
                               ),
                               const SizedBox(height: 6),
@@ -387,6 +388,7 @@ class _DigitalMatchReportScreenState
                                 secondaryColorHex:
                                     state.awayTeam?.secondaryColorHex ??
                                     0xFF1A237E,
+                                crestUrl: state.awayTeam?.crestUrl,
                                 size: 48,
                               ),
                               const SizedBox(height: 6),

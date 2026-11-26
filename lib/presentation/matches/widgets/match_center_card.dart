@@ -118,6 +118,7 @@ class MatchCenterCard extends StatelessWidget {
                                     homeTeam?.primaryColorHex ?? 0xFF00E676,
                                 secondaryColorHex:
                                     homeTeam?.secondaryColorHex ?? 0xFF0A0E17,
+                                crestUrl: homeTeam?.crestUrl,
                                 size: 32,
                               ),
                             ],
@@ -181,6 +182,7 @@ class MatchCenterCard extends StatelessWidget {
                                     awayTeam?.primaryColorHex ?? 0xFF38BDF8,
                                 secondaryColorHex:
                                     awayTeam?.secondaryColorHex ?? 0xFF0A0E17,
+                                crestUrl: awayTeam?.crestUrl,
                                 size: 32,
                               ),
                               const SizedBox(

@@ -245,6 +245,7 @@ class _TeamsDirectoryScreenState extends ConsumerState<TeamsDirectoryScreen> {
                 crestShape: team.crestShape,
                 primaryColorHex: team.primaryColorHex,
                 secondaryColorHex: team.secondaryColorHex,
+                crestUrl: team.crestUrl,
                 size: 44.0,
               ),
               const SizedBox(width: KickPulseRadiiSpacing.spaceSm),

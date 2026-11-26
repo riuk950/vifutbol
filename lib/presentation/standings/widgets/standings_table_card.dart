@@ -5,6 +5,7 @@ import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
+import 'package:vifutbol/presentation/teams/widgets/kick_pulse_team_crest.dart';
 
 /// Displays the official deterministic league or group-stage standings table
 /// with `tabular-nums` alignment (`FR-010`) and zero horizontal overflow (`SC-004`).
@@ -327,24 +328,38 @@ class _StandingsTableCardState extends State<StandingsTableCard> {
             ),
             SizedBox(
               width: 150,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: <Widget>[
-                  Text(
-                    '${row.teamName} (${row.teamShortCode})',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: KickPulseTypography.bodyPrimary.copyWith(
-                      fontWeight: FontWeight.w600,
+                  KickPulseTeamCrest(
+                    shortCode: row.teamShortCode,
+                    crestShape: row.crestShape,
+                    primaryColorHex: row.primaryColorHex,
+                    crestUrl: row.crestUrl,
+                    size: 22,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          '${row.teamName} (${row.teamShortCode})',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: KickPulseTypography.bodyPrimary.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (row.isTiedOnAllCriteria)
+                          Text(
+                            l10n.standingsTechnicalTieBadge,
+                            style: KickPulseTypography.microBadge.copyWith(
+                              color: KickPulseColors.accentWarning,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
-                  if (row.isTiedOnAllCriteria)
-                    Text(
-                      l10n.standingsTechnicalTieBadge,
-                      style: KickPulseTypography.microBadge.copyWith(
-                        color: KickPulseColors.accentWarning,
-                      ),
-                    ),
                 ],
               ),
             ),

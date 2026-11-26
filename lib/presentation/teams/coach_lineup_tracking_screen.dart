@@ -239,6 +239,7 @@ class _CoachLineupTrackingScreenState
                   crestShape: team.crestShape,
                   primaryColorHex: team.primaryColorHex,
                   secondaryColorHex: team.secondaryColorHex,
+                  crestUrl: team.crestUrl,
                   size: 48,
                 ),
                 const SizedBox(width: KickPulseRadiiSpacing.spaceMd),

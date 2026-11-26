@@ -1,4 +1,7 @@
-import 'package:supabase_flutter/supabase_flutter.dart' show SupabaseClient;
+import 'dart:io';
+
+import 'package:supabase_flutter/supabase_flutter.dart'
+    show FileOptions, SupabaseClient;
 import 'package:vifutbol/domain/entities/player_directory_item.dart';
 import 'package:vifutbol/domain/entities/registered_player.dart';
 import 'package:vifutbol/domain/entities/sync_outbox_item.dart';
@@ -180,7 +183,42 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
         resolvedMasterTeamId ??
         HybridRepositorySupport.ensureUuid(team.id, 'team');
 
-    // 1. Upsert parent club in `teams`
+    // 1. Upsert parent club in `teams` (including offline-first crest upload if local path)
+    String? resolvedCrestUrl =
+        (team.crestUrl != null && team.crestUrl!.trim().isNotEmpty)
+        ? team.crestUrl!.trim()
+        : null;
+    if (resolvedCrestUrl != null &&
+        !resolvedCrestUrl.startsWith('http://') &&
+        !resolvedCrestUrl.startsWith('https://')) {
+      try {
+        final localFile = File(resolvedCrestUrl);
+        if (await localFile.exists()) {
+          final ext = resolvedCrestUrl.split('.').last.toLowerCase();
+          final mime = switch (ext) {
+            'png' => 'image/png',
+            'webp' => 'image/webp',
+            _ => 'image/jpeg',
+          };
+          final ownerId =
+              client.auth.currentUser?.id ??
+              HybridRepositorySupport.uuidOrNull(team.coachId) ??
+              masterTeamId;
+          final crestPath = '$ownerId/crest_$masterTeamId.$ext';
+          final storage = client.storage.from('team-crests');
+          await storage.upload(
+            crestPath,
+            localFile,
+            fileOptions: FileOptions(upsert: true, contentType: mime),
+          );
+          resolvedCrestUrl =
+              '${storage.getPublicUrl(crestPath)}?t=${DateTime.now().millisecondsSinceEpoch}';
+        }
+      } catch (_) {
+        // Keep local path on temporary storage/network error
+      }
+    }
+
     await client.schema(schema).from('teams').upsert({
       'id': masterTeamId,
       'coach_id':
@@ -191,6 +229,7 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
       'crest_shape': team.crestShape.name,
       'primary_color_hex': team.primaryColorHex,
       'secondary_color_hex': team.secondaryColorHex,
+      'crest_url': resolvedCrestUrl,
       'delegate_name': (team.delegateName != null && team.delegateName!.trim().isNotEmpty)
           ? team.delegateName!.trim()
           : null,
@@ -382,6 +421,9 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
       foundedDate: teamMap['founded_date'] is String
           ? DateTime.tryParse(teamMap['founded_date'] as String)
           : null,
+      crestUrl: (teamMap['crest_url'] as String?)?.trim().isNotEmpty == true
+          ? (teamMap['crest_url'] as String).trim()
+          : null,
       updatedAt: DateTime.parse(row['updated_at'] as String).toLocal(),
     );
   }
@@ -419,6 +461,9 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
           : null,
       foundedDate: teamMap['founded_date'] is String
           ? DateTime.tryParse(teamMap['founded_date'] as String)
+          : null,
+      crestUrl: (teamMap['crest_url'] as String?)?.trim().isNotEmpty == true
+          ? (teamMap['crest_url'] as String).trim()
           : null,
       updatedAt: teamMap['updated_at'] != null
           ? DateTime.parse(teamMap['updated_at'] as String).toLocal()
@@ -513,7 +558,7 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
         .schema(schema)
         .from('teams')
         .select(
-          'id, coach_id, name, short_code, crest_shape, primary_color_hex, secondary_color_hex, delegate_name, founded_date, updated_at, '
+          'id, coach_id, name, short_code, crest_shape, primary_color_hex, secondary_color_hex, crest_url, delegate_name, founded_date, updated_at, '
           'tournament_teams(id, tournament_id, eligibility_status, tournaments(name, category), players(id))',
         )
         .order('name', ascending: true);
@@ -586,6 +631,9 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
               : null,
           foundedDate: row['founded_date'] is String
               ? DateTime.tryParse(row['founded_date'] as String)
+              : null,
+          crestUrl: (row['crest_url'] as String?)?.trim().isNotEmpty == true
+              ? (row['crest_url'] as String).trim()
               : null,
           updatedAt:
               DateTime.tryParse(
