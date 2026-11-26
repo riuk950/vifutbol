@@ -1,5 +1,6 @@
 import 'package:vifutbol/domain/entities/role_profile_data.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
+import 'package:vifutbol/domain/services/player_personal_data_utils.dart';
 
 /// User account representation within vifutbol championships.
 class UserAccount {
@@ -71,10 +72,21 @@ class UserAccount {
             _hasText(roleProfile?.documentBackUrl) &&
             _hasText(roleProfile?.certificationDocumentUrl);
       case UserRole.coach:
+        final coachBirthDate = roleProfile?.birthDate;
         return hasPhone &&
             hasDoc &&
+            _hasText(roleProfile?.firstName) &&
+            _hasText(roleProfile?.firstSurname) &&
+            _hasText(roleProfile?.sex) &&
+            coachBirthDate != null &&
+            PlayerPersonalDataUtils.calculateAge(coachBirthDate) >= 18 &&
+            _hasText(roleProfile?.bloodType) &&
+            _hasText(roleProfile?.department) &&
+            _hasText(roleProfile?.municipality) &&
             _hasText(roleProfile?.clubName) &&
-            _hasText(roleProfile?.licenseLevel);
+            _hasText(roleProfile?.licenseLevel) &&
+            _hasText(roleProfile?.documentFrontUrl) &&
+            _hasText(roleProfile?.documentBackUrl);
       case UserRole.organizer:
         return hasPhone &&
             hasDoc &&

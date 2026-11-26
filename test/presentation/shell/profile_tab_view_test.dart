@@ -129,9 +129,18 @@ void main() {
       onboardingCompleted: true,
       phone: '3001112233',
       documentId: '77665544',
-      roleProfile: const RoleProfileData(
+      roleProfile: RoleProfileData(
+        firstName: 'Luis',
+        firstSurname: 'Gómez',
+        sex: 'M',
+        birthDate: DateTime(1985, 4, 10),
+        bloodType: 'O+',
+        department: 'Antioquia',
+        municipality: 'Medellín',
         clubName: 'Club Norte',
         licenseLevel: 'PRO',
+        documentFrontUrl: 'u2/front.jpg',
+        documentBackUrl: 'u2/back.jpg',
       ),
     );
     final controller = _TestAuthController(

@@ -143,9 +143,18 @@ void main() {
       expect(missingClub.isProfileCompleteForActiveRole, isFalse);
 
       final complete = missingClub.copyWith(
-        roleProfile: const RoleProfileData(
+        roleProfile: RoleProfileData(
+          firstName: 'Luis',
+          firstSurname: 'Gómez',
+          sex: 'M',
+          birthDate: DateTime(1985, 4, 10),
+          bloodType: 'O+',
+          department: 'Antioquia',
+          municipality: 'Medellín',
           clubName: 'Club Deportivo Norte',
           licenseLevel: 'PRO',
+          documentFrontUrl: 'u3/document_front.jpg',
+          documentBackUrl: 'u3/document_back.jpg',
         ),
       );
       expect(complete.isProfileCompleteForActiveRole, isTrue);

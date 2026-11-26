@@ -304,6 +304,15 @@ void main() {
         (_) async => {
           'club_name': 'Club Norte',
           'license_level': 'PRO',
+          'first_name': 'Luis',
+          'first_surname': 'Gómez',
+          'sex': 'M',
+          'birth_date': '1985-04-10',
+          'blood_type': 'O+',
+          'department': 'Antioquia',
+          'municipality': 'Medellín',
+          'document_front_url': 'coach/front.jpg',
+          'document_back_url': 'coach/back.jpg',
         },
       );
 

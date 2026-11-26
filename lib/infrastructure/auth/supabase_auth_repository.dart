@@ -165,7 +165,9 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
         client
             .schema(schema)
             .from('coach_profiles')
-            .select('club_name, license_level')
+            .select(
+              'club_name, license_level, first_name, second_name, first_surname, second_surname, sex, birth_date, blood_type, department, municipality, document_front_url, document_back_url',
+            )
             .eq('user_account_id', userAccountId)
             .maybeSingle(),
         client
@@ -231,20 +233,47 @@ class _PostgrestUserProfileDataSource implements SupabaseUserProfileDataSource {
           'linked_referee_id': referee['id'],
           'certification_level': referee['certification_level'],
           'certification_document_url': referee['certification_document_url'],
-          'first_name': player?['first_name'] ?? referee['first_name'],
-          'second_name': player?['second_name'] ?? referee['second_name'],
-          'first_surname': player?['first_surname'] ?? referee['first_surname'],
+          'first_name':
+              player?['first_name'] ??
+              referee['first_name'] ??
+              coach?['first_name'],
+          'second_name':
+              player?['second_name'] ??
+              referee['second_name'] ??
+              coach?['second_name'],
+          'first_surname':
+              player?['first_surname'] ??
+              referee['first_surname'] ??
+              coach?['first_surname'],
           'second_surname':
-              player?['second_surname'] ?? referee['second_surname'],
-          'sex': player?['sex'] ?? referee['sex'],
-          'birth_date': player?['birth_date'] ?? referee['birth_date'],
-          'blood_type': player?['blood_type'] ?? referee['blood_type'],
-          'department': player?['department'] ?? referee['department'],
-          'municipality': player?['municipality'] ?? referee['municipality'],
+              player?['second_surname'] ??
+              referee['second_surname'] ??
+              coach?['second_surname'],
+          'sex': player?['sex'] ?? referee['sex'] ?? coach?['sex'],
+          'birth_date':
+              player?['birth_date'] ??
+              referee['birth_date'] ??
+              coach?['birth_date'],
+          'blood_type':
+              player?['blood_type'] ??
+              referee['blood_type'] ??
+              coach?['blood_type'],
+          'department':
+              player?['department'] ??
+              referee['department'] ??
+              coach?['department'],
+          'municipality':
+              player?['municipality'] ??
+              referee['municipality'] ??
+              coach?['municipality'],
           'document_front_url':
-              player?['document_front_url'] ?? referee['document_front_url'],
+              player?['document_front_url'] ??
+              referee['document_front_url'] ??
+              coach?['document_front_url'],
           'document_back_url':
-              player?['document_back_url'] ?? referee['document_back_url'],
+              player?['document_back_url'] ??
+              referee['document_back_url'] ??
+              coach?['document_back_url'],
           'photo_url': player?['photo_url'] ?? referee['photo_url'],
         },
       };

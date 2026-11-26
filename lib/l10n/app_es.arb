@@ -5260,5 +5260,101 @@
   "refereeMatchAssignedAlertTitle": "Nuevo partido asignado",
   "@refereeMatchAssignedAlertTitle": {
     "description": "Título de la notificación cuando se asigna un partido a un árbitro"
+  },
+  "coachPersonalDataTitle": "Datos del Entrenador",
+  "@coachPersonalDataTitle": {
+    "description": "Título de la pantalla del formulario de datos personales del entrenador"
+  },
+  "coachPersonalDataSubtitle": "Completa tu información de cédula colombiana y perfil técnico",
+  "@coachPersonalDataSubtitle": {
+    "description": "Subtítulo del formulario de datos personales del entrenador"
+  },
+  "coachPersonalDataTile": "Datos del Entrenador",
+  "@coachPersonalDataTile": {
+    "description": "Título de la tarjeta de datos personales del entrenador en la pestaña Perfil"
+  },
+  "coachPersonalDataSubtitleTile": "Completa tu cédula, ubicación, club y licencia",
+  "@coachPersonalDataSubtitleTile": {
+    "description": "Subtítulo de la tarjeta cuando el perfil del entrenador está incompleto"
+  },
+  "coachPersonalDataSummarySubtitle": "Ver identidad, acreditación técnica y documentos",
+  "@coachPersonalDataSummarySubtitle": {
+    "description": "Subtítulo de la tarjeta cuando el perfil del entrenador está completo"
+  },
+  "coachPersonalDataSummaryTitle": "Resumen del Entrenador",
+  "@coachPersonalDataSummaryTitle": {
+    "description": "Título de la pantalla resumen del entrenador"
+  },
+  "coachPersonalDataBirthDateMinAge": "Debes ser mayor de edad (mínimo 18 años)",
+  "@coachPersonalDataBirthDateMinAge": {
+    "description": "Error de validación cuando el entrenador es menor de 18 años"
+  },
+  "coachTechnicalSectionTitle": "Acreditación Técnica",
+  "@coachTechnicalSectionTitle": {
+    "description": "Título de la sección de club y licencia del entrenador"
+  },
+  "coachTechnicalSectionSubtitle": "Indica tu club actual o escribe Independiente, y selecciona tu licencia",
+  "@coachTechnicalSectionSubtitle": {
+    "description": "Subtítulo de la sección de acreditación técnica del entrenador"
+  },
+  "coachClubNameLabel": "Club o institución",
+  "@coachClubNameLabel": {
+    "description": "Etiqueta del campo club o institución del entrenador"
+  },
+  "coachClubNameHint": "Ej. Club Deportivo o Independiente",
+  "@coachClubNameHint": {
+    "description": "Texto de ejemplo para el campo club del entrenador"
+  },
+  "coachClubNameHelper": "Si no perteneces a un club, escribe \"Independiente\"",
+  "@coachClubNameHelper": {
+    "description": "Texto de ayuda indicando que puede escribir Independiente"
+  },
+  "coachClubNameRequired": "El nombre del club es obligatorio (puedes escribir Independiente)",
+  "@coachClubNameRequired": {
+    "description": "Error de validación cuando falta el club del entrenador"
+  },
+  "coachLicenseLevelLabel": "Nivel de licencia",
+  "@coachLicenseLevelLabel": {
+    "description": "Etiqueta del selector de nivel de licencia del entrenador"
+  },
+  "coachLicenseLevelRequired": "Selecciona tu nivel de licencia",
+  "@coachLicenseLevelRequired": {
+    "description": "Error de validación cuando falta el nivel de licencia del entrenador"
+  },
+  "coachLicenseNone": "Sin licencia",
+  "@coachLicenseNone": {
+    "description": "Opción de nivel de licencia para entrenadores sin licencia formal"
+  },
+  "coachLicenseC": "Licencia C",
+  "@coachLicenseC": {
+    "description": "Opción de nivel de licencia C"
+  },
+  "coachLicenseB": "Licencia B",
+  "@coachLicenseB": {
+    "description": "Opción de nivel de licencia B"
+  },
+  "coachLicenseA": "Licencia A",
+  "@coachLicenseA": {
+    "description": "Opción de nivel de licencia A"
+  },
+  "coachLicensePro": "Licencia PRO",
+  "@coachLicensePro": {
+    "description": "Opción de nivel de licencia PRO"
+  },
+  "coachLicenseOther": "Otra",
+  "@coachLicenseOther": {
+    "description": "Opción para otro tipo de licencia de entrenador"
+  },
+  "coachSummaryTechnicalTitle": "Acreditación Técnica",
+  "@coachSummaryTechnicalTitle": {
+    "description": "Título de la tarjeta de acreditación técnica en el resumen del entrenador"
+  },
+  "coachSummaryTechnicalSubtitle": "Club y nivel de licencia registrados",
+  "@coachSummaryTechnicalSubtitle": {
+    "description": "Subtítulo de la tarjeta técnica en el resumen del entrenador"
+  },
+  "coachSummaryDocLoadFallback": "No se pudo cargar la imagen del documento",
+  "@coachSummaryDocLoadFallback": {
+    "description": "Mensaje de respaldo cuando falla la carga de la imagen de la cédula"
   }
 }

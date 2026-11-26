@@ -13,6 +13,8 @@ import 'package:vifutbol/presentation/directories/teams_directory_screen.dart';
 import 'package:vifutbol/presentation/matches/digital_match_report_screen.dart';
 import 'package:vifutbol/presentation/panel/panel_screen.dart';
 import 'package:vifutbol/presentation/shell/app_shell_screen.dart';
+import 'package:vifutbol/presentation/shell/tabs/coach_personal_data_screen.dart';
+import 'package:vifutbol/presentation/shell/tabs/coach_personal_data_summary_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/player_personal_data_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/player_personal_data_summary_screen.dart';
 import 'package:vifutbol/presentation/shell/tabs/player_team_requests_screen.dart';
@@ -219,6 +221,18 @@ class AppRouter {
       },
     );
 
+    final coachPersonalDataHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const CoachPersonalDataScreen();
+      },
+    );
+
+    final coachPersonalDataSummaryHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return const CoachPersonalDataSummaryScreen();
+      },
+    );
+
     router.define(
       '/',
       handler: rootHandler,
@@ -367,6 +381,16 @@ class AppRouter {
     router.define(
       '/profile/referee-personal-data/summary',
       handler: refereePersonalDataSummaryHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/profile/coach-personal-data',
+      handler: coachPersonalDataHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+    router.define(
+      '/profile/coach-personal-data/summary',
+      handler: coachPersonalDataSummaryHandler,
       transitionType: TransitionType.fadeIn,
     );
   }

@@ -219,6 +219,9 @@ class ProfileTabView extends ConsumerWidget {
                       } else if (activeRole == UserRole.referee) {
                         Navigator.of(context)
                             .pushNamed('/profile/referee-personal-data');
+                      } else if (activeRole == UserRole.coach) {
+                        Navigator.of(context)
+                            .pushNamed('/profile/coach-personal-data');
                       } else {
                         CompleteProfileDialog.show(context, user: user);
                       }
@@ -250,6 +253,74 @@ class ProfileTabView extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
+
+          // Coach Personal Data Section (Only visible for coach role)
+          if (!isGuest &&
+              (activeRole == UserRole.coach ||
+                  (user?.authorizedRoles.contains(UserRole.coach) ??
+                      false))) ...[
+            KickPulseCard(
+              child: InkWell(
+                key: const Key('profile_coach_personal_data_tile'),
+                onTap: () {
+                  final isComplete =
+                      user?.isProfileCompleteForActiveRole ?? false;
+                  Navigator.of(context).pushNamed(
+                    isComplete
+                        ? '/profile/coach-personal-data/summary'
+                        : '/profile/coach-personal-data',
+                  );
+                },
+                borderRadius: BorderRadius.circular(
+                  KickPulseRadiiSpacing.cardRadius,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: KickPulseRadiiSpacing.spaceSm,
+                    vertical: KickPulseRadiiSpacing.spaceXs,
+                  ),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        backgroundColor: KickPulseColors.surfaceElevated,
+                        child: Icon(
+                          Icons.sports_outlined,
+                          color: KickPulseColors.accentPrimary,
+                        ),
+                      ),
+                      const SizedBox(width: KickPulseRadiiSpacing.spaceMd),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.coachPersonalDataTile,
+                              style: KickPulseTypography.cardTitle,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              (user?.isProfileCompleteForActiveRole ?? false)
+                                  ? l10n.coachPersonalDataSummarySubtitle
+                                  : l10n.coachPersonalDataSubtitleTile,
+                              style: const TextStyle(
+                                color: KickPulseColors.textSecondary,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.chevron_right,
+                        color: KickPulseColors.textSecondary,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: KickPulseRadiiSpacing.spaceMd),
+          ],
 
           // Referee Personal Data Section (Only visible for referee role)
           if (!isGuest &&

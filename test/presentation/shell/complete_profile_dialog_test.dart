@@ -66,34 +66,34 @@ void main() {
     );
   }
 
-  testWidgets('coach sees adaptive fields and immediately updates badge on save',
+  testWidgets('organizer sees adaptive fields and immediately updates badge on save',
       (tester) async {
-    final incompleteCoach = UserAccount(
+    final incompleteOrganizer = UserAccount(
       id: 'u1',
-      fullName: 'DT Luis',
+      fullName: 'Org Luis',
       email: 'luis@test.com',
-      activeRole: UserRole.coach,
-      authorizedRoles: {UserRole.coach, UserRole.fan},
+      activeRole: UserRole.organizer,
+      authorizedRoles: {UserRole.organizer, UserRole.fan},
       onboardingCompleted: true,
     );
-    final completeCoach = incompleteCoach.copyWith(
+    final completeOrganizer = incompleteOrganizer.copyWith(
       phone: '3001112233',
       documentId: '77665544',
       roleProfile: const RoleProfileData(
-        clubName: 'Club Norte',
-        licenseLevel: 'PRO',
+        organizationName: 'Liga Norte',
+        baseCity: 'Medellín',
       ),
     );
 
     when(
       () => authRepository.updateRoleProfile(
         userId: 'u1',
-        role: UserRole.coach,
+        role: UserRole.organizer,
         phone: '3001112233',
         documentId: '77665544',
         roleProfile: any(named: 'roleProfile'),
       ),
-    ).thenAnswer((_) async => completeCoach);
+    ).thenAnswer((_) async => completeOrganizer);
 
     final controller = _TestAuthController(
       authRepository: authRepository,
@@ -101,7 +101,7 @@ void main() {
         status: AuthStatus.authenticated,
         session: AuthSession(
           sessionId: 's1',
-          user: incompleteCoach,
+          user: incompleteOrganizer,
           sessionToken: 't1',
           authenticatedAt: DateTime(2026, 11, 13),
         ),
@@ -116,8 +116,8 @@ void main() {
 
     expect(find.byKey(const ValueKey('complete_profile_phone_field')), findsOneWidget);
     expect(find.byKey(const ValueKey('complete_profile_document_field')), findsOneWidget);
-    expect(find.byKey(const ValueKey('complete_profile_club_field')), findsOneWidget);
-    expect(find.byKey(const ValueKey('complete_profile_license_field')), findsOneWidget);
+    expect(find.byKey(const ValueKey('complete_profile_organization_field')), findsOneWidget);
+    expect(find.byKey(const ValueKey('complete_profile_base_city_field')), findsOneWidget);
 
     await tester.enterText(
       find.byKey(const ValueKey('complete_profile_phone_field')),
@@ -128,12 +128,12 @@ void main() {
       '77665544',
     );
     await tester.enterText(
-      find.byKey(const ValueKey('complete_profile_club_field')),
-      'Club Norte',
+      find.byKey(const ValueKey('complete_profile_organization_field')),
+      'Liga Norte',
     );
     await tester.enterText(
-      find.byKey(const ValueKey('complete_profile_license_field')),
-      'PRO',
+      find.byKey(const ValueKey('complete_profile_base_city_field')),
+      'Medellín',
     );
 
     await tester.tap(find.byKey(const ValueKey('complete_profile_save_button')));

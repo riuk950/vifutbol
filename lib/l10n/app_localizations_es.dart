@@ -4162,4 +4162,85 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get refereeMatchAssignedAlertTitle => 'Nuevo partido asignado';
+
+  @override
+  String get coachPersonalDataTitle => 'Datos del Entrenador';
+
+  @override
+  String get coachPersonalDataSubtitle =>
+      'Completa tu información de cédula colombiana y perfil técnico';
+
+  @override
+  String get coachPersonalDataTile => 'Datos del Entrenador';
+
+  @override
+  String get coachPersonalDataSubtitleTile =>
+      'Completa tu cédula, ubicación, club y licencia';
+
+  @override
+  String get coachPersonalDataSummarySubtitle =>
+      'Ver identidad, acreditación técnica y documentos';
+
+  @override
+  String get coachPersonalDataSummaryTitle => 'Resumen del Entrenador';
+
+  @override
+  String get coachPersonalDataBirthDateMinAge =>
+      'Debes ser mayor de edad (mínimo 18 años)';
+
+  @override
+  String get coachTechnicalSectionTitle => 'Acreditación Técnica';
+
+  @override
+  String get coachTechnicalSectionSubtitle =>
+      'Indica tu club actual o escribe Independiente, y selecciona tu licencia';
+
+  @override
+  String get coachClubNameLabel => 'Club o institución';
+
+  @override
+  String get coachClubNameHint => 'Ej. Club Deportivo o Independiente';
+
+  @override
+  String get coachClubNameHelper =>
+      'Si no perteneces a un club, escribe \"Independiente\"';
+
+  @override
+  String get coachClubNameRequired =>
+      'El nombre del club es obligatorio (puedes escribir Independiente)';
+
+  @override
+  String get coachLicenseLevelLabel => 'Nivel de licencia';
+
+  @override
+  String get coachLicenseLevelRequired => 'Selecciona tu nivel de licencia';
+
+  @override
+  String get coachLicenseNone => 'Sin licencia';
+
+  @override
+  String get coachLicenseC => 'Licencia C';
+
+  @override
+  String get coachLicenseB => 'Licencia B';
+
+  @override
+  String get coachLicenseA => 'Licencia A';
+
+  @override
+  String get coachLicensePro => 'Licencia PRO';
+
+  @override
+  String get coachLicenseOther => 'Otra';
+
+  @override
+  String get coachSummaryTechnicalTitle => 'Acreditación Técnica';
+
+  @override
+  String get coachSummaryTechnicalSubtitle =>
+      'Club y nivel de licencia registrados';
+
+  @override
+  String get coachSummaryDocLoadFallback =>
+      'No se pudo cargar la imagen del documento';
 }

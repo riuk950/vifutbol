@@ -7179,6 +7179,150 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Nuevo partido asignado'**
   String get refereeMatchAssignedAlertTitle;
+
+  /// Título de la pantalla del formulario de datos personales del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Datos del Entrenador'**
+  String get coachPersonalDataTitle;
+
+  /// Subtítulo del formulario de datos personales del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Completa tu información de cédula colombiana y perfil técnico'**
+  String get coachPersonalDataSubtitle;
+
+  /// Título de la tarjeta de datos personales del entrenador en la pestaña Perfil
+  ///
+  /// In es, this message translates to:
+  /// **'Datos del Entrenador'**
+  String get coachPersonalDataTile;
+
+  /// Subtítulo de la tarjeta cuando el perfil del entrenador está incompleto
+  ///
+  /// In es, this message translates to:
+  /// **'Completa tu cédula, ubicación, club y licencia'**
+  String get coachPersonalDataSubtitleTile;
+
+  /// Subtítulo de la tarjeta cuando el perfil del entrenador está completo
+  ///
+  /// In es, this message translates to:
+  /// **'Ver identidad, acreditación técnica y documentos'**
+  String get coachPersonalDataSummarySubtitle;
+
+  /// Título de la pantalla resumen del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Resumen del Entrenador'**
+  String get coachPersonalDataSummaryTitle;
+
+  /// Error de validación cuando el entrenador es menor de 18 años
+  ///
+  /// In es, this message translates to:
+  /// **'Debes ser mayor de edad (mínimo 18 años)'**
+  String get coachPersonalDataBirthDateMinAge;
+
+  /// Título de la sección de club y licencia del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Acreditación Técnica'**
+  String get coachTechnicalSectionTitle;
+
+  /// Subtítulo de la sección de acreditación técnica del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Indica tu club actual o escribe Independiente, y selecciona tu licencia'**
+  String get coachTechnicalSectionSubtitle;
+
+  /// Etiqueta del campo club o institución del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Club o institución'**
+  String get coachClubNameLabel;
+
+  /// Texto de ejemplo para el campo club del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Ej. Club Deportivo o Independiente'**
+  String get coachClubNameHint;
+
+  /// Texto de ayuda indicando que puede escribir Independiente
+  ///
+  /// In es, this message translates to:
+  /// **'Si no perteneces a un club, escribe \"Independiente\"'**
+  String get coachClubNameHelper;
+
+  /// Error de validación cuando falta el club del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'El nombre del club es obligatorio (puedes escribir Independiente)'**
+  String get coachClubNameRequired;
+
+  /// Etiqueta del selector de nivel de licencia del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Nivel de licencia'**
+  String get coachLicenseLevelLabel;
+
+  /// Error de validación cuando falta el nivel de licencia del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona tu nivel de licencia'**
+  String get coachLicenseLevelRequired;
+
+  /// Opción de nivel de licencia para entrenadores sin licencia formal
+  ///
+  /// In es, this message translates to:
+  /// **'Sin licencia'**
+  String get coachLicenseNone;
+
+  /// Opción de nivel de licencia C
+  ///
+  /// In es, this message translates to:
+  /// **'Licencia C'**
+  String get coachLicenseC;
+
+  /// Opción de nivel de licencia B
+  ///
+  /// In es, this message translates to:
+  /// **'Licencia B'**
+  String get coachLicenseB;
+
+  /// Opción de nivel de licencia A
+  ///
+  /// In es, this message translates to:
+  /// **'Licencia A'**
+  String get coachLicenseA;
+
+  /// Opción de nivel de licencia PRO
+  ///
+  /// In es, this message translates to:
+  /// **'Licencia PRO'**
+  String get coachLicensePro;
+
+  /// Opción para otro tipo de licencia de entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Otra'**
+  String get coachLicenseOther;
+
+  /// Título de la tarjeta de acreditación técnica en el resumen del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Acreditación Técnica'**
+  String get coachSummaryTechnicalTitle;
+
+  /// Subtítulo de la tarjeta técnica en el resumen del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Club y nivel de licencia registrados'**
+  String get coachSummaryTechnicalSubtitle;
+
+  /// Mensaje de respaldo cuando falla la carga de la imagen de la cédula
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo cargar la imagen del documento'**
+  String get coachSummaryDocLoadFallback;
 }
 
 class _AppLocalizationsDelegate
