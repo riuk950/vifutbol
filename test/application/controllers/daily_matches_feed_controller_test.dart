@@ -16,11 +16,12 @@ import 'package:vifutbol/domain/entities/teams_catalog_state.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
 import 'package:vifutbol/domain/entities/tournaments_catalog_state.dart';
 import 'package:vifutbol/domain/entities/ui_view_state.dart';
+import 'package:vifutbol/domain/services/colombia_time_utils.dart';
 
 void main() {
   group('DailyMatchesDateState', () {
     test('initializes with today by default', () {
-      final now = DateTime.now();
+      final now = ColombiaTimeUtils.todayColombia();
       final state = DailyMatchesDateState.today();
 
       expect(state.activeTab, equals(MatchesDailyTab.today));
@@ -34,7 +35,9 @@ void main() {
       final state = DailyMatchesDateState.today().withTab(
         MatchesDailyTab.yesterday,
       );
-      final yesterday = DateTime.now().subtract(const Duration(days: 1));
+      final yesterday = ColombiaTimeUtils.todayColombia().subtract(
+        const Duration(days: 1),
+      );
 
       expect(state.activeTab, equals(MatchesDailyTab.yesterday));
       expect(state.selectedDate.day, equals(yesterday.day));
@@ -45,7 +48,9 @@ void main() {
       final state = DailyMatchesDateState.today().withTab(
         MatchesDailyTab.tomorrow,
       );
-      final tomorrow = DateTime.now().add(const Duration(days: 1));
+      final tomorrow = ColombiaTimeUtils.todayColombia().add(
+        const Duration(days: 1),
+      );
 
       expect(state.activeTab, equals(MatchesDailyTab.tomorrow));
       expect(state.selectedDate.day, equals(tomorrow.day));
@@ -258,8 +263,7 @@ void main() {
     test(
       'refreshFromCloud loads tournaments, teams, and matches and reactively updates feed',
       () async {
-        final now = DateTime.now();
-        final today = DateTime(now.year, now.month, now.day);
+        final today = ColombiaTimeUtils.todayColombia();
         final tournament = ChampionshipTournament(
           id: 't-cloud-1',
           name: 'Liga Cloud',
