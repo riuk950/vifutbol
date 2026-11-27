@@ -35,6 +35,10 @@ class _FakeMatchesRepository implements TournamentMatchesRepository {
   }
 
   @override
+  Future<List<ChampionshipMatch>> loadAllMatches() async =>
+      List.unmodifiable(matches);
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
@@ -1007,5 +1011,89 @@ void main() {
         );
       },
     );
+  });
+
+  group('ManageTeamsEligibilityUseCase - Coach Edit & Delete (HU 27.4)', () {
+    test('allows owner coach to edit team in inProgress tournament and blocks non-owner', () async {
+      final team = TournamentTeam(
+        id: 'coach-edit-team',
+        tournamentId: closedTournament.id,
+        coachId: 'coach-owner-1',
+        name: 'Atlético Norte',
+        shortCode: 'ATN',
+      );
+      await repository.saveTeam(team);
+
+      await expectLater(
+        useCase.registerOrUpdateTeam(
+          team: team.copyWith(name: 'Atlético Norte Editado'),
+          tournament: closedTournament,
+          actorRole: UserRole.coach,
+          isEdit: true,
+          actorUserId: 'coach-other-2',
+        ),
+        throwsA(isA<UnauthorizedRoleFailure>()),
+      );
+
+      final updated = await useCase.registerOrUpdateTeam(
+        team: team.copyWith(name: 'Atlético Norte Editado'),
+        tournament: closedTournament,
+        actorRole: UserRole.coach,
+        isEdit: true,
+        actorUserId: 'coach-owner-1',
+      );
+      expect(updated.name, 'Atlético Norte Editado');
+    });
+
+    test('deleteCoachTeam enforces ownership, blocks active tournament and matches, and deletes autonomous team', () async {
+      final autonomous = TournamentTeam(
+        id: 'coach-del-auto',
+        coachId: 'coach-owner-1',
+        name: 'Autónomo FC',
+        shortCode: 'AFC',
+      );
+      final activeTeam = TournamentTeam(
+        id: 'coach-del-active',
+        tournamentId: closedTournament.id,
+        coachId: 'coach-owner-1',
+        name: 'Activo FC',
+        shortCode: 'ACT',
+      );
+      await repository.saveTeam(autonomous);
+      await repository.saveTeam(activeTeam);
+
+      await expectLater(
+        useCase.deleteCoachTeam(
+          team: autonomous,
+          actorUserId: 'coach-other-2',
+          actorRole: UserRole.coach,
+        ),
+        throwsA(isA<UnauthorizedRoleFailure>()),
+      );
+
+      await expectLater(
+        useCase.deleteCoachTeam(
+          team: activeTeam,
+          tournament: closedTournament,
+          actorUserId: 'coach-owner-1',
+          actorRole: UserRole.coach,
+        ),
+        throwsA(
+          predicate<TeamEligibilityValidationFailure>(
+            (f) =>
+                f.code ==
+                TeamEligibilityErrorCode.teamInActiveOrFinishedTournament,
+          ),
+        ),
+      );
+
+      await useCase.deleteCoachTeam(
+        team: autonomous,
+        actorUserId: 'coach-owner-1',
+        actorRole: UserRole.coach,
+      );
+      final remaining = await repository.loadTeams();
+      expect(remaining.any((t) => t.id == autonomous.id), isFalse);
+    });
   });
 }

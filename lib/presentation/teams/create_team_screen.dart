@@ -10,6 +10,7 @@ import 'package:vifutbol/application/providers/document_scanner_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
 import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/tournament_enums.dart';
+import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/domain/entities/user_role.dart';
 import 'package:vifutbol/infrastructure/storage/supabase_document_storage_repository.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
@@ -42,8 +43,12 @@ const List<int> kTeamDistinctiveColorPalette = <int>[
 class CreateTeamScreen extends ConsumerStatefulWidget {
   const CreateTeamScreen({
     super.key,
+    this.initialTeam,
     this.crestPickerOverride,
   });
+
+  /// Optional existing team for edit mode from Coach Technical Panel.
+  final TournamentTeam? initialTeam;
 
   /// Optional test override for picking a team crest image from camera or gallery.
   final Future<String?> Function(ImageSource source)? crestPickerOverride;
@@ -69,15 +74,40 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
   int _primaryColorHex = kTeamDistinctiveColorPalette[0];
   int _secondaryColorHex = kTeamDistinctiveColorPalette[1];
   String? _localCrestPath;
+  String? _existingCrestUrl;
+  bool _crestRemoved = false;
   String? _crestValidationError;
   String? _errorMessage;
+
+  bool get _isEditMode => widget.initialTeam != null;
+
+  String? get _effectiveCrestPreview =>
+      _localCrestPath ?? (_crestRemoved ? null : _existingCrestUrl);
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController();
-    _shortCodeController = TextEditingController();
-    _delegateController = TextEditingController();
+    final initial = widget.initialTeam;
+    _nameController = TextEditingController(text: initial?.name ?? '');
+    _shortCodeController = TextEditingController(
+      text: initial?.shortCode ?? '',
+    );
+    _delegateController = TextEditingController(
+      text: initial?.delegateName ?? '',
+    );
+    if (initial != null) {
+      _shortCodeEditedManually = true;
+      _foundedDate = initial.foundedDate;
+      _selectedTournamentId = initial.tournamentId.trim().isNotEmpty
+          ? initial.tournamentId
+          : null;
+      _primaryColorHex = initial.primaryColorHex;
+      _secondaryColorHex = initial.secondaryColorHex;
+      final existingCrest = initial.crestUrl?.trim();
+      if (existingCrest != null && existingCrest.isNotEmpty) {
+        _existingCrestUrl = existingCrest;
+      }
+    }
   }
 
   @override
@@ -347,6 +377,7 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
       if (!mounted) return;
       setState(() {
         _localCrestPath = cleanPath;
+        _crestRemoved = false;
         _crestValidationError = null;
         _isDirty = true;
       });
@@ -366,6 +397,7 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
   void _removeCrestImage() {
     setState(() {
       _localCrestPath = null;
+      _crestRemoved = true;
       _crestValidationError = null;
       _isDirty = true;
     });
@@ -411,14 +443,14 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
       final shortCode = _shortCodeController.text.trim().toUpperCase();
       final delegateName = _delegateController.text.trim();
 
-      String? resolvedCrestUrl;
+      String? resolvedCrestUrl = _crestRemoved ? null : _existingCrestUrl;
       var usedOfflineCrestFallback = false;
       if (_localCrestPath != null && _localCrestPath!.trim().isNotEmpty) {
         try {
           final storageRepo = ref.read(documentStorageRepositoryProvider);
           final uploadedUrl = await storageRepo.uploadTeamCrest(
             userId: coachId,
-            teamId: const Uuid().v4(),
+            teamId: widget.initialTeam?.id ?? const Uuid().v4(),
             localPath: _localCrestPath!,
           );
           resolvedCrestUrl = uploadedUrl.trim().isNotEmpty
@@ -436,20 +468,34 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
         }
       }
 
-      final success = await ref
-          .read(teamsControllerProvider.notifier)
-          .createTeam(
-            name: teamName,
-            shortCode: shortCode,
-            delegateName: delegateName,
-            foundedDate: _foundedDate,
-            primaryColorHex: _primaryColorHex,
-            secondaryColorHex: _secondaryColorHex,
-            crestUrl: resolvedCrestUrl,
-            tournament: selectedTournament,
-            coachId: coachId,
-            actorRole: actorRole,
-          );
+      final teamsNotifier = ref.read(teamsControllerProvider.notifier);
+      final success = _isEditMode
+          ? await teamsNotifier.updateTeam(
+              existingTeam: widget.initialTeam!,
+              name: teamName,
+              shortCode: shortCode,
+              delegateName: delegateName,
+              foundedDate: _foundedDate,
+              primaryColorHex: _primaryColorHex,
+              secondaryColorHex: _secondaryColorHex,
+              crestUrl: resolvedCrestUrl,
+              clearCrestUrl: _crestRemoved && _localCrestPath == null,
+              tournament: selectedTournament,
+              actorUserId: coachId,
+              actorRole: actorRole,
+            )
+          : await teamsNotifier.createTeam(
+              name: teamName,
+              shortCode: shortCode,
+              delegateName: delegateName,
+              foundedDate: _foundedDate,
+              primaryColorHex: _primaryColorHex,
+              secondaryColorHex: _secondaryColorHex,
+              crestUrl: resolvedCrestUrl,
+              tournament: selectedTournament,
+              coachId: coachId,
+              actorRole: actorRole,
+            );
 
       if (!mounted) return;
 
@@ -463,7 +509,9 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
               content: Text(
                 usedOfflineCrestFallback
                     ? l10n.createTeamCrestOfflineSyncNotice
-                    : l10n.createTeamSuccessMessage(teamName),
+                    : (_isEditMode
+                          ? l10n.editTeamSuccessMessage(teamName)
+                          : l10n.createTeamSuccessMessage(teamName)),
               ),
               backgroundColor: KickPulseColors.accentPrimary,
             ),
@@ -499,6 +547,19 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
     final openTournaments = tournamentsState.tournaments
         .where((t) => t.status == TournamentStatus.openRegistration)
         .toList();
+    final existingTournament =
+        _isEditMode && widget.initialTeam!.tournamentId.trim().isNotEmpty
+        ? tournamentsState.tournaments
+              .where((t) => t.id == widget.initialTeam!.tournamentId)
+              .firstOrNull
+        : null;
+    final isTournamentLocked =
+        _isEditMode &&
+        existingTournament != null &&
+        existingTournament.status != TournamentStatus.openRegistration;
+    final dropdownTournaments = isTournamentLocked
+        ? [existingTournament]
+        : openTournaments;
     final isSaving =
         _isSubmitting || ref.watch(teamsControllerProvider).isSaving;
 
@@ -522,7 +583,7 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
         backgroundColor: KickPulseColors.canvasBackground,
         appBar: AppBar(
           title: Text(
-            l10n.createTeamScreenTitle,
+            _isEditMode ? l10n.editTeamScreenTitle : l10n.createTeamScreenTitle,
             style: KickPulseTypography.screenTitle,
           ),
           backgroundColor: Colors.transparent,
@@ -554,8 +615,9 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
                     ),
                   ),
                 )
-              : Form(
-                  key: _formKey,
+              : RepaintBoundary(
+                  child: Form(
+                    key: _formKey,
                   child: SingleChildScrollView(
                     key: const Key('create_team_screen'),
                     padding: const EdgeInsets.symmetric(
@@ -625,7 +687,7 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
                                     shortCode: previewShortCode,
                                     primaryColorHex: _primaryColorHex,
                                     secondaryColorHex: _secondaryColorHex,
-                                    crestUrl: _localCrestPath,
+                                    crestUrl: _effectiveCrestPreview,
                                     size: 64,
                                   ),
                                   const SizedBox(
@@ -732,7 +794,7 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
                                       size: 18,
                                     ),
                                     label: Text(
-                                      _localCrestPath == null
+                                      _effectiveCrestPreview == null
                                           ? l10n.createTeamCrestUploadAction
                                           : l10n.createTeamCrestChangeAction,
                                     ),
@@ -744,7 +806,7 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
                                       ),
                                     ),
                                   ),
-                                  if (_localCrestPath != null)
+                                  if (_effectiveCrestPreview != null)
                                     TextButton.icon(
                                       key: const Key(
                                         'create_team_remove_crest_button',
@@ -973,11 +1035,20 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
                           child: DropdownButtonFormField<String?>(
                             key: const Key('create_team_tournament_dropdown'),
                             isExpanded: true,
-                            initialValue: _selectedTournamentId,
+                            initialValue:
+                                dropdownTournaments.any(
+                                  (t) => t.id == _selectedTournamentId,
+                                )
+                                ? _selectedTournamentId
+                                : null,
                             dropdownColor: KickPulseColors.surfaceElevated,
                             style: KickPulseTypography.bodyPrimary,
                             decoration: InputDecoration(
                               labelText: l10n.createTeamTournamentLabel,
+                              helperText: isTournamentLocked
+                                  ? l10n.editTeamTournamentLockedHelper
+                                  : null,
+                              helperMaxLines: 2,
                               prefixIcon: const Icon(
                                 Icons.emoji_events_outlined,
                               ),
@@ -987,7 +1058,7 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
                                 value: null,
                                 child: Text(l10n.createTeamNoTournamentOption),
                               ),
-                              ...openTournaments.map(
+                              ...dropdownTournaments.map(
                                 (tourn) => DropdownMenuItem<String?>(
                                   value: tourn.id,
                                   child: Text(
@@ -997,19 +1068,23 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
                                 ),
                               ),
                             ],
-                            onChanged: (val) {
-                              setState(() {
-                                _selectedTournamentId = val;
-                                _isDirty = true;
-                              });
-                            },
+                            onChanged: isTournamentLocked
+                                ? null
+                                : (val) {
+                                    setState(() {
+                                      _selectedTournamentId = val;
+                                      _isDirty = true;
+                                    });
+                                  },
                           ),
                         ),
                         const SizedBox(height: KickPulseRadiiSpacing.spaceLg),
 
                         KickPulseButton(
                           key: const Key('create_team_submit_button'),
-                          label: l10n.createTeamSubmitButton,
+                          label: _isEditMode
+                              ? l10n.editTeamSubmitButton
+                              : l10n.createTeamSubmitButton,
                           icon: const Icon(Icons.check, size: 18),
                           isLoading: isSaving,
                           isFullWidth: true,
@@ -1020,6 +1095,7 @@ class CreateTeamScreenState extends ConsumerState<CreateTeamScreen> {
                     ),
                   ),
                 ),
+              ),
         ),
       ),
     );

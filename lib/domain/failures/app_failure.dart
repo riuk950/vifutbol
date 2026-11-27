@@ -148,6 +148,7 @@ enum TeamEligibilityErrorCode {
   insufficientPlayersForApproval,
   teamNotFound,
   teamHasPlayedMatches,
+  teamInActiveOrFinishedTournament,
   playerAlreadyHasPendingRequest,
   shirtNumberAlreadyReserved,
   joinRequestNotFound,

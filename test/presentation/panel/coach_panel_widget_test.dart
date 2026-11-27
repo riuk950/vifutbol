@@ -213,7 +213,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tap Convocatoria
-      await tester.tap(find.byKey(const Key('coach_action_match_lineup')));
+      final lineupBtn = find.byKey(const Key('coach_action_match_lineup'));
+      await tester.ensureVisible(lineupBtn);
+      await tester.tap(lineupBtn);
       await tester.pumpAndSettle();
       expect(
         find.textContaining(

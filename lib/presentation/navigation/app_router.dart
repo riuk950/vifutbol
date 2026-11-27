@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:vifutbol/domain/entities/app_shell_section.dart';
 import 'package:vifutbol/domain/entities/championship_match.dart';
 import 'package:vifutbol/domain/entities/championship_tournament.dart';
+import 'package:vifutbol/domain/entities/tournament_team.dart';
 import 'package:vifutbol/presentation/auth/auth_gate.dart';
 import 'package:vifutbol/presentation/auth/role_onboarding_screen.dart';
 import 'package:vifutbol/presentation/auth/welcome_auth_screen.dart';
@@ -34,6 +35,31 @@ import 'package:vifutbol/presentation/venues/venue_form_screen.dart';
 class AppRouter {
   static final FluroRouter router = FluroRouter();
   static bool _isConfigured = false;
+
+  static Widget _smoothSlideFadeTransition(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final curved = CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+    final slide = Tween<Offset>(
+      begin: const Offset(0.12, 0),
+      end: Offset.zero,
+    ).animate(curved);
+
+    return FadeTransition(
+      opacity: curved,
+      child: SlideTransition(
+        position: slide,
+        child: RepaintBoundary(child: child),
+      ),
+    );
+  }
 
   static void setupRouter() {
     if (_isConfigured) {
@@ -240,6 +266,15 @@ class AppRouter {
       },
     );
 
+    final editTeamHandler = Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        final args = context != null ? ModalRoute.of(context)?.settings.arguments : null;
+        return CreateTeamScreen(
+          initialTeam: args is TournamentTeam ? args : null,
+        );
+      },
+    );
+
     router.define(
       '/',
       handler: rootHandler,
@@ -304,6 +339,20 @@ class AppRouter {
       '/teams',
       handler: teamsHandler,
       transitionType: TransitionType.native,
+    );
+    router.define(
+      '/teams/create',
+      handler: createTeamHandler,
+      transitionType: TransitionType.custom,
+      transitionBuilder: _smoothSlideFadeTransition,
+      transitionDuration: const Duration(milliseconds: 260),
+    );
+    router.define(
+      '/teams/edit',
+      handler: editTeamHandler,
+      transitionType: TransitionType.custom,
+      transitionBuilder: _smoothSlideFadeTransition,
+      transitionDuration: const Duration(milliseconds: 260),
     );
     router.define(
       '/teams/:id',
@@ -399,11 +448,6 @@ class AppRouter {
       '/profile/coach-personal-data/summary',
       handler: coachPersonalDataSummaryHandler,
       transitionType: TransitionType.fadeIn,
-    );
-    router.define(
-      '/teams/create',
-      handler: createTeamHandler,
-      transitionType: TransitionType.native,
     );
   }
 }

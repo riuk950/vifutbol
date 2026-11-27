@@ -57,7 +57,7 @@ void main() {
       coachId: null,
     );
 
-    test('filters teams matching active coach ID or fallback coach-seed-1', () {
+    test('filters teams strictly matching active coach ID', () {
       final authSession = AuthSession(
         sessionId: 'session-coach',
         user: UserAccount(
@@ -96,11 +96,9 @@ void main() {
 
       final coachTeams = container.read(coachTeamsProvider);
 
-      expect(coachTeams.length, equals(2));
-      expect(
-        coachTeams.map((t) => t.id),
-        containsAll(['team-coach-1', 'team-seed-1']),
-      );
+      expect(coachTeams.length, equals(1));
+      expect(coachTeams.first.id, equals('team-coach-1'));
+      expect(coachTeams.map((t) => t.id), isNot(contains('team-seed-1')));
       expect(coachTeams.map((t) => t.id), isNot(contains('team-other-coach')));
       expect(coachTeams.map((t) => t.id), isNot(contains('team-no-coach')));
     });

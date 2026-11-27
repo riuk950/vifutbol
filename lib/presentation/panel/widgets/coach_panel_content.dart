@@ -1,16 +1,20 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vifutbol/application/providers/auth_providers.dart';
 import 'package:vifutbol/application/providers/matches_catalog_providers.dart';
 import 'package:vifutbol/application/providers/teams_providers.dart';
+import 'package:vifutbol/application/providers/tournaments_providers.dart';
 import 'package:vifutbol/domain/entities/tournament_team.dart';
+import 'package:vifutbol/domain/entities/user_role.dart';
+import 'package:vifutbol/domain/failures/app_failure.dart';
 import 'package:vifutbol/l10n/app_localizations.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_colors.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_radii_spacing.dart';
 import 'package:vifutbol/presentation/design_system/kick_pulse_typography.dart';
-import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_badge.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_button.dart';
 import 'package:vifutbol/presentation/design_system/widgets/kick_pulse_card.dart';
 import 'package:vifutbol/presentation/panel/widgets/coach_positional_roster_section.dart';
+import 'package:vifutbol/presentation/teams/widgets/kick_pulse_team_crest.dart';
 
 /// Dynamic panel content for [UserRole.coach].
 class CoachPanelContent extends ConsumerWidget {
@@ -92,10 +96,231 @@ class CoachPanelContent extends ConsumerWidget {
     }
   }
 
+  Future<void> _confirmDeleteTeam(
+    BuildContext context,
+    WidgetRef ref,
+    TournamentTeam team,
+    AppLocalizations l10n,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: KickPulseColors.surfaceElevated,
+        title: Text(
+          l10n.coachPanelDeleteTeamTitle,
+          style: KickPulseTypography.cardTitle,
+        ),
+        content: Text(
+          l10n.coachPanelDeleteTeamMessage(team.name),
+          style: KickPulseTypography.bodyPrimary.copyWith(
+            color: KickPulseColors.textSecondary,
+          ),
+        ),
+        actions: [
+          TextButton(
+            key: const Key('coach_delete_team_cancel_button'),
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.actionCancel),
+          ),
+          TextButton(
+            key: const Key('coach_delete_team_confirm_button'),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(
+              l10n.coachPanelDeleteTeamConfirm,
+              style: const TextStyle(color: KickPulseColors.accentLive),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    final authState = ref.read(authControllerProvider);
+    final tournamentsState = ref.read(tournamentsControllerProvider);
+    final tournament = team.tournamentId.trim().isNotEmpty
+        ? tournamentsState.tournaments
+              .where((t) => t.id == team.tournamentId)
+              .firstOrNull
+        : null;
+    final actorUserId = authState.session?.user.id ?? 'coach-seed-1';
+    final actorRole = authState.session?.user.activeRole ?? UserRole.coach;
+
+    final success = await ref
+        .read(teamsControllerProvider.notifier)
+        .deleteCoachTeam(
+          team: team,
+          tournament: tournament,
+          actorUserId: actorUserId,
+          actorRole: actorRole,
+        );
+
+    if (!context.mounted) return;
+
+    if (success) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(l10n.coachPanelDeleteTeamSuccess(team.name)),
+            backgroundColor: KickPulseColors.accentPrimary,
+          ),
+        );
+    } else {
+      final failure = ref.read(teamsControllerProvider).lastFailure;
+      final errorMessage = switch (failure) {
+        TeamEligibilityValidationFailure(
+          code: TeamEligibilityErrorCode.teamInActiveOrFinishedTournament,
+        ) =>
+          l10n.coachPanelDeleteTeamBlockedTournament,
+        TeamEligibilityValidationFailure(
+          code: TeamEligibilityErrorCode.teamHasPlayedMatches,
+        ) =>
+          l10n.coachPanelDeleteTeamBlockedMatches,
+        _ => failure?.message ?? l10n.coachPanelDeleteTeamBlockedTournament,
+      };
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: KickPulseColors.accentLive,
+          ),
+        );
+    }
+  }
+
+  Widget _buildCoachTeamCard(
+    BuildContext context,
+    WidgetRef ref,
+    TournamentTeam item,
+    bool isSelected,
+    bool isSaving,
+    AppLocalizations l10n,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: KickPulseRadiiSpacing.spaceSm),
+      decoration: BoxDecoration(
+        borderRadius: KickPulseRadiiSpacing.cardBorderRadius,
+        border: Border.all(
+          color: isSelected
+              ? KickPulseColors.accentPrimary
+              : KickPulseColors.borderSubtle,
+          width: isSelected ? 1.5 : 1,
+        ),
+      ),
+      child: InkWell(
+        key: Key('coach_team_card_${item.id}'),
+        borderRadius: KickPulseRadiiSpacing.cardBorderRadius,
+        onTap: () =>
+            ref.read(teamsControllerProvider.notifier).selectTeam(item.id),
+        child: KickPulseCard(
+          child: Row(
+            children: [
+              KickPulseTeamCrest(
+                shortCode: item.shortCode,
+                primaryColorHex: item.primaryColorHex,
+                secondaryColorHex: item.secondaryColorHex,
+                crestUrl: item.crestUrl,
+                size: 48,
+              ),
+              const SizedBox(width: KickPulseRadiiSpacing.spaceMd),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.name,
+                      style: KickPulseTypography.cardTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 6,
+                      runSpacing: 2,
+                      children: [
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: Color(item.primaryColorHex),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: Color(item.secondaryColorHex),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        Text(
+                          item.shortCode,
+                          style: KickPulseTypography.captionMeta.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (item.delegateName != null &&
+                            item.delegateName!.trim().isNotEmpty)
+                          Text(
+                            '· ${item.delegateName!.trim()}',
+                            style: KickPulseTypography.captionMeta,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${item.players.length} ${l10n.coachMetricTotalPlayers.toLowerCase()}',
+                      style: KickPulseTypography.captionMeta,
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                key: Key('coach_team_edit_${item.id}'),
+                tooltip: l10n.coachPanelEditTeamAction,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+                icon: const Icon(
+                  Icons.edit_outlined,
+                  color: KickPulseColors.accentElectric,
+                ),
+                onPressed: isSaving
+                    ? null
+                    : () => Navigator.of(
+                        context,
+                      ).pushNamed('/teams/edit', arguments: item),
+              ),
+              IconButton(
+                key: Key('coach_team_delete_${item.id}'),
+                tooltip: l10n.coachPanelDeleteTeamAction,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+                icon: const Icon(
+                  Icons.delete_outline,
+                  color: KickPulseColors.accentLive,
+                ),
+                onPressed: isSaving
+                    ? null
+                    : () => _confirmDeleteTeam(context, ref, item, l10n),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final coachTeams = ref.watch(coachTeamsProvider);
+    final teamsState = ref.watch(teamsControllerProvider);
     final matchesCatalogState = ref.watch(matchesCatalogControllerProvider);
 
     if (coachTeams.isEmpty) {
@@ -152,7 +377,11 @@ class CoachPanelContent extends ConsumerWidget {
       );
     }
 
-    final team = coachTeams.first;
+    final team =
+        coachTeams
+            .where((t) => t.id == teamsState.selectedTeamId)
+            .firstOrNull ??
+        coachTeams.first;
 
     final players = team.players;
     final totalPlayers = players.length;
@@ -166,27 +395,48 @@ class CoachPanelContent extends ConsumerWidget {
 
     final nextMatch = teamMatches.isNotEmpty ? teamMatches.first : null;
 
-    return SingleChildScrollView(
-      key: const Key('coach_panel_content'),
+    return RepaintBoundary(
+      child: SingleChildScrollView(
+        key: const Key('coach_panel_content'),
       padding: const EdgeInsets.all(KickPulseRadiiSpacing.spaceMd),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Team Header / Summary
-          Row(
+          // Coach Created Teams List
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: KickPulseRadiiSpacing.spaceSm,
+            runSpacing: KickPulseRadiiSpacing.spaceXs,
             children: [
-              Expanded(
-                child: Text(
-                  team.name,
-                  style: KickPulseTypography.sectionHeader,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              Text(
+                l10n.coachPanelTeamsListTitle,
+                style: KickPulseTypography.sectionHeader,
               ),
-              KickPulseBadge(
-                label: team.shortCode,
-                variant: KickPulseBadgeVariant.info,
+              TextButton.icon(
+                key: const Key('coach_action_add_another_team'),
+                onPressed: () =>
+                    Navigator.of(context).pushNamed('/teams/create'),
+                icon: const Icon(Icons.add, size: 18),
+                label: Text(l10n.coachPanelAddAnotherTeamAction),
               ),
             ],
+          ),
+          const SizedBox(height: KickPulseRadiiSpacing.spaceXs),
+          Column(
+            key: const Key('coach_panel_teams_list'),
+            children: coachTeams
+                .map(
+                  (item) => _buildCoachTeamCard(
+                    context,
+                    ref,
+                    item,
+                    item.id == team.id,
+                    teamsState.isSaving,
+                    l10n,
+                  ),
+                )
+                .toList(growable: false),
           ),
           const SizedBox(height: KickPulseRadiiSpacing.spaceSm),
 
@@ -299,6 +549,7 @@ class CoachPanelContent extends ConsumerWidget {
           CoachPositionalRosterSection(teamId: team.id),
         ],
       ),
+    ),
     );
   }
 }

@@ -7521,6 +7521,90 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Equipo guardado. El escudo se sincronizará al restablecer la conexión'**
   String get createTeamCrestOfflineSyncNotice;
+
+  /// Título de la pantalla al editar un equipo existente
+  ///
+  /// In es, this message translates to:
+  /// **'Editar Equipo'**
+  String get editTeamScreenTitle;
+
+  /// Texto del botón principal al guardar cambios de un equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar cambios'**
+  String get editTeamSubmitButton;
+
+  /// Mensaje de confirmación tras actualizar un equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Equipo \"{teamName}\" actualizado correctamente'**
+  String editTeamSuccessMessage(String teamName);
+
+  /// Texto informativo cuando el selector de campeonato está bloqueado en edición
+  ///
+  /// In es, this message translates to:
+  /// **'El campeonato no se puede cambiar porque ya está en curso o finalizado'**
+  String get editTeamTournamentLockedHelper;
+
+  /// Título de la sección con la lista de equipos creados por el entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Mis equipos'**
+  String get coachPanelTeamsListTitle;
+
+  /// Acción para editar un equipo desde el Panel Técnico del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get coachPanelEditTeamAction;
+
+  /// Acción para eliminar un equipo desde el Panel Técnico del entrenador
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar'**
+  String get coachPanelDeleteTeamAction;
+
+  /// Botón para registrar un equipo adicional cuando el entrenador ya tiene al menos uno
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar otro equipo'**
+  String get coachPanelAddAnotherTeamAction;
+
+  /// Título del diálogo de confirmación al eliminar un equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar equipo'**
+  String get coachPanelDeleteTeamTitle;
+
+  /// Mensaje de confirmación irreversible al eliminar un equipo
+  ///
+  /// In es, this message translates to:
+  /// **'¿Seguro que deseas eliminar \"{teamName}\"? Esta acción es irreversible.'**
+  String coachPanelDeleteTeamMessage(String teamName);
+
+  /// Botón de confirmación para eliminar el equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar'**
+  String get coachPanelDeleteTeamConfirm;
+
+  /// Mensaje de éxito tras eliminar un equipo
+  ///
+  /// In es, this message translates to:
+  /// **'Equipo \"{teamName}\" eliminado'**
+  String coachPanelDeleteTeamSuccess(String teamName);
+
+  /// Error al intentar eliminar un equipo de un torneo en curso o finalizado
+  ///
+  /// In es, this message translates to:
+  /// **'No puedes eliminar un equipo inscrito en un campeonato en curso o finalizado'**
+  String get coachPanelDeleteTeamBlockedTournament;
+
+  /// Error al intentar eliminar un equipo con partidos asociados
+  ///
+  /// In es, this message translates to:
+  /// **'No puedes eliminar un equipo que ya tiene partidos registrados'**
+  String get coachPanelDeleteTeamBlockedMatches;
 }
 
 class _AppLocalizationsDelegate

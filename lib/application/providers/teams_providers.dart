@@ -143,11 +143,15 @@ final teamSquadRosterProvider = Provider.family<TeamSquadRoster, String>((
 final coachTeamsProvider = Provider<List<TournamentTeam>>((ref) {
   final teamsState = ref.watch(teamsControllerProvider);
   final authState = ref.watch(authControllerProvider);
-  final currentCoachId = authState.session?.user.id;
+  final currentCoachId = authState.session?.user.id.trim();
 
-  return teamsState.teams.where((team) {
-    if (team.coachId == null) return false;
-    if (currentCoachId != null && team.coachId == currentCoachId) return true;
-    return team.coachId == 'coach-seed-1';
-  }).toList();
+  if (currentCoachId != null && currentCoachId.isNotEmpty) {
+    return teamsState.teams
+        .where((team) => team.coachId == currentCoachId)
+        .toList();
+  }
+
+  return teamsState.teams
+      .where((team) => team.coachId == 'coach-seed-1')
+      .toList();
 });

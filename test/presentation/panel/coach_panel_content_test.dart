@@ -143,6 +143,7 @@ void main() {
         expect(manageRosterButtonFinder, findsOneWidget);
 
         // Tap the button
+        await tester.ensureVisible(manageRosterButtonFinder);
         await tester.tap(manageRosterButtonFinder);
         await tester.pumpAndSettle();
 

@@ -49,9 +49,20 @@ class ManageTeamsEligibilityUseCase {
     required TournamentTeam team,
     ChampionshipTournament? tournament,
     required UserRole actorRole,
+    bool isEdit = false,
+    String? actorUserId,
   }) async {
     _ensureRosterManagementPermission(actorRole);
-    if (tournament != null) {
+    if (isEdit &&
+        actorRole == UserRole.coach &&
+        actorUserId != null &&
+        actorUserId.trim().isNotEmpty &&
+        team.coachId != actorUserId) {
+      throw const UnauthorizedRoleFailure(
+        'Solo el entrenador propietario puede editar este equipo',
+      );
+    }
+    if (tournament != null && !isEdit) {
       _ensureOpenRegistration(tournament);
     }
 
@@ -214,6 +225,47 @@ class ManageTeamsEligibilityUseCase {
     }
 
     await _repository.deleteTeam(teamId);
+  }
+
+  /// Safely deletes a coach-owned [team] from local and remote storage.
+  ///
+  /// Enforces owner permission, blocks deletion when [tournament] is in progress
+  /// or finished, and blocks deletion when any match references [team.id].
+  Future<void> deleteCoachTeam({
+    required TournamentTeam team,
+    ChampionshipTournament? tournament,
+    required String actorUserId,
+    required UserRole actorRole,
+  }) async {
+    _ensureRosterManagementPermission(actorRole);
+    if (actorRole == UserRole.coach &&
+        (team.coachId == null || team.coachId != actorUserId)) {
+      throw const UnauthorizedRoleFailure(
+        'Solo el entrenador propietario puede eliminar este equipo',
+      );
+    }
+    if (tournament != null &&
+        tournament.status != TournamentStatus.openRegistration) {
+      throw const TeamEligibilityValidationFailure(
+        TeamEligibilityErrorCode.teamInActiveOrFinishedTournament,
+        'No puedes eliminar un equipo inscrito en un campeonato en curso o finalizado',
+      );
+    }
+    if (_matchesRepository != null) {
+      final matchesToCheck = team.tournamentId.trim().isNotEmpty
+          ? await _matchesRepository.loadMatchesForTournament(team.tournamentId)
+          : await _matchesRepository.loadAllMatches();
+      final hasAssociatedMatches = matchesToCheck.any(
+        (m) => m.homeTeamId == team.id || m.awayTeamId == team.id,
+      );
+      if (hasAssociatedMatches) {
+        throw const TeamEligibilityValidationFailure(
+          TeamEligibilityErrorCode.teamHasPlayedMatches,
+          'No puedes eliminar un equipo que ya tiene partidos registrados',
+        );
+      }
+    }
+    await _repository.deleteTeam(team.id);
   }
 
   /// Enrolls a team into a championship competition from the Organizer's perspective.

@@ -4353,4 +4353,55 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get createTeamCrestOfflineSyncNotice =>
       'Equipo guardado. El escudo se sincronizará al restablecer la conexión';
+
+  @override
+  String get editTeamScreenTitle => 'Editar Equipo';
+
+  @override
+  String get editTeamSubmitButton => 'Guardar cambios';
+
+  @override
+  String editTeamSuccessMessage(String teamName) {
+    return 'Equipo \"$teamName\" actualizado correctamente';
+  }
+
+  @override
+  String get editTeamTournamentLockedHelper =>
+      'El campeonato no se puede cambiar porque ya está en curso o finalizado';
+
+  @override
+  String get coachPanelTeamsListTitle => 'Mis equipos';
+
+  @override
+  String get coachPanelEditTeamAction => 'Editar';
+
+  @override
+  String get coachPanelDeleteTeamAction => 'Eliminar';
+
+  @override
+  String get coachPanelAddAnotherTeamAction => 'Registrar otro equipo';
+
+  @override
+  String get coachPanelDeleteTeamTitle => 'Eliminar equipo';
+
+  @override
+  String coachPanelDeleteTeamMessage(String teamName) {
+    return '¿Seguro que deseas eliminar \"$teamName\"? Esta acción es irreversible.';
+  }
+
+  @override
+  String get coachPanelDeleteTeamConfirm => 'Eliminar';
+
+  @override
+  String coachPanelDeleteTeamSuccess(String teamName) {
+    return 'Equipo \"$teamName\" eliminado';
+  }
+
+  @override
+  String get coachPanelDeleteTeamBlockedTournament =>
+      'No puedes eliminar un equipo inscrito en un campeonato en curso o finalizado';
+
+  @override
+  String get coachPanelDeleteTeamBlockedMatches =>
+      'No puedes eliminar un equipo que ya tiene partidos registrados';
 }

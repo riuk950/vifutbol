@@ -347,11 +347,35 @@ class PostgrestTeamsRemoteDataSource implements TeamsRemoteDataSource {
       teamId,
       'tournament_team',
     );
-    await client
+    final enrollment = await client
         .schema(schema)
         .from('tournament_teams')
-        .delete()
-        .eq('id', safeTeamId);
+        .select('team_id')
+        .eq('id', safeTeamId)
+        .maybeSingle();
+    final masterTeamId = enrollment?['team_id'] as String? ?? safeTeamId;
+
+    if (enrollment != null) {
+      await client
+          .schema(schema)
+          .from('tournament_teams')
+          .delete()
+          .eq('id', safeTeamId);
+    }
+
+    final remainingEnrollments = await client
+        .schema(schema)
+        .from('tournament_teams')
+        .select('id')
+        .eq('team_id', masterTeamId)
+        .limit(1);
+    if ((remainingEnrollments as List<dynamic>).isEmpty) {
+      await client
+          .schema(schema)
+          .from('teams')
+          .delete()
+          .eq('id', masterTeamId);
+    }
   }
 
   TournamentTeam _fromEnrollmentRow(Map<String, dynamic> row) {

@@ -98,13 +98,18 @@ void main() {
     storageRepository = _MockDocumentStorageRepository();
 
     when(() => teamsRepository.loadTeams()).thenAnswer((_) async => []);
+    when(() => teamsRepository.loadTeamsForTournament(any()))
+        .thenAnswer((_) async => []);
     when(() => tournamentsRepository.loadTournaments())
         .thenAnswer((_) async => []);
+    when(() => tournamentsRepository.loadDraft())
+        .thenAnswer((_) async => null);
   });
 
   Widget wrapScreen({
     required UserAccount user,
     TeamsController? teamsController,
+    TournamentTeam? initialTeam,
     Future<String?> Function(ImageSource source)? crestPickerOverride,
   }) {
     final authCtrl = _TestAuthController(
@@ -122,6 +127,7 @@ void main() {
       manageTournamentsUseCase:
           ManageTournamentsUseCase(tournamentsRepository),
     );
+    tournCtrl.loadCatalog();
 
     return ProviderScope(
       overrides: [
@@ -137,7 +143,10 @@ void main() {
           ...GlobalMaterialLocalizations.delegates,
         ],
         supportedLocales: AppLocalizations.supportedLocales,
-        home: CreateTeamScreen(crestPickerOverride: crestPickerOverride),
+        home: CreateTeamScreen(
+          initialTeam: initialTeam,
+          crestPickerOverride: crestPickerOverride,
+        ),
       ),
     );
   }
@@ -538,6 +547,70 @@ void main() {
           .captured
           .single as TournamentTeam;
       expect(saved.crestUrl, imgFile.path);
+    },
+  );
+
+  testWidgets(
+    'prefills edit mode and locks tournament dropdown when tournament is inProgress',
+    (tester) async {
+      final inProgressTournament = ChampionshipTournament(
+        id: 'tourn-active-1',
+        name: 'Liga Activa',
+        category: 'Libre',
+        startDate: DateTime(2026, 1, 1),
+        endDate: DateTime(2026, 12, 31),
+        format: TournamentFormat.league,
+        status: TournamentStatus.inProgress,
+        updatedAt: DateTime(2026, 11, 26),
+      );
+      final existingTeam = TournamentTeam(
+        id: 'team-edit-1',
+        tournamentId: inProgressTournament.id,
+        coachId: 'coach-1',
+        name: 'Club Original',
+        shortCode: 'COR',
+        delegateName: 'Carlos Ruiz',
+        foundedDate: DateTime(2020, 5, 10),
+        primaryColorHex: 0xFF00E676,
+        secondaryColorHex: 0xFF0A0E17,
+      );
+
+      when(() => tournamentsRepository.loadTournaments())
+          .thenAnswer((_) async => [inProgressTournament]);
+      when(() => teamsRepository.saveTeam(any())).thenAnswer(
+        (invocation) async => invocation.positionalArguments[0] as TournamentTeam,
+      );
+
+      await tester.pumpWidget(
+        wrapScreen(user: coachUser(), initialTeam: existingTeam),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Editar Equipo'), findsOneWidget);
+      expect(find.text('Club Original'), findsAtLeastNWidgets(1));
+      expect(find.text('Guardar cambios'), findsOneWidget);
+      expect(
+        find.text(
+          'El campeonato no se puede cambiar porque ya está en curso o finalizado',
+        ),
+        findsOneWidget,
+      );
+
+      await tester.enterText(
+        find.byKey(const Key('create_team_name_input')),
+        'Club Editado',
+      );
+      final submitBtn = find.byKey(const Key('create_team_submit_button'));
+      await tester.ensureVisible(submitBtn);
+      await tester.tap(submitBtn);
+      await tester.pumpAndSettle();
+
+      final saved = verify(() => teamsRepository.saveTeam(captureAny()))
+          .captured
+          .single as TournamentTeam;
+      expect(saved.id, existingTeam.id);
+      expect(saved.name, 'Club Editado');
+      expect(saved.tournamentId, inProgressTournament.id);
     },
   );
 }

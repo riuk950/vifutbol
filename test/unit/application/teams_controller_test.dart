@@ -333,5 +333,47 @@ void main() {
       expect(controller.state.teams.any((t) => t.id == team.id), isFalse);
       expect(controller.state.selectedTeamId, isNull);
     });
+
+    test('updateTeam and deleteCoachTeam update state and adjust selectedTeamId', () async {
+      final team1 = TournamentTeam(
+        id: 'coach-ctrl-1',
+        coachId: 'coach-1',
+        name: 'Primero FC',
+        shortCode: 'PFC',
+      );
+      final team2 = TournamentTeam(
+        id: 'coach-ctrl-2',
+        coachId: 'coach-1',
+        name: 'Segundo FC',
+        shortCode: 'SFC',
+      );
+      await repository.saveTeam(team1);
+      await repository.saveTeam(team2);
+      await controller.loadTeams();
+      controller.selectTeam(team1.id);
+
+      final updated = await controller.updateTeam(
+        existingTeam: team1,
+        name: 'Primero Renovado',
+        shortCode: 'PRV',
+        actorUserId: 'coach-1',
+        actorRole: UserRole.coach,
+      );
+      expect(updated, isTrue);
+      expect(
+        controller.state.teams.firstWhere((t) => t.id == team1.id).name,
+        'Primero Renovado',
+      );
+      expect(controller.state.selectedTeamId, team1.id);
+
+      final deleted = await controller.deleteCoachTeam(
+        team: team1,
+        actorUserId: 'coach-1',
+        actorRole: UserRole.coach,
+      );
+      expect(deleted, isTrue);
+      expect(controller.state.teams.any((t) => t.id == team1.id), isFalse);
+      expect(controller.state.selectedTeamId, team2.id);
+    });
   });
 }
